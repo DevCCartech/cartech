@@ -8,7 +8,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .full-screen-bg {
-      background-image: linear-gradient(to right, rgba(6, 16, 34, 0.10), rgba(6, 16, 34, 0.25)), url('team.jpg'), url('https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&q=80&w=1600');
+      background-image: linear-gradient(to bottom, rgba(6, 16, 34, 0.15), rgba(6, 16, 34, 0.35)), url('team.jpg'), url('https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&q=80&w=1600');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -42,40 +42,35 @@
       </div>
     </div>
 
-    <div class="z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto w-full max-w-7xl mx-auto py-8">
-      <!-- Left Column (Clean Transparent Space) -->
-      <div class="lg:col-span-7"></div>
+    <!-- Centered Login Section (Positioned in Upper-Center Shelf Area to Keep All Faces 100% Visible) -->
+    <div class="z-10 flex justify-center items-center w-full my-auto py-2">
+      <div class="w-full max-w-md backdrop-blur-md bg-white/40 p-8 rounded-3xl border border-white/60 shadow-2xl space-y-6">
+        <div>
+          <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
+          <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
+          <p class="text-xs text-slate-800 font-semibold mt-1">Sign in with your registered staff name.</p>
+        </div>
 
-      <!-- Right Floating Login Card (Ultra-Clear Frosted Glass Backdrop) -->
-      <div class="lg:col-span-5 flex justify-center lg:justify-end">
-        <div class="w-full max-w-md backdrop-blur-md bg-white/40 p-8 rounded-3xl border border-white/60 shadow-2xl space-y-6">
+        <form onsubmit="handleLogin(event)" class="space-y-4">
           <div>
-            <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
-            <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-            <p class="text-xs text-slate-800 font-semibold mt-1">Sign in with your registered staff name.</p>
+            <label class="block text-xs font-bold text-slate-900 uppercase mb-1">Staff Member Name</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-600">
+                <i class="fa-regular fa-user"></i>
+              </span>
+              <input id="loginName" required placeholder="Enter staff name..." 
+                     class="w-full pl-10 pr-4 py-3 bg-white/70 border border-white/80 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-bold">
+            </div>
+            <div id="loginError" class="hidden text-xs text-rose-700 font-black mt-2 flex items-center bg-white/80 p-1.5 rounded-lg">
+              <i class="fa-solid fa-circle-exclamation mr-1.5 text-rose-600"></i> Name not recognized in staff records.
+            </div>
           </div>
 
-          <form onsubmit="handleLogin(event)" class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-900 uppercase mb-1">Staff Member Name</label>
-              <div class="relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-600">
-                  <i class="fa-regular fa-user"></i>
-                </span>
-                <input id="loginName" required placeholder="Enter staff name..." 
-                       class="w-full pl-10 pr-4 py-3 bg-white/70 border border-white/80 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-bold">
-              </div>
-              <div id="loginError" class="hidden text-xs text-rose-700 font-black mt-2 flex items-center bg-white/80 p-1.5 rounded-lg">
-                <i class="fa-solid fa-circle-exclamation mr-1.5 text-rose-600"></i> Name not recognized in staff records.
-              </div>
-            </div>
-
-            <button type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/30">
-              <span>Enter Workspace</span>
-              <i class="fa-solid fa-arrow-right text-xs"></i>
-            </button>
-          </form>
-        </div>
+          <button type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/30">
+            <span>Enter Workspace</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </form>
       </div>
     </div>
 
