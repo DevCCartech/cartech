@@ -20,26 +20,14 @@
     .animate-alert-pulse {
       animation: alertPulse 1s infinite ease-in-out;
     }
-    .draggable-resizable-box {
-      resize: both;
-      overflow: auto;
-      min-width: 280px;
-      min-height: 260px;
-      max-width: 90vw;
-      max-height: 90vh;
+    .fixed-locked-card {
       position: absolute;
-      top: 20%;
-      left: 35%;
+      top: 181px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 420px;
+      max-width: 92vw;
       z-index: 50;
-      cursor: grab;
-      touch-action: none;
-    }
-    .draggable-resizable-box:active {
-      cursor: grabbing;
-    }
-    .draggable-resizable-box input,
-    .draggable-resizable-box button {
-      cursor: auto;
     }
   </style>
 </head>
@@ -63,27 +51,13 @@
       </div>
     </div>
 
-    <!-- Live Position Inspector -->
-    <div class="z-10 absolute top-20 right-6 bg-slate-950/80 text-white font-mono text-[11px] p-2.5 rounded-xl border border-white/20 shadow-lg hidden sm:block">
-      <span class="text-orange-400 font-bold">Live Card Coordinates:</span><br>
-      <span id="posStats">Top: 20% | Left: 35% | Width: 380px</span>
-    </div>
-
-    <!-- Movable & Resizable Card (Drag by top header, resize by bottom-right handle) -->
-    <div id="dragCard" class="draggable-resizable-box backdrop-blur-md bg-white/40 p-6 sm:p-8 rounded-3xl border border-white/60 shadow-2xl space-y-4 sm:space-y-6">
-      
-      <!-- Drag Handle Header -->
-      <div class="flex items-center justify-between border-b border-white/40 pb-2 text-slate-800">
-        <div>
-          <span class="text-[11px] font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
-          <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-        </div>
-        <span class="text-xs text-slate-600 font-bold bg-white/50 px-2 py-0.5 rounded-md flex items-center gap-1" title="Click and hold to drag anywhere">
-          <i class="fa-solid fa-arrows-up-down-left-right text-[10px]"></i> Move
-        </span>
+    <!-- Fixed Center Locked Login Card -->
+    <div class="fixed-locked-card backdrop-blur-md bg-white/40 p-6 sm:p-8 rounded-3xl border border-white/60 shadow-2xl space-y-4 sm:space-y-6">
+      <div>
+        <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
+        <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
+        <p class="text-xs text-slate-800 font-semibold mt-1">Sign in with your registered staff name.</p>
       </div>
-
-      <p class="text-xs text-slate-800 font-semibold">Sign in with your registered staff name.</p>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
@@ -105,10 +79,6 @@
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
       </form>
-
-      <div class="text-[10px] text-center text-slate-700 font-semibold pt-1">
-        Resize card from bottom-right corner ↘
-      </div>
     </div>
 
     <div class="z-10 flex justify-between items-center text-[11px] text-white/80 font-bold backdrop-blur-sm bg-slate-950/40 px-4 py-2 rounded-xl w-fit border border-white/10">
@@ -307,73 +277,6 @@
 
     let audioCtx = null;
     let continuousAlarmInterval = null;
-
-    // Draggable Logic for Exact Placement
-    const dragCard = document.getElementById("dragCard");
-    let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
-
-    function updatePosInspector() {
-      const rect = dragCard.getBoundingClientRect();
-      const posStats = document.getElementById("posStats");
-      if (posStats) {
-        posStats.innerText = `Top: ${Math.round(rect.top)}px | Left: ${Math.round(rect.left)}px | Width: ${Math.round(rect.width)}px`;
-      }
-    }
-
-    dragCard.addEventListener("mousedown", (e) => {
-      // Don't drag when focusing input or clicking button
-      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = dragCard.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-    });
-
-    window.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      dragCard.style.left = `${initialLeft + dx}px`;
-      dragCard.style.top = `${initialTop + dy}px`;
-      dragCard.style.right = "auto";
-      dragCard.style.bottom = "auto";
-      updatePosInspector();
-    });
-
-    window.addEventListener("mouseup", () => {
-      isDragging = false;
-    });
-
-    // Touch support for dragging on tablet/mobile
-    dragCard.addEventListener("touchstart", (e) => {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
-      isDragging = true;
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      const rect = dragCard.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-    }, { passive: true });
-
-    window.addEventListener("touchmove", (e) => {
-      if (!isDragging) return;
-      const touch = e.touches[0];
-      const dx = touch.clientX - startX;
-      const dy = touch.clientY - startY;
-      dragCard.style.left = `${initialLeft + dx}px`;
-      dragCard.style.top = `${initialTop + dy}px`;
-      updatePosInspector();
-    }, { passive: true });
-
-    window.addEventListener("touchend", () => {
-      isDragging = false;
-    });
-
-    new ResizeObserver(updatePosInspector).observe(dragCard);
 
     function unlockAudio() {
       if (!audioCtx) {
@@ -811,7 +714,7 @@
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <h3 class="font-black text-slate-900 mt-1">${j.vehicle}</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
