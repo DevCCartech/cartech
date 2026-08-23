@@ -105,8 +105,8 @@
         </div>
       </div>
 
-      <!-- Live 4-Bay Occupancy Status Strip -->
-      <div class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-4 py-2 rounded-2xl shadow-inner">
+      <!-- Live 4-Bay Occupancy Status Strip (Hidden in Workshop view) -->
+      <div id="topBayStrip" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-4 py-2 rounded-2xl shadow-inner">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bay Floor (4 Capacity):</span>
         <div id="bayIndicators" class="flex items-center space-x-2"></div>
       </div>
@@ -121,8 +121,7 @@
             <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Workshop
           </button>
         </div>
-        <!-- Reset / Launch Database Purge Button -->
-        <button onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" title="Purge Testing Logs (Launch Fresh Database)">
+        <button onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Logs">
           <i class="fa-solid fa-trash-can"></i>
         </button>
         <button onclick="toggleDevMode()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" title="Toggle Developer View Mode">
@@ -134,8 +133,8 @@
       </div>
     </header>
 
-    <!-- Dynamic 4-Bay Occupancy Mobile Bar -->
-    <div class="md:hidden bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800">
+    <!-- Dynamic 4-Bay Occupancy Mobile Bar (Hidden in Workshop view) -->
+    <div id="topBayStripMobile" class="md:hidden bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800">
       <span class="text-[11px] font-bold text-slate-400 uppercase"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Floor Bays:</span>
       <div id="bayIndicatorsMobile" class="flex items-center space-x-1.5"></div>
     </div>
@@ -188,10 +187,8 @@
             <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Live System Feed</span>
             <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Vehicle queue & scheduling</h2>
           </div>
-          <!-- Clean Database Action Trigger -->
-          <button onclick="clearAllTestingRecords()" class="text-xs font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-trash-can text-[11px]"></i> Clear Test Logs
-          </button>
+          <!-- Remaining Bay Slot Pill on Office -->
+          <div id="officeRemainingBayBadge" class="px-3.5 py-1.5 rounded-2xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
         <div class="grid grid-cols-3 gap-3">
@@ -232,13 +229,10 @@
 
     <!-- ==================== WORKSHOP MECHANICS FLOOR ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-8 space-y-4 flex-1 w-full">
-      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
-        <div>
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Workshop Floor</span>
-          <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">Active bays & pending</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept into next available bay (1-4) or reject.</p>
-        </div>
-        <div id="wsBayStatusBadge" class="bg-slate-900 text-white px-4 py-2.5 rounded-2xl text-xs font-bold shadow-sm"></div>
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md">
+        <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Workshop Floor</span>
+        <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">Active bays & pending</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Accept into next available bay (1-4) or reject.</p>
       </div>
 
       <div id="workshopFeedList" class="space-y-3.5"></div>
@@ -328,15 +322,21 @@
       const workshop = document.getElementById('viewWorkshop');
       const tabOffice = document.getElementById('tabOffice');
       const tabWorkshop = document.getElementById('tabWorkshop');
+      const topBayStrip = document.getElementById('topBayStrip');
+      const topBayStripMobile = document.getElementById('topBayStripMobile');
 
       if (view === 'office') {
         office.classList.remove('hidden');
         workshop.classList.add('hidden');
+        if (topBayStrip) topBayStrip.classList.remove('hidden');
+        if (topBayStripMobile) topBayStripMobile.classList.remove('hidden');
         if (tabOffice) tabOffice.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
         if (tabWorkshop) tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
       } else {
         office.classList.add('hidden');
         workshop.classList.remove('hidden');
+        if (topBayStrip) topBayStrip.classList.add('hidden');
+        if (topBayStripMobile) topBayStripMobile.classList.add('hidden');
         if (tabWorkshop) tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
         if (tabOffice) tabOffice.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
       }
@@ -496,7 +496,6 @@
       }
     }
 
-    // Launch & Purge Testing Records Helper
     async function clearAllTestingRecords() {
       if (!confirm("Are you sure you want to permanently clear all testing records to launch clean?")) {
         return;
@@ -506,7 +505,6 @@
       render();
 
       try {
-        // Deletes all rows where ID starts with JB or is not null
         await fetch(`${API_URL}?id=neq.null`, {
           method: "DELETE",
           headers: HEADERS
@@ -526,6 +524,7 @@
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
 
+      // Top Bay Strips Rendering (Office View Only)
       let bayHTML = "";
       for (let i = 1; i <= TOTAL_BAYS; i++) {
         const isOccupied = state.some(j => {
@@ -554,12 +553,15 @@
       document.getElementById('cntSched').innerText = sched;
       document.getElementById('cntDone').innerText = done;
 
-      const wsBadge = document.getElementById('wsBayStatusBadge');
-      if (wsBadge) {
+      // Office-Only Remaining Bay Badge
+      const officeBadge = document.getElementById('officeRemainingBayBadge');
+      if (officeBadge) {
         if (availableBays === 0) {
-          wsBadge.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation mr-1"></i> 0 Slots Open (Full)</span>`;
+          officeBadge.className = "px-3.5 py-1.5 rounded-2xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Slots Open (Full)`;
         } else {
-          wsBadge.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Available</span>`;
+          officeBadge.className = "px-3.5 py-1.5 rounded-2xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Available`;
         }
       }
 
@@ -637,7 +639,7 @@
             <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
               <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-2"></i>
               <p class="font-bold text-slate-700 text-base">Workshop Floor Clear</p>
-              <p class="text-xs text-slate-400 mt-1">All 4 bay slots are available. Completed and scheduled cars have moved to office logs.</p>
+              <p class="text-xs text-slate-400 mt-1">All bay slots are available. Completed and scheduled cars have moved to office logs.</p>
             </div>`;
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
