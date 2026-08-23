@@ -22,7 +22,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased">
+<body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased" onclick="unlockAudio()">
 
   <!-- 1. LOGIN SCREEN -->
   <div id="loginScreen" class="min-h-screen w-full full-screen-bg flex flex-col justify-between p-6 md:p-12 relative overflow-hidden">
@@ -60,7 +60,7 @@
           <div>
             <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
             <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-            <p class="text-xs text-slate-500 mt-1">Sign in with your registered station identity.</p>
+            <p class="text-xs text-slate-500 mt-1">Sign in with your registered staff name.</p>
           </div>
 
           <form onsubmit="handleLogin(event)" class="space-y-4">
@@ -116,22 +116,11 @@
         <div id="bayIndicators" class="flex items-center space-x-2"></div>
       </div>
 
-      <!-- Controls & Actions -->
+      <!-- Header Controls -->
       <div class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
-        <button onclick="testAudio()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Test Alarm Audio">
+        <button onclick="testAudio()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Test Notification Audio">
           <i class="fa-solid fa-volume-high"></i>
-          <span class="hidden sm:inline">Sound Test</span>
-        </button>
-        <div id="devNavSwitcher" class="hidden flex items-center space-x-1 border-r border-slate-700 pr-1.5">
-          <button id="tabOffice" onclick="switchView('office')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-            <i class="fa-solid fa-building mr-1"></i> Office
-          </button>
-          <button id="tabWorkshop" onclick="switchView('workshop')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-            <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Workshop
-          </button>
-        </div>
-        <button onclick="toggleDevMode()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" title="Toggle Developer View Mode">
-          <i class="fa-solid fa-code"></i>
+          <span class="hidden sm:inline">Audio Test</span>
         </button>
         <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -256,12 +245,15 @@
   </div>
 
   <script>
+    // STRICT AUTHENTICATION ROSTER
     const AUTHORIZED_ROSTER = {
+      // Front Desk / Office Only:
       "josh": "office",
       "shiela": "office",
       "ken": "office",
       "office": "office",
 
+      // Mechanics / Workshop Only:
       "bert": "workshop",
       "charl": "workshop",
       "roky": "workshop",
@@ -273,8 +265,6 @@
     const TOTAL_BAYS = 4;
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
     const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
-
-    // DIRECT EMBEDDABLE MICROSOFT FORM URL
     const MICROSOFT_FORM_URL = "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u";
 
     const HEADERS = {
@@ -288,49 +278,47 @@
     let currentFilter = 'active';
     let currentUser = null;
     let currentRole = null;
-    let isDevMode = false;
     let lastCompletedCount = 0;
     let isInitialLoad = true;
 
     let audioCtx = null;
     let continuousAlarmInterval = null;
 
-    function getAudioContext() {
+    function unlockAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
-      return audioCtx;
     }
 
     function playWorkshopAlertSound() {
       try {
-        const ctx = getAudioContext();
-        const now = ctx.currentTime;
+        unlockAudio();
+        const now = audioCtx.currentTime;
 
-        const osc1 = ctx.createOscillator();
-        const gain1 = ctx.createGain();
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
         osc1.type = 'sawtooth';
         osc1.frequency.setValueAtTime(950, now);
         osc1.frequency.exponentialRampToValueAtTime(1400, now + 0.15);
         gain1.gain.setValueAtTime(0.85, now);
         gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc1.connect(gain1);
-        gain1.connect(ctx.destination);
+        gain1.connect(audioCtx.destination);
         osc1.start(now);
         osc1.stop(now + 0.35);
 
-        const osc2 = ctx.createOscillator();
-        const gain2 = ctx.createGain();
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
         osc2.type = 'sawtooth';
         osc2.frequency.setValueAtTime(1200, now + 0.18);
         osc2.frequency.exponentialRampToValueAtTime(1600, now + 0.35);
         gain2.gain.setValueAtTime(0.9, now + 0.18);
         gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
         osc2.connect(gain2);
-        gain2.connect(ctx.destination);
+        gain2.connect(audioCtx.destination);
         osc2.start(now + 0.18);
         osc2.stop(now + 0.55);
 
@@ -342,31 +330,32 @@
 
     function playOfficeDoneSound() {
       try {
-        const ctx = getAudioContext();
-        const now = ctx.currentTime;
-
+        unlockAudio();
+        const now = audioCtx.currentTime;
         const frequencies = [523.25, 659.25, 783.99, 1046.50];
+
         frequencies.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const startTime = now + (idx * 0.1);
-          osc.type = 'sine';
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const startTime = now + (idx * 0.12);
+          osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, startTime);
-          gain.gain.setValueAtTime(0.8, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.6);
+          gain.gain.setValueAtTime(0.9, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.7);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(audioCtx.destination);
           osc.start(startTime);
-          osc.stop(startTime + 0.6);
+          osc.stop(startTime + 0.7);
         });
 
         if ("vibrate" in navigator) {
-          navigator.vibrate([150, 80, 150]);
+          navigator.vibrate([200, 100, 200]);
         }
       } catch (err) {}
     }
 
     function testAudio() {
+      unlockAudio();
       if (currentRole === 'workshop') {
         playWorkshopAlertSound();
       } else {
@@ -388,10 +377,12 @@
       currentUser = input;
       currentRole = AUTHORIZED_ROSTER[input];
 
+      // Clear any previous dev mode overrides
+      localStorage.removeItem('cartech_dev');
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
 
-      getAudioContext();
+      unlockAudio();
       bootApp();
     }
 
@@ -401,6 +392,7 @@
       document.getElementById('staffBadge').innerText = currentUser;
       document.getElementById('roleBadge').innerText = currentRole === 'workshop' ? 'Mechanics Floor' : 'Front Desk';
 
+      // Strict enforcement: route to user's assigned role
       switchView(currentRole);
       pullData();
     }
@@ -415,39 +407,16 @@
       }
     }
 
-    function toggleDevMode() {
-      isDevMode = !isDevMode;
-      const nav = document.getElementById('devNavSwitcher');
-      if (isDevMode) {
-        nav.classList.remove('hidden');
-        localStorage.setItem('cartech_dev', 'true');
-      } else {
-        nav.classList.add('hidden');
-        localStorage.removeItem('cartech_dev');
-        switchView(currentRole);
-      }
-    }
-
     function switchView(view) {
-      if (!isDevMode && view !== currentRole) {
-        view = currentRole;
-      }
-
       const office = document.getElementById('viewOffice');
       const workshop = document.getElementById('viewWorkshop');
-      const tabOffice = document.getElementById('tabOffice');
-      const tabWorkshop = document.getElementById('tabWorkshop');
 
       if (view === 'office') {
         office.classList.remove('hidden');
         workshop.classList.add('hidden');
-        tabOffice.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
-        tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
       } else {
         office.classList.add('hidden');
         workshop.classList.remove('hidden');
-        tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
-        tabOffice.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
       }
       render();
     }
@@ -478,7 +447,8 @@
             const waitingCount = data.filter(j => j.status === 'waiting').length;
             const completedCount = data.filter(j => j.status === 'completed').length;
 
-            if (currentRole === 'workshop' || isDevMode) {
+            // Workshop sound: ring until waiting is zero
+            if (currentRole === 'workshop') {
               if (waitingCount > 0) {
                 document.title = `🚨 (${waitingCount}) NEW CAR ARRIVED! - CARTECH`;
                 if (!continuousAlarmInterval) {
@@ -494,7 +464,8 @@
               }
             }
 
-            if ((currentRole === 'office' || isDevMode) && !isInitialLoad) {
+            // Office sound: ring when a completed job is added
+            if (currentRole === 'office' && !isInitialLoad) {
               if (completedCount > lastCompletedCount) {
                 playOfficeDoneSound();
                 document.title = "✅ CAR FINISHED & BAY FREE! - CARTECH";
@@ -515,6 +486,7 @@
 
     async function handleDispatch(e) {
       e.preventDefault();
+      unlockAudio();
       const btn = document.getElementById('btnDispatch');
       const btnText = document.getElementById('btnText');
       btn.disabled = true;
@@ -554,6 +526,7 @@
     }
 
     async function setStatus(id, newStatus) {
+      unlockAudio();
       let slot = null;
       if (newStatus === 'scheduled') {
         slot = "Rejected by Workshop (Awaiting Office Schedule)";
@@ -590,6 +563,7 @@
     }
 
     async function applyOfficeSchedule(id) {
+      unlockAudio();
       const dateVal = document.getElementById(`schedDate-${id}`).value;
       const timeVal = document.getElementById(`schedTime-${id}`).value;
 
@@ -649,150 +623,154 @@
       document.getElementById('cntDone').innerText = done;
 
       const wsBadge = document.getElementById('wsBayStatusBadge');
-      if (availableBays === 0) {
-        wsBadge.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation mr-1"></i> 0 Slots Open (Full)</span>`;
-      } else {
-        wsBadge.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Available</span>`;
+      if (wsBadge) {
+        if (availableBays === 0) {
+          wsBadge.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation mr-1"></i> 0 Slots Open (Full)</span>`;
+        } else {
+          wsBadge.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Available</span>`;
+        }
       }
 
       const pendingBanner = document.getElementById('wsPendingArrivalBanner');
-      if (waiting > 0) {
-        pendingBanner.classList.remove('hidden');
-      } else {
-        pendingBanner.classList.add('hidden');
+      if (pendingBanner) {
+        if (waiting > 0) {
+          pendingBanner.classList.remove('hidden');
+        } else {
+          pendingBanner.classList.add('hidden');
+        }
       }
 
       // Office Feed
       const officeContainer = document.getElementById('officeQueueList');
-      let officeList = state;
-      if (currentFilter === 'active') {
-        officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
-      } else {
-        officeList = state.filter(j => j.status === currentFilter);
-      }
+      if (officeContainer) {
+        let officeList = state;
+        if (currentFilter === 'active') {
+          officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+        } else {
+          officeList = state.filter(j => j.status === currentFilter);
+        }
 
-      if (officeList.length === 0) {
-        officeContainer.innerHTML = `
-          <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
-            <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
-            <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
-            <p class="text-xs text-slate-400 mt-0.5">Records are sorted automatically by workflow state.</p>
-          </div>`;
-      } else {
-        officeContainer.innerHTML = officeList.map(j => {
-          let badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center shadow-sm"><i class="fa-regular fa-bell mr-1.5"></i> Waiting Decision</span>`;
-          if (j.status === 'inprogress') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center shadow-sm"><i class="fa-solid fa-wrench mr-1.5 animate-spin"></i> Active on ${j.auto_schedule_slot || 'Bay'}</span>`;
-          if (j.status === 'scheduled') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-rose-50 text-rose-600 border border-rose-200/80 flex items-center shadow-sm"><i class="fa-regular fa-calendar-xmark mr-1.5"></i> Workshop Full / Sched</span>`;
-          if (j.status === 'completed') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center shadow-sm"><i class="fa-regular fa-circle-check mr-1.5"></i> Completed</span>`;
+        if (officeList.length === 0) {
+          officeContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
+              <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
+              <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
+              <p class="text-xs text-slate-400 mt-0.5">Records are sorted automatically by workflow state.</p>
+            </div>`;
+        } else {
+          officeContainer.innerHTML = officeList.map(j => {
+            let badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center shadow-sm"><i class="fa-regular fa-bell mr-1.5"></i> Waiting Decision</span>`;
+            if (j.status === 'inprogress') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center shadow-sm"><i class="fa-solid fa-wrench mr-1.5 animate-spin"></i> Active on ${j.auto_schedule_slot || 'Bay'}</span>`;
+            if (j.status === 'scheduled') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-rose-50 text-rose-600 border border-rose-200/80 flex items-center shadow-sm"><i class="fa-regular fa-calendar-xmark mr-1.5"></i> Workshop Full / Sched</span>`;
+            if (j.status === 'completed') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center shadow-sm"><i class="fa-regular fa-circle-check mr-1.5"></i> Completed</span>`;
 
-          let scheduleTool = "";
-          if (j.status === 'scheduled') {
-            const todayStr = new Date().toISOString().split('T')[0];
-            scheduleTool = `
-              <div class="mt-3.5 pt-3.5 border-t border-slate-100 space-y-2.5">
-                <span class="text-xs font-bold text-slate-700 flex items-center">
-                  <i class="fa-regular fa-calendar-check text-orange-500 mr-1.5"></i> Assign Confirmed Customer Slot:
-                </span>
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
-                  <input id="schedDate-${j.id}" type="date" value="${todayStr}" class="sm:col-span-5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
-                  <input id="schedTime-${j.id}" type="time" value="09:00" class="sm:col-span-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
-                  <button onclick="applyOfficeSchedule('${j.id}')" class="sm:col-span-3 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-md shadow-orange-600/20">
-                    Save Slot
-                  </button>
-                </div>
-              </div>`;
-          }
-
-          return `
-            <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition">
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="font-black text-slate-900 text-base">${j.vehicle}</h3>
+            let scheduleTool = "";
+            if (j.status === 'scheduled') {
+              const todayStr = new Date().toISOString().split('T')[0];
+              scheduleTool = `
+                <div class="mt-3.5 pt-3.5 border-t border-slate-100 space-y-2.5">
+                  <span class="text-xs font-bold text-slate-700 flex items-center">
+                    <i class="fa-regular fa-calendar-check text-orange-500 mr-1.5"></i> Assign Confirmed Customer Slot:
+                  </span>
+                  <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <input id="schedDate-${j.id}" type="date" value="${todayStr}" class="sm:col-span-5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
+                    <input id="schedTime-${j.id}" type="time" value="09:00" class="sm:col-span-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
+                    <button onclick="applyOfficeSchedule('${j.id}')" class="sm:col-span-3 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-md shadow-orange-600/20">
+                      Save Slot
+                    </button>
                   </div>
-                  <p class="text-xs text-slate-500 mt-1">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
+                </div>`;
+            }
+
+            return `
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                      <h3 class="font-black text-slate-900 text-base">${j.vehicle}</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
+                  </div>
+                  <div>${badge}</div>
                 </div>
-                <div>${badge}</div>
-              </div>
-              <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                ${j.auto_schedule_slot ? `<p class="text-rose-600 font-bold pt-1.5 border-t border-slate-200/60 mt-1.5"><i class="fa-solid fa-tag mr-1 text-orange-500"></i> ${j.auto_schedule_slot}</p>` : ''}
-              </div>
-              ${scheduleTool}
-            </div>`;
-        }).join('');
+                <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  ${j.auto_schedule_slot ? `<p class="text-rose-600 font-bold pt-1.5 border-t border-slate-200/60 mt-1.5"><i class="fa-solid fa-tag mr-1 text-orange-500"></i> ${j.auto_schedule_slot}</p>` : ''}
+                </div>
+                ${scheduleTool}
+              </div>`;
+          }).join('');
+        }
       }
 
-      // Workshop Console with Microsoft Form Button
+      // Workshop Console
       const wsContainer = document.getElementById('workshopFeedList');
-      const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+      if (wsContainer) {
+        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
 
-      if (activeWorkshopJobs.length === 0) {
-        wsContainer.innerHTML = `
-          <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
-            <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-2"></i>
-            <p class="font-bold text-slate-700 text-base">Workshop Floor Clear</p>
-            <p class="text-xs text-slate-400 mt-1">All 4 bay slots are available. Completed and scheduled cars have moved to office logs.</p>
-          </div>`;
-      } else {
-        wsContainer.innerHTML = activeWorkshopJobs.map(j => {
-          let actionArea = "";
-          if (j.status === 'waiting') {
-            actionArea = `
-              <div class="flex items-center gap-2 mt-4 pt-3.5 border-t border-slate-100">
-                <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition">
-                  <i class="fa-solid fa-check mr-2"></i> ${availableBays === 0 ? 'Bays Full (Cannot Accept)' : 'Accept into Next Bay'}
-                </button>
-                <button onclick="setStatus('${j.id}', 'scheduled')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-rose-600/20">
-                  <i class="fa-solid fa-ban mr-2"></i> Reject (Full)
-                </button>
-              </div>`;
-          } else if (j.status === 'inprogress') {
-            actionArea = `
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3.5 border-t border-slate-100">
-                <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                  Occupying ${j.auto_schedule_slot || 'Service Bay'}
-                </span>
-                <div class="flex items-center gap-2">
-                  <a href="${MICROSOFT_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-none bg-orange-600 hover:bg-orange-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center transition shadow-md shadow-orange-600/20 cursor-pointer">
-                    <i class="fa-solid fa-clipboard-list mr-1.5"></i> Diagnostic Form
-                  </a>
-                  <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 sm:flex-none bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
-                    <i class="fa-solid fa-check-double mr-1 text-emerald-400"></i> Mark Done
-                  </button>
-                </div>
-              </div>`;
-          }
-
-          return `
-            <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
-              <div class="flex justify-between items-start">
-                <div>
-                  <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                  <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                  <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
-                </div>
-                <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
-                  j.status === 'waiting' ? 'bg-amber-50 text-amber-600 border border-amber-200/80' : 'bg-blue-50 text-blue-600 border border-blue-200/80'
-                }">${j.status === 'waiting' ? 'Pending Action' : (j.auto_schedule_slot || 'In Bay')}</span>
-              </div>
-              <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-              </div>
-              ${actionArea}
+        if (activeWorkshopJobs.length === 0) {
+          wsContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
+              <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-2"></i>
+              <p class="font-bold text-slate-700 text-base">Workshop Floor Clear</p>
+              <p class="text-xs text-slate-400 mt-1">All 4 bay slots are available. Completed and scheduled cars have moved to office logs.</p>
             </div>`;
-        }).join('');
+        } else {
+          wsContainer.innerHTML = activeWorkshopJobs.map(j => {
+            let actionArea = "";
+            if (j.status === 'waiting') {
+              actionArea = `
+                <div class="flex items-center gap-2 mt-4 pt-3.5 border-t border-slate-100">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-2"></i> ${availableBays === 0 ? 'Bays Full (Cannot Accept)' : 'Accept into Next Bay'}
+                  </button>
+                  <button onclick="setStatus('${j.id}', 'scheduled')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-rose-600/20">
+                    <i class="fa-solid fa-ban mr-2"></i> Reject (Full)
+                  </button>
+                </div>`;
+            } else if (j.status === 'inprogress') {
+              actionArea = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3.5 border-t border-slate-100">
+                  <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    Occupying ${j.auto_schedule_slot || 'Service Bay'}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <a href="${MICROSOFT_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-none bg-orange-600 hover:bg-orange-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center transition shadow-md shadow-orange-600/20 cursor-pointer">
+                      <i class="fa-solid fa-clipboard-list mr-1.5"></i> Diagnostic Form
+                    </a>
+                    <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 sm:flex-none bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                      <i class="fa-solid fa-check-double mr-1 text-emerald-400"></i> Mark Done
+                    </button>
+                  </div>
+                </div>`;
+            }
+
+            return `
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                    <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                  </div>
+                  <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
+                    j.status === 'waiting' ? 'bg-amber-50 text-amber-600 border border-amber-200/80' : 'bg-blue-50 text-blue-600 border border-blue-200/80'
+                  }">${j.status === 'waiting' ? 'Pending Action' : (j.auto_schedule_slot || 'In Bay')}</span>
+                </div>
+                <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                </div>
+                ${actionArea}
+              </div>`;
+          }).join('');
+        }
       }
     }
 
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
-    if (localStorage.getItem('cartech_dev') === 'true') {
-      isDevMode = true;
-      document.getElementById('devNavSwitcher').classList.remove('hidden');
-    }
 
     if (savedAuthUser && savedAuthRole) {
       currentUser = savedAuthUser;
