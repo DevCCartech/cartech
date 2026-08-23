@@ -8,7 +8,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .full-screen-bg {
-      background-image: linear-gradient(to right, rgba(6, 16, 34, 0.45), rgba(6, 16, 34, 0.78)), url('team.jpg'), url('https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&q=80&w=1600');
+      background-image: linear-gradient(to right, rgba(6, 16, 34, 0.20), rgba(6, 16, 34, 0.40)), url('team.jpg'), url('https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&q=80&w=1600');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -44,14 +44,10 @@
 
     <div class="z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto w-full max-w-7xl mx-auto py-8">
       <div class="lg:col-span-7 space-y-4">
-        <div class="backdrop-blur-md bg-slate-950/70 p-6 md:p-8 rounded-3xl border border-white/15 max-w-xl shadow-2xl space-y-3">
-          <span class="text-xs font-black uppercase tracking-widest text-orange-400">Shop Floor Management</span>
-          <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
-            One queue. 4 Bays.<br><span class="text-amber-400">Audio Alarm Synced.</span>
+        <div class="p-2 max-w-xl">
+          <h1 class="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+            CARTECH TEAM
           </h1>
-          <p class="text-slate-200 text-xs md:text-sm leading-relaxed">
-            Real-time workshop bay tracking, direct intake floor dispatch, and background sound notifications.
-          </p>
         </div>
       </div>
 
@@ -586,6 +582,7 @@
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
 
+      // Bay Indicators
       let bayHTML = "";
       for (let i = 1; i <= TOTAL_BAYS; i++) {
         const isOccupied = state.some(j => j.status === 'inprogress' && j.auto_schedule_slot === `Bay #${i}`);
@@ -719,7 +716,7 @@
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <h3 class="font-black text-slate-900 mt-1">${j.vehicle}</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
