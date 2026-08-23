@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <!-- Live 4-Bay Occupancy Status Strip (STRICTLY ONLY SHOWN ON OFFICE DESKTOP) -->
+      <!-- Live 4-Bay Occupancy Status Strip (STRICTLY ONLY ON OFFICE) -->
       <div id="topBayStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3.5 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bays:</span>
         <div id="bayIndicators" class="flex items-center space-x-1.5"></div>
@@ -122,7 +122,7 @@
       </div>
     </header>
 
-    <!-- ==================== OFFICE DESK VIEW (ONLY: josh, shiela, ken) ==================== -->
+    <!-- ==================== OFFICE DESK VIEW (josh, shiela, ken) ==================== -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -174,7 +174,6 @@
           <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <!-- Metric Stat Cards -->
         <div class="grid grid-cols-3 gap-2.5 md:gap-3">
           <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
             <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-base"><i class="fa-regular fa-clock"></i></div>
@@ -183,7 +182,7 @@
               <div class="text-[10px] font-semibold text-slate-400 mt-1">Pending</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
             <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-base"><i class="fa-solid fa-wrench"></i></div>
             <div>
               <div id="statActive" class="text-xl md:text-2xl font-black text-slate-900 leading-none">0</div>
@@ -211,12 +210,12 @@
       </div>
     </main>
 
-    <!-- ==================== MECHANICS WORKSHOP (ONLY: bert, charl, rocky, mark, nel) ==================== -->
+    <!-- ==================== MECHANICS WORKSHOP (bert, charl, rocky, mark, nel) ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md">
         <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
         <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicles or reject if full.</p>
+        <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicles, fill diagnostic checklist, or reject.</p>
       </div>
 
       <div id="workshopFeedList" class="space-y-3.5"></div>
@@ -224,7 +223,10 @@
   </div>
 
   <script>
-    // STRICT ROLE PERMISSIONS
+    // MS Form Diagnostic Checklist Link
+    const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
+
+    // STRICT USER ROSTER
     const AUTHORIZED_ROSTER = {
       "josh": "office",
       "shiela": "office",
@@ -282,7 +284,6 @@
       const workshopView = document.getElementById('viewWorkshop');
       const topBayStripOffice = document.getElementById('topBayStripOffice');
 
-      // STRICT ROLE ROUTING (Staff can never see workshop, Mechanic can never see office)
       if (currentRole === 'office') {
         officeView.classList.remove('hidden');
         workshopView.classList.add('hidden');
@@ -484,7 +485,7 @@
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
 
-      // 1. Office Header Bay Indicators
+      // Office Header Bay Indicators
       let bayHTML = "";
       for (let i = 1; i <= TOTAL_BAYS; i++) {
         const isOccupied = state.some(j => {
@@ -511,7 +512,7 @@
       document.getElementById('cntSched').innerText = sched;
       document.getElementById('cntDone').innerText = done;
 
-      // Office-Only Available Bays Badge
+      // Office Remaining Bay Badge
       const officeBadge = document.getElementById('officeRemainingBayBadge');
       if (officeBadge) {
         if (availableBays === 0) {
@@ -614,14 +615,19 @@
                 </div>`;
             } else if (j.status === 'inprogress') {
               actionArea = `
-                <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-100">
                   <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
                     ${j.auto_schedule_slot || 'Service Bay'}
                   </span>
-                  <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm">
-                    <i class="fa-solid fa-check-double mr-1 text-emerald-400"></i> Mark Done
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                      <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
+                    </a>
+                    <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                      <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
+                    </button>
+                  </div>
                 </div>`;
             }
 
