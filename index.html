@@ -181,6 +181,7 @@
           <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Vehicle queue & scheduling</h2>
         </div>
 
+        <!-- Metric Cards -->
         <div class="grid grid-cols-3 gap-3">
           <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3.5">
             <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
@@ -193,7 +194,7 @@
             <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg"><i class="fa-solid fa-wrench"></i></div>
             <div>
               <div id="statActive" class="text-2xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[11px] font-semibold text-slate-400 mt-1">In Bay / Sched</div>
+              <div class="text-[11px] font-semibold text-slate-400 mt-1">Active In Bay</div>
             </div>
           </div>
           <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3.5">
@@ -205,11 +206,12 @@
           </div>
         </div>
 
+        <!-- Filter Labels -->
         <div class="flex items-center space-x-1.5 border-b border-slate-200 pb-3 text-xs font-bold text-slate-500 overflow-x-auto">
           <button onclick="setFilter('active')" id="flt-active" class="px-3.5 py-2 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Live Active Feed</button>
           <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
           <button onclick="setFilter('inprogress')" id="flt-inprogress" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">In Bay <span id="cntProg" class="ml-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('scheduled')" id="flt-scheduled" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Rejected / Sched <span id="cntSched" class="ml-1 text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('scheduled')" id="flt-scheduled" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Scheduled <span id="cntSched" class="ml-1 text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
           <button onclick="setFilter('completed')" id="flt-completed" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Completed <span id="cntDone" class="ml-1 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
         </div>
 
@@ -245,7 +247,6 @@
   </div>
 
   <script>
-    // STRICT AUTHENTICATION ROSTER
     const AUTHORIZED_ROSTER = {
       // Front Desk / Office Only:
       "josh": "office",
@@ -377,7 +378,6 @@
       currentUser = input;
       currentRole = AUTHORIZED_ROSTER[input];
 
-      // Clear any previous dev mode overrides
       localStorage.removeItem('cartech_dev');
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
@@ -392,7 +392,6 @@
       document.getElementById('staffBadge').innerText = currentUser;
       document.getElementById('roleBadge').innerText = currentRole === 'workshop' ? 'Mechanics Floor' : 'Front Desk';
 
-      // Strict enforcement: route to user's assigned role
       switchView(currentRole);
       pullData();
     }
@@ -447,7 +446,6 @@
             const waitingCount = data.filter(j => j.status === 'waiting').length;
             const completedCount = data.filter(j => j.status === 'completed').length;
 
-            // Workshop sound: ring until waiting is zero
             if (currentRole === 'workshop') {
               if (waitingCount > 0) {
                 document.title = `🚨 (${waitingCount}) NEW CAR ARRIVED! - CARTECH`;
@@ -464,7 +462,6 @@
               }
             }
 
-            // Office sound: ring when a completed job is added
             if (currentRole === 'office' && !isInitialLoad) {
               if (completedCount > lastCompletedCount) {
                 playOfficeDoneSound();
@@ -525,6 +522,25 @@
       }
     }
 
+    // Permanent Delete Record Function
+    async function deleteRecord(id) {
+      if (!confirm(`Permanently remove vehicle record ${id}?`)) return;
+
+      state = state.filter(j => j.id !== id);
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, {
+          method: "DELETE",
+          headers: HEADERS
+        });
+      } catch (err) {
+        console.error("Delete error:", err);
+      } finally {
+        pullData();
+      }
+    }
+
     async function setStatus(id, newStatus) {
       unlockAudio();
       let slot = null;
@@ -577,7 +593,7 @@
         month: 'short', day: 'numeric', year: 'numeric' 
       }) + " @ " + combinedDate.toLocaleTimeString('en-US', { 
         hour: '2-digit', minute: '2-digit', hour12: true 
-      }) + " (Confirmed)";
+      }) + " (Confirmed Appointment)";
 
       state = state.map(j => (j.id === id ? { ...j, status: 'scheduled', auto_schedule_slot: formattedSlot } : j));
       render();
@@ -602,6 +618,7 @@
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
 
+      // Bay Indicators
       let bayHTML = "";
       for (let i = 1; i <= TOTAL_BAYS; i++) {
         const isOccupied = state.some(j => j.status === 'inprogress' && j.auto_schedule_slot === `Bay #${i}`);
@@ -615,7 +632,7 @@
       document.getElementById('bayIndicatorsMobile').innerHTML = bayHTML;
 
       document.getElementById('statWaiting').innerText = waiting;
-      document.getElementById('statActive').innerText = inProg + sched;
+      document.getElementById('statActive').innerText = inProg;
       document.getElementById('statDone').innerText = done;
       document.getElementById('cntWaiting').innerText = waiting;
       document.getElementById('cntProg').innerText = inProg;
@@ -665,7 +682,7 @@
             if (j.status === 'completed') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center shadow-sm"><i class="fa-regular fa-circle-check mr-1.5"></i> Completed</span>`;
 
             let scheduleTool = "";
-            if (j.status === 'scheduled') {
+            if (j.status === 'scheduled' && (!j.auto_schedule_slot || !j.auto_schedule_slot.includes('Confirmed Appointment'))) {
               const todayStr = new Date().toISOString().split('T')[0];
               scheduleTool = `
                 <div class="mt-3.5 pt-3.5 border-t border-slate-100 space-y-2.5">
@@ -692,7 +709,12 @@
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
                   </div>
-                  <div>${badge}</div>
+                  <div class="flex items-center space-x-2">
+                    ${badge}
+                    <button onclick="deleteRecord('${j.id}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center transition" title="Delete record">
+                      <i class="fa-regular fa-trash-can text-xs"></i>
+                    </button>
+                  </div>
                 </div>
                 <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
