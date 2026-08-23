@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CARTECH - Hybrid Queue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .full-screen-bg {
+      background-image: 
+        linear-gradient(to right, rgba(6, 16, 34, 0.40), rgba(6, 16, 34, 0.40)), 
+        url('team.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased">
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="loginScreen" class="min-h-screen w-full full-screen-bg flex flex-col justify-between p-6 md:p-12 relative overflow-hidden">
+    <div class="z-10 flex items-center justify-between w-full">
+      <div class="flex items-center space-x-3 backdrop-blur-md bg-slate-950/60 px-4 py-2.5 rounded-2xl border border-white/10 shadow-lg">
+        <div class="w-10 h-10 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/30">
+          <i class="fa-solid fa-wrench"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-white tracking-tight leading-none">CARTECH</h2>
+          <p class="text-[10px] font-bold text-orange-400 uppercase tracking-widest mt-0.5">Automotive Operations</p>
+        </div>
+      </div>
+      <div class="hidden sm:flex items-center space-x-2 backdrop-blur-md bg-slate-950/40 px-3.5 py-1.5 rounded-full border border-white/10 text-xs text-emerald-400 font-bold">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>4-Bay Live Grid</span>
+      </div>
+    </div>
+
+    <div class="z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto w-full max-w-7xl mx-auto py-8">
+      <div class="lg:col-span-7 space-y-4">
+        <div class="backdrop-blur-md bg-slate-950/70 p-6 md:p-8 rounded-3xl border border-white/15 max-w-xl shadow-2xl space-y-3">
+          <span class="text-xs font-black uppercase tracking-widest text-orange-400">Automotive Specialists</span>
+          <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
+            THE CARTECH<br><span class="text-amber-400">TEAM</span>
+          </h1>
+          <p class="text-slate-200 text-xs md:text-sm leading-relaxed">
+            Dedicated service technicians, master mechanics, and expert customer service operations ready to keep your vehicles moving.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 flex justify-center lg:justify-end">
+        <div class="w-full max-w-md backdrop-blur-xl bg-white/95 p-8 rounded-3xl border border-white/40 shadow-2xl space-y-6">
+          <div>
+            <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
+            <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
+            <p class="text-xs text-slate-500 mt-1">Sign in with your registered station identity.</p>
+          </div>
+
+          <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Staff Member Name</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                  <i class="fa-regular fa-user"></i>
+                </span>
+                <input id="loginName" required placeholder="Enter name (e.g. Josh, Charl)" 
+                       class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold">
+              </div>
+              <div id="loginError" class="hidden text-xs text-rose-600 font-bold mt-2 flex items-center">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Name not recognized in staff records.
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20">
+              <span>Enter Workspace</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="z-10 flex justify-between items-center text-[11px] text-white/80 font-bold backdrop-blur-sm bg-slate-950/40 px-4 py-2 rounded-xl w-fit border border-white/10">
+      <span>© 2026 CARTECH Systems. Fast Garage OS.</span>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APPLICATION -->
+  <div id="appShell" class="hidden min-h-screen flex flex-col">
+    <header class="bg-[#0b1329] text-white px-6 py-4 flex justify-between items-center sticky top-0 z-50 border-b border-slate-800 shadow-lg">
+      <div class="flex items-center space-x-4">
+        <div class="w-10 h-10 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-md shadow-orange-500/20">
+          <i class="fa-solid fa-wrench"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black tracking-tight leading-none flex items-center">
+            CARTECH <span class="text-[10px] ml-2.5 px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded-full font-bold border border-orange-500/30">HYBRID PRO</span>
+          </h1>
+          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Staff: <strong id="staffBadge" class="text-slate-200 uppercase">Staff</strong> • <span id="roleBadge" class="text-orange-400 font-bold">Front Desk</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Live 4-Bay Occupancy Status Strip -->
+      <div class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-4 py-2 rounded-2xl shadow-inner">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bay Floor (4 Capacity):</span>
+        <div id="bayIndicators" class="flex items-center space-x-2"></div>
+      </div>
+
+      <!-- View Switcher & Actions -->
+      <div class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+        <div id="devNavSwitcher" class="hidden flex items-center space-x-1 border-r border-slate-700 pr-1.5">
+          <button id="tabOffice" onclick="switchView('office')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+            <i class="fa-solid fa-building mr-1"></i> Office
+          </button>
+          <button id="tabWorkshop" onclick="switchView('workshop')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+            <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Workshop
+          </button>
+        </div>
+        <button onclick="toggleDevMode()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" title="Toggle Developer View Mode">
+          <i class="fa-solid fa-code"></i>
+        </button>
+        <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic 4-Bay Occupancy Mobile Bar -->
+    <div class="md:hidden bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800">
+      <span class="text-[11px] font-bold text-slate-400 uppercase"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Floor Bays:</span>
+      <div id="bayIndicatorsMobile" class="flex items-center space-x-1.5"></div>
+    </div>
+
+    <!-- ==================== OFFICE RECEPTION ==================== -->
+    <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+      <div class="lg:col-span-5 bg-white p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-6">
+        <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Intake Terminal</span>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">New dispatch</h2>
+          </div>
+          <button type="button" onclick="document.getElementById('intakeForm').reset()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 flex items-center justify-center text-sm font-bold transition" title="Reset fields">
+            <i class="fa-solid fa-rotate-left text-xs"></i>
+          </button>
+        </div>
+
+        <form id="intakeForm" onsubmit="handleDispatch(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Customer name *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-regular fa-user text-xs"></i></span>
+              <input id="inCust" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Vehicle Model / Unit *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-car-side text-xs"></i></span>
+              <input id="inVeh" required placeholder="e.g. Toyota Vios, Ranger Raptor" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Instructions / Complaints *</label>
+            <textarea id="inDetails" rows="4" required placeholder="Enter repair instructions, service requests, or customer complaints..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800"></textarea>
+          </div>
+
+          <button id="btnDispatch" type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-2xl transition duration-150 flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/10">
+            <i class="fa-solid fa-paper-plane text-xs mr-1 text-orange-400"></i>
+            <span id="btnText">Dispatch to floor</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-7 space-y-6">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Live System Feed</span>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Vehicle queue & scheduling</h2>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+            <div>
+              <div id="statWaiting" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 mt-1">Pending</div>
+            </div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg"><i class="fa-solid fa-wrench"></i></div>
+            <div>
+              <div id="statActive" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 mt-1">In Bay / Sched</div>
+            </div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg"><i class="fa-regular fa-circle-check"></i></div>
+            <div>
+              <div id="statDone" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 mt-1">Completed</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-1.5 border-b border-slate-200 pb-3 text-xs font-bold text-slate-500 overflow-x-auto">
+          <button onclick="setFilter('active')" id="flt-active" class="px-3.5 py-2 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Live Active Feed</button>
+          <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('inprogress')" id="flt-inprogress" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">In Bay <span id="cntProg" class="ml-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('scheduled')" id="flt-scheduled" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Rejected / Sched <span id="cntSched" class="ml-1 text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('completed')" id="flt-completed" class="px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap">Completed <span id="cntDone" class="ml-1 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">0</span></button>
+        </div>
+
+        <div id="officeQueueList" class="space-y-3.5 min-h-[300px]"></div>
+      </div>
+    </main>
+
+    <!-- ==================== WORKSHOP MECHANICS FLOOR ==================== -->
+    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-8 space-y-4 flex-1 w-full">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Workshop Floor</span>
+          <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">Active bays & pending</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Accept into next available bay (1-4) or reject.</p>
+        </div>
+        <div id="wsBayStatusBadge" class="bg-slate-900 text-white px-4 py-2.5 rounded-2xl text-xs font-bold shadow-sm"></div>
+      </div>
+
+      <div id="workshopFeedList" class="space-y-3.5"></div>
+    </main>
+  </div>
+
+  <script>
+    const AUTHORIZED_ROSTER = {
+      "josh": "office",
+      "ken": "office",
+      "office": "office",
+      "charl": "workshop",
+      "bert": "workshop",
+      "workshop": "workshop"
+    };
+
+    const TOTAL_BAYS = 4;
+    const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
+    const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
+
+    const HEADERS = {
+      "apikey": API_KEY,
+      "Authorization": "Bearer " + API_KEY,
+      "Content-Type": "application/json",
+      "Prefer": "return=representation"
+    };
+
+    let state = [];
+    let currentFilter = 'active';
+    let currentUser = null;
+    let currentRole = null;
+    let isDevMode = false;
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const input = document.getElementById('loginName').value.trim().toLowerCase();
+      const errorElem = document.getElementById('loginError');
+
+      if (!AUTHORIZED_ROSTER[input]) {
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      errorElem.classList.add('hidden');
+      currentUser = input;
+      currentRole = AUTHORIZED_ROSTER[input];
+
+      localStorage.setItem('cartech_auth_user', currentUser);
+      localStorage.setItem('cartech_auth_role', currentRole);
+
+      bootApp();
+    }
+
+    function bootApp() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('appShell').classList.remove('hidden');
+      document.getElementById('staffBadge').innerText = currentUser;
+      document.getElementById('roleBadge').innerText = currentRole === 'workshop' ? 'Mechanics Floor' : 'Front Desk';
+
+      switchView(currentRole);
+      pullData();
+    }
+
+    function handleLogout() {
+      if (confirm("Log out of current staff station?")) {
+        localStorage.removeItem('cartech_auth_user');
+        localStorage.removeItem('cartech_auth_role');
+        localStorage.removeItem('cartech_dev');
+        location.reload();
+      }
+    }
+
+    function toggleDevMode() {
+      isDevMode = !isDevMode;
+      const nav = document.getElementById('devNavSwitcher');
+      if (isDevMode) {
+        nav.classList.remove('hidden');
+        localStorage.setItem('cartech_dev', 'true');
+      } else {
+        nav.classList.add('hidden');
+        localStorage.removeItem('cartech_dev');
+      }
+    }
+
+    function switchView(view) {
+      const office = document.getElementById('viewOffice');
+      const workshop = document.getElementById('viewWorkshop');
+      const tabOffice = document.getElementById('tabOffice');
+      const tabWorkshop = document.getElementById('tabWorkshop');
+
+      if (view === 'office') {
+        office.classList.remove('hidden');
+        workshop.classList.add('hidden');
+        if (tabOffice) tabOffice.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
+        if (tabWorkshop) tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+      } else {
+        office.classList.add('hidden');
+        workshop.classList.remove('hidden');
+        if (tabWorkshop) tabWorkshop.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-sm";
+        if (tabOffice) tabOffice.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+      }
+      render();
+    }
+
+    function setFilter(flt) {
+      currentFilter = flt;
+      ['active', 'waiting', 'inprogress', 'scheduled', 'completed'].forEach(f => {
+        const btn = document.getElementById(`flt-${f}`);
+        if (btn) {
+          if (f === flt) {
+            btn.className = "px-3.5 py-2 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap font-bold";
+          } else {
+            btn.className = "px-3.5 py-2 rounded-xl hover:text-slate-900 whitespace-nowrap font-bold";
+          }
+        }
+      });
+      render();
+    }
+
+    async function pullData() {
+      try {
+        const res = await fetch(`${API_URL}?select=*&order=created_at.desc`, {
+          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            state = data;
+            render();
+          }
+        }
+      } catch (e) {
+        console.error("Sync error:", e);
+      }
+    }
+
+    async function handleDispatch(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnDispatch');
+      const btnText = document.getElementById('btnText');
+      btn.disabled = true;
+      btnText.innerText = "Dispatching...";
+
+      const newCar = {
+        id: "JB-" + Math.floor(100 + Math.random() * 900),
+        customer: document.getElementById('inCust').value,
+        phone: "N/A",
+        vehicle: document.getElementById('inVeh').value,
+        plate: "N/A",
+        service: "General Service",
+        est_time: 45,
+        priority: "Normal",
+        details: document.getElementById('inDetails').value,
+        status: "waiting",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      state.unshift(newCar);
+      render();
+      document.getElementById('intakeForm').reset();
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: HEADERS,
+          body: JSON.stringify(newCar)
+        });
+      } catch (err) {
+        console.error("Dispatch upload error:", err);
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Dispatch to floor";
+        pullData();
+      }
+    }
+
+    async function setStatus(id, newStatus) {
+      let slot = null;
+
+      if (newStatus === 'scheduled') {
+        slot = "Rejected by Workshop (Awaiting Office Schedule)";
+      } else if (newStatus === 'inprogress') {
+        const occupiedBays = state
+          .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== id)
+          .map(j => {
+            const match = String(j.auto_schedule_slot).match(/\d+/);
+            return match ? parseInt(match[0], 10) : null;
+          })
+          .filter(n => n !== null);
+
+        let assignedBay = null;
+        for (let b = 1; b <= TOTAL_BAYS; b++) {
+          if (!occupiedBays.includes(b)) {
+            assignedBay = b;
+            break;
+          }
+        }
+
+        if (!assignedBay) {
+          alert("All 4 bays are currently occupied. Complete an active job first.");
+          return;
+        }
+
+        slot = `Bay #${assignedBay}`;
+      } else if (newStatus === 'completed') {
+        slot = "Completed Service";
+      }
+
+      state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: newStatus, auto_schedule_slot: slot })
+        });
+      } catch (err) {
+        console.error("Status update error:", err);
+      } finally {
+        pullData();
+      }
+    }
+
+    async function applyOfficeSchedule(id) {
+      const dateVal = document.getElementById(`schedDate-${id}`).value;
+      const timeVal = document.getElementById(`schedTime-${id}`).value;
+
+      if (!dateVal || !timeVal) {
+        alert("Please specify both a valid schedule date and time.");
+        return;
+      }
+
+      const combinedDate = new Date(`${dateVal}T${timeVal}`);
+      const formattedSlot = combinedDate.toLocaleDateString('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric' 
+      }) + " @ " + combinedDate.toLocaleTimeString('en-US', { 
+        hour: '2-digit', minute: '2-digit', hour12: true 
+      }) + " (Confirmed)";
+
+      state = state.map(j => (j.id === id ? { ...j, status: 'scheduled', auto_schedule_slot: formattedSlot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'scheduled', auto_schedule_slot: formattedSlot })
+        });
+      } catch (err) {
+        console.error("Schedule error:", err);
+      } finally {
+        pullData();
+      }
+    }
+
+    function render() {
+      const waiting = state.filter(j => j.status === 'waiting').length;
+      const inProg = state.filter(j => j.status === 'inprogress').length;
+      const sched = state.filter(j => j.status === 'scheduled').length;
+      const done = state.filter(j => j.status === 'completed').length;
+
+      const availableBays = Math.max(0, TOTAL_BAYS - inProg);
+
+      let bayHTML = "";
+      for (let i = 1; i <= TOTAL_BAYS; i++) {
+        const isOccupied = state.some(j => {
+          if (j.status !== 'inprogress' || !j.auto_schedule_slot) return false;
+          const match = String(j.auto_schedule_slot).match(/\d+/);
+          return match && parseInt(match[0], 10) === i;
+        });
+
+        if (isOccupied) {
+          bayHTML += `<span class="px-2 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-wrench text-[9px]"></i> Bay ${i} Full</span>`;
+        } else {
+          bayHTML += `<span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-check text-[9px]"></i> Bay ${i} Open</span>`;
+        }
+      }
+
+      const indDesktop = document.getElementById('bayIndicators');
+      const indMobile = document.getElementById('bayIndicatorsMobile');
+      if (indDesktop) indDesktop.innerHTML = bayHTML;
+      if (indMobile) indMobile.innerHTML = bayHTML;
+
+      document.getElementById('statWaiting').innerText = waiting;
+      document.getElementById('statActive').innerText = inProg + sched;
+      document.getElementById('statDone').innerText = done;
+      document.getElementById('cntWaiting').innerText = waiting;
+      document.getElementById('cntProg').innerText = inProg;
+      document.getElementById('cntSched').innerText = sched;
+      document.getElementById('cntDone').innerText = done;
+
+      const wsBadge = document.getElementById('wsBayStatusBadge');
+      if (wsBadge) {
+        if (availableBays === 0) {
+          wsBadge.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation mr-1"></i> 0 Slots Open (Full)</span>`;
+        } else {
+          wsBadge.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Available</span>`;
+        }
+      }
+
+      // Office Feed
+      const officeContainer = document.getElementById('officeQueueList');
+      let officeList = state;
+      if (currentFilter === 'active') {
+        officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+      } else {
+        officeList = state.filter(j => j.status === currentFilter);
+      }
+
+      if (officeContainer) {
+        if (officeList.length === 0) {
+          officeContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
+              <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
+              <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
+              <p class="text-xs text-slate-400 mt-0.5">Records are sorted automatically by workflow state.</p>
+            </div>`;
+        } else {
+          officeContainer.innerHTML = officeList.map(j => {
+            let badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center shadow-sm"><i class="fa-regular fa-bell mr-1.5"></i> Waiting Decision</span>`;
+            if (j.status === 'inprogress') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center shadow-sm"><i class="fa-solid fa-wrench mr-1.5 animate-spin"></i> Active on ${j.auto_schedule_slot || 'Bay'}</span>`;
+            if (j.status === 'scheduled') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-rose-50 text-rose-600 border border-rose-200/80 flex items-center shadow-sm"><i class="fa-regular fa-calendar-xmark mr-1.5"></i> Workshop Full / Sched</span>`;
+            if (j.status === 'completed') badge = `<span class="px-3 py-1 text-[11px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center shadow-sm"><i class="fa-regular fa-circle-check mr-1.5"></i> Completed</span>`;
+
+            let scheduleTool = "";
+            if (j.status === 'scheduled') {
+              const todayStr = new Date().toISOString().split('T')[0];
+              scheduleTool = `
+                <div class="mt-3.5 pt-3.5 border-t border-slate-100 space-y-2.5">
+                  <span class="text-xs font-bold text-slate-700 flex items-center">
+                    <i class="fa-regular fa-calendar-check text-orange-500 mr-1.5"></i> Assign Confirmed Customer Slot:
+                  </span>
+                  <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <input id="schedDate-${j.id}" type="date" value="${todayStr}" class="sm:col-span-5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
+                    <input id="schedTime-${j.id}" type="time" value="09:00" class="sm:col-span-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500">
+                    <button onclick="applyOfficeSchedule('${j.id}')" class="sm:col-span-3 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-md shadow-orange-600/20">
+                      Save Slot
+                    </button>
+                  </div>
+                </div>`;
+            }
+
+            return `
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                      <h3 class="font-black text-slate-900 text-base">${j.vehicle}</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
+                  </div>
+                  <div>${badge}</div>
+                </div>
+                <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  ${j.auto_schedule_slot ? `<p class="text-rose-600 font-bold pt-1.5 border-t border-slate-200/60 mt-1.5"><i class="fa-solid fa-tag mr-1 text-orange-500"></i> ${j.auto_schedule_slot}</p>` : ''}
+                </div>
+                ${scheduleTool}
+              </div>`;
+          }).join('');
+        }
+      }
+
+      // Workshop Feed
+      const wsContainer = document.getElementById('workshopFeedList');
+      const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+
+      if (wsContainer) {
+        if (activeWorkshopJobs.length === 0) {
+          wsContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
+              <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-2"></i>
+              <p class="font-bold text-slate-700 text-base">Workshop Floor Clear</p>
+              <p class="text-xs text-slate-400 mt-1">All 4 bay slots are available. Completed and scheduled cars have moved to office logs.</p>
+            </div>`;
+        } else {
+          wsContainer.innerHTML = activeWorkshopJobs.map(j => {
+            let actionArea = "";
+            if (j.status === 'waiting') {
+              actionArea = `
+                <div class="flex items-center gap-2 mt-4 pt-3.5 border-t border-slate-100">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-2"></i> ${availableBays === 0 ? 'Bays Full (Cannot Accept)' : 'Accept into Next Bay'}
+                  </button>
+                  <button onclick="setStatus('${j.id}', 'scheduled')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-rose-600/20">
+                    <i class="fa-solid fa-ban mr-2"></i> Reject (Full)
+                  </button>
+                </div>`;
+            } else if (j.status === 'inprogress') {
+              actionArea = `
+                <div class="flex items-center justify-between mt-4 pt-3.5 border-t border-slate-100">
+                  <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    Occupying ${j.auto_schedule_slot || 'Service Bay'}
+                  </span>
+                  <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                    <i class="fa-solid fa-check-double mr-1 text-emerald-400"></i> Mark Done (Free Bay)
+                  </button>
+                </div>`;
+            }
+
+            return `
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                    <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                  </div>
+                  <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
+                    j.status === 'waiting' ? 'bg-amber-50 text-amber-600 border border-amber-200/80' : 'bg-blue-50 text-blue-600 border border-blue-200/80'
+                  }">${j.status === 'waiting' ? 'Pending Action' : (j.auto_schedule_slot || 'In Bay')}</span>
+                </div>
+                <div class="mt-3 bg-slate-50/80 p-3 rounded-2xl text-xs text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                </div>
+                ${actionArea}
+              </div>`;
+          }).join('');
+        }
+      }
+    }
+
+    const savedAuthUser = localStorage.getItem('cartech_auth_user');
+    const savedAuthRole = localStorage.getItem('cartech_auth_role');
+    if (localStorage.getItem('cartech_dev') === 'true') {
+      isDevMode = true;
+      document.getElementById('devNavSwitcher').classList.remove('hidden');
+    }
+
+    if (savedAuthUser && savedAuthRole) {
+      currentUser = savedAuthUser;
+      currentRole = savedAuthRole;
+      bootApp();
+    }
+
+    setInterval(pullData, 1200);
+  </script>
+</body>
+</html>
