@@ -70,7 +70,7 @@
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                   <i class="fa-regular fa-user"></i>
                 </span>
-                <input id="loginName" required placeholder="Enter name (e.g. Josh, Shiela, Charl, Bert)" 
+                <input id="loginName" required placeholder="Enter staff name..." 
                        class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold">
               </div>
               <div id="loginError" class="hidden text-xs text-rose-600 font-bold mt-2 flex items-center">
@@ -560,7 +560,6 @@
       }
 
       if (newStatus === 'rejected') {
-        // Remove from active queue immediately
         deleteRecord(id);
         return;
       }
@@ -587,7 +586,6 @@
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
 
-      // Bay Indicators
       let bayHTML = "";
       for (let i = 1; i <= TOTAL_BAYS; i++) {
         const isOccupied = state.some(j => j.status === 'inprogress' && j.auto_schedule_slot === `Bay #${i}`);
