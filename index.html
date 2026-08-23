@@ -20,6 +20,27 @@
     .animate-alert-pulse {
       animation: alertPulse 1s infinite ease-in-out;
     }
+    .draggable-resizable-box {
+      resize: both;
+      overflow: auto;
+      min-width: 280px;
+      min-height: 260px;
+      max-width: 90vw;
+      max-height: 90vh;
+      position: absolute;
+      top: 20%;
+      left: 35%;
+      z-index: 50;
+      cursor: grab;
+      touch-action: none;
+    }
+    .draggable-resizable-box:active {
+      cursor: grabbing;
+    }
+    .draggable-resizable-box input,
+    .draggable-resizable-box button {
+      cursor: auto;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased" onclick="unlockAudio()">
@@ -42,35 +63,51 @@
       </div>
     </div>
 
-    <!-- Centered Login Section (Positioned in Upper-Center Shelf Area to Keep All Faces 100% Visible) -->
-    <div class="z-10 flex justify-center items-center w-full my-auto py-2">
-      <div class="w-full max-w-md backdrop-blur-md bg-white/40 p-8 rounded-3xl border border-white/60 shadow-2xl space-y-6">
+    <!-- Live Position Inspector -->
+    <div class="z-10 absolute top-20 right-6 bg-slate-950/80 text-white font-mono text-[11px] p-2.5 rounded-xl border border-white/20 shadow-lg hidden sm:block">
+      <span class="text-orange-400 font-bold">Live Card Coordinates:</span><br>
+      <span id="posStats">Top: 20% | Left: 35% | Width: 380px</span>
+    </div>
+
+    <!-- Movable & Resizable Card (Drag by top header, resize by bottom-right handle) -->
+    <div id="dragCard" class="draggable-resizable-box backdrop-blur-md bg-white/40 p-6 sm:p-8 rounded-3xl border border-white/60 shadow-2xl space-y-4 sm:space-y-6">
+      
+      <!-- Drag Handle Header -->
+      <div class="flex items-center justify-between border-b border-white/40 pb-2 text-slate-800">
         <div>
-          <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
-          <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-          <p class="text-xs text-slate-800 font-semibold mt-1">Sign in with your registered staff name.</p>
+          <span class="text-[11px] font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
+        </div>
+        <span class="text-xs text-slate-600 font-bold bg-white/50 px-2 py-0.5 rounded-md flex items-center gap-1" title="Click and hold to drag anywhere">
+          <i class="fa-solid fa-arrows-up-down-left-right text-[10px]"></i> Move
+        </span>
+      </div>
+
+      <p class="text-xs text-slate-800 font-semibold">Sign in with your registered staff name.</p>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-900 uppercase mb-1">Staff Member Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-600">
+              <i class="fa-regular fa-user"></i>
+            </span>
+            <input id="loginName" required placeholder="Enter staff name..." 
+                   class="w-full pl-10 pr-4 py-3 bg-white/70 border border-white/80 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-bold">
+          </div>
+          <div id="loginError" class="hidden text-xs text-rose-700 font-black mt-2 flex items-center bg-white/80 p-1.5 rounded-lg">
+            <i class="fa-solid fa-circle-exclamation mr-1.5 text-rose-600"></i> Name not recognized in staff records.
+          </div>
         </div>
 
-        <form onsubmit="handleLogin(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-900 uppercase mb-1">Staff Member Name</label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-600">
-                <i class="fa-regular fa-user"></i>
-              </span>
-              <input id="loginName" required placeholder="Enter staff name..." 
-                     class="w-full pl-10 pr-4 py-3 bg-white/70 border border-white/80 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-bold">
-            </div>
-            <div id="loginError" class="hidden text-xs text-rose-700 font-black mt-2 flex items-center bg-white/80 p-1.5 rounded-lg">
-              <i class="fa-solid fa-circle-exclamation mr-1.5 text-rose-600"></i> Name not recognized in staff records.
-            </div>
-          </div>
+        <button type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/30">
+          <span>Enter Workspace</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </form>
 
-          <button type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/30">
-            <span>Enter Workspace</span>
-            <i class="fa-solid fa-arrow-right text-xs"></i>
-          </button>
-        </form>
+      <div class="text-[10px] text-center text-slate-700 font-semibold pt-1">
+        Resize card from bottom-right corner ↘
       </div>
     </div>
 
@@ -270,6 +307,73 @@
 
     let audioCtx = null;
     let continuousAlarmInterval = null;
+
+    // Draggable Logic for Exact Placement
+    const dragCard = document.getElementById("dragCard");
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    function updatePosInspector() {
+      const rect = dragCard.getBoundingClientRect();
+      const posStats = document.getElementById("posStats");
+      if (posStats) {
+        posStats.innerText = `Top: ${Math.round(rect.top)}px | Left: ${Math.round(rect.left)}px | Width: ${Math.round(rect.width)}px`;
+      }
+    }
+
+    dragCard.addEventListener("mousedown", (e) => {
+      // Don't drag when focusing input or clicking button
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = dragCard.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      dragCard.style.left = `${initialLeft + dx}px`;
+      dragCard.style.top = `${initialTop + dy}px`;
+      dragCard.style.right = "auto";
+      dragCard.style.bottom = "auto";
+      updatePosInspector();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    // Touch support for dragging on tablet/mobile
+    dragCard.addEventListener("touchstart", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+      isDragging = true;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      const rect = dragCard.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+    }, { passive: true });
+
+    window.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      dragCard.style.left = `${initialLeft + dx}px`;
+      dragCard.style.top = `${initialTop + dy}px`;
+      updatePosInspector();
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      isDragging = false;
+    });
+
+    new ResizeObserver(updatePosInspector).observe(dragCard);
 
     function unlockAudio() {
       if (!audioCtx) {
