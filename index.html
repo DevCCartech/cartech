@@ -20,6 +20,17 @@
     .animate-alert-pulse {
       animation: alertPulse 1s infinite ease-in-out;
     }
+    @keyframes glowText {
+      0%, 100% {
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(249, 115, 22, 0.8), 0 4px 15px rgba(0, 0, 0, 0.9);
+      }
+      50% {
+        text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 45px rgba(251, 146, 60, 1), 0 4px 20px rgba(0, 0, 0, 0.9);
+      }
+    }
+    .text-glow-live {
+      animation: glowText 2.5s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased" onclick="unlockAudio()">
@@ -43,9 +54,9 @@
     </div>
 
     <div class="z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto w-full max-w-7xl mx-auto py-8">
-      <div class="lg:col-span-7 space-y-4">
-        <div class="p-2 max-w-xl">
-          <h1 class="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+      <div class="lg:col-span-7 flex justify-center items-center">
+        <div class="p-2 text-center">
+          <h1 class="text-4xl md:text-6xl font-black text-white tracking-wider leading-tight text-glow-live">
             CARTECH TEAM
           </h1>
         </div>
@@ -716,7 +727,7 @@
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <h3 class="text-lg font-black text-slate-900 mt-1">${j.vehicle}</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-xs font-bold px-3 py-1 rounded-xl uppercase ${
