@@ -327,7 +327,7 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicle to take single ownership, request parts, or mark completed.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), request parts, or mark completed.</p>
         </div>
         <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
@@ -399,6 +399,7 @@
 
     const MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
     const TOTAL_BAYS = 4;
+    const MAX_JOBS_PER_MECHANIC = 3; // Rule: Up to 3 vehicles per mechanic
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
     const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
 
@@ -417,9 +418,8 @@
     let alarmInterval = null;
     let uploadedPartImages = [];
 
-    // Fallback mechanic map for legacy records that didn't have a tag saved
     const LEGACY_JOB_MAP = {
-      "JB-298": "bert" // Tucson legacy fallback
+      "JB-298": "bert"
     };
 
     function getRegisteredAccounts() {
@@ -749,21 +749,27 @@
       }
     }
 
-    // Single Mechanic Ownership Logic
+    // Helper to count active jobs for a mechanic
+    function getMechanicActiveCount(mechanicName) {
+      if (!mechanicName) return 0;
+      const lowerMech = mechanicName.toLowerCase();
+      return state.filter(j => {
+        if (j.status !== 'inprogress' && j.status !== 'waiting_parts') return false;
+        const resolved = resolveMechanicName(j);
+        return resolved && resolved.toLowerCase() === lowerMech;
+      }).length;
+    }
+
+    // Single Mechanic Ownership with Max 3 Limit Logic
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
 
       if (newStatus === 'inprogress' && !slot) {
-        const isMechanicBusy = state.some(j => 
-          (j.status === 'inprogress' || j.status === 'waiting_parts') && 
-          j.auto_schedule_slot && 
-          j.auto_schedule_slot.toLowerCase().includes(`[mech:${currentUser}]`) &&
-          j.id !== id
-        );
+        const myActiveJobCount = getMechanicActiveCount(currentUser);
 
-        if (isMechanicBusy) {
-          alert(`Mechanic ${currentUser.toUpperCase()} already has an active vehicle job in progress. Please complete your current job first.`);
+        if (myActiveJobCount >= MAX_JOBS_PER_MECHANIC) {
+          alert(`Mechanic ${currentUser.toUpperCase()} already reached the limit of ${MAX_JOBS_PER_MECHANIC} active jobs (including waiting for parts). Please complete a job first.`);
           return;
         }
 
@@ -784,7 +790,7 @@
         }
 
         if (!assignedBay) {
-          alert("All 4 bays are currently occupied. Place vehicle on Waiting list or complete an active car first.");
+          alert("All 4 physical bays are currently occupied. Place vehicle on Waiting list or complete an active car first.");
           return;
         }
 
@@ -805,13 +811,9 @@
         }
 
         let mechTag = "";
-        if (currentItem && currentItem.auto_schedule_slot) {
-          const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
-          if (mMatch) {
-            mechTag = ` [MECH:${mMatch[1]}]`;
-          } else if (LEGACY_JOB_MAP[currentItem.id]) {
-            mechTag = ` [MECH:${LEGACY_JOB_MAP[currentItem.id]}]`;
-          }
+        const resolved = resolveMechanicName(currentItem);
+        if (resolved) {
+          mechTag = ` [MECH:${resolved.toLowerCase()}]`;
         }
 
         slot = "Completed Service" + mechTag + historicalParts;
@@ -915,13 +917,9 @@
       btn.innerText = "Submitting...";
 
       let mechTag = "";
-      if (currentItem && currentItem.auto_schedule_slot) {
-        const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
-        if (mMatch) {
-          mechTag = ` [MECH:${mMatch[1]}]`;
-        } else if (LEGACY_JOB_MAP[currentItem.id]) {
-          mechTag = ` [MECH:${LEGACY_JOB_MAP[currentItem.id]}]`;
-        }
+      const resolved = resolveMechanicName(currentItem);
+      if (resolved) {
+        mechTag = ` [MECH:${resolved.toLowerCase()}]`;
       }
 
       let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag}`;
@@ -1041,18 +1039,22 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // Track busy mechanics across all active jobs (with legacy fallback)
-      const busyMechanics = [];
+      // 5 Mechanics Roster Tracking with Active Load Counters
+      const mechanicLoads = {};
+      MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
+
       state.forEach(j => {
         if (j.status === 'inprogress' || j.status === 'waiting_parts') {
           const mechName = resolveMechanicName(j);
-          if (mechName) {
-            busyMechanics.push(mechName.toLowerCase());
+          if (mechName && mechanicLoads[mechName.toLowerCase()] !== undefined) {
+            mechanicLoads[mechName.toLowerCase()]++;
           }
         }
       });
 
-      const availableMechanicsCount = MECHANIC_LIST.filter(m => !busyMechanics.includes(m)).length;
+      // A mechanic is only considered fully busy/red when they reach the 3-car limit
+      const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
+      const availableMechanicsCount = availableMechanics.length;
 
       // Workshop Bell State
       const wsBell = document.getElementById('wsBellIcon');
@@ -1064,12 +1066,15 @@
         }
       }
 
-      // Office Header 5 Mechanics Indicators
+      // Office Header 5 Mechanics Indicators (Green = Has Slot Available, Red = Full at 3/3 capacity)
       let mechHTML = "";
       MECHANIC_LIST.forEach(m => {
-        const isBusy = busyMechanics.includes(m);
-        if (isBusy) {
-          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (Busy)</span>`;
+        const load = mechanicLoads[m];
+        const isFull = load >= MAX_JOBS_PER_MECHANIC;
+        if (isFull) {
+          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC} Full)</span>`;
+        } else if (load > 0) {
+          mechHTML += `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC})</span>`;
         } else {
           mechHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ${m.toUpperCase()}</span>`;
         }
@@ -1088,10 +1093,10 @@
       if (officeBadge) {
         if (availableMechanicsCount === 0) {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Busy)`;
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All 3/3 Full)`;
         } else {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Available`;
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
         }
       }
 
@@ -1215,6 +1220,8 @@
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
+        const myActiveCount = getMechanicActiveCount(currentUser);
+        const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
 
         if (activeWorkshopJobs.length === 0) {
           wsContainer.innerHTML = `
@@ -1232,8 +1239,8 @@
             if (j.status === 'waiting') {
               actionArea = `
                 <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableMechanicsCount === 0 ? 'disabled' : ''} class="flex-1 ${availableMechanicsCount === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${availableMechanicsCount === 0 ? 'Mechanics Busy' : `Accept (Assign to ${currentUser.toUpperCase()})`}
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="flex-1 ${isMyCapacityFull ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-1.5"></i> ${isMyCapacityFull ? `Capacity Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept into Bay (${currentUser.toUpperCase()}: ${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}
                   </button>
                   <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
                     <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
@@ -1264,7 +1271,6 @@
                     </div>
                   </div>`;
               } else {
-                // Dynamically displays the mechanic's specific name
                 const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
