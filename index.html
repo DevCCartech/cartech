@@ -24,53 +24,57 @@
     .alarm-active {
       animation: pulse-ring 1.2s infinite;
     }
+    .sharp-img {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
   </style>
 </head>
-<body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased">
+<body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-base">
 
   <!-- 1. LOGIN SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-5 my-auto">
       
       <div class="flex items-center justify-center space-x-2.5 pb-3 border-b border-slate-200/60">
-        <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-sm shadow-md shadow-orange-500/30">
+        <div class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-base shadow-md shadow-orange-500/30">
           <i class="fa-solid fa-wrench"></i>
         </div>
         <div>
-          <h2 class="text-base font-black text-slate-900 tracking-tight leading-none">CARTECH</h2>
-          <p class="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Automotive Operations</p>
+          <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none">CARTECH</h2>
+          <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mt-0.5">Automotive Operations</p>
         </div>
       </div>
 
       <div class="text-center">
-        <span class="text-[10px] font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
-        <h3 class="text-xl md:text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-        <p class="text-xs text-slate-500 mt-0.5">Sign in with your registered staff name.</p>
+        <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
+        <h3 class="text-2xl font-black text-slate-900 mt-0.5">Welcome back</h3>
+        <p class="text-sm text-slate-600 mt-1">Sign in with your registered staff name.</p>
       </div>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Staff Member Name</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5 text-left">Staff Member Name</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <i class="fa-regular fa-user text-xs"></i>
+              <i class="fa-regular fa-user text-sm"></i>
             </span>
             <input id="loginName" required placeholder="Enter staff name..." 
-                   class="w-full pl-9 pr-3.5 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+                   class="w-full pl-10 pr-3.5 py-3 bg-slate-50 border border-slate-300 rounded-xl text-base focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
           </div>
-          <div id="loginError" class="hidden text-[11px] text-rose-600 font-bold mt-2 flex items-center">
-            <i class="fa-solid fa-circle-exclamation mr-1"></i> Name not recognized. Use: josh, shiela, ken (Office) or bert, charl, rocky, mark, nel (Mechanic).
+          <div id="loginError" class="hidden text-xs text-rose-600 font-bold mt-2 flex items-center">
+            <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Name not recognized. Use: josh, shiela, ken (Office) or bert, charl, rocky, mark, nel (Mechanic).
           </div>
         </div>
 
-        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm">
+        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-base">
           <span>Enter Workspace</span>
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
       </form>
 
       <div class="text-center pt-1">
-        <span class="text-[10px] text-slate-400 font-bold">© 2026 CARTECH Systems</span>
+        <span class="text-xs text-slate-500 font-bold">© 2026 CARTECH Systems</span>
       </div>
     </div>
   </div>
@@ -79,32 +83,32 @@
   <div id="appShell" class="hidden min-h-screen flex flex-col">
     <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3.5 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg">
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-base font-bold shadow-md shadow-orange-500/20">
+        <div class="w-10 h-10 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-md shadow-orange-500/20">
           <i class="fa-solid fa-wrench"></i>
         </div>
         <div>
-          <h1 class="text-base md:text-lg font-black tracking-tight leading-none flex items-center">
-            CARTECH <span class="text-[9px] ml-2 px-1.5 py-0.5 bg-orange-500/20 text-orange-400 rounded-full font-bold border border-orange-500/30">PRO</span>
+          <h1 class="text-lg md:text-xl font-black tracking-tight leading-none flex items-center">
+            CARTECH <span class="text-[10px] ml-2 px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded-full font-bold border border-orange-500/30">PRO</span>
           </h1>
-          <p class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            Staff: <strong id="staffBadge" class="text-slate-200 uppercase">Staff</strong> • <span id="roleBadge" class="text-orange-400 font-bold">Terminal</span>
+          <p class="text-xs md:text-sm text-slate-300 mt-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            Staff: <strong id="staffBadge" class="text-white uppercase font-black">Staff</strong> • <span id="roleBadge" class="text-orange-400 font-bold">Terminal</span>
           </p>
         </div>
       </div>
 
       <!-- Live 4-Bay Occupancy Status Strip (Office Desktop) -->
-      <div id="topBayStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3.5 py-1.5 rounded-2xl shadow-inner">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bays:</span>
-        <div id="bayIndicators" class="flex items-center space-x-1.5"></div>
+      <div id="topBayStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-4 py-2 rounded-2xl shadow-inner">
+        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider mr-1"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bays:</span>
+        <div id="bayIndicators" class="flex items-center space-x-2"></div>
       </div>
 
       <!-- Header Action Buttons -->
-      <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
-        <button onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
+      <div class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+        <button onclick="clearAllTestingRecords()" class="px-3 py-1.5 rounded-xl text-sm font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
           <i class="fa-solid fa-trash-can"></i>
         </button>
-        <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
+        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-sm font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
@@ -115,111 +119,102 @@
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Intake Terminal</span>
-            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">New dispatch</h2>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Intake Terminal</span>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">New dispatch</h2>
           </div>
-          <button type="button" onclick="document.getElementById('intakeForm').reset()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 flex items-center justify-center text-xs font-bold transition" title="Reset fields">
+          <button type="button" onclick="document.getElementById('intakeForm').reset()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-orange-100 text-slate-600 hover:text-orange-600 flex items-center justify-center text-sm font-bold transition" title="Reset fields">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
         </div>
 
-        <form id="intakeForm" onsubmit="handleDispatch(event)" class="space-y-3.5">
+        <form id="intakeForm" onsubmit="handleDispatch(event)" class="space-y-4">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Customer name *</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Customer name *</label>
             <div class="relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-regular fa-user text-xs"></i></span>
-              <input id="inCust" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-regular fa-user text-sm"></i></span>
+              <input id="inCust" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm md:text-base focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-900">
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Vehicle Model / Unit *</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Vehicle Model / Unit *</label>
             <div class="relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-car-side text-xs"></i></span>
-              <input id="inVeh" required placeholder="e.g. Toyota Vios, Ranger Raptor" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-car-side text-sm"></i></span>
+              <input id="inVeh" required placeholder="e.g. Toyota Vios, Ranger Raptor" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm md:text-base focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-900">
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Job Instructions / Complaints *</label>
-            <textarea id="inDetails" rows="3" required placeholder="Enter repair instructions, service requests, or complaints..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800"></textarea>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Instructions / Complaints *</label>
+            <textarea id="inDetails" rows="3" required placeholder="Enter repair instructions, service requests, or complaints..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm md:text-base focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-900"></textarea>
           </div>
 
-          <button id="btnDispatch" type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3 rounded-2xl transition duration-150 flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/10 text-xs md:text-sm">
-            <i class="fa-solid fa-paper-plane text-xs mr-1 text-orange-400"></i>
+          <button id="btnDispatch" type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3.5 rounded-2xl transition duration-150 flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/10 text-sm md:text-base">
+            <i class="fa-solid fa-paper-plane text-xs mr-1.5 text-orange-400"></i>
             <span id="btnText">Dispatch to floor</span>
           </button>
         </form>
       </div>
 
-      <div class="lg:col-span-7 space-y-5">
+      <div class="lg:col-span-7 space-y-6">
         <div class="flex justify-between items-center">
           <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
-            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">Vehicle Queue</h2>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Live System Feed</span>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Vehicle Queue</h2>
           </div>
-          <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
+          <div id="officeRemainingBayBadge" class="px-4 py-2 rounded-2xl text-sm font-bold border shadow-sm flex items-center gap-2"></div>
         </div>
 
-        <!-- 4 TAPPABLE METRIC CARDS -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
-          <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
+        <!-- 4 TAPPABLE METRIC CARDS (Larger, more readable text & spacing) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
             <div>
-              <div id="statWaiting" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Pending</div>
+              <div id="statWaiting" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-xs font-bold text-slate-500 mt-1">Pending</div>
             </div>
           </div>
-          <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-blue-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
+          <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3 cursor-pointer hover:border-blue-400 hover:shadow transition transform active:scale-95">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg"><i class="fa-solid fa-wrench"></i></div>
             <div>
-              <div id="statActive" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Working Bay</div>
+              <div id="statActive" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-xs font-bold text-slate-500 mt-1">Working Bay</div>
             </div>
           </div>
-          <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-purple-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-gears"></i></div>
+          <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3 cursor-pointer hover:border-purple-400 hover:shadow transition transform active:scale-95">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-gears"></i></div>
             <div>
-              <div id="statParts" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Waiting Parts</div>
+              <div id="statParts" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-xs font-bold text-slate-500 mt-1">Waiting Parts</div>
             </div>
           </div>
-          <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-emerald-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-regular fa-circle-check"></i></div>
+          <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3 cursor-pointer hover:border-emerald-400 hover:shadow transition transform active:scale-95">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg"><i class="fa-regular fa-circle-check"></i></div>
             <div>
-              <div id="statDone" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Completed</div>
+              <div id="statDone" class="text-2xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-xs font-bold text-slate-500 mt-1">Completed</div>
             </div>
           </div>
         </div>
 
-        <!-- Filter Labels Bar (Live Active Feed Replaced with 'Waiting to Approve') -->
-        <div class="flex items-center space-x-1.5 border-b border-slate-200 pb-2.5 text-xs font-bold text-slate-500 overflow-x-auto">
-          <button onclick="setFilter('waiting_approve')" id="flt-waiting_approve" class="px-3 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Waiting to Approve</button>
-          <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('inprogress')" id="flt-inprogress" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Working on Bay <span id="cntProg" class="ml-1 text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('waiting_parts')" id="flt-waiting_parts" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting Parts <span id="cntParts" class="ml-1 text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('completed')" id="flt-completed" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Completed <span id="cntDone" class="ml-1 text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-        </div>
-
-        <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
+        <div id="officeQueueList" class="space-y-4 min-h-[300px]"></div>
       </div>
     </main>
 
     <!-- ==================== MECHANIC WORKSHOP (bert, charl, rocky, mark, nel) ==================== -->
-    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
+    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-5 flex-1 w-full">
+      <div class="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
         <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
-          <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles into bay, attach multiple parts photos, or mark completed.</p>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Mechanic Station</span>
+          <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1.5">Floor Queue & Bay Action</h2>
+          <p class="text-sm text-slate-600 mt-0.5">Accept vehicles into bay, attach multiple parts photos, or mark completed.</p>
         </div>
-        <div id="wsBellIcon" class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
+        <div id="wsBellIcon" class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-xl border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
         </div>
       </div>
 
-      <div id="workshopFeedList" class="space-y-3.5"></div>
+      <div id="workshopFeedList" class="space-y-4"></div>
     </main>
   </div>
 
@@ -228,8 +223,8 @@
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div>
-          <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Parts Order</span>
-          <h3 class="text-lg font-black text-slate-900">Request Car Parts to Buy</h3>
+          <span class="text-xs font-bold uppercase text-purple-600 tracking-wider">Parts Order</span>
+          <h3 class="text-xl font-black text-slate-900 mt-0.5">Request Car Parts to Buy</h3>
         </div>
         <button onclick="closePartsModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm font-bold">
           <i class="fa-solid fa-xmark"></i>
@@ -239,12 +234,12 @@
       <div class="space-y-3">
         <input type="hidden" id="partJobId">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">List of Parts & Specs to Buy *</label>
-          <textarea id="partText" rows="3" placeholder="e.g. 1x Valve Cover Gasket, 1x Air Filter, 1 Set Front Brake Pads..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-purple-500"></textarea>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">List of Parts & Specs to Buy *</label>
+          <textarea id="partText" rows="3" placeholder="e.g. 1x Valve Cover Gasket, 1x Air Filter, 1 Set Front Brake Pads..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:outline-none focus:border-purple-500"></textarea>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Multiple Allowed)</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Add Part Photos (Multiple Allowed)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
           
           <div id="partPhotosGrid" class="grid grid-cols-3 gap-2 mt-2.5"></div>
@@ -252,17 +247,17 @@
       </div>
 
       <div class="flex gap-2 pt-2">
-        <button onclick="closePartsModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl text-xs hover:bg-slate-200">Cancel</button>
-        <button id="btnSubmitPart" onclick="submitPartsRequest()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl text-xs shadow-md shadow-purple-600/20">Submit to Office</button>
+        <button onclick="closePartsModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl text-sm hover:bg-slate-200">Cancel</button>
+        <button id="btnSubmitPart" onclick="submitPartsRequest()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl text-sm shadow-md shadow-purple-600/20">Submit to Office</button>
       </div>
     </div>
   </div>
 
-  <!-- 4. FULL IMAGE VIEWER MODAL -->
-  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4" onclick="closePhotoViewer()">
-    <div class="relative max-w-2xl w-full text-center" onclick="event.stopPropagation()">
-      <img id="modalFullImage" src="" class="max-h-[80vh] w-auto mx-auto rounded-2xl shadow-2xl border border-white/20">
-      <button onclick="closePhotoViewer()" class="absolute -top-4 -right-4 bg-white text-slate-900 rounded-full w-9 h-9 flex items-center justify-center font-black shadow-lg">
+  <!-- 4. FULL HIGH-RESOLUTION LIGHTBOX VIEWER -->
+  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
+    <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
+      <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
+      <button onclick="closePhotoViewer()" class="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-white text-slate-900 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center font-black shadow-2xl text-lg md:text-xl border-2 border-slate-900 hover:bg-slate-200 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -294,7 +289,7 @@
     };
 
     let state = [];
-    let currentFilter = 'waiting_approve';
+    let currentFilter = 'waiting';
     let currentUser = null;
     let currentRole = null;
     let audioCtx = null;
@@ -428,6 +423,7 @@
         topBayStripOffice.classList.remove('flex');
       }
 
+      setFilter('waiting');
       pullData();
     }
 
@@ -440,26 +436,17 @@
       }
     }
 
+    // TAPPABLE STATS HANDLER
     function setFilter(flt) {
       currentFilter = flt;
-      ['waiting_approve', 'waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(f => {
-        const btn = document.getElementById(`flt-${f}`);
-        if (btn) {
-          if (f === flt) {
-            btn.className = "px-3 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap font-bold";
-          } else {
-            btn.className = "px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap font-bold";
-          }
-        }
-      });
 
       ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
         const card = document.getElementById(`card-${c}`);
         if (card) {
           if (c === flt) {
-            card.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50/20');
+            card.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50/40', 'border-orange-300');
           } else {
-            card.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50/20');
+            card.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50/40', 'border-orange-300');
           }
         }
       });
@@ -552,7 +539,6 @@
           return;
         }
 
-        // Preserve parts history when resuming from parts
         let extraPartsTag = "";
         if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
           extraPartsTag = " [PARTS_LOGGED]" + currentItem.auto_schedule_slot + "[/PARTS_LOGGED]";
@@ -600,6 +586,7 @@
       document.getElementById('partsModal').classList.add('hidden');
     }
 
+    // High quality compression preserving sharp text inside photos
     function handleMultiplePartImages(event) {
       const files = Array.from(event.target.files);
       if (!files.length) return;
@@ -612,7 +599,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 600;
+            const maxDim = 1200; // Increased max dimension for razor-sharp screenshot & photo viewing
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -624,7 +611,7 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            const base64 = canvas.toDataURL('image/jpeg', 0.60);
+            const base64 = canvas.toDataURL('image/jpeg', 0.85); // Crisp 85% JPEG quality
             
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
@@ -639,9 +626,9 @@
     function renderModalPhotoGrid() {
       const grid = document.getElementById('partPhotosGrid');
       grid.innerHTML = uploadedPartImages.map((src, index) => `
-        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-20 group">
+        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-24 group">
           <img src="${src}" class="w-full h-full object-cover">
-          <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
+          <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -734,7 +721,6 @@
       }
     }
 
-    // Extract Parts Details & Photos from Payload
     function parsePartsInfo(rawStr) {
       if (!rawStr) return { text: '', images: [] };
       let images = [];
@@ -775,9 +761,9 @@
       const wsBell = document.getElementById('wsBellIcon');
       if (wsBell) {
         if (hasUnassignedWaiting) {
-          wsBell.className = "w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 alarm-active";
+          wsBell.className = "w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-xl shadow-lg shadow-rose-600/40 alarm-active";
         } else {
-          wsBell.className = "w-11 h-11 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
+          wsBell.className = "w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-xl border border-slate-200";
         }
       }
 
@@ -791,9 +777,9 @@
         });
 
         if (isOccupied) {
-          bayHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-wrench text-[8px]"></i> Bay ${i} Full</span>`;
+          bayHTML += `<span class="px-2.5 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold rounded-lg flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px]"></i> Bay ${i} Full</span>`;
         } else {
-          bayHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-check text-[8px]"></i> Bay ${i} Open</span>`;
+          bayHTML += `<span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-lg flex items-center gap-1.5"><i class="fa-solid fa-check text-[10px]"></i> Bay ${i} Open</span>`;
         }
       }
 
@@ -804,120 +790,112 @@
       document.getElementById('statActive').innerText = inProg;
       document.getElementById('statParts').innerText = parts;
       document.getElementById('statDone').innerText = done;
-      document.getElementById('cntWaiting').innerText = waiting;
-      document.getElementById('cntProg').innerText = inProg;
-      document.getElementById('cntParts').innerText = parts;
-      document.getElementById('cntDone').innerText = done;
 
       // Office Remaining Bay Badge
       const officeBadge = document.getElementById('officeRemainingBayBadge');
       if (officeBadge) {
         if (availableBays === 0) {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Bays Open (Full)`;
+          officeBadge.className = "px-4 py-2 rounded-2xl text-sm font-bold border shadow-sm flex items-center gap-2 bg-rose-50 text-rose-600 border-rose-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation text-base"></i> 0 Bays Open (Full)`;
         } else {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Open`;
+          officeBadge.className = "px-4 py-2 rounded-2xl text-sm font-bold border shadow-sm flex items-center gap-2 bg-emerald-50 text-emerald-600 border-emerald-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check text-base"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Open`;
         }
       }
 
-      // Office Feed Render
+      // Office Feed Render (Highly readable large typography & spacious clean layout)
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
-        let officeList = state;
-        if (currentFilter === 'waiting_approve') {
-          officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
-        } else {
-          officeList = state.filter(j => j.status === currentFilter);
-        }
+        const officeList = state.filter(j => j.status === currentFilter);
 
         if (officeList.length === 0) {
           officeContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
-              <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
-              <p class="text-xs text-slate-400 mt-0.5">Records are sorted automatically by workflow state.</p>
+            <div class="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-car text-4xl text-slate-300"></i>
+              <p class="font-bold text-slate-700 text-lg">No vehicles in this section</p>
+              <p class="text-sm text-slate-500">Tap on any metric card above to view respective records.</p>
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
-            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
+            let badge = `<span class="px-3.5 py-1 text-xs md:text-sm font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1.5"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
+              badge = `<span class="px-3.5 py-1 text-xs md:text-sm font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1.5"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
               const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
+              badge = `<span class="px-3.5 py-1 text-xs md:text-sm font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center gap-1.5"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
             }
-            if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
-            if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
+            if (j.status === 'waiting_parts') badge = `<span class="px-3.5 py-1 text-xs md:text-sm font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
+            if (j.status === 'completed') badge = `<span class="px-3.5 py-1 text-xs md:text-sm font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center gap-1.5"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
 
             let deleteBtn = "";
             if (j.status === 'completed') {
               deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-sm text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-xl transition" title="Delete Log Record">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>`;
             }
 
-            // Parts Card Breakdown for Office (Shown in Waiting Parts OR Completed Service History)
+            // Parts Card Breakdown for Office
             let partsSection = "";
             const { text: partText, images: partImages } = parsePartsInfo(j.auto_schedule_slot);
 
             if (j.status === 'waiting_parts') {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-2xl border-2 border-purple-200 shadow cursor-pointer hover:opacity-85 hover:scale-105 transition transform">
               `).join('');
 
               partsSection = `
-                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3 rounded-2xl space-y-2">
+                <div class="mt-3.5 bg-purple-50/90 border border-purple-200 p-4 rounded-2xl space-y-2.5">
                   <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
+                    <span class="text-xs md:text-sm font-black text-purple-900 uppercase flex items-center gap-1.5">
+                      <i class="fa-solid fa-triangle-exclamation text-purple-600 text-sm"></i> Parts Requested by Workshop:
                     </span>
-                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+                    <span class="text-xs font-bold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-lg">${partImages.length} Photo${partImages.length > 1 ? 's' : ''} Attached</span>
                   </div>
-                  <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                  <p class="text-sm md:text-base font-bold text-purple-950 bg-white p-3 rounded-xl border border-purple-100 shadow-sm leading-relaxed">${partText || 'Replacement parts required'}</p>
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2.5 pt-1.5">${photosThumbnails}</div>` : ''}
                 </div>`;
             } else if (j.status === 'completed' && partText) {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-2xl border-2 border-emerald-200 shadow cursor-pointer hover:opacity-85 hover:scale-105 transition transform">
               `).join('');
 
               partsSection = `
-                <div class="mt-2.5 bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl space-y-1.5">
+                <div class="mt-3.5 bg-emerald-50/80 border border-emerald-200 p-4 rounded-2xl space-y-2">
                   <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
+                    <span class="text-xs md:text-sm font-black text-emerald-900 uppercase flex items-center gap-1.5">
+                      <i class="fa-solid fa-box-archive text-emerald-600 text-sm"></i> Installed / Replaced Car Parts:
                     </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
+                    ${partImages.length > 0 ? `<span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-lg">${partImages.length} Photo${partImages.length > 1 ? 's' : ''} (Click to view full)</span>` : ''}
                   </div>
-                  <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                  <p class="text-sm md:text-base font-bold text-emerald-950 bg-white/95 p-3 rounded-xl border border-emerald-100 shadow-sm leading-relaxed">${partText}</p>
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2.5 pt-1.5">${photosThumbnails}</div>` : ''}
                 </div>`;
             }
 
             const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
 
             return `
-              <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition">
+              <div class="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/90 shadow-sm hover:border-slate-300 transition space-y-3">
                 <div class="flex justify-between items-start">
                   <div>
-                    <div class="flex items-center space-x-2">
-                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                      <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
+                    <div class="flex items-center space-x-2.5">
+                      <span class="text-xs font-mono font-black text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">${j.id}</span>
+                      <h3 class="font-black text-slate-900 text-lg md:text-xl tracking-tight">${j.vehicle}</h3>
                     </div>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
+                    <p class="text-xs md:text-sm text-slate-600 mt-1">Customer: <strong class="text-slate-900 font-bold">${j.customer}</strong> • Dispatched: <span class="font-semibold text-slate-700">${j.time_created || 'Today'}</span></p>
                   </div>
                   <div class="flex items-center gap-2">
                     ${badge}
                     ${deleteBtn}
                   </div>
                 </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${j.status !== 'waiting_parts' && cleanBaySlot && cleanBaySlot !== 'Completed Service' ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBaySlot}</p>` : ''}
-                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
+
+                <div class="bg-slate-50/90 p-3.5 md:p-4 rounded-2xl text-sm md:text-base space-y-1.5 text-slate-800 border border-slate-200/70">
+                  <p class="leading-relaxed"><strong class="font-black text-slate-900">Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  ${j.status !== 'waiting_parts' && cleanBaySlot && cleanBaySlot !== 'Completed Service' ? `<p class="text-blue-600 font-black pt-1.5 border-t border-slate-200/80 mt-1.5 flex items-center gap-1.5"><i class="fa-solid fa-warehouse text-orange-500"></i> ${cleanBaySlot}</p>` : ''}
+                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-700 font-black pt-1.5 border-t border-slate-200/80 mt-1.5 flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
                 ${partsSection}
               </div>`;
@@ -932,42 +910,42 @@
 
         if (activeWorkshopJobs.length === 0) {
           wsContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-circle-check text-3xl text-emerald-400 mb-2"></i>
-              <p class="font-bold text-slate-700 text-sm md:text-base">Workshop Floor Clear</p>
-              <p class="text-xs text-slate-400 mt-0.5">No pending vehicles on the floor.</p>
+            <div class="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
+              <p class="font-bold text-slate-800 text-lg md:text-xl">Workshop Floor Clear</p>
+              <p class="text-sm text-slate-500">No pending vehicles on the floor.</p>
             </div>`;
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             let actionArea = "";
             if (j.status === 'waiting') {
               actionArea = `
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${availableBays === 0 ? 'Bays Full' : 'Accept into Bay'}
+                <div class="flex items-center gap-2.5 mt-4 pt-4 border-t border-slate-100">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3.5 px-3 rounded-2xl text-sm flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-2"></i> ${availableBays === 0 ? 'Bays Full' : 'Accept into Bay'}
                   </button>
-                  <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
-                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
+                  <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-3 rounded-2xl text-sm flex items-center justify-center transition shadow-md shadow-amber-500/20">
+                    <i class="fa-solid fa-hourglass-half mr-2"></i> Set as Waiting
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
               const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
               actionArea = `
-                <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
+                <div class="flex flex-col gap-3 mt-4 pt-4 border-t border-slate-100">
                   <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span class="text-sm font-black text-blue-600 flex items-center gap-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping"></span>
                       ${cleanBay}
                     </span>
-                    <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
+                    <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-3.5 rounded-xl text-xs md:text-sm transition flex items-center gap-1.5 shadow-sm">
                       <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
                     </button>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                  <div class="flex items-center gap-2.5">
+                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center justify-center gap-1.5">
                       <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
                     </a>
-                    <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                    <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-3.5 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center justify-center gap-1.5">
                       <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
                     </button>
                   </div>
@@ -975,20 +953,20 @@
             } else if (j.status === 'waiting_parts') {
               const { text, images } = parsePartsInfo(j.auto_schedule_slot);
               const photosThumbnails = images.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-2xl border-2 border-purple-200 shadow cursor-pointer hover:opacity-85 hover:scale-105 transition transform">
               `).join('');
 
               actionArea = `
-                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2">
-                  <div class="bg-purple-50 p-3 rounded-2xl border border-purple-100 space-y-1.5">
+                <div class="mt-4 pt-4 border-t border-purple-100 space-y-2.5">
+                  <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 space-y-2">
                     <div class="flex items-center justify-between">
-                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${images.length} Photo${images.length > 1 ? 's' : ''}</span>
+                      <span class="text-xs font-black uppercase text-purple-900 flex items-center gap-1"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
+                      <span class="text-xs font-bold text-purple-700">${images.length} Photo${images.length > 1 ? 's' : ''} Attached</span>
                     </div>
-                    <p class="text-xs font-bold text-purple-800">${text}</p>
-                    ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                    <p class="text-sm md:text-base font-bold text-purple-950 bg-white p-3 rounded-xl border border-purple-100 leading-relaxed">${text}</p>
+                    ${images.length > 0 ? `<div class="flex flex-wrap gap-2.5 pt-1.5">${photosThumbnails}</div>` : ''}
                   </div>
-                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
                     <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
                   </button>
                 </div>`;
@@ -998,21 +976,21 @@
             const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
 
             return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
+              <div class="bg-white p-5 md:p-6 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
                 <div class="flex justify-between items-start">
                   <div>
-                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                    <span class="text-xs font-mono font-black text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">${j.id}</span>
+                    <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1.5 tracking-tight">${j.vehicle}</h3>
+                    <p class="text-xs md:text-sm text-slate-600 mt-1">Owner: <strong class="text-slate-900 font-bold">${j.customer}</strong></p>
                   </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
+                  <span class="text-xs md:text-sm font-bold px-3 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
                     ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : cleanBaySlot)}
                   </span>
                 </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                <div class="mt-3.5 bg-slate-50/90 p-3.5 md:p-4 rounded-2xl text-sm md:text-base text-slate-800 border border-slate-200/70 leading-relaxed">
+                  <p><strong class="font-black text-slate-900">Instructions:</strong> ${j.details || 'Standard intake'}</p>
                 </div>
                 ${actionArea}
               </div>`;
