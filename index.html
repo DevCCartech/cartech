@@ -386,7 +386,6 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // STRICT ROSTER CONFIGURATION (Added Ken to Office Roster)
     const AUTHORIZED_ROSTER = {
       "shiela": "office",
       "josh": "office",
@@ -417,6 +416,11 @@
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
+
+    // Fallback mechanic map for legacy records that didn't have a tag saved
+    const LEGACY_JOB_MAP = {
+      "JB-298": "bert" // Tucson legacy fallback
+    };
 
     function getRegisteredAccounts() {
       try {
@@ -745,13 +749,12 @@
       }
     }
 
-    // 1 Mechanic = 1 Job Rule Assignment
+    // Single Mechanic Ownership Logic
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
 
       if (newStatus === 'inprogress' && !slot) {
-        // Enforce 1 Active Job per Mechanic
         const isMechanicBusy = state.some(j => 
           (j.status === 'inprogress' || j.status === 'waiting_parts') && 
           j.auto_schedule_slot && 
@@ -790,7 +793,6 @@
           extraPartsTag = " [PARTS_LOGGED]" + currentItem.auto_schedule_slot + "[/PARTS_LOGGED]";
         }
         
-        // Embed assigned mechanic tag for office highlight
         slot = `Bay #${assignedBay} [MECH:${currentUser}]` + extraPartsTag;
 
       } else if (newStatus === 'completed') {
@@ -805,7 +807,11 @@
         let mechTag = "";
         if (currentItem && currentItem.auto_schedule_slot) {
           const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
-          if (mMatch) mechTag = ` [MECH:${mMatch[1]}]`;
+          if (mMatch) {
+            mechTag = ` [MECH:${mMatch[1]}]`;
+          } else if (LEGACY_JOB_MAP[currentItem.id]) {
+            mechTag = ` [MECH:${LEGACY_JOB_MAP[currentItem.id]}]`;
+          }
         }
 
         slot = "Completed Service" + mechTag + historicalParts;
@@ -911,7 +917,11 @@
       let mechTag = "";
       if (currentItem && currentItem.auto_schedule_slot) {
         const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
-        if (mMatch) mechTag = ` [MECH:${mMatch[1]}]`;
+        if (mMatch) {
+          mechTag = ` [MECH:${mMatch[1]}]`;
+        } else if (LEGACY_JOB_MAP[currentItem.id]) {
+          mechTag = ` [MECH:${LEGACY_JOB_MAP[currentItem.id]}]`;
+        }
       }
 
       let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag}`;
@@ -982,6 +992,16 @@
       }
     }
 
+    // Helper: Resolve Mechanic Name with Legacy Support
+    function resolveMechanicName(job) {
+      if (!job) return null;
+      const rawStr = String(job.auto_schedule_slot || '');
+      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
+      if (mMatch) return mMatch[1].toUpperCase();
+      if (LEGACY_JOB_MAP[job.id]) return LEGACY_JOB_MAP[job.id].toUpperCase();
+      return null;
+    }
+
     function parsePartsInfo(rawStr) {
       if (!rawStr) return { text: '', images: [], mech: null };
       let images = [];
@@ -1021,13 +1041,13 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // 5 Mechanics Roster Tracking Calculation
+      // Track busy mechanics across all active jobs (with legacy fallback)
       const busyMechanics = [];
       state.forEach(j => {
         if (j.status === 'inprogress' || j.status === 'waiting_parts') {
-          const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
-          if (mMatch) {
-            busyMechanics.push(mMatch[1].toLowerCase());
+          const mechName = resolveMechanicName(j);
+          if (mechName) {
+            busyMechanics.push(mechName.toLowerCase());
           }
         }
       });
@@ -1044,7 +1064,7 @@
         }
       }
 
-      // Office Header 5 Mechanics Indicators (Green = Available, Red = Busy Handling a Car)
+      // Office Header 5 Mechanics Indicators
       let mechHTML = "";
       MECHANIC_LIST.forEach(m => {
         const isBusy = busyMechanics.includes(m);
@@ -1089,8 +1109,7 @@
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
-            const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
-            const assignedMechanic = mMatch ? mMatch[1].toUpperCase() : null;
+            const assignedMechanic = resolveMechanicName(j);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
@@ -1111,12 +1130,17 @@
                 </button>`;
             }
 
-            // Highlight Handling Mechanic for the Office
+            // Always display who is handling the vehicle
             let mechanicHighlightTag = "";
             if (assignedMechanic) {
               mechanicHighlightTag = `
                 <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
                   <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
+                </span>`;
+            } else if (j.status === 'inprogress') {
+              mechanicHighlightTag = `
+                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold rounded-lg flex items-center gap-1">
+                  <i class="fa-solid fa-user-gear text-amber-600"></i> In Bay Floor
                 </span>`;
             }
 
@@ -1201,9 +1225,8 @@
             </div>`;
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
-            const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
-            const assignedMechanic = mMatch ? mMatch[1].toLowerCase() : null;
-            const isMyJob = assignedMechanic === currentUser;
+            const assignedMechanic = resolveMechanicName(j);
+            const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -1241,10 +1264,14 @@
                     </div>
                   </div>`;
               } else {
+                // Dynamically displays the mechanic's specific name
+                const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
                     <span>${cleanBay}</span>
-                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">Handled by: ${assignedMechanic ? assignedMechanic.toUpperCase() : 'Another Mechanic'}</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
+                      <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
+                    </span>
                   </div>`;
               }
             } else if (j.status === 'waiting_parts') {
