@@ -161,30 +161,30 @@
           <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <!-- 4 Metric Cards -->
+        <!-- 4 TAPPABLE METRIC CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+          <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
             <div>
               <div id="statWaiting" class="text-xl font-black text-slate-900 leading-none">0</div>
               <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Pending</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+          <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-blue-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
             <div>
               <div id="statActive" class="text-xl font-black text-slate-900 leading-none">0</div>
               <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Working Bay</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+          <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-purple-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-gears"></i></div>
             <div>
               <div id="statParts" class="text-xl font-black text-slate-900 leading-none">0</div>
               <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Waiting Parts</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+          <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-emerald-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-regular fa-circle-check"></i></div>
             <div>
               <div id="statDone" class="text-xl font-black text-slate-900 leading-none">0</div>
@@ -247,7 +247,6 @@
           <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Multiple Allowed)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
           
-          <!-- Multiple Photos Grid Preview -->
           <div id="partPhotosGrid" class="grid grid-cols-3 gap-2 mt-2.5"></div>
         </div>
       </div>
@@ -300,7 +299,7 @@
     let currentRole = null;
     let audioCtx = null;
     let alarmInterval = null;
-    let uploadedPartImages = []; // Stores array of multiple base64 photos
+    let uploadedPartImages = [];
 
     function getAudioContext() {
       if (!audioCtx) {
@@ -441,6 +440,7 @@
       }
     }
 
+    // TAPPABLE STATS & FILTER HANDLER
     function setFilter(flt) {
       currentFilter = flt;
       ['active', 'waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(f => {
@@ -453,6 +453,19 @@
           }
         }
       });
+
+      // Highlight tapped metric card
+      ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
+        const card = document.getElementById(`card-${c}`);
+        if (card) {
+          if (c === flt) {
+            card.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50/20');
+          } else {
+            card.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50/20');
+          }
+        }
+      });
+
       render();
     }
 
@@ -563,7 +576,6 @@
       }
     }
 
-    // MULTI-PHOTO UPLOAD & COMPRESSION HANDLER
     function openPartsModal(jobId) {
       document.getElementById('partJobId').value = jobId;
       document.getElementById('partText').value = "";
@@ -642,7 +654,6 @@
       btn.disabled = true;
       btn.innerText = "Submitting...";
 
-      // Pack description and multiple photos into payload
       let slotPayload = `Waiting for Car Parts: ${partDesc}`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
@@ -711,7 +722,6 @@
       }
     }
 
-    // MULTIPLE PHOTOS PARSER
     function parsePartsInfo(slotStr) {
       if (!slotStr) return { text: '', images: [] };
       let images = [];
