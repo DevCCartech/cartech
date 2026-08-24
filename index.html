@@ -32,9 +32,9 @@
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
-  <!-- 1. LOGIN SCREEN -->
+  <!-- 1. AUTH SCREEN (LOGIN / REGISTER / FORGOT PASSWORD) -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-5 my-auto">
+    <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto">
       
       <div class="flex items-center justify-center space-x-2.5 pb-3 border-b border-slate-200/60">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-sm shadow-md shadow-orange-500/30">
@@ -46,32 +46,151 @@
         </div>
       </div>
 
-      <div class="text-center">
-        <span class="text-[10px] font-bold uppercase text-orange-600 tracking-wider">Staff Access</span>
-        <h3 class="text-xl font-black text-slate-900 mt-0.5">Welcome back</h3>
-        <p class="text-xs text-slate-500 mt-0.5">Sign in with your registered staff name.</p>
-      </div>
-
-      <form onsubmit="handleLogin(event)" class="space-y-4">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Staff Member Name</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <i class="fa-regular fa-user text-xs"></i>
-            </span>
-            <input id="loginName" required placeholder="Enter staff name..." 
-                   class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
-          </div>
-          <div id="loginError" class="hidden text-[11px] text-rose-600 font-bold mt-2 flex items-center">
-            <i class="fa-solid fa-circle-exclamation mr-1"></i> Name not recognized. Use: josh, shiela, ken (Office) or bert, charl, rocky, mark, nel (Mechanic).
-          </div>
+      <!-- FORM 1: LOGIN -->
+      <div id="authBoxLogin" class="space-y-4">
+        <div class="text-center">
+          <span class="text-[10px] font-bold uppercase text-orange-600 tracking-wider">Staff Security Portal</span>
+          <h3 class="text-xl font-black text-slate-900 mt-0.5">Account Sign In</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Enter your credentials to open station.</p>
         </div>
 
-        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm">
-          <span>Enter Workspace</span>
-          <i class="fa-solid fa-arrow-right text-xs"></i>
-        </button>
-      </form>
+        <form onsubmit="handleAuthLogin(event)" class="space-y-3.5">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Username</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-regular fa-user text-xs"></i>
+              </span>
+              <input id="loginUsername" required placeholder="e.g. josh, charl..." 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-lock text-xs"></i>
+              </span>
+              <input id="loginPassword" type="password" required placeholder="••••••••" 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div id="loginAuthError" class="hidden text-[11px] text-rose-600 font-bold flex items-center">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="loginAuthErrorMsg">Invalid username or password.</span>
+          </div>
+
+          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm">
+            <span>Enter Workspace</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </form>
+
+        <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-100">
+          <button onclick="switchAuthForm('register')" class="font-bold text-orange-600 hover:underline">Create Account</button>
+          <button onclick="switchAuthForm('forgot')" class="font-bold text-slate-500 hover:text-slate-800">Forgot Password?</button>
+        </div>
+      </div>
+
+      <!-- FORM 2: REGISTER ACCOUNT (STRICT ROSTER VERIFICATION) -->
+      <div id="authBoxRegister" class="hidden space-y-4">
+        <div class="text-center">
+          <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Registration</span>
+          <h3 class="text-xl font-black text-slate-900 mt-0.5">Create Staff Account</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Must match authorized roster exactly.</p>
+        </div>
+
+        <form onsubmit="handleAuthRegister(event)" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Exact Staff Name on Record *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-id-badge text-xs"></i>
+              </span>
+              <input id="regName" required placeholder="Exact name (e.g. josh, charl)" 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Create Password *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-key text-xs"></i>
+              </span>
+              <input id="regPassword" type="password" required placeholder="At least 4 characters" 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div id="regError" class="hidden text-[11px] text-rose-600 font-bold p-2.5 bg-rose-50 rounded-xl border border-rose-200">
+            <i class="fa-solid fa-ban mr-1"></i> <span id="regErrorMsg">You are not allowed to create an account.</span>
+          </div>
+
+          <div id="regSuccess" class="hidden text-[11px] text-emerald-600 font-bold p-2.5 bg-emerald-50 rounded-xl border border-emerald-200">
+            <i class="fa-solid fa-circle-check mr-1"></i> Account created successfully! Please sign in.
+          </div>
+
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/20 text-sm">
+            <span>Register Account</span>
+            <i class="fa-solid fa-user-plus text-xs"></i>
+          </button>
+        </form>
+
+        <div class="text-center pt-1 border-t border-slate-100">
+          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900">Already registered? <span class="text-orange-600">Sign In</span></button>
+        </div>
+      </div>
+
+      <!-- FORM 3: FORGOT PASSWORD -->
+      <div id="authBoxForgot" class="hidden space-y-4">
+        <div class="text-center">
+          <span class="text-[10px] font-bold uppercase text-amber-600 tracking-wider">Account Recovery</span>
+          <h3 class="text-xl font-black text-slate-900 mt-0.5">Reset Password</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Enter your exact registered username.</p>
+        </div>
+
+        <form onsubmit="handleAuthForgot(event)" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Staff Username</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-regular fa-user text-xs"></i>
+              </span>
+              <input id="forgotUsername" required placeholder="e.g. josh, charl" 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">New Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-lock text-xs"></i>
+              </span>
+              <input id="forgotNewPassword" type="password" required placeholder="Enter new password" 
+                     class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
+            </div>
+          </div>
+
+          <div id="forgotError" class="hidden text-[11px] text-rose-600 font-bold p-2.5 bg-rose-50 rounded-xl border border-rose-200">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="forgotErrorMsg">Username not recognized.</span>
+          </div>
+
+          <div id="forgotSuccess" class="hidden text-[11px] text-emerald-600 font-bold p-2.5 bg-emerald-50 rounded-xl border border-emerald-200">
+            <i class="fa-solid fa-circle-check mr-1"></i> Password reset successfully! Please sign in.
+          </div>
+
+          <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-lg shadow-amber-600/20">
+            <span>Update Password</span>
+          </button>
+        </form>
+
+        <div class="text-center pt-1 border-t border-slate-100">
+          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900">Back to <span class="text-orange-600">Sign In</span></button>
+        </div>
+      </div>
 
       <div class="text-center pt-1">
         <span class="text-[10px] text-slate-400 font-bold">© 2026 CARTECH Systems</span>
@@ -114,7 +233,7 @@
       </div>
     </header>
 
-    <!-- ==================== OFFICE DESK VIEW (josh, shiela, ken) ==================== -->
+    <!-- ==================== OFFICE DESK VIEW (ONLY: shiela, josh) ==================== -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -165,7 +284,7 @@
           <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <!-- 4 TAPPABLE METRIC CARDS (Normal Standard Scale) -->
+        <!-- 4 TAPPABLE METRIC CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
           <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
@@ -201,7 +320,7 @@
       </div>
     </main>
 
-    <!-- ==================== MECHANIC WORKSHOP (bert, charl, rocky, mark, nel) ==================== -->
+    <!-- ==================== MECHANIC WORKSHOP (ONLY: charl, bert, nel, rocky, mark) ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
         <div>
@@ -266,15 +385,15 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
+    // STRICT ROSTER CONFIGURATION & ROLE MAPPING
     const AUTHORIZED_ROSTER = {
-      "josh": "office",
       "shiela": "office",
-      "ken": "office",
-      "bert": "workshop",
+      "josh": "office",
       "charl": "workshop",
+      "bert": "workshop",
+      "nel": "workshop",
       "rocky": "workshop",
-      "mark": "workshop",
-      "nel": "workshop"
+      "mark": "workshop"
     };
 
     const TOTAL_BAYS = 4;
@@ -295,6 +414,145 @@
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
+
+    // Local Account Database Helper
+    function getRegisteredAccounts() {
+      try {
+        const accs = localStorage.getItem('cartech_registered_users');
+        return accs ? JSON.parse(accs) : { "josh": "1234", "shiela": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+      } catch (e) {
+        return { "josh": "1234", "shiela": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+      }
+    }
+
+    function saveRegisteredAccounts(accs) {
+      localStorage.setItem('cartech_registered_users', JSON.stringify(accs));
+    }
+
+    // Switch between Login / Register / Forgot tabs
+    function switchAuthForm(type) {
+      document.getElementById('authBoxLogin').classList.add('hidden');
+      document.getElementById('authBoxRegister').classList.add('hidden');
+      document.getElementById('authBoxForgot').classList.add('hidden');
+
+      // Clear any active alert messages
+      document.getElementById('loginAuthError').classList.add('hidden');
+      document.getElementById('regError').classList.add('hidden');
+      document.getElementById('regSuccess').classList.add('hidden');
+      document.getElementById('forgotError').classList.add('hidden');
+      document.getElementById('forgotSuccess').classList.add('hidden');
+
+      if (type === 'login') {
+        document.getElementById('authBoxLogin').classList.remove('hidden');
+      } else if (type === 'register') {
+        document.getElementById('authBoxRegister').classList.remove('hidden');
+      } else if (type === 'forgot') {
+        document.getElementById('authBoxForgot').classList.remove('hidden');
+      }
+    }
+
+    // 1. Handle Login
+    function handleAuthLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUsername').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPassword').value.trim();
+      const errorElem = document.getElementById('loginAuthError');
+      const errorMsg = document.getElementById('loginAuthErrorMsg');
+
+      if (!AUTHORIZED_ROSTER[user]) {
+        errorMsg.innerText = "You are not allowed to access this workspace.";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      const registeredUsers = getRegisteredAccounts();
+      if (!registeredUsers[user] || registeredUsers[user] !== pass) {
+        errorMsg.innerText = "Incorrect password or account not registered yet.";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      errorElem.classList.add('hidden');
+      currentUser = user;
+      currentRole = AUTHORIZED_ROSTER[user];
+
+      localStorage.setItem('cartech_auth_user', currentUser);
+      localStorage.setItem('cartech_auth_role', currentRole);
+
+      getAudioContext();
+      bootApp();
+    }
+
+    // 2. Handle Register (Exact Roster Verification)
+    function handleAuthRegister(e) {
+      e.preventDefault();
+      const exactName = document.getElementById('regName').value.trim().toLowerCase();
+      const pass = document.getElementById('regPassword').value.trim();
+      const errorElem = document.getElementById('regError');
+      const errorMsg = document.getElementById('regErrorMsg');
+      const successElem = document.getElementById('regSuccess');
+
+      errorElem.classList.add('hidden');
+      successElem.classList.add('hidden');
+
+      // Reject if name does NOT exactly match authorized list
+      if (!AUTHORIZED_ROSTER[exactName]) {
+        errorMsg.innerText = "You are not allowed to create an account. (Exact name not found in CARTECH authorized roster)";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      if (pass.length < 4) {
+        errorMsg.innerText = "Password must be at least 4 characters long.";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      const registeredUsers = getRegisteredAccounts();
+      registeredUsers[exactName] = pass;
+      saveRegisteredAccounts(registeredUsers);
+
+      successElem.classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('loginUsername').value = exactName;
+        switchAuthForm('login');
+      }, 1400);
+    }
+
+    // 3. Handle Forgot Password
+    function handleAuthForgot(e) {
+      e.preventDefault();
+      const user = document.getElementById('forgotUsername').value.trim().toLowerCase();
+      const newPass = document.getElementById('forgotNewPassword').value.trim();
+      const errorElem = document.getElementById('forgotError');
+      const errorMsg = document.getElementById('forgotErrorMsg');
+      const successElem = document.getElementById('forgotSuccess');
+
+      errorElem.classList.add('hidden');
+      successElem.classList.add('hidden');
+
+      if (!AUTHORIZED_ROSTER[user]) {
+        errorMsg.innerText = "Username is not authorized in CARTECH records.";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      if (newPass.length < 4) {
+        errorMsg.innerText = "New password must be at least 4 characters.";
+        errorElem.classList.remove('hidden');
+        return;
+      }
+
+      const registeredUsers = getRegisteredAccounts();
+      registeredUsers[user] = newPass;
+      saveRegisteredAccounts(registeredUsers);
+
+      successElem.classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('loginUsername').value = user;
+        switchAuthForm('login');
+      }, 1400);
+    }
 
     function getAudioContext() {
       if (!audioCtx) {
@@ -378,27 +636,6 @@
       }
     }
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const input = document.getElementById('loginName').value.trim().toLowerCase();
-      const errorElem = document.getElementById('loginError');
-
-      if (!AUTHORIZED_ROSTER[input]) {
-        errorElem.classList.remove('hidden');
-        return;
-      }
-
-      errorElem.classList.add('hidden');
-      currentUser = input;
-      currentRole = AUTHORIZED_ROSTER[input];
-
-      localStorage.setItem('cartech_auth_user', currentUser);
-      localStorage.setItem('cartech_auth_role', currentRole);
-
-      getAudioContext();
-      bootApp();
-    }
-
     function bootApp() {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
@@ -409,6 +646,7 @@
       const workshopView = document.getElementById('viewWorkshop');
       const topBayStripOffice = document.getElementById('topBayStripOffice');
 
+      // STRICT ROLE ENFORCEMENT
       if (currentRole === 'office') {
         officeView.classList.remove('hidden');
         workshopView.classList.add('hidden');
@@ -436,7 +674,6 @@
       }
     }
 
-    // TAPPABLE STATS HANDLER
     function setFilter(flt) {
       currentFilter = flt;
 
@@ -802,7 +1039,7 @@
         }
       }
 
-      // Office Feed Render (Normal Standard Font Scale)
+      // Office Feed Render
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -835,7 +1072,6 @@
                 </button>`;
             }
 
-            // Parts Card Breakdown for Office
             let partsSection = "";
             const { text: partText, images: partImages } = parsePartsInfo(j.auto_schedule_slot);
 
