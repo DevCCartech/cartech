@@ -20,11 +20,10 @@
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased">
 
-  <!-- 1. LOGIN SCREEN (100% CENTERED ON ANY PHONE OR SCREEN) -->
+  <!-- 1. LOGIN SCREEN (CENTERED MODAL FOR MOBILE & DESKTOP) -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-5 my-auto">
       
-      <!-- Brand Header Inside Modal -->
       <div class="flex items-center justify-center space-x-2.5 pb-3 border-b border-slate-200/60">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-sm shadow-md shadow-orange-500/30">
           <i class="fa-solid fa-wrench"></i>
@@ -194,10 +193,15 @@
 
     <!-- ==================== MECHANICS WORKSHOP (bert, charl, rocky, mark, nel) ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md">
-        <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
-        <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicles, complete diagnostic checklist, or mark done.</p>
+      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
+          <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicles, complete diagnostic checklist, or mark done.</p>
+        </div>
+        <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg border border-orange-100">
+          <i class="fa-solid fa-bell animate-pulse"></i>
+        </div>
       </div>
 
       <div id="workshopFeedList" class="space-y-3.5"></div>
@@ -235,6 +239,61 @@
     let currentFilter = 'active';
     let currentUser = null;
     let currentRole = null;
+    let lastWaitingCount = 0;
+    let audioCtx = null;
+
+    // Web Audio Synthesizer for Notifications
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playChime(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        if (type === 'newJob') {
+          // Double two-tone notification chime for incoming jobs
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+          osc1.frequency.setValueAtTime(880, ctx.currentTime + 0.15); // A5
+          gain1.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start();
+          osc1.stop(ctx.currentTime + 0.5);
+        } else if (type === 'doneJob') {
+          // Cheerful ascending success sound when marked done
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.2, ctx.currentTime + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + idx * 0.08);
+            osc.stop(ctx.currentTime + idx * 0.08 + 0.25);
+          });
+        }
+      } catch (err) {
+        console.log("Audio notification error:", err);
+      }
+    }
 
     function handleLogin(e) {
       e.preventDefault();
@@ -253,6 +312,7 @@
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
 
+      getAudioContext();
       bootApp();
     }
 
@@ -280,7 +340,7 @@
         topBayStripOffice.classList.remove('flex');
       }
 
-      pullData();
+      pullData(true);
     }
 
     function handleLogout() {
@@ -306,7 +366,7 @@
       render();
     }
 
-    async function pullData() {
+    async function pullData(isFirstLoad = false) {
       try {
         const res = await fetch(`${API_URL}?select=*&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -314,6 +374,14 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
+            const currentWaiting = data.filter(j => j.status === 'waiting').length;
+
+            // Trigger notification sound if a new job arrives
+            if (!isFirstLoad && currentWaiting > lastWaitingCount) {
+              playChime('newJob');
+            }
+            lastWaitingCount = currentWaiting;
+
             state = data;
             render();
           }
@@ -355,6 +423,7 @@
           headers: HEADERS,
           body: JSON.stringify(newCar)
         });
+        playChime('newJob');
       } catch (err) {
         console.error("Dispatch upload error:", err);
       } finally {
@@ -392,6 +461,7 @@
         slot = `Bay #${assignedBay}`;
       } else if (newStatus === 'completed') {
         slot = "Completed Service";
+        playChime('doneJob'); // Play completion chime
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
@@ -562,9 +632,11 @@
                     <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase ${
+                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     j.status === 'waiting' ? 'bg-amber-50 text-amber-600 border border-amber-200/80' : 'bg-blue-50 text-blue-600 border border-blue-200/80'
-                  }">${j.status === 'waiting' ? 'Pending' : (j.auto_schedule_slot || 'In Bay')}</span>
+                  }">
+                    ${j.status === 'waiting' ? '<i class="fa-regular fa-bell animate-bounce text-amber-500"></i> Pending' : (j.auto_schedule_slot || 'In Bay')}
+                  </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
@@ -585,7 +657,7 @@
       bootApp();
     }
 
-    setInterval(pullData, 1200);
+    setInterval(() => pullData(false), 1200);
   </script>
 </body>
 </html>
