@@ -61,7 +61,7 @@
               <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <i class="fa-regular fa-user text-xs"></i>
               </span>
-              <input id="loginUsername" required placeholder="e.g. josh, charl..." 
+              <input id="loginUsername" required placeholder="Enter username..." 
                      class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
             </div>
           </div>
@@ -108,7 +108,7 @@
               <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <i class="fa-solid fa-id-badge text-xs"></i>
               </span>
-              <input id="regName" required placeholder="Exact name (e.g. josh, charl)" 
+              <input id="regName" required placeholder="Enter registered name..." 
                      class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
             </div>
           </div>
@@ -158,7 +158,7 @@
               <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <i class="fa-regular fa-user text-xs"></i>
               </span>
-              <input id="forgotUsername" required placeholder="e.g. josh, charl" 
+              <input id="forgotUsername" required placeholder="Enter username..." 
                      class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
             </div>
           </div>
@@ -216,10 +216,10 @@
         </div>
       </div>
 
-      <!-- Live 4-Bay Occupancy Status Strip (Office Desktop) -->
-      <div id="topBayStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3.5 py-1.5 rounded-2xl shadow-inner">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bays:</span>
-        <div id="bayIndicators" class="flex items-center space-x-1.5"></div>
+      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office View) -->
+      <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
+        <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
       <!-- Header Action Buttons -->
@@ -233,7 +233,7 @@
       </div>
     </header>
 
-    <!-- ==================== OFFICE DESK VIEW (ONLY: shiela, josh) ==================== -->
+    <!-- ==================== OFFICE DESK VIEW (ONLY: shiela, josh, ken) ==================== -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -281,7 +281,8 @@
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
             <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">Vehicle Queue</h2>
           </div>
-          <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
+          <!-- Available Mechanics Badge in Office -->
+          <div id="officeRemainingMechanicBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
         <!-- 4 TAPPABLE METRIC CARDS -->
@@ -326,7 +327,7 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles into bay, attach multiple parts photos, or mark completed.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicle to take single ownership, request parts, or mark completed.</p>
         </div>
         <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
@@ -385,10 +386,11 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // STRICT ROSTER CONFIGURATION & ROLE MAPPING
+    // STRICT ROSTER CONFIGURATION (Added Ken to Office Roster)
     const AUTHORIZED_ROSTER = {
       "shiela": "office",
       "josh": "office",
+      "ken": "office",
       "charl": "workshop",
       "bert": "workshop",
       "nel": "workshop",
@@ -396,6 +398,7 @@
       "mark": "workshop"
     };
 
+    const MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
     const TOTAL_BAYS = 4;
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
     const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
@@ -415,13 +418,12 @@
     let alarmInterval = null;
     let uploadedPartImages = [];
 
-    // Local Account Database Helper
     function getRegisteredAccounts() {
       try {
         const accs = localStorage.getItem('cartech_registered_users');
-        return accs ? JSON.parse(accs) : { "josh": "1234", "shiela": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+        return accs ? JSON.parse(accs) : { "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
       } catch (e) {
-        return { "josh": "1234", "shiela": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+        return { "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
       }
     }
 
@@ -429,13 +431,11 @@
       localStorage.setItem('cartech_registered_users', JSON.stringify(accs));
     }
 
-    // Switch between Login / Register / Forgot tabs
     function switchAuthForm(type) {
       document.getElementById('authBoxLogin').classList.add('hidden');
       document.getElementById('authBoxRegister').classList.add('hidden');
       document.getElementById('authBoxForgot').classList.add('hidden');
 
-      // Clear any active alert messages
       document.getElementById('loginAuthError').classList.add('hidden');
       document.getElementById('regError').classList.add('hidden');
       document.getElementById('regSuccess').classList.add('hidden');
@@ -451,7 +451,6 @@
       }
     }
 
-    // 1. Handle Login
     function handleAuthLogin(e) {
       e.preventDefault();
       const user = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -483,7 +482,6 @@
       bootApp();
     }
 
-    // 2. Handle Register (Exact Roster Verification)
     function handleAuthRegister(e) {
       e.preventDefault();
       const exactName = document.getElementById('regName').value.trim().toLowerCase();
@@ -495,7 +493,6 @@
       errorElem.classList.add('hidden');
       successElem.classList.add('hidden');
 
-      // Reject if name does NOT exactly match authorized list
       if (!AUTHORIZED_ROSTER[exactName]) {
         errorMsg.innerText = "You are not allowed to create an account. (Exact name not found in CARTECH authorized roster)";
         errorElem.classList.remove('hidden');
@@ -519,7 +516,6 @@
       }, 1400);
     }
 
-    // 3. Handle Forgot Password
     function handleAuthForgot(e) {
       e.preventDefault();
       const user = document.getElementById('forgotUsername').value.trim().toLowerCase();
@@ -644,21 +640,20 @@
 
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
-      const topBayStripOffice = document.getElementById('topBayStripOffice');
+      const topMechanicsStripOffice = document.getElementById('topMechanicsStripOffice');
 
-      // STRICT ROLE ENFORCEMENT
       if (currentRole === 'office') {
         officeView.classList.remove('hidden');
         workshopView.classList.add('hidden');
         if (window.innerWidth >= 768) {
-          topBayStripOffice.classList.remove('hidden');
-          topBayStripOffice.classList.add('flex');
+          topMechanicsStripOffice.classList.remove('hidden');
+          topMechanicsStripOffice.classList.add('flex');
         }
       } else {
         officeView.classList.add('hidden');
         workshopView.classList.remove('hidden');
-        topBayStripOffice.classList.add('hidden');
-        topBayStripOffice.classList.remove('flex');
+        topMechanicsStripOffice.classList.add('hidden');
+        topMechanicsStripOffice.classList.remove('flex');
       }
 
       setFilter('waiting');
@@ -750,16 +745,30 @@
       }
     }
 
+    // 1 Mechanic = 1 Job Rule Assignment
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
 
       if (newStatus === 'inprogress' && !slot) {
+        // Enforce 1 Active Job per Mechanic
+        const isMechanicBusy = state.some(j => 
+          (j.status === 'inprogress' || j.status === 'waiting_parts') && 
+          j.auto_schedule_slot && 
+          j.auto_schedule_slot.toLowerCase().includes(`[mech:${currentUser}]`) &&
+          j.id !== id
+        );
+
+        if (isMechanicBusy) {
+          alert(`Mechanic ${currentUser.toUpperCase()} already has an active vehicle job in progress. Please complete your current job first.`);
+          return;
+        }
+
         const occupiedBays = state
           .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== id)
           .map(j => {
-            const match = String(j.auto_schedule_slot).match(/\d+/);
-            return match ? parseInt(match[0], 10) : null;
+            const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
+            return match ? parseInt(match[1], 10) : null;
           })
           .filter(n => n !== null);
 
@@ -780,7 +789,9 @@
         if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
           extraPartsTag = " [PARTS_LOGGED]" + currentItem.auto_schedule_slot + "[/PARTS_LOGGED]";
         }
-        slot = `Bay #${assignedBay}` + extraPartsTag;
+        
+        // Embed assigned mechanic tag for office highlight
+        slot = `Bay #${assignedBay} [MECH:${currentUser}]` + extraPartsTag;
 
       } else if (newStatus === 'completed') {
         let historicalParts = "";
@@ -790,7 +801,14 @@
         } else if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
           historicalParts = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
         }
-        slot = "Completed Service" + historicalParts;
+
+        let mechTag = "";
+        if (currentItem && currentItem.auto_schedule_slot) {
+          const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
+          if (mMatch) mechTag = ` [MECH:${mMatch[1]}]`;
+        }
+
+        slot = "Completed Service" + mechTag + historicalParts;
         playDoneChime();
       }
 
@@ -879,6 +897,7 @@
     async function submitPartsRequest() {
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
+      const currentItem = state.find(j => j.id === jobId);
 
       if (!partDesc) {
         alert("Please describe the replacement parts required.");
@@ -889,7 +908,13 @@
       btn.disabled = true;
       btn.innerText = "Submitting...";
 
-      let slotPayload = `Waiting for Car Parts: ${partDesc}`;
+      let mechTag = "";
+      if (currentItem && currentItem.auto_schedule_slot) {
+        const mMatch = currentItem.auto_schedule_slot.match(/\[MECH:(.*?)\]/i);
+        if (mMatch) mechTag = ` [MECH:${mMatch[1]}]`;
+      }
+
+      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag}`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
@@ -958,7 +983,7 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [] };
+      if (!rawStr) return { text: '', images: [], mech: null };
       let images = [];
       
       let targetStr = rawStr;
@@ -975,13 +1000,17 @@
         if (singleMatch) images = [singleMatch[1]];
       }
 
+      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
+      const mech = mMatch ? mMatch[1].toUpperCase() : null;
+
       const text = targetStr
         .replace(/\[IMGS\].*?\[\/IMGS\]/, '')
         .replace(/\[IMG\].*?\[\/IMG\]/, '')
+        .replace(/\[MECH:.*?\]/gi, '')
         .replace('Waiting for Car Parts:', '')
         .trim();
 
-      return { text, images };
+      return { text, images, mech };
     }
 
     function render() {
@@ -990,8 +1019,20 @@
       const parts = state.filter(j => j.status === 'waiting_parts').length;
       const done = state.filter(j => j.status === 'completed').length;
 
-      const availableBays = Math.max(0, TOTAL_BAYS - inProg);
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+
+      // 5 Mechanics Roster Tracking Calculation
+      const busyMechanics = [];
+      state.forEach(j => {
+        if (j.status === 'inprogress' || j.status === 'waiting_parts') {
+          const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
+          if (mMatch) {
+            busyMechanics.push(mMatch[1].toLowerCase());
+          }
+        }
+      });
+
+      const availableMechanicsCount = MECHANIC_LIST.filter(m => !busyMechanics.includes(m)).length;
 
       // Workshop Bell State
       const wsBell = document.getElementById('wsBellIcon');
@@ -1003,39 +1044,34 @@
         }
       }
 
-      // Office Header Bay Indicators
-      let bayHTML = "";
-      for (let i = 1; i <= TOTAL_BAYS; i++) {
-        const isOccupied = state.some(j => {
-          if (j.status !== 'inprogress' || !j.auto_schedule_slot) return false;
-          const match = String(j.auto_schedule_slot).match(/\d+/);
-          return match && parseInt(match[0], 10) === i;
-        });
-
-        if (isOccupied) {
-          bayHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-wrench text-[8px]"></i> Bay ${i} Full</span>`;
+      // Office Header 5 Mechanics Indicators (Green = Available, Red = Busy Handling a Car)
+      let mechHTML = "";
+      MECHANIC_LIST.forEach(m => {
+        const isBusy = busyMechanics.includes(m);
+        if (isBusy) {
+          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (Busy)</span>`;
         } else {
-          bayHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><i class="fa-solid fa-check text-[8px]"></i> Bay ${i} Open</span>`;
+          mechHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ${m.toUpperCase()}</span>`;
         }
-      }
+      });
 
-      const indDesktop = document.getElementById('bayIndicators');
-      if (indDesktop) indDesktop.innerHTML = bayHTML;
+      const indDesktop = document.getElementById('mechanicsIndicators');
+      if (indDesktop) indDesktop.innerHTML = mechHTML;
 
       document.getElementById('statWaiting').innerText = waiting;
       document.getElementById('statActive').innerText = inProg;
       document.getElementById('statParts').innerText = parts;
       document.getElementById('statDone').innerText = done;
 
-      // Office Remaining Bay Badge
-      const officeBadge = document.getElementById('officeRemainingBayBadge');
+      // Office Available Mechanics Badge
+      const officeBadge = document.getElementById('officeRemainingMechanicBadge');
       if (officeBadge) {
-        if (availableBays === 0) {
+        if (availableMechanicsCount === 0) {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Bays Open (Full)`;
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Busy)`;
         } else {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableBays} Bay Slot${availableBays > 1 ? 's' : ''} Open`;
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Available`;
         }
       }
 
@@ -1053,12 +1089,15 @@
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
+            const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
+            const assignedMechanic = mMatch ? mMatch[1].toUpperCase() : null;
+
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
+              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
@@ -1070,6 +1109,15 @@
                 <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>`;
+            }
+
+            // Highlight Handling Mechanic for the Office
+            let mechanicHighlightTag = "";
+            if (assignedMechanic) {
+              mechanicHighlightTag = `
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
+                </span>`;
             }
 
             let partsSection = "";
@@ -1109,7 +1157,7 @@
                 </div>`;
             }
 
-            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
+            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
@@ -1118,6 +1166,7 @@
                     <div class="flex items-center space-x-2">
                       <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
                       <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
+                      ${mechanicHighlightTag}
                     </div>
                     <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
                   </div>
@@ -1152,44 +1201,65 @@
             </div>`;
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
+            const mMatch = String(j.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
+            const assignedMechanic = mMatch ? mMatch[1].toLowerCase() : null;
+            const isMyJob = assignedMechanic === currentUser;
+
             let actionArea = "";
             if (j.status === 'waiting') {
               actionArea = `
                 <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${availableBays === 0 ? 'Bays Full' : 'Accept into Bay'}
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableMechanicsCount === 0 ? 'disabled' : ''} class="flex-1 ${availableMechanicsCount === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-1.5"></i> ${availableMechanicsCount === 0 ? 'Mechanics Busy' : `Accept (Assign to ${currentUser.toUpperCase()})`}
                   </button>
                   <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
                     <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
-              actionArea = `
-                <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                      ${cleanBay}
-                    </span>
-                    <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
-                      <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
-                    </button>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                      <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
-                    </a>
-                    <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                      <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
-                    </button>
-                  </div>
-                </div>`;
+              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+              
+              if (isMyJob) {
+                actionArea = `
+                  <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                        ${cleanBay} • <strong>You are handling this car</strong>
+                      </span>
+                      <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
+                      </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
+                      </a>
+                      <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
+                      </button>
+                    </div>
+                  </div>`;
+              } else {
+                actionArea = `
+                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                    <span>${cleanBay}</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">Handled by: ${assignedMechanic ? assignedMechanic.toUpperCase() : 'Another Mechanic'}</span>
+                  </div>`;
+              }
             } else if (j.status === 'waiting_parts') {
               const { text, images } = parsePartsInfo(j.auto_schedule_slot);
               const photosThumbnails = images.map(img => `
                 <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
+
+              let resumeBtn = "";
+              if (isMyJob) {
+                resumeBtn = `
+                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
+                  </button>`;
+              }
 
               actionArea = `
                 <div class="mt-3 pt-3 border-t border-purple-100 space-y-2">
@@ -1201,14 +1271,12 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                   </div>
-                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
-                  </button>
+                  ${resumeBtn}
                 </div>`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '');
+            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
