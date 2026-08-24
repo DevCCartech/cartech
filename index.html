@@ -93,13 +93,13 @@
         </div>
       </div>
 
-      <!-- Live 4-Bay Occupancy Status Strip (STRICTLY ON OFFICE DESKTOP) -->
+      <!-- Live 4-Bay Occupancy Status Strip (Office Desktop) -->
       <div id="topBayStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3.5 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-warehouse mr-1 text-orange-400"></i> Bays:</span>
         <div id="bayIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
-      <!-- Header Buttons -->
+      <!-- Header Action Buttons -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
           <i class="fa-solid fa-trash-can"></i>
@@ -110,7 +110,7 @@
       </div>
     </header>
 
-    <!-- ==================== OFFICE VIEW (josh, shiela, ken) ==================== -->
+    <!-- ==================== OFFICE DESK VIEW (josh, shiela, ken) ==================== -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -161,35 +161,45 @@
           <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2.5 md:gap-3">
-          <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
-            <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-base"><i class="fa-regular fa-clock"></i></div>
+        <!-- 4 Metric Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
             <div>
-              <div id="statWaiting" class="text-xl md:text-2xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-1">Pending</div>
+              <div id="statWaiting" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Pending</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
-            <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-base"><i class="fa-solid fa-wrench"></i></div>
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
             <div>
-              <div id="statActive" class="text-xl md:text-2xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-1">Working on the Bay</div>
+              <div id="statActive" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Working Bay</div>
             </div>
           </div>
-          <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
-            <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-base"><i class="fa-regular fa-circle-check"></i></div>
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-gears"></i></div>
             <div>
-              <div id="statDone" class="text-xl md:text-2xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-1">Completed</div>
+              <div id="statParts" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Waiting Parts</div>
+            </div>
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-regular fa-circle-check"></i></div>
+            <div>
+              <div id="statDone" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Completed</div>
             </div>
           </div>
         </div>
 
+        <!-- Filter Labels Bar -->
         <div class="flex items-center space-x-1.5 border-b border-slate-200 pb-2.5 text-xs font-bold text-slate-500 overflow-x-auto">
-          <button onclick="setFilter('active')" id="flt-active" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Live Active Feed</button>
-          <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3.5 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('inprogress')" id="flt-inprogress" class="px-3.5 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Working on the Bay <span id="cntProg" class="ml-1 text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
-          <button onclick="setFilter('completed')" id="flt-completed" class="px-3.5 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Completed <span id="cntDone" class="ml-1 text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('active')" id="flt-active" class="px-3 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Live Active Feed</button>
+          <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('inprogress')" id="flt-inprogress" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Working on Bay <span id="cntProg" class="ml-1 text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('waiting_parts')" id="flt-waiting_parts" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting Parts <span id="cntParts" class="ml-1 text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
+          <button onclick="setFilter('completed')" id="flt-completed" class="px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Completed <span id="cntDone" class="ml-1 text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
         </div>
 
         <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
@@ -202,9 +212,8 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles into bay, put on waiting list, or complete checklist.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles into bay, request parts with photo, or mark completed.</p>
         </div>
-        <!-- Animated / Ringing Alarm Bell Badge -->
         <div id="wsBellIcon" class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
         </div>
@@ -212,6 +221,55 @@
 
       <div id="workshopFeedList" class="space-y-3.5"></div>
     </main>
+  </div>
+
+  <!-- 3. MODAL: REQUEST CAR PARTS (WITH PHOTO UPLOAD) -->
+  <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Parts Order</span>
+          <h3 class="text-lg font-black text-slate-900">Request Car Part to Buy</h3>
+        </div>
+        <button onclick="closePartsModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm font-bold">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <input type="hidden" id="partJobId">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Part Name / Specifications *</label>
+          <textarea id="partText" rows="3" placeholder="e.g. Front Shock Absorber (KYB), Timing Belt set, 4L Synthetic Oil 5W-30..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-purple-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Take/Attach Part Photo (Optional)</label>
+          <input id="partPhotoInput" type="file" accept="image/*" capture="environment" onchange="previewPartImage(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+          <div id="partImagePreviewContainer" class="hidden mt-2 relative">
+            <img id="partImagePreview" src="" class="w-full h-36 object-cover rounded-2xl border border-slate-200 shadow-sm">
+            <button onclick="removePartImage()" class="absolute top-2 right-2 bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closePartsModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl text-xs hover:bg-slate-200">Cancel</button>
+        <button id="btnSubmitPart" onclick="submitPartsRequest()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl text-xs shadow-md shadow-purple-600/20">Submit to Office</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. IMAGE VIEWER MODAL -->
+  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4" onclick="closePhotoViewer()">
+    <div class="relative max-w-2xl w-full text-center" onclick="event.stopPropagation()">
+      <img id="modalFullImage" src="" class="max-h-[80vh] w-auto mx-auto rounded-2xl shadow-2xl border border-white/20">
+      <button onclick="closePhotoViewer()" class="absolute -top-4 -right-4 bg-white text-slate-900 rounded-full w-9 h-9 flex items-center justify-center font-black shadow-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
   </div>
 
   <script>
@@ -245,6 +303,7 @@
     let currentRole = null;
     let audioCtx = null;
     let alarmInterval = null;
+    let currentPartBase64 = null;
 
     function getAudioContext() {
       if (!audioCtx) {
@@ -259,17 +318,13 @@
       return audioCtx;
     }
 
-    // Force Continuous Alarm & Pocket Vibration until mechanic takes action
     function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
         navigator.vibrate([400, 200, 400, 200, 600]);
       }
-
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-
-        // Loud garage alert sequence (880Hz -> 1200Hz saw-tone)
         [0, 0.22, 0.44].forEach((timeOffset) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -318,14 +373,11 @@
         if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
         return;
       }
-
-      // Check if there is any car waiting outside
       const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
-
       if (hasPendingCars) {
         if (!alarmInterval) {
-          triggerContinuousAlarm(); // fire immediately
-          alarmInterval = setInterval(triggerContinuousAlarm, 2800); // Repeat every 2.8s continuously
+          triggerContinuousAlarm();
+          alarmInterval = setInterval(triggerContinuousAlarm, 2800);
         }
       } else {
         if (alarmInterval) {
@@ -394,13 +446,13 @@
 
     function setFilter(flt) {
       currentFilter = flt;
-      ['active', 'waiting', 'inprogress', 'completed'].forEach(f => {
+      ['active', 'waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(f => {
         const btn = document.getElementById(`flt-${f}`);
         if (btn) {
           if (f === flt) {
-            btn.className = "px-3.5 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap font-bold";
+            btn.className = "px-3 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap font-bold";
           } else {
-            btn.className = "px-3.5 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap font-bold";
+            btn.className = "px-3 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap font-bold";
           }
         }
       });
@@ -514,6 +566,106 @@
       }
     }
 
+    // Modal & Car Part Request Logic
+    function openPartsModal(jobId) {
+      document.getElementById('partJobId').value = jobId;
+      document.getElementById('partText').value = "";
+      removePartImage();
+      document.getElementById('partsModal').classList.remove('hidden');
+    }
+
+    function closePartsModal() {
+      document.getElementById('partsModal').classList.add('hidden');
+    }
+
+    function previewPartImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Compress image using canvas
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 800;
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          currentPartBase64 = canvas.toDataURL('image/jpeg', 0.65);
+
+          document.getElementById('partImagePreview').src = currentPartBase64;
+          document.getElementById('partImagePreviewContainer').classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removePartImage() {
+      currentPartBase64 = null;
+      document.getElementById('partPhotoInput').value = "";
+      document.getElementById('partImagePreview').src = "";
+      document.getElementById('partImagePreviewContainer').classList.add('hidden');
+    }
+
+    async function submitPartsRequest() {
+      const jobId = document.getElementById('partJobId').value;
+      const partDesc = document.getElementById('partText').value.trim();
+
+      if (!partDesc) {
+        alert("Please describe the replacement part required.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitPart');
+      btn.disabled = true;
+      btn.innerText = "Submitting...";
+
+      // Format parts data package into auto_schedule_slot / payload
+      let slotPayload = `Waiting for Car Parts: ${partDesc}`;
+      if (currentPartBase64) {
+        slotPayload += ` [IMG]${currentPartBase64}[/IMG]`;
+      }
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
+      render();
+      closePartsModal();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
+        });
+      } catch (err) {
+        console.error("Parts request error:", err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Submit to Office";
+        pullData();
+      }
+    }
+
+    function openPhotoViewer(src) {
+      document.getElementById('modalFullImage').src = src;
+      document.getElementById('photoViewerModal').classList.remove('hidden');
+    }
+
+    function closePhotoViewer() {
+      document.getElementById('photoViewerModal').classList.add('hidden');
+    }
+
     async function deleteSingleRecord(id) {
       if (!confirm("Delete this completed vehicle record permanently?")) {
         return;
@@ -549,15 +701,24 @@
       }
     }
 
+    function parsePartsInfo(slotStr) {
+      if (!slotStr) return { text: '', image: null };
+      const imgMatch = slotStr.match(/\[IMG\](.*?)\[\/IMG\]/);
+      const image = imgMatch ? imgMatch[1] : null;
+      const text = slotStr.replace(/\[IMG\].*?\[\/IMG\]/, '').replace('Waiting for Car Parts:', '').trim();
+      return { text, image };
+    }
+
     function render() {
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
+      const parts = state.filter(j => j.status === 'waiting_parts').length;
       const done = state.filter(j => j.status === 'completed').length;
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // Workshop Header Bell State
+      // Workshop Bell State
       const wsBell = document.getElementById('wsBellIcon');
       if (wsBell) {
         if (hasUnassignedWaiting) {
@@ -588,9 +749,11 @@
 
       document.getElementById('statWaiting').innerText = waiting;
       document.getElementById('statActive').innerText = inProg;
+      document.getElementById('statParts').innerText = parts;
       document.getElementById('statDone').innerText = done;
       document.getElementById('cntWaiting').innerText = waiting;
       document.getElementById('cntProg').innerText = inProg;
+      document.getElementById('cntParts').innerText = parts;
       document.getElementById('cntDone').innerText = done;
 
       // Office Remaining Bay Badge
@@ -610,7 +773,7 @@
       if (officeContainer) {
         let officeList = state;
         if (currentFilter === 'active') {
-          officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+          officeList = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
         } else {
           officeList = state.filter(j => j.status === currentFilter);
         }
@@ -624,11 +787,12 @@
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
-            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting Outside</span>`;
+            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting (Slots Full)</span>`;
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${j.auto_schedule_slot || 'Bay'}</span>`;
+            if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Part</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
 
             let deleteBtn = "";
@@ -637,6 +801,22 @@
                 <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>`;
+            }
+
+            // Parts Card Breakdown for Office
+            let partsSection = "";
+            if (j.status === 'waiting_parts') {
+              const { text, image } = parsePartsInfo(j.auto_schedule_slot);
+              partsSection = `
+                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3 rounded-2xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
+                      <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Part Requested by Workshop:
+                    </span>
+                    ${image ? `<button onclick="openPhotoViewer('${image}')" class="text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-bold px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm"><i class="fa-solid fa-image"></i> View Part Photo</button>` : ''}
+                  </div>
+                  <p class="text-xs font-bold text-purple-800 bg-white p-2.5 rounded-xl border border-purple-100">${text || 'Replacement part required'}</p>
+                </div>`;
             }
 
             return `
@@ -656,8 +836,9 @@
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${j.auto_schedule_slot ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${j.auto_schedule_slot}</p>` : ''}
+                  ${j.status !== 'waiting_parts' && j.auto_schedule_slot ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${j.auto_schedule_slot}</p>` : ''}
                 </div>
+                ${partsSection}
               </div>`;
           }).join('');
         }
@@ -666,7 +847,7 @@
       // Workshop Feed Render
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
-        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress');
+        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
 
         if (activeWorkshopJobs.length === 0) {
           wsContainer.innerHTML = `
@@ -690,26 +871,46 @@
                 </div>`;
             } else if (j.status === 'inprogress') {
               actionArea = `
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-100">
-                  <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                    ${j.auto_schedule_slot || 'Working on the Bay'}
-                  </span>
+                <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                      ${j.auto_schedule_slot || 'Working on the Bay'}
+                    </span>
+                    <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
+                      <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
+                    </button>
+                  </div>
                   <div class="flex items-center gap-2">
-                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
                       <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
                     </a>
-                    <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                    <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
                       <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
                     </button>
                   </div>
+                </div>`;
+            } else if (j.status === 'waiting_parts') {
+              const { text, image } = parsePartsInfo(j.auto_schedule_slot);
+              actionArea = `
+                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2">
+                  <div class="bg-purple-50 p-3 rounded-2xl border border-purple-100 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Part to Buy (Sent to Office):</span>
+                      ${image ? `<button onclick="openPhotoViewer('${image}')" class="text-[10px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg flex items-center gap-1"><i class="fa-solid fa-image"></i> Photo</button>` : ''}
+                    </div>
+                    <p class="text-xs font-bold text-purple-800">${text}</p>
+                  </div>
+                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
+                  </button>
                 </div>`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
 
             return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : 'border-slate-200/80 shadow-sm'}">
+              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
@@ -717,9 +918,9 @@
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.auto_schedule_slot ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
+                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.auto_schedule_slot || 'In Bay')}
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (j.auto_schedule_slot || 'In Bay'))}
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
@@ -741,7 +942,6 @@
       bootApp();
     }
 
-    // Real-time synchronization
     setInterval(pullData, 1200);
   </script>
 </body>
