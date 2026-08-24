@@ -16,6 +16,14 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
     }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .alarm-active {
+      animation: pulse-ring 1.2s infinite;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased">
@@ -153,7 +161,6 @@
           <div id="officeRemainingBayBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <!-- 3 Stat Metrics Cards -->
         <div class="grid grid-cols-3 gap-2.5 md:gap-3">
           <div class="bg-white p-3.5 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-3">
             <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-base"><i class="fa-regular fa-clock"></i></div>
@@ -178,7 +185,6 @@
           </div>
         </div>
 
-        <!-- Filter Labels Bar -->
         <div class="flex items-center space-x-1.5 border-b border-slate-200 pb-2.5 text-xs font-bold text-slate-500 overflow-x-auto">
           <button onclick="setFilter('active')" id="flt-active" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap">Live Active Feed</button>
           <button onclick="setFilter('waiting')" id="flt-waiting" class="px-3.5 py-1.5 rounded-xl hover:text-slate-900 whitespace-nowrap">Waiting <span id="cntWaiting" class="ml-1 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.2 rounded-full font-bold">0</span></button>
@@ -196,9 +202,10 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept dispatched vehicles, complete diagnostic checklist, or mark done.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles into bay, put on waiting list, or complete checklist.</p>
         </div>
-        <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
+        <!-- Animated / Ringing Alarm Bell Badge -->
+        <div id="wsBellIcon" class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
         </div>
       </div>
@@ -236,10 +243,9 @@
     let currentFilter = 'active';
     let currentUser = null;
     let currentRole = null;
-    let lastWaitingCount = null;
     let audioCtx = null;
+    let alarmInterval = null;
 
-    // Web Audio Engine (Audible Alarms + Mobile Vibration)
     function getAudioContext() {
       if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -253,53 +259,79 @@
       return audioCtx;
     }
 
-    function triggerAlarmAndVibrate(type) {
-      // Vibrate mobile device
+    // Force Continuous Alarm & Pocket Vibration until mechanic takes action
+    function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
-        if (type === 'newJob') {
-          navigator.vibrate([300, 100, 300, 100, 400]);
-        } else if (type === 'doneJob') {
-          navigator.vibrate([150, 80, 150]);
-        }
+        navigator.vibrate([400, 200, 400, 200, 600]);
       }
 
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
 
-        if (type === 'newJob') {
-          // Urgent repeating loud garage alert tone (880Hz -> 1174Hz)
-          [0, 0.2, 0.4].forEach((timeOffset) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(880, ctx.currentTime + timeOffset);
-            osc.frequency.exponentialRampToValueAtTime(1174.66, ctx.currentTime + timeOffset + 0.15);
-            gain.gain.setValueAtTime(0.4, ctx.currentTime + timeOffset);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.18);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + timeOffset);
-            osc.stop(ctx.currentTime + timeOffset + 0.18);
-          });
-        } else if (type === 'doneJob') {
-          // Success chime
-          const freqs = [523.25, 659.25, 783.99, 1046.50];
-          freqs.forEach((f, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.value = f;
-            gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + i * 0.08);
-            osc.stop(ctx.currentTime + i * 0.08 + 0.25);
-          });
-        }
+        // Loud garage alert sequence (880Hz -> 1200Hz saw-tone)
+        [0, 0.22, 0.44].forEach((timeOffset) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(880, ctx.currentTime + timeOffset);
+          osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + timeOffset + 0.16);
+          gain.gain.setValueAtTime(0.5, ctx.currentTime + timeOffset);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + timeOffset);
+          osc.stop(ctx.currentTime + timeOffset + 0.2);
+        });
       } catch (e) {
-        console.error("Audio trigger error:", e);
+        console.error("Audio error:", e);
+      }
+    }
+
+    function playDoneChime() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([150, 100, 150]);
+      }
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const freqs = [523.25, 659.25, 783.99, 1046.50];
+        freqs.forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.08);
+          osc.stop(ctx.currentTime + i * 0.08 + 0.25);
+        });
+      } catch (e) {
+        console.error("Audio error:", e);
+      }
+    }
+
+    function updateAlarmState() {
+      if (currentRole !== 'workshop') {
+        if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
+        return;
+      }
+
+      // Check if there is any car waiting outside
+      const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+
+      if (hasPendingCars) {
+        if (!alarmInterval) {
+          triggerContinuousAlarm(); // fire immediately
+          alarmInterval = setInterval(triggerContinuousAlarm, 2800); // Repeat every 2.8s continuously
+        }
+      } else {
+        if (alarmInterval) {
+          clearInterval(alarmInterval);
+          alarmInterval = null;
+        }
       }
     }
 
@@ -348,11 +380,12 @@
         topBayStripOffice.classList.remove('flex');
       }
 
-      pullData(true);
+      pullData();
     }
 
     function handleLogout() {
       if (confirm("Log out of current staff station?")) {
+        if (alarmInterval) clearInterval(alarmInterval);
         localStorage.removeItem('cartech_auth_user');
         localStorage.removeItem('cartech_auth_role');
         location.reload();
@@ -374,7 +407,7 @@
       render();
     }
 
-    async function pullData(isFirstLoad = false) {
+    async function pullData() {
       try {
         const res = await fetch(`${API_URL}?select=*&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -382,15 +415,9 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            const currentWaiting = data.filter(j => j.status === 'waiting').length;
-
-            if (lastWaitingCount !== null && !isFirstLoad && currentWaiting > lastWaitingCount) {
-              triggerAlarmAndVibrate('newJob');
-            }
-            lastWaitingCount = currentWaiting;
-
             state = data;
             render();
+            updateAlarmState();
           }
         }
       } catch (e) {
@@ -430,7 +457,6 @@
           headers: HEADERS,
           body: JSON.stringify(newCar)
         });
-        triggerAlarmAndVibrate('newJob');
       } catch (err) {
         console.error("Dispatch upload error:", err);
       } finally {
@@ -440,10 +466,10 @@
       }
     }
 
-    async function setStatus(id, newStatus) {
-      let slot = null;
+    async function setStatus(id, newStatus, customSlot = null) {
+      let slot = customSlot;
 
-      if (newStatus === 'inprogress') {
+      if (newStatus === 'inprogress' && !slot) {
         const occupiedBays = state
           .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== id)
           .map(j => {
@@ -461,18 +487,19 @@
         }
 
         if (!assignedBay) {
-          alert("All 4 bays are currently occupied. Complete an active job first.");
+          alert("All 4 bays are currently occupied. Place vehicle on Waiting list or complete an active car first.");
           return;
         }
 
         slot = `Bay #${assignedBay}`;
       } else if (newStatus === 'completed') {
         slot = "Completed Service";
-        triggerAlarmAndVibrate('doneJob');
+        playDoneChime();
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
+      updateAlarmState();
 
       try {
         await fetch(`${API_URL}?id=eq.${id}`, {
@@ -487,7 +514,6 @@
       }
     }
 
-    // Individual Delete Function for Completed / Logged Records
     async function deleteSingleRecord(id) {
       if (!confirm("Delete this completed vehicle record permanently?")) {
         return;
@@ -513,6 +539,7 @@
       }
       state = [];
       render();
+      updateAlarmState();
       try {
         await fetch(`${API_URL}?id=neq.null`, { method: "DELETE", headers: HEADERS });
       } catch (err) {
@@ -528,14 +555,15 @@
       const done = state.filter(j => j.status === 'completed').length;
 
       const availableBays = Math.max(0, TOTAL_BAYS - inProg);
+      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // Bell notification visual indicator in Workshop header
+      // Workshop Header Bell State
       const wsBell = document.getElementById('wsBellIcon');
       if (wsBell) {
-        if (waiting > 0) {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center text-lg shadow-md shadow-orange-500/30 animate-bounce";
+        if (hasUnassignedWaiting) {
+          wsBell.className = "w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 alarm-active";
         } else {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
+          wsBell.className = "w-11 h-11 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
         }
       }
 
@@ -596,11 +624,13 @@
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
-            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell animate-bounce text-amber-500"></i> Waiting</span>`;
+            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting Outside</span>`;
+            if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting (Slots Full)</span>`;
+            }
             if (j.status === 'inprogress') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${j.auto_schedule_slot || 'Bay'}</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
 
-            // Delete action for individual log cards
             let deleteBtn = "";
             if (j.status === 'completed') {
               deleteBtn = `
@@ -651,8 +681,11 @@
             if (j.status === 'waiting') {
               actionArea = `
                 <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="w-full ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3.5 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${availableBays === 0 ? 'disabled' : ''} class="flex-1 ${availableBays === 0 ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
                     <i class="fa-solid fa-check mr-1.5"></i> ${availableBays === 0 ? 'Bays Full' : 'Accept into Bay'}
+                  </button>
+                  <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
+                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
@@ -663,18 +696,20 @@
                     ${j.auto_schedule_slot || 'Working on the Bay'}
                   </span>
                   <div class="flex items-center gap-2">
-                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                    <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
                       <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
                     </a>
-                    <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                    <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
                       <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
                     </button>
                   </div>
                 </div>`;
             }
 
+            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
+
             return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-sm ${j.status === 'waiting' ? 'border-amber-300 ring-2 ring-amber-400/20' : ''}">
+              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : 'border-slate-200/80 shadow-sm'}">
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
@@ -682,9 +717,9 @@
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    j.status === 'waiting' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80'
+                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.auto_schedule_slot ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
-                    ${j.status === 'waiting' ? '<i class="fa-regular fa-bell animate-bounce text-amber-600"></i> Action Required' : (j.auto_schedule_slot || 'In Bay')}
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.auto_schedule_slot || 'In Bay')}
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
@@ -706,7 +741,8 @@
       bootApp();
     }
 
-    setInterval(() => pullData(false), 1200);
+    // Real-time synchronization
+    setInterval(pullData, 1200);
   </script>
 </body>
 </html>
