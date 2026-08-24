@@ -399,7 +399,7 @@
 
     const MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
     const TOTAL_BAYS = 4;
-    const MAX_JOBS_PER_MECHANIC = 3; // Rule: Up to 3 vehicles per mechanic
+    const MAX_JOBS_PER_MECHANIC = 3;
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
     const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
 
@@ -417,10 +417,47 @@
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
+    let wakeLock = null;
 
     const LEGACY_JOB_MAP = {
       "JB-298": "bert"
     };
+
+    // Request WakeLock to prevent browser tab sleep when phone screen is turned off or in pocket
+    async function requestScreenWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.log("WakeLock active state error:", err);
+      }
+    }
+
+    // Setup Web Notification API (For Lockscreen & Background Alerts)
+    function requestPushNotificationPermission() {
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+    }
+
+    function showSystemNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          new Notification(title, {
+            body: body,
+            icon: "team.jpg",
+            badge: "team.jpg",
+            vibrate: [600, 250, 600, 250, 800],
+            tag: "cartech-urgent-car-alert",
+            renotify: true,
+            requireInteraction: true
+          });
+        } catch (e) {
+          console.log("Push notice fallback:", e);
+        }
+      }
+    }
 
     function getRegisteredAccounts() {
       try {
@@ -483,6 +520,8 @@
       localStorage.setItem('cartech_auth_role', currentRole);
 
       getAudioContext();
+      requestPushNotificationPermission();
+      requestScreenWakeLock();
       bootApp();
     }
 
@@ -567,25 +606,44 @@
       return audioCtx;
     }
 
+    // POWERFUL HIGH-DECIBEL AUDIBLE SIREN & HEAVY MOTOR VIBRATION (FOR POCKETS & SLEEPING PHONES)
     function triggerContinuousAlarm() {
+      // Force heavy pocket motor vibration sequence
       if ("vibrate" in navigator) {
-        navigator.vibrate([400, 200, 400, 200, 600]);
+        navigator.vibrate([600, 200, 600, 200, 800, 200, 1000]);
       }
+
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-        [0, 0.22, 0.44].forEach((timeOffset) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(880, ctx.currentTime + timeOffset);
-          osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + timeOffset + 0.16);
-          gain.gain.setValueAtTime(0.5, ctx.currentTime + timeOffset);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.2);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + timeOffset);
-          osc.stop(ctx.currentTime + timeOffset + 0.2);
+
+        // Dual-oscillator amplified siren blast with piercing harmonics
+        [0, 0.25, 0.5, 0.75].forEach((timeOffset) => {
+          // Primary square wave
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'square';
+          osc1.frequency.setValueAtTime(960, ctx.currentTime + timeOffset);
+          osc1.frequency.exponentialRampToValueAtTime(1440, ctx.currentTime + timeOffset + 0.18);
+          gain1.gain.setValueAtTime(0.8, ctx.currentTime + timeOffset);
+          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.22);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(ctx.currentTime + timeOffset);
+          osc1.stop(ctx.currentTime + timeOffset + 0.22);
+
+          // Secondary harmonic sawtooth wave for deep cutting garage punch
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sawtooth';
+          osc2.frequency.setValueAtTime(480, ctx.currentTime + timeOffset);
+          osc2.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + timeOffset + 0.18);
+          gain2.gain.setValueAtTime(0.6, ctx.currentTime + timeOffset);
+          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.22);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(ctx.currentTime + timeOffset);
+          osc2.stop(ctx.currentTime + timeOffset + 0.22);
         });
       } catch (e) {
         console.error("Audio error:", e);
@@ -624,6 +682,7 @@
       }
       const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
       if (hasPendingCars) {
+        showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
         if (!alarmInterval) {
           triggerContinuousAlarm();
           alarmInterval = setInterval(triggerContinuousAlarm, 2800);
@@ -749,7 +808,6 @@
       }
     }
 
-    // Helper to count active jobs for a mechanic
     function getMechanicActiveCount(mechanicName) {
       if (!mechanicName) return 0;
       const lowerMech = mechanicName.toLowerCase();
@@ -760,7 +818,6 @@
       }).length;
     }
 
-    // Single Mechanic Ownership with Max 3 Limit Logic
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
@@ -990,7 +1047,6 @@
       }
     }
 
-    // Helper: Resolve Mechanic Name with Legacy Support
     function resolveMechanicName(job) {
       if (!job) return null;
       const rawStr = String(job.auto_schedule_slot || '');
@@ -1039,7 +1095,6 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // 5 Mechanics Roster Tracking with Active Load Counters
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
 
@@ -1052,7 +1107,6 @@
         }
       });
 
-      // A mechanic is only considered fully busy/red when they reach the 3-car limit
       const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
       const availableMechanicsCount = availableMechanics.length;
 
@@ -1066,7 +1120,7 @@
         }
       }
 
-      // Office Header 5 Mechanics Indicators (Green = Has Slot Available, Red = Full at 3/3 capacity)
+      // Office Header 5 Mechanics Indicators
       let mechHTML = "";
       MECHANIC_LIST.forEach(m => {
         const load = mechanicLoads[m];
@@ -1135,7 +1189,6 @@
                 </button>`;
             }
 
-            // Always display who is handling the vehicle
             let mechanicHighlightTag = "";
             if (assignedMechanic) {
               mechanicHighlightTag = `
