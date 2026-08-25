@@ -28,7 +28,7 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     .alarm-active {
-      animation: pulse-ring 1.2s infinite;
+      animation: pulse-ring 0.9s infinite;
     }
     .sharp-img {
       image-rendering: -webkit-optimize-contrast;
@@ -418,19 +418,19 @@
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       
-      <!-- PERMISSION ACTIVATOR (DISAPPEARS AUTOMATICALLY AFTER FIRST TAP) -->
-      <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-indigo-600 to-blue-700 text-white p-4 rounded-3xl shadow-lg border border-indigo-400/40 flex items-center justify-between">
+      <!-- PERMISSION ACTIVATOR -->
+      <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-bell text-white animate-bounce"></i>
+            <i class="fa-solid fa-bell-concierge text-white animate-bounce"></i>
           </div>
           <div>
-            <h3 class="font-black text-xs md:text-sm">Activate Ringtone & Vibrate</h3>
-            <p class="text-[11px] text-indigo-100">Tap once to grant Discord-style pocket alerts.</p>
+            <h3 class="font-black text-xs md:text-sm">Activate Fast Doorbell Alert</h3>
+            <p class="text-[11px] text-orange-100">Tap once to test fast doorbell ring & heavy vibrate.</p>
           </div>
         </div>
-        <button onclick="requestPocketAlertPermission()" class="bg-white text-indigo-950 hover:bg-slate-100 font-black px-4 py-2.5 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-play text-indigo-600 text-[10px]"></i> Test Alert
+        <button onclick="requestPocketAlertPermission()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-4 py-2.5 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-play text-orange-600 text-[10px]"></i> Test Doorbell
         </button>
       </div>
 
@@ -724,7 +724,6 @@
       }
     }
 
-    // DISCORD-STYLE NOTIFICATION DISPATCHER (WAKES UP BACKGROUND SERVICE)
     function showSystemNotification(title, body) {
       if ("Notification" in window && Notification.permission === "granted") {
         try {
@@ -738,7 +737,7 @@
               body: body,
               icon: "team.jpg",
               badge: "team.jpg",
-              vibrate: [1000, 250, 1000, 250, 1000, 500, 1500, 300, 1500],
+              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
               tag: "cartech-urgent-floor-alarm",
               renotify: true,
               requireInteraction: true
@@ -748,7 +747,7 @@
               body: body,
               icon: "team.jpg",
               badge: "team.jpg",
-              vibrate: [1000, 250, 1000, 250, 1000, 500, 1500, 300, 1500],
+              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
               tag: "cartech-urgent-floor-alarm",
               renotify: true,
               requireInteraction: true
@@ -771,36 +770,42 @@
       return audioCtx;
     }
 
-    // PLEASANT 4-STAGE HARMONIC MARIMBA RINGTONE
-    function triggerMelodicRingtone() {
+    // FAST HIGH-PITCH "DING-DONG" DOORBELL / RING SYNTHESIZER
+    function triggerFastDoorbellSound() {
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
 
-        // Melodic notes in Hertz: [E5, G#5, B5, E6] (Crisp bell chime)
-        const notes = [659.25, 830.61, 987.77, 1318.51];
-        notes.forEach((freq, i) => {
-          const startTime = ctx.currentTime + (i * 0.11);
+        // Sequence: Double Ding-Dong Chime [Ding (High), Dong (Low), Ding (High), Dong (Low)]
+        const doorbellChimes = [
+          { f: 880.00, start: 0.00, dur: 0.28 },  // A5 (Ding)
+          { f: 659.25, start: 0.18, dur: 0.38 },  // E5 (Dong)
+          { f: 1046.50, start: 0.48, dur: 0.28 }, // C6 (Ding - High)
+          { f: 783.99, start: 0.66, dur: 0.45 }   // G5 (Dong - Deep)
+        ];
+
+        doorbellChimes.forEach(chime => {
+          const startTime = ctx.currentTime + chime.start;
           
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
 
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, startTime);
+          osc.frequency.setValueAtTime(chime.f, startTime);
 
+          // Rich bell strike envelope
           gain.gain.setValueAtTime(0.01, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.9, startTime + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+          gain.gain.exponentialRampToValueAtTime(0.95, startTime + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + chime.dur);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(startTime);
-          osc.stop(startTime + 0.45);
+          osc.stop(startTime + chime.dur);
         });
       } catch (e) {}
     }
 
-    // TAP ONCE TO ACTIVATE (AUTO HIDES IMMEDIATELY)
     function requestPocketAlertPermission() {
       localStorage.setItem('cartech_whistle_permission_granted', 'true');
       
@@ -811,19 +816,19 @@
       requestPushNotificationPermission();
       requestScreenWakeLock();
       
-      triggerMelodicRingtone();
+      triggerFastDoorbellSound();
       if ("vibrate" in navigator) {
-        navigator.vibrate([1000, 200, 1000, 200, 1500]);
+        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
       }
-      showSystemNotification("🚨 CARTECH ALARM VERIFIED", "Background chime and pocket vibration are fully unlocked.");
+      showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert will now ring doorbell and vibrate fast!");
     }
 
-    // CONTINUOUS VIBRATION & CHIME LOOP WHILE CAR IS WAITING
+    // CONTINUOUS FAST DOORBELL & HARDWARE VIBRATION LOOP
     function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
-        navigator.vibrate([1000, 250, 1000, 250, 1500]);
+        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
       }
-      triggerMelodicRingtone();
+      triggerFastDoorbellSound();
     }
 
     function playDoneChime() {
@@ -856,10 +861,11 @@
       }
       const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
       if (hasPendingCars) {
-        showSystemNotification("🚨 CAR DISPATCHED ON FLOOR!", "New vehicle waiting for service. Open app to accept into Bay.");
+        showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
         if (!alarmInterval) {
           triggerContinuousAlarm();
-          alarmInterval = setInterval(triggerContinuousAlarm, 2800);
+          // Faster loop rate: repeats every 1.6s for immediate mechanic notice
+          alarmInterval = setInterval(triggerContinuousAlarm, 1600);
         }
       } else {
         if (alarmInterval) {
@@ -1048,7 +1054,6 @@
         topMechanicsStripOffice.classList.add('hidden');
         topMechanicsStripOffice.classList.remove('flex');
         
-        // Show test activation card only if not activated yet
         const whistleCard = document.getElementById('whistlePermissionCard');
         if (whistleCard) {
           if (localStorage.getItem('cartech_whistle_permission_granted') === 'true') {
@@ -1058,7 +1063,6 @@
           }
         }
 
-        // Show install banner only if not standalone app
         const banner = document.getElementById('pwaInstallBanner');
         if (banner) {
           if (isAppAlreadyInstalled()) {
@@ -1982,6 +1986,7 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
+                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
                     ${officeMsg ? `
                       <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                         <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
