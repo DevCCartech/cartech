@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CARTECH - Hybrid Queue</title>
   
-  <!-- PWA Manifest & Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -53,7 +52,6 @@
         </div>
       </div>
 
-      <!-- FORM 1: LOGIN -->
       <div id="authBoxLogin" class="space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-orange-600 tracking-wider">Staff Security Portal</span>
@@ -100,7 +98,7 @@
         </div>
       </div>
 
-      <!-- FORM 2: REGISTER ACCOUNT -->
+      <!-- FORM 2: REGISTER -->
       <div id="authBoxRegister" class="hidden space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Registration</span>
@@ -150,7 +148,7 @@
         </div>
       </div>
 
-      <!-- FORM 3: FORGOT PASSWORD -->
+      <!-- FORM 3: FORGOT -->
       <div id="authBoxForgot" class="hidden space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-amber-600 tracking-wider">Account Recovery</span>
@@ -161,7 +159,7 @@
         <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2 text-center">
           <i class="fa-solid fa-headset text-2xl text-amber-600 mb-1"></i>
           <p class="font-bold text-sm">Ask Developer to Change Password</p>
-          <p class="text-amber-800 leading-relaxed">For shop security, staff cannot reset passwords directly. Please contact the <strong>Developer</strong> to change or recover your password from the Developer Terminal.</p>
+          <p class="text-amber-800 leading-relaxed">For shop security, staff cannot reset passwords directly. Please contact the <strong>Developer</strong> to change or recover your password.</p>
         </div>
 
         <div class="text-center pt-2 border-t border-slate-100">
@@ -193,13 +191,11 @@
         </div>
       </div>
 
-      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP -->
       <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
-      <!-- Header Action Buttons -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button id="btnHeaderPurge" onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
           <i class="fa-solid fa-trash-can"></i>
@@ -210,7 +206,7 @@
       </div>
     </header>
 
-    <!-- ==================== DEVELOPER COMMAND & ADMIN PERFORMANCE MONITORING VIEW ==================== -->
+    <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -230,7 +226,6 @@
         </div>
       </div>
 
-      <!-- Metric KPI Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div id="devRegisteredCard" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
@@ -262,7 +257,6 @@
         </div>
       </div>
 
-      <!-- WEEKLY MONITORING & MECHANIC LEADERBOARD -->
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-100 pb-3">
           <div>
@@ -292,7 +286,6 @@
           </div>
         </div>
 
-        <!-- Leaderboard Bars -->
         <div>
           <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-2.5">Mechanic Individual Handled Leaderboard:</h4>
           <div id="mechanicPerformanceBars" class="space-y-2"></div>
@@ -300,7 +293,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Live Active Staff & Online Presence Table -->
         <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
             <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity (Cross-Device)</h3>
@@ -309,7 +301,6 @@
           <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
         </div>
 
-        <!-- Cloud Registered Accounts & Flow Control -->
         <div id="devExclusiveControlPanel" class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
             <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Registered Staff & Developer Flow Control</h3>
@@ -338,7 +329,7 @@
       </div>
     </main>
 
-    <!-- ==================== OFFICE DESK VIEW (ONLY: shiela, josh, ken) ==================== -->
+    <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
       <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -389,7 +380,6 @@
           <div id="officeRemainingMechanicBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <!-- 4 TAPPABLE METRIC CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
           <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
             <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
@@ -425,10 +415,10 @@
       </div>
     </main>
 
-    <!-- ==================== MECHANIC WORKSHOP (ONLY: charl, bert, nel, rocky, mark) ==================== -->
+    <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       
-      <!-- MOBILE APP INSTALL BANNER (AUTOMATICALLY HIDES ONCE INSTALLED OR RUNNING AS APP) -->
+      <!-- INSTALL BANNER -->
       <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -464,7 +454,7 @@
     </main>
   </div>
 
-  <!-- 3. MODAL: REQUEST MULTIPLE CAR PARTS WITH MULTI-PHOTO UPLOAD -->
+  <!-- MODAL: PARTS -->
   <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -499,7 +489,7 @@
     </div>
   </div>
 
-  <!-- 4. FULL HIGH-RESOLUTION LIGHTBOX VIEWER -->
+  <!-- LIGHTBOX -->
   <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
@@ -550,6 +540,7 @@
     let uploadedPartImages = [];
     let wakeLock = null;
     let deferredPwaPrompt = null;
+    let swRegistration = null;
 
     let cachedCloudAccounts = { 
       "dev": "admin123", 
@@ -562,7 +553,6 @@
       "JB-298": "bert"
     };
 
-    // CHECK IF APP IS RUNNING IN STANDALONE (INSTALLED) MODE
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.navigator.standalone === true || 
@@ -570,23 +560,20 @@
              localStorage.getItem('cartech_app_installed') === 'true';
     }
 
-    // REGISTER SERVICE WORKER
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch((err) => {
-          console.log('ServiceWorker registration ignored/failed: ', err);
-        });
+        navigator.serviceWorker.register('sw.js').then((reg) => {
+          swRegistration = reg;
+        }).catch((err) => {});
       });
     }
 
-    // DETECT APP INSTALLATION EVENT
     window.addEventListener('appinstalled', () => {
       localStorage.setItem('cartech_app_installed', 'true');
       const banner = document.getElementById('pwaInstallBanner');
       if (banner) banner.classList.add('hidden');
     });
 
-    // CAPTURE PWA INSTALL PROMPT EVENT
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
@@ -596,7 +583,6 @@
       }
     });
 
-    // TRIGGER INSTALL & REMOVE BANNER AUTOMATICALLY
     function triggerPwaInstallPrompt() {
       localStorage.setItem('cartech_app_installed', 'true');
       const banner = document.getElementById('pwaInstallBanner');
@@ -623,7 +609,6 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // 1. CLOUD SYNC: FETCH PASSWORDS & PRESENCE
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -646,12 +631,9 @@
             }
           });
         }
-      } catch (e) {
-        console.error("Cloud account sync error:", e);
-      }
+      } catch (e) {}
     }
 
-    // 2. CLOUD SYNC: SAVE ACCOUNT / PASSWORD UPDATE
     async function saveAccountToCloud(username, password) {
       cachedCloudAccounts[username] = password;
       localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
@@ -677,12 +659,9 @@
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(payload)
         });
-      } catch (err) {
-        console.error("Save account error:", err);
-      }
+      } catch (err) {}
     }
 
-    // 3. CLOUD SYNC: REAL-TIME HEARTBEAT
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
       if (!currentUser || !currentRole) return;
 
@@ -732,15 +711,22 @@
     function showSystemNotification(title, body) {
       if ("Notification" in window && Notification.permission === "granted") {
         try {
-          new Notification(title, {
-            body: body,
-            icon: "team.jpg",
-            badge: "team.jpg",
-            vibrate: [600, 250, 600, 250, 800],
-            tag: "cartech-urgent-car-alert",
-            renotify: true,
-            requireInteraction: true
-          });
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: "CAR_WAITING_ALERT",
+              msg: body
+            });
+          } else {
+            new Notification(title, {
+              body: body,
+              icon: "team.jpg",
+              badge: "team.jpg",
+              vibrate: [800, 300, 800, 300, 1200, 300, 1500],
+              tag: "cartech-urgent-car-alert",
+              renotify: true,
+              requireInteraction: true
+            });
+          }
         } catch (e) {}
       }
     }
@@ -763,7 +749,6 @@
       }
     }
 
-    // LOGIN ACTION
     async function handleAuthLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnLoginSubmit');
@@ -813,7 +798,6 @@
       bootApp();
     }
 
-    // REGISTER ACCOUNT ACTION
     async function handleAuthRegister(e) {
       e.preventDefault();
       const btn = document.getElementById('btnRegSubmit');
@@ -886,37 +870,26 @@
       return audioCtx;
     }
 
+    // HEAVY HARDWARE SIREN & POCKET VIBRATION LOOP
     function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
-        navigator.vibrate([600, 200, 600, 200, 800, 200, 1000]);
+        navigator.vibrate([1000, 300, 1000, 300, 1500]);
       }
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-        [0, 0.25, 0.5, 0.75].forEach((timeOffset) => {
+        [0, 0.22, 0.44, 0.66, 0.88].forEach((timeOffset) => {
           const osc1 = ctx.createOscillator();
           const gain1 = ctx.createGain();
-          osc1.type = 'square';
-          osc1.frequency.setValueAtTime(960, ctx.currentTime + timeOffset);
-          osc1.frequency.exponentialRampToValueAtTime(1440, ctx.currentTime + timeOffset + 0.18);
-          gain1.gain.setValueAtTime(0.8, ctx.currentTime + timeOffset);
-          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.22);
+          osc1.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(1100, ctx.currentTime + timeOffset);
+          osc1.frequency.exponentialRampToValueAtTime(1650, ctx.currentTime + timeOffset + 0.18);
+          gain1.gain.setValueAtTime(0.9, ctx.currentTime + timeOffset);
+          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.20);
           osc1.connect(gain1);
           gain1.connect(ctx.destination);
           osc1.start(ctx.currentTime + timeOffset);
-          osc1.stop(ctx.currentTime + timeOffset + 0.22);
-
-          const osc2 = ctx.createOscillator();
-          const gain2 = ctx.createGain();
-          osc2.type = 'sawtooth';
-          osc2.frequency.setValueAtTime(480, ctx.currentTime + timeOffset);
-          osc2.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + timeOffset + 0.18);
-          gain2.gain.setValueAtTime(0.6, ctx.currentTime + timeOffset);
-          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.22);
-          osc2.connect(gain2);
-          gain2.connect(ctx.destination);
-          osc2.start(ctx.currentTime + timeOffset);
-          osc2.stop(ctx.currentTime + timeOffset + 0.22);
+          osc1.stop(ctx.currentTime + timeOffset + 0.20);
         });
       } catch (e) {}
     }
@@ -951,10 +924,10 @@
       }
       const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
       if (hasPendingCars) {
-        showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
+        showSystemNotification("🚨 CAR WAITING ON FLOOR!", "New vehicle dispatched. Accept into Bay now.");
         if (!alarmInterval) {
           triggerContinuousAlarm();
-          alarmInterval = setInterval(triggerContinuousAlarm, 2800);
+          alarmInterval = setInterval(triggerContinuousAlarm, 2200);
         }
       } else {
         if (alarmInterval) {
@@ -1017,7 +990,6 @@
         topMechanicsStripOffice.classList.add('hidden');
         topMechanicsStripOffice.classList.remove('flex');
         
-        // Show banner only if app is NOT already installed
         const banner = document.getElementById('pwaInstallBanner');
         if (banner) {
           if (isAppAlreadyInstalled()) {
@@ -1840,7 +1812,6 @@
         }
       }
 
-      // Workshop Feed Render
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -1942,7 +1913,6 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
                     ${officeMsg ? `
                       <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                         <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
