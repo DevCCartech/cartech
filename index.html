@@ -418,6 +418,22 @@
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       
+      <!-- PERMISSION ACTIVATOR & TEST BUTTON -->
+      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-lg">
+            <i class="fa-solid fa-volume-high"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-xs md:text-sm text-slate-900">Whistle Ringtone & Vibration</h3>
+            <p class="text-[11px] text-slate-500">Tap to allow background pocket alerts & test ringtone.</p>
+          </div>
+        </div>
+        <button onclick="requestPocketAlertPermission()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-play text-[10px]"></i> Test / Allow
+        </button>
+      </div>
+
       <!-- INSTALL BANNER -->
       <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -721,7 +737,7 @@
               body: body,
               icon: "team.jpg",
               badge: "team.jpg",
-              vibrate: [800, 300, 800, 300, 1200, 300, 1500],
+              vibrate: [600, 200, 600, 200, 1000, 400, 1000],
               tag: "cartech-urgent-car-alert",
               renotify: true,
               requireInteraction: true
@@ -729,6 +745,17 @@
           }
         } catch (e) {}
       }
+    }
+
+    function requestPocketAlertPermission() {
+      getAudioContext();
+      requestPushNotificationPermission();
+      requestScreenWakeLock();
+      triggerWhistleRingtone();
+      if ("vibrate" in navigator) {
+        navigator.vibrate([600, 200, 600, 200, 1000]);
+      }
+      alert("✅ Pocket alert sound, vibration, and background notifications are now active!");
     }
 
     function switchAuthForm(type) {
@@ -870,28 +897,41 @@
       return audioCtx;
     }
 
-    // HEAVY HARDWARE SIREN & POCKET VIBRATION LOOP
-    function triggerContinuousAlarm() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([1000, 300, 1000, 300, 1500]);
-      }
+    // REALISTIC TWO-TONE WHISTLE RINGTONE (SINE HARMONICS)
+    function triggerWhistleRingtone() {
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-        [0, 0.22, 0.44, 0.66, 0.88].forEach((timeOffset) => {
-          const osc1 = ctx.createOscillator();
-          const gain1 = ctx.createGain();
-          osc1.type = 'sawtooth';
-          osc1.frequency.setValueAtTime(1100, ctx.currentTime + timeOffset);
-          osc1.frequency.exponentialRampToValueAtTime(1650, ctx.currentTime + timeOffset + 0.18);
-          gain1.gain.setValueAtTime(0.9, ctx.currentTime + timeOffset);
-          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.20);
-          osc1.connect(gain1);
-          gain1.connect(ctx.destination);
-          osc1.start(ctx.currentTime + timeOffset);
-          osc1.stop(ctx.currentTime + timeOffset + 0.20);
+
+        const whistleBursts = [0, 0.38];
+        whistleBursts.forEach((startTime) => {
+          // Whistle tone slide 1600Hz -> 2400Hz -> 2100Hz
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1600, ctx.currentTime + startTime);
+          osc.frequency.exponentialRampToValueAtTime(2450, ctx.currentTime + startTime + 0.12);
+          osc.frequency.exponentialRampToValueAtTime(2150, ctx.currentTime + startTime + 0.28);
+
+          gain.gain.setValueAtTime(0.01, ctx.currentTime + startTime);
+          gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + startTime + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + startTime + 0.30);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + startTime);
+          osc.stop(ctx.currentTime + startTime + 0.30);
         });
       } catch (e) {}
+    }
+
+    // HARDWARE VIBRATION & CONTINUOUS WHISTLE LOOP
+    function triggerContinuousAlarm() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([600, 200, 600, 200, 1000, 400, 1000]);
+      }
+      triggerWhistleRingtone();
     }
 
     function playDoneChime() {
@@ -927,7 +967,7 @@
         showSystemNotification("🚨 CAR WAITING ON FLOOR!", "New vehicle dispatched. Accept into Bay now.");
         if (!alarmInterval) {
           triggerContinuousAlarm();
-          alarmInterval = setInterval(triggerContinuousAlarm, 2200);
+          alarmInterval = setInterval(triggerContinuousAlarm, 2600);
         }
       } else {
         if (alarmInterval) {
