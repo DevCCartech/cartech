@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <!-- FORM 2: REGISTER ACCOUNT (NO DEFAULT PASSWORDS, ONE-TIME REGISTRATION) -->
+      <!-- FORM 2: REGISTER ACCOUNT -->
       <div id="authBoxRegister" class="hidden space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Registration</span>
@@ -143,7 +143,7 @@
         </div>
       </div>
 
-      <!-- FORM 3: FORGOT PASSWORD (DIRECTS TO DEVELOPER) -->
+      <!-- FORM 3: FORGOT PASSWORD -->
       <div id="authBoxForgot" class="hidden space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-amber-600 tracking-wider">Account Recovery</span>
@@ -482,7 +482,6 @@
     let uploadedPartImages = [];
     let wakeLock = null;
 
-    // Only dev/admin are pre-registered; all other staff must create their account once
     let cachedCloudAccounts = { 
       "dev": "admin123", 
       "admin": "admin123"
@@ -494,7 +493,7 @@
       "JB-298": "bert"
     };
 
-    // 1. CLOUD SYNC: FETCH PERMANENT REGISTERED PASSWORDS & LIVE PRESENCE
+    // 1. CLOUD SYNC: FETCH PASSWORDS & PRESENCE
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -522,7 +521,7 @@
       }
     }
 
-    // 2. CLOUD SYNC: SAVE NEW ACCOUNT OR PASSWORD UPDATE
+    // 2. CLOUD SYNC: SAVE ACCOUNT / PASSWORD UPDATE
     async function saveAccountToCloud(username, password) {
       cachedCloudAccounts[username] = password;
       localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
@@ -559,7 +558,7 @@
 
       cachedCloudPresence[currentUser] = {
         role: currentRole,
-        lastSeen: isExplicitOnline ? Date.now() : 0 // 0 immediately marks staff as Offline on logout
+        lastSeen: isExplicitOnline ? Date.now() : 0
       };
 
       const payload = {
@@ -684,7 +683,7 @@
       bootApp();
     }
 
-    // REGISTER ACCOUNT ACTION (One-Time Creation Enforcement)
+    // REGISTER ACCOUNT ACTION
     async function handleAuthRegister(e) {
       e.preventDefault();
       const btn = document.getElementById('btnRegSubmit');
@@ -702,13 +701,12 @@
       successElem.classList.add('hidden');
 
       if (!AUTHORIZED_ROSTER[exactName]) {
-        errorMsg.innerText = "You are not allowed to create an account. (Name not on CARTECH authorized roster)";
+        errorMsg.innerText = "You are not allowed to create an account. (Name not on CARTECH roster)";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
       }
 
-      // Check if account is already registered
       if (cachedCloudAccounts[exactName]) {
         errorMsg.innerText = "You already created an account. Please sign in or ask the Developer if you forgot your password.";
         errorElem.classList.remove('hidden');
@@ -733,7 +731,6 @@
       }, 1200);
     }
 
-    // DEVELOPER QUICK CHANGE PASSWORD FOR STAFF
     async function devChangeStaffPassword(username) {
       const currentPass = cachedCloudAccounts[username] || 'Not Set';
       const newPass = prompt(`Set new password for staff member [${username.toUpperCase()}]:`, currentPass);
@@ -881,11 +878,10 @@
       document.getElementById('viewOffice').classList.remove('hidden');
     }
 
-    // INSTANT CLOUD LOGOUT PRESENCE SYNC
     async function handleLogout() {
       if (confirm("Log out of current staff station?")) {
         if (alarmInterval) clearInterval(alarmInterval);
-        await sendPresenceHeartbeat(false); // Sync status to offline across all devices
+        await sendPresenceHeartbeat(false);
         localStorage.removeItem('cartech_auth_user');
         localStorage.removeItem('cartech_auth_role');
         location.reload();
@@ -1082,6 +1078,75 @@
       }
     }
 
+    // TWO-WAY OFFICE & MECHANIC PARTS REPLY FLOW
+    async function officeSendPartsReply(jobId) {
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
+
+      const replyText = prompt("Enter reply / price update for mechanic (e.g. 'I will ask the customer first regarding the pricelist'):", "I will ask first customer and pricelist");
+      if (!replyText || !replyText.trim()) return;
+
+      let currentSlot = currentItem.auto_schedule_slot || "";
+      // Clean previous reply tag if any and append new one
+      currentSlot = currentSlot.replace(/\[OFFICE_MSG:.*?\]/gi, '');
+      currentSlot += ` [OFFICE_MSG:${replyText.trim()}]`;
+
+      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: currentSlot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ auto_schedule_slot: currentSlot })
+        });
+      } catch (e){}
+      pullData();
+    }
+
+    // OFFICE MARKS PART READY TO PICK UP -> AUTOMATICALLY ADVANCES MECHANIC TO BAY WORK
+    async function officePartsReadyToPickUp(jobId) {
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
+
+      if (!confirm("Notify mechanic that parts are ready to pick up and automatically resume work in bay?")) {
+        return;
+      }
+
+      let assignedBay = null;
+      const occupiedBays = state
+        .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== jobId)
+        .map(j => {
+          const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
+          return match ? parseInt(match[1], 10) : null;
+        })
+        .filter(n => n !== null);
+
+      for (let b = 1; b <= TOTAL_BAYS; b++) {
+        if (!occupiedBays.includes(b)) {
+          assignedBay = b;
+          break;
+        }
+      }
+
+      const bayStr = assignedBay ? `Bay #${assignedBay}` : 'Bay #1';
+      const resolvedMech = resolveMechanicName(currentItem) || 'CHARL';
+      const partsHistory = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
+      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up! Part received, continue to work.]` + partsHistory;
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: newSlot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: newSlot })
+        });
+      } catch (e){}
+      pullData();
+    }
+
     function openPartsModal(jobId) {
       document.getElementById('partJobId').value = jobId;
       document.getElementById('partText').value = "";
@@ -1239,7 +1304,7 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null };
+      if (!rawStr) return { text: '', images: [], mech: null, officeMsg: null };
       let images = [];
       
       let targetStr = rawStr;
@@ -1259,14 +1324,18 @@
       const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
       const mech = mMatch ? mMatch[1].toUpperCase() : null;
 
+      const offMsgMatch = rawStr.match(/\[OFFICE_MSG:(.*?)\]/i);
+      const officeMsg = offMsgMatch ? offMsgMatch[1] : null;
+
       const text = targetStr
         .replace(/\[IMGS\].*?\[\/IMGS\]/, '')
         .replace(/\[IMG\].*?\[\/IMG\]/, '')
         .replace(/\[MECH:.*?\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
         .replace('Waiting for Car Parts:', '')
         .trim();
 
-      return { text, images, mech };
+      return { text, images, mech, officeMsg };
     }
 
     function renderDeveloperAnalytics() {
@@ -1286,7 +1355,7 @@
         const userRole = AUTHORIZED_ROSTER[user];
         const record = cachedCloudPresence[user];
         const lastSeen = record ? record.lastSeen : 0;
-        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0; // Active within 15 seconds
+        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
         if (isOnline) onlineCount++;
 
         const isRegistered = !!registeredUsers[user];
@@ -1312,7 +1381,6 @@
       document.getElementById('devOnlineStaffCount').innerText = onlineCount;
       document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
 
-      // Render Registered Accounts Table with developer Edit button
       let accHTML = "";
       accountsList.forEach(u => {
         accHTML += `
@@ -1425,7 +1493,7 @@
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
@@ -1453,7 +1521,7 @@
             }
 
             let partsSection = "";
-            const { text: partText, images: partImages } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
 
             if (j.status === 'waiting_parts') {
               const photosThumbnails = partImages.map(img => `
@@ -1461,7 +1529,7 @@
               `).join('');
 
               partsSection = `
-                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3 rounded-2xl space-y-2">
+                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
                   <div class="flex items-center justify-between">
                     <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
                       <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
@@ -1470,6 +1538,26 @@
                   </div>
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                  
+                  <!-- Office Reply Status Display -->
+                  ${officeMsg ? `
+                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+                      <i class="fa-solid fa-comment-dots text-amber-600 mt-0.5"></i>
+                      <div>
+                        <span class="font-bold text-[10px] uppercase text-amber-700">Office Reply to Mechanic:</span>
+                        <p class="font-semibold text-xs mt-0.5">${officeMsg}</p>
+                      </div>
+                    </div>` : ''}
+
+                  <!-- Office Interactive Reply Controls -->
+                  <div class="flex items-center gap-2 pt-1">
+                    <button onclick="officeSendPartsReply('${j.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
+                    </button>
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-box-check"></i> Part Ready (Receive & Resume)
+                    </button>
+                  </div>
                 </div>`;
             } else if (j.status === 'completed' && partText) {
               const photosThumbnails = partImages.map(img => `
@@ -1489,7 +1577,7 @@
                 </div>`;
             }
 
-            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
@@ -1550,8 +1638,10 @@
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-              
+              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+              const offMsgMatch = String(j.auto_schedule_slot || '').match(/\[OFFICE_MSG:(.*?)\]/i);
+              const officeNotice = offMsgMatch ? offMsgMatch[1] : null;
+
               if (isMyJob) {
                 actionArea = `
                   <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
@@ -1564,6 +1654,13 @@
                         <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
                       </button>
                     </div>
+
+                    ${officeNotice ? `
+                      <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span class="font-bold">${officeNotice}</span>
+                      </div>` : ''}
+
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
@@ -1584,7 +1681,7 @@
                   </div>`;
               }
             } else if (j.status === 'waiting_parts') {
-              const { text, images } = parsePartsInfo(j.auto_schedule_slot);
+              const { text, images, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
               const photosThumbnails = images.map(img => `
                 <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
@@ -1606,13 +1703,22 @@
                     </div>
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+
+                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
+                    ${officeMsg ? `
+                      <div class="mt-2 p-2 bg-amber-100/90 rounded-xl border border-amber-300 text-xs text-amber-900 space-y-0.5">
+                        <span class="font-extrabold text-[10px] uppercase text-amber-800 flex items-center gap-1">
+                          <i class="fa-solid fa-bell text-amber-600"></i> Note from Front Desk / Office:
+                        </span>
+                        <p class="font-bold text-xs">${officeMsg}</p>
+                      </div>` : ''}
                   </div>
                   ${resumeBtn}
                 </div>`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
@@ -1638,7 +1744,6 @@
       }
     }
 
-    // Startup cloud synchronization
     syncSystemCloudRecords();
 
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
@@ -1650,7 +1755,6 @@
       bootApp();
     }
 
-    // Real-time polling & presence broadcast every 1.5s
     setInterval(pullData, 1500);
   </script>
 </body>
