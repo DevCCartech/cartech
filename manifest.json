@@ -1,0 +1,20 @@
+{
+  "name": "CARTECH PRO",
+  "short_name": "CARTECH",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1329",
+  "theme_color": "#0b1329",
+  "icons": [
+    {
+      "src": "team.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "team.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
