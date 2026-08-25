@@ -1,6 +1,6 @@
 {
   "id": "/cartech/",
-  "name": "CARTECH PRO - Workshop Queue",
+  "name": "CARTECH PRO",
   "short_name": "CARTECH",
   "description": "Automotive shop real-time repair and bay management terminal.",
   "start_url": "./index.html",
@@ -12,38 +12,38 @@
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "https://img.icons8.com/color/192/wrench.png",
+      "src": "team.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "https://img.icons8.com/color/512/wrench.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "https://img.icons8.com/color/512/wrench.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "https://img.icons8.com/color/512/wrench.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "CARTECH Queue Terminal"
+      "label": "CARTECH Team Terminal"
     },
     {
-      "src": "https://img.icons8.com/color/512/wrench.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "CARTECH Desktop Overview"
+      "label": "CARTECH Team Overview"
     }
   ]
 }
