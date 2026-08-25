@@ -216,7 +216,7 @@
         </div>
       </div>
 
-      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office View) -->
+      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office & Dev View) -->
       <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
@@ -232,6 +232,95 @@
         </button>
       </div>
     </header>
+
+    <!-- ==================== DEVELOPER COMMAND & ANALYTICS VIEW (ONLY: dev, admin) ==================== -->
+    <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100"><i class="fa-solid fa-code mr-1"></i> Developer Control Engine</span>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">System Analytics & Flow Control</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Live monitoring of active staff, registered accounts, bay performance, and system throughput.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
+          </button>
+          <button onclick="switchDevToOfficeSim()" class="bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition">
+            <i class="fa-solid fa-desktop"></i> Open Front Desk View
+          </button>
+        </div>
+      </div>
+
+      <!-- Metric KPI Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
+          <div>
+            <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
+            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-signal"></i></div>
+          <div>
+            <div id="devOnlineStaffCount" class="text-xl font-black text-slate-900">0</div>
+            <div class="text-[11px] font-semibold text-slate-400">Online Staff</div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-car-side"></i></div>
+          <div>
+            <div id="devTotalQueueJobs" class="text-xl font-black text-slate-900">0</div>
+            <div class="text-[11px] font-semibold text-slate-400">Total Cars In Database</div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div>
+            <div id="devTotalPartsReq" class="text-xl font-black text-slate-900">0</div>
+            <div class="text-[11px] font-semibold text-slate-400">Parts Orders Logged</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Live Active Staff & Online Presence Table -->
+        <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Staff Roster & Activity</h3>
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Heartbeat Active</span>
+          </div>
+          <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
+        </div>
+
+        <!-- System Flow & Override Manager -->
+        <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Flow Override & Database Control</h3>
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Direct Pipeline</span>
+          </div>
+          
+          <div class="space-y-3">
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+              <p class="font-bold text-slate-900">Developer Flow Controls:</p>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-plus text-xs"></i> Inject Test Job
+                </button>
+                <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-trash-can text-xs"></i> Purge All Records
+                </button>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+              <p class="font-bold text-slate-900">Manage Registered Passwords:</p>
+              <div id="devRegisteredAccountsContainer" class="space-y-1.5 max-h-[160px] overflow-y-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
 
     <!-- ==================== OFFICE DESK VIEW (ONLY: shiela, josh, ken) ==================== -->
     <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
@@ -281,7 +370,6 @@
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
             <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">Vehicle Queue</h2>
           </div>
-          <!-- Available Mechanics Badge in Office -->
           <div id="officeRemainingMechanicBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
@@ -386,7 +474,10 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
+    // AUTHORIZED ROSTER WITH DEVELOPER ROLE
     const AUTHORIZED_ROSTER = {
+      "dev": "developer",
+      "admin": "developer",
       "shiela": "office",
       "josh": "office",
       "ken": "office",
@@ -423,18 +514,26 @@
       "JB-298": "bert"
     };
 
-    // Request WakeLock to prevent browser tab sleep when phone screen is turned off or in pocket
+    // Presence & Heartbeat Tracking
+    function updateStaffHeartbeat(username, role) {
+      try {
+        const presence = JSON.parse(localStorage.getItem('cartech_staff_presence') || '{}');
+        presence[username] = {
+          role: role,
+          lastSeen: Date.now()
+        };
+        localStorage.setItem('cartech_staff_presence', JSON.stringify(presence));
+      } catch (e){}
+    }
+
     async function requestScreenWakeLock() {
       try {
         if ('wakeLock' in navigator) {
           wakeLock = await navigator.wakeLock.request('screen');
         }
-      } catch (err) {
-        console.log("WakeLock active state error:", err);
-      }
+      } catch (err) {}
     }
 
-    // Setup Web Notification API (For Lockscreen & Background Alerts)
     function requestPushNotificationPermission() {
       if ("Notification" in window && Notification.permission !== "granted") {
         Notification.requestPermission();
@@ -453,18 +552,16 @@
             renotify: true,
             requireInteraction: true
           });
-        } catch (e) {
-          console.log("Push notice fallback:", e);
-        }
+        } catch (e) {}
       }
     }
 
     function getRegisteredAccounts() {
       try {
         const accs = localStorage.getItem('cartech_registered_users');
-        return accs ? JSON.parse(accs) : { "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+        return accs ? JSON.parse(accs) : { "dev": "admin123", "admin": "admin123", "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
       } catch (e) {
-        return { "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
+        return { "dev": "admin123", "admin": "admin123", "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
       }
     }
 
@@ -519,6 +616,7 @@
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
 
+      updateStaffHeartbeat(currentUser, currentRole);
       getAudioContext();
       requestPushNotificationPermission();
       requestScreenWakeLock();
@@ -606,20 +704,14 @@
       return audioCtx;
     }
 
-    // POWERFUL HIGH-DECIBEL AUDIBLE SIREN & HEAVY MOTOR VIBRATION (FOR POCKETS & SLEEPING PHONES)
     function triggerContinuousAlarm() {
-      // Force heavy pocket motor vibration sequence
       if ("vibrate" in navigator) {
         navigator.vibrate([600, 200, 600, 200, 800, 200, 1000]);
       }
-
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-
-        // Dual-oscillator amplified siren blast with piercing harmonics
         [0, 0.25, 0.5, 0.75].forEach((timeOffset) => {
-          // Primary square wave
           const osc1 = ctx.createOscillator();
           const gain1 = ctx.createGain();
           osc1.type = 'square';
@@ -632,7 +724,6 @@
           osc1.start(ctx.currentTime + timeOffset);
           osc1.stop(ctx.currentTime + timeOffset + 0.22);
 
-          // Secondary harmonic sawtooth wave for deep cutting garage punch
           const osc2 = ctx.createOscillator();
           const gain2 = ctx.createGain();
           osc2.type = 'sawtooth';
@@ -645,9 +736,7 @@
           osc2.start(ctx.currentTime + timeOffset);
           osc2.stop(ctx.currentTime + timeOffset + 0.22);
         });
-      } catch (e) {
-        console.error("Audio error:", e);
-      }
+      } catch (e) {}
     }
 
     function playDoneChime() {
@@ -670,9 +759,7 @@
           osc.start(ctx.currentTime + i * 0.08);
           osc.stop(ctx.currentTime + i * 0.08 + 0.25);
         });
-      } catch (e) {
-        console.error("Audio error:", e);
-      }
+      } catch (e) {}
     }
 
     function updateAlarmState() {
@@ -699,21 +786,32 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
       document.getElementById('staffBadge').innerText = currentUser;
-      document.getElementById('roleBadge').innerText = currentRole === 'workshop' ? 'Mechanic Station' : 'Front Desk';
+      
+      const roleLabel = currentRole === 'developer' ? 'Developer Terminal' : (currentRole === 'workshop' ? 'Mechanic Station' : 'Front Desk');
+      document.getElementById('roleBadge').innerText = roleLabel;
 
+      const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
       const topMechanicsStripOffice = document.getElementById('topMechanicsStripOffice');
 
-      if (currentRole === 'office') {
+      devView.classList.add('hidden');
+      officeView.classList.add('hidden');
+      workshopView.classList.add('hidden');
+
+      if (currentRole === 'developer') {
+        devView.classList.remove('hidden');
+        if (window.innerWidth >= 768) {
+          topMechanicsStripOffice.classList.remove('hidden');
+          topMechanicsStripOffice.classList.add('flex');
+        }
+      } else if (currentRole === 'office') {
         officeView.classList.remove('hidden');
-        workshopView.classList.add('hidden');
         if (window.innerWidth >= 768) {
           topMechanicsStripOffice.classList.remove('hidden');
           topMechanicsStripOffice.classList.add('flex');
         }
       } else {
-        officeView.classList.add('hidden');
         workshopView.classList.remove('hidden');
         topMechanicsStripOffice.classList.add('hidden');
         topMechanicsStripOffice.classList.remove('flex');
@@ -721,6 +819,11 @@
 
       setFilter('waiting');
       pullData();
+    }
+
+    function switchDevToOfficeSim() {
+      document.getElementById('viewDeveloper').classList.add('hidden');
+      document.getElementById('viewOffice').classList.remove('hidden');
     }
 
     function handleLogout() {
@@ -750,6 +853,9 @@
     }
 
     async function pullData() {
+      if (currentUser && currentRole) {
+        updateStaffHeartbeat(currentUser, currentRole);
+      }
       try {
         const res = await fetch(`${API_URL}?select=*&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -762,9 +868,7 @@
             updateAlarmState();
           }
         }
-      } catch (e) {
-        console.error("Sync error:", e);
-      }
+      } catch (e) {}
     }
 
     async function handleDispatch(e) {
@@ -800,12 +904,40 @@
           body: JSON.stringify(newCar)
         });
       } catch (err) {
-        console.error("Dispatch upload error:", err);
       } finally {
         btn.disabled = false;
         btnText.innerText = "Dispatch to floor";
         pullData();
       }
+    }
+
+    async function devQuickDispatchTest() {
+      const demoVehicles = ["Toyota Fortuner 4x4", "Ford Ranger Biturbo", "Honda Civic RS Turbo", "Mitsubishi Montero Sport", "Nissan Navara Pro-4X"];
+      const demoCustomers = ["Mark Z.", "Elon M.", "Carlos S.", "Alexander D."];
+      const randomVeh = demoVehicles[Math.floor(Math.random() * demoVehicles.length)];
+      const randomCust = demoCustomers[Math.floor(Math.random() * demoCustomers.length)];
+
+      const newCar = {
+        id: "JB-" + Math.floor(100 + Math.random() * 900),
+        customer: randomCust,
+        phone: "N/A",
+        vehicle: randomVeh,
+        plate: "DEV-TEST",
+        service: "Diagnostic Flow Test",
+        est_time: 30,
+        priority: "High",
+        details: "Automated simulation test dispatched via Developer Terminal.",
+        status: "waiting",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      state.unshift(newCar);
+      render();
+      try {
+        await fetch(API_URL, { method: "POST", headers: HEADERS, body: JSON.stringify(newCar) });
+      } catch (e){}
+      pullData();
     }
 
     function getMechanicActiveCount(mechanicName) {
@@ -826,7 +958,7 @@
         const myActiveJobCount = getMechanicActiveCount(currentUser);
 
         if (myActiveJobCount >= MAX_JOBS_PER_MECHANIC) {
-          alert(`Mechanic ${currentUser.toUpperCase()} already reached the limit of ${MAX_JOBS_PER_MECHANIC} active jobs (including waiting for parts). Please complete a job first.`);
+          alert(`Mechanic ${currentUser.toUpperCase()} already reached the limit of ${MAX_JOBS_PER_MECHANIC} active jobs. Please complete a job first.`);
           return;
         }
 
@@ -887,9 +1019,7 @@
           headers: HEADERS,
           body: JSON.stringify({ status: newStatus, auto_schedule_slot: slot })
         });
-      } catch (err) {
-        console.error("Status update error:", err);
-      } finally {
+      } catch (err) {} finally {
         pullData();
       }
     }
@@ -994,9 +1124,7 @@
           headers: HEADERS,
           body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
         });
-      } catch (err) {
-        console.error("Parts request error:", err);
-      } finally {
+      } catch (err) {} finally {
         btn.disabled = false;
         btn.innerText = "Submit to Office";
         pullData();
@@ -1024,9 +1152,7 @@
           method: "DELETE",
           headers: HEADERS
         });
-      } catch (err) {
-        console.error("Delete record error:", err);
-      } finally {
+      } catch (err) {} finally {
         pullData();
       }
     }
@@ -1040,9 +1166,7 @@
       updateAlarmState();
       try {
         await fetch(`${API_URL}?id=neq.null`, { method: "DELETE", headers: HEADERS });
-      } catch (err) {
-        console.error("Purge error:", err);
-      } finally {
+      } catch (err) {} finally {
         pullData();
       }
     }
@@ -1087,6 +1211,65 @@
       return { text, images, mech };
     }
 
+    function renderDeveloperAnalytics() {
+      const registeredUsers = getRegisteredAccounts();
+      const accountsList = Object.keys(registeredUsers);
+      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
+
+      document.getElementById('devTotalRegistered').innerText = accountsList.length;
+      document.getElementById('devTotalQueueJobs').innerText = state.length;
+      document.getElementById('devTotalPartsReq').innerText = partsCount;
+
+      // Online status calculation (active within 15 seconds)
+      let presence = {};
+      try {
+        presence = JSON.parse(localStorage.getItem('cartech_staff_presence') || '{}');
+      } catch(e){}
+
+      const now = Date.now();
+      let onlineCount = 0;
+      let presenceHTML = "";
+
+      Object.keys(AUTHORIZED_ROSTER).forEach(user => {
+        const userRole = AUTHORIZED_ROSTER[user];
+        const lastSeen = presence[user] ? presence[user].lastSeen : 0;
+        const isOnline = (now - lastSeen) < 15000;
+        if (isOnline) onlineCount++;
+
+        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800');
+
+        presenceHTML += `
+          <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
+              <div>
+                <span class="font-black text-slate-900 uppercase text-xs">${user}</span>
+                <span class="ml-1.5 px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${roleBadgeColor}">${userRole}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online' : 'Offline'}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('devOnlineStaffCount').innerText = onlineCount;
+      document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
+
+      // Render Registered Accounts Table
+      let accHTML = "";
+      accountsList.forEach(u => {
+        accHTML += `
+          <div class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
+            <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
+            <span class="font-mono text-slate-500 text-xs">Pass: ${registeredUsers[u]}</span>
+          </div>
+        `;
+      });
+      document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
+    }
+
     function render() {
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
@@ -1094,6 +1277,10 @@
       const done = state.filter(j => j.status === 'completed').length;
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+
+      if (currentRole === 'developer') {
+        renderDeveloperAnalytics();
+      }
 
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
