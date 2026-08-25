@@ -154,7 +154,7 @@
         <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2 text-center">
           <i class="fa-solid fa-headset text-2xl text-amber-600 mb-1"></i>
           <p class="font-bold text-sm">Ask Developer to Change Password</p>
-          <p class="text-amber-800 leading-relaxed">For shop security, staff cannot reset passwords directly. Please contact the <strong>Developer / Admin</strong> to change or recover your password from the Developer Dashboard.</p>
+          <p class="text-amber-800 leading-relaxed">For shop security, staff cannot reset passwords directly. Please contact the <strong>Developer</strong> to change or recover your password from the Developer Terminal.</p>
         </div>
 
         <div class="text-center pt-2 border-t border-slate-100">
@@ -186,7 +186,7 @@
         </div>
       </div>
 
-      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office & Dev View) -->
+      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office & Dev/Admin View) -->
       <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
@@ -194,7 +194,7 @@
 
       <!-- Header Action Buttons -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
-        <button onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
+        <button id="btnHeaderPurge" onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
           <i class="fa-solid fa-trash-can"></i>
         </button>
         <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
@@ -203,13 +203,15 @@
       </div>
     </header>
 
-    <!-- ==================== DEVELOPER COMMAND & ANALYTICS VIEW ==================== -->
+    <!-- ==================== DEVELOPER COMMAND & ADMIN PERFORMANCE MONITORING VIEW ==================== -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100"><i class="fa-solid fa-code mr-1"></i> Developer Control Engine</span>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">System Analytics & Flow Control</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Real-time online status and live registered user management.</p>
+          <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
+            <i class="fa-solid fa-code mr-1"></i> Developer Control Engine
+          </span>
+          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">System Analytics & Flow Control</h2>
+          <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time online status and live registered user management.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
@@ -223,7 +225,7 @@
 
       <!-- Metric KPI Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+        <div id="devRegisteredCard" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
@@ -253,6 +255,43 @@
         </div>
       </div>
 
+      <!-- WEEKLY MONITORING & MECHANIC LEADERBOARD (VISIBLE TO DEV & ADMIN) -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+              <i class="fa-solid fa-chart-line mr-1"></i> Weekly Performance & Growth Monitoring
+            </span>
+            <h3 class="text-xl font-black text-slate-900 mt-1">End of Week Shop Repair Analysis</h3>
+          </div>
+          <div id="weeklyTrendBadge" class="px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">This Week Repairs (Total Cars)</span>
+            <div id="repairsThisWeek" class="text-2xl font-black text-slate-900 mt-1">0</div>
+            <p class="text-xs text-slate-500 mt-0.5">Completed jobs in past 7 days</p>
+          </div>
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Previous Week (7-14 Days Ago)</span>
+            <div id="repairsLastWeek" class="text-2xl font-black text-slate-900 mt-1">0</div>
+            <p class="text-xs text-slate-500 mt-0.5">Historical comparison benchmark</p>
+          </div>
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Top Mechanic (Most Handled)</span>
+            <div id="topMechanicName" class="text-2xl font-black text-emerald-600 mt-1">None</div>
+            <p id="topMechanicSub" class="text-xs text-slate-500 mt-0.5">Leading throughput score</p>
+          </div>
+        </div>
+
+        <!-- Leaderboard Bars -->
+        <div>
+          <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-2.5">Mechanic Individual Handled Leaderboard:</h4>
+          <div id="mechanicPerformanceBars" class="space-y-2"></div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Live Active Staff & Online Presence Table -->
         <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
@@ -263,8 +302,8 @@
           <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
         </div>
 
-        <!-- Cloud Registered Accounts & Flow Control -->
-        <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <!-- Cloud Registered Accounts & Flow Control (RESTRICTED ONLY TO DEV ROLE) -->
+        <div id="devExclusiveControlPanel" class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
             <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Registered Staff & Developer Flow Control</h3>
             <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
@@ -284,7 +323,7 @@
             </div>
 
             <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-              <p class="font-bold text-slate-900">Registered Accounts (Click edit to change password for staff):</p>
+              <p class="font-bold text-slate-900">Registered Accounts & Passwords (Developer Only):</p>
               <div id="devRegisteredAccountsContainer" class="space-y-1.5 max-h-[180px] overflow-y-auto"></div>
             </div>
           </div>
@@ -444,9 +483,10 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
+    // DEVELOPER VS ADMIN SEPARATION
     const AUTHORIZED_ROSTER = {
-      "dev": "developer",
-      "admin": "developer",
+      "dev": "developer",     // Full system access + registered account secrets
+      "admin": "admin",       // Performance telemetry & weekly analytics only (no registered staff account passwords)
       "shiela": "office",
       "josh": "office",
       "ken": "office",
@@ -839,23 +879,43 @@
       document.getElementById('appShell').classList.remove('hidden');
       document.getElementById('staffBadge').innerText = currentUser;
       
-      const roleLabel = currentRole === 'developer' ? 'Developer Terminal' : (currentRole === 'workshop' ? 'Mechanic Station' : 'Front Desk');
+      let roleLabel = 'Front Desk';
+      if (currentRole === 'developer') roleLabel = 'Developer Terminal';
+      if (currentRole === 'admin') roleLabel = 'Admin Monitor Terminal';
+      if (currentRole === 'workshop') roleLabel = 'Mechanic Station';
       document.getElementById('roleBadge').innerText = roleLabel;
 
       const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
       const topMechanicsStripOffice = document.getElementById('topMechanicsStripOffice');
+      const devExclusive = document.getElementById('devExclusiveControlPanel');
+      const devRegisteredCard = document.getElementById('devRegisteredCard');
 
       devView.classList.add('hidden');
       officeView.classList.add('hidden');
       workshopView.classList.add('hidden');
 
-      if (currentRole === 'developer') {
+      if (currentRole === 'developer' || currentRole === 'admin') {
         devView.classList.remove('hidden');
         if (window.innerWidth >= 768) {
           topMechanicsStripOffice.classList.remove('hidden');
           topMechanicsStripOffice.classList.add('flex');
+        }
+
+        // ROLE ISOLATION: Admin sees performance and staff presence, but NOT registered user passwords
+        if (currentRole === 'admin') {
+          devExclusive.classList.add('hidden');
+          devRegisteredCard.classList.add('hidden');
+          document.getElementById('devBadgeTitle').innerHTML = '<i class="fa-solid fa-gauge-high mr-1"></i> Admin Operations Monitor';
+          document.getElementById('devMainTitle').innerText = 'Shop Performance & Flow Monitoring';
+          document.getElementById('devSubTitle').innerText = 'Live telemetry of mechanics load, bay status, and week-over-week performance.';
+        } else {
+          devExclusive.classList.remove('hidden');
+          devRegisteredCard.classList.remove('hidden');
+          document.getElementById('devBadgeTitle').innerHTML = '<i class="fa-solid fa-code mr-1"></i> Developer Control Engine';
+          document.getElementById('devMainTitle').innerText = 'System Analytics & Flow Control';
+          document.getElementById('devSubTitle').innerText = 'Full system control, real-time online status, and live registered user management.';
         }
       } else if (currentRole === 'office') {
         officeView.classList.remove('hidden');
@@ -1102,7 +1162,6 @@
       pullData();
     }
 
-    // UPDATED: Notifies "Part ready to pick up" without extra text
     async function officePartsReadyToPickUp(jobId) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
@@ -1336,6 +1395,90 @@
       return { text, images, mech, officeMsg };
     }
 
+    // COMPREHENSIVE WEEKLY SHOP MONITORING & MECHANIC LEADERBOARD ENGINE
+    function calculateWeeklyAnalytics() {
+      const now = Date.now();
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+
+      let thisWeekRepairs = 0;
+      let lastWeekRepairs = 0;
+      const mechanicHandledTotal = {};
+
+      MECHANIC_LIST.forEach(m => {
+        mechanicHandledTotal[m] = 0;
+      });
+
+      state.forEach(job => {
+        // Count all jobs handled by mechanics
+        const mech = resolveMechanicName(job);
+        if (mech && mechanicHandledTotal[mech.toLowerCase()] !== undefined) {
+          mechanicHandledTotal[mech.toLowerCase()]++;
+        }
+
+        // Parse creation/completion timestamp
+        let jobTime = job.created_at ? new Date(job.created_at).getTime() : now;
+        const diff = now - jobTime;
+
+        if (job.status === 'completed') {
+          if (diff <= ONE_WEEK_MS) {
+            thisWeekRepairs++;
+          } else if (diff <= TWO_WEEKS_MS) {
+            lastWeekRepairs++;
+          }
+        }
+      });
+
+      // Find top mechanic
+      let topMech = "None";
+      let topCount = 0;
+      Object.keys(mechanicHandledTotal).forEach(m => {
+        if (mechanicHandledTotal[m] > topCount) {
+          topCount = mechanicHandledTotal[m];
+          topMech = m.toUpperCase();
+        }
+      });
+
+      // Update KPI metrics on Dashboard
+      document.getElementById('repairsThisWeek').innerText = thisWeekRepairs;
+      document.getElementById('repairsLastWeek').innerText = lastWeekRepairs;
+      document.getElementById('topMechanicName').innerText = topMech;
+      document.getElementById('topMechanicSub').innerText = `${topCount} total jobs handled`;
+
+      // Calculate trend badge (Doing Good / Growth / Decline)
+      const trendBadge = document.getElementById('weeklyTrendBadge');
+      if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
+        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
+        trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
+      } else if (thisWeekRepairs < lastWeekRepairs) {
+        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
+        trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
+      } else {
+        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
+        trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
+      }
+
+      // Render mechanic performance leaderboard bars
+      let barsHTML = "";
+      const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
+      MECHANIC_LIST.forEach(m => {
+        const count = mechanicHandledTotal[m];
+        const percent = Math.round((count / maxLeaderboardCount) * 100);
+        barsHTML += `
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
+              <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+              <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('mechanicPerformanceBars').innerHTML = barsHTML;
+    }
+
     function renderDeveloperAnalytics() {
       const registeredUsers = cachedCloudAccounts;
       const accountsList = Object.keys(registeredUsers);
@@ -1344,6 +1487,8 @@
       document.getElementById('devTotalRegistered').innerText = accountsList.length;
       document.getElementById('devTotalQueueJobs').innerText = state.length;
       document.getElementById('devTotalPartsReq').innerText = partsCount;
+
+      calculateWeeklyAnalytics();
 
       const now = Date.now();
       let onlineCount = 0;
@@ -1357,7 +1502,7 @@
         if (isOnline) onlineCount++;
 
         const isRegistered = !!registeredUsers[user];
-        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800');
+        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
 
         presenceHTML += `
           <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
@@ -1379,24 +1524,27 @@
       document.getElementById('devOnlineStaffCount').innerText = onlineCount;
       document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
 
-      let accHTML = "";
-      accountsList.forEach(u => {
-        accHTML += `
-          <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-user-check text-xs text-emerald-600"></i>
-              <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
+      // Developer Exclusive Passwords Roster
+      if (currentRole === 'developer') {
+        let accHTML = "";
+        accountsList.forEach(u => {
+          accHTML += `
+            <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-check text-xs text-emerald-600"></i>
+                <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 text-xs">Pass: ${registeredUsers[u]}</span>
+                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold border border-indigo-200" title="Change Password for staff">
+                  <i class="fa-solid fa-pen-to-square"></i> Change
+                </button>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 text-xs">Pass: ${registeredUsers[u]}</span>
-              <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold border border-indigo-200" title="Change Password for staff">
-                <i class="fa-solid fa-pen-to-square"></i> Change
-              </button>
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
+          `;
+        });
+        document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
+      }
     }
 
     function render() {
@@ -1407,7 +1555,7 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      if (currentRole === 'developer') {
+      if (currentRole === 'developer' || currentRole === 'admin') {
         renderDeveloperAnalytics();
       }
 
