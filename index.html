@@ -1102,6 +1102,7 @@
       pullData();
     }
 
+    // UPDATED: Notifies "Part ready to pick up" without extra text
     async function officePartsReadyToPickUp(jobId) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
@@ -1129,7 +1130,7 @@
       const bayStr = assignedBay ? `Bay #${assignedBay}` : 'Bay #1';
       const resolvedMech = resolveMechanicName(currentItem) || 'CHARL';
       const partsHistory = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
-      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up! Part received, continue to work.]` + partsHistory;
+      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up!]` + partsHistory;
 
       state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: newSlot } : j));
       render();
@@ -1536,7 +1537,7 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  <!-- Office Reply Status Display (Red Alert Styling) -->
+                  <!-- Office Reply Status Display -->
                   ${officeMsg ? `
                     <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                       <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
@@ -1554,7 +1555,7 @@
                       <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
                     </button>
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-box-check"></i> Part Ready (Receive & Resume)
+                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
                     </button>
                   </div>
                 </div>`;
@@ -1708,7 +1709,7 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- Notice Sent by Front Desk / Office to Mechanic (HIGHLIGHTED RED & CLEAR) -->
+                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
                     ${officeMsg ? `
                       <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                         <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
