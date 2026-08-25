@@ -81,7 +81,7 @@
             <i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="loginAuthErrorMsg">Invalid username or password.</span>
           </div>
 
-          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm">
+          <button id="btnLoginSubmit" type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm">
             <span>Enter Workspace</span>
             <i class="fa-solid fa-arrow-right text-xs"></i>
           </button>
@@ -93,12 +93,12 @@
         </div>
       </div>
 
-      <!-- FORM 2: REGISTER ACCOUNT (STRICT ROSTER VERIFICATION) -->
+      <!-- FORM 2: REGISTER ACCOUNT (SYNCS WORLDWIDE TO CLOUD DB) -->
       <div id="authBoxRegister" class="hidden space-y-4">
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-purple-600 tracking-wider">Registration</span>
           <h3 class="text-xl font-black text-slate-900 mt-0.5">Create Staff Account</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Must match authorized roster exactly.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Saves online to cloud database instantly.</p>
         </div>
 
         <form onsubmit="handleAuthRegister(event)" class="space-y-3">
@@ -108,7 +108,7 @@
               <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <i class="fa-solid fa-id-badge text-xs"></i>
               </span>
-              <input id="regName" required placeholder="Enter registered name..." 
+              <input id="regName" required placeholder="Enter name (e.g. mark, charl, ken)" 
                      class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:bg-white text-slate-900 font-semibold shadow-inner">
             </div>
           </div>
@@ -129,10 +129,10 @@
           </div>
 
           <div id="regSuccess" class="hidden text-[11px] text-emerald-600 font-bold p-2.5 bg-emerald-50 rounded-xl border border-emerald-200">
-            <i class="fa-solid fa-circle-check mr-1"></i> Account created successfully! Please sign in.
+            <i class="fa-solid fa-circle-check mr-1"></i> Account created & synced to cloud! Redirecting to sign in...
           </div>
 
-          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/20 text-sm">
+          <button id="btnRegSubmit" type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/20 text-sm">
             <span>Register Account</span>
             <i class="fa-solid fa-user-plus text-xs"></i>
           </button>
@@ -179,10 +179,10 @@
           </div>
 
           <div id="forgotSuccess" class="hidden text-[11px] text-emerald-600 font-bold p-2.5 bg-emerald-50 rounded-xl border border-emerald-200">
-            <i class="fa-solid fa-circle-check mr-1"></i> Password reset successfully! Please sign in.
+            <i class="fa-solid fa-circle-check mr-1"></i> Password reset in database! Please sign in.
           </div>
 
-          <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-lg shadow-amber-600/20">
+          <button id="btnForgotSubmit" type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-lg shadow-amber-600/20">
             <span>Update Password</span>
           </button>
         </form>
@@ -239,7 +239,7 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100"><i class="fa-solid fa-code mr-1"></i> Developer Control Engine</span>
           <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">System Analytics & Flow Control</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Live monitoring of active staff, registered accounts, bay performance, and system throughput.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Live real-time monitoring across all phones, registered accounts, bay performance, and system throughput.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
@@ -257,14 +257,14 @@
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
+            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts (Cloud)</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-signal"></i></div>
           <div>
             <div id="devOnlineStaffCount" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Online Staff</div>
+            <div class="text-[11px] font-semibold text-slate-400">Real-time Online Staff</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -287,17 +287,17 @@
         <!-- Live Active Staff & Online Presence Table -->
         <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Staff Roster & Activity</h3>
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Heartbeat Active</span>
+            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity (Cross-Device)</h3>
+            <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200"><i class="fa-solid fa-circle text-[7px] mr-1 animate-ping"></i> Live Sync</span>
           </div>
           <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
         </div>
 
-        <!-- System Flow & Override Manager -->
+        <!-- System Flow & Cloud Account Manager -->
         <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Flow Override & Database Control</h3>
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Direct Pipeline</span>
+            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Cloud Registered Accounts & Flow Control</h3>
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
           </div>
           
           <div class="space-y-3">
@@ -314,8 +314,8 @@
             </div>
 
             <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-              <p class="font-bold text-slate-900">Manage Registered Passwords:</p>
-              <div id="devRegisteredAccountsContainer" class="space-y-1.5 max-h-[160px] overflow-y-auto"></div>
+              <p class="font-bold text-slate-900">Cloud Registered Accounts & Passwords (Permanent):</p>
+              <div id="devRegisteredAccountsContainer" class="space-y-1.5 max-h-[180px] overflow-y-auto"></div>
             </div>
           </div>
         </div>
@@ -474,7 +474,6 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // AUTHORIZED ROSTER WITH DEVELOPER ROLE
     const AUTHORIZED_ROSTER = {
       "dev": "developer",
       "admin": "developer",
@@ -501,6 +500,10 @@
       "Prefer": "return=representation"
     };
 
+    // System Record IDs inside Supabase
+    const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
+    const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
+
     let state = [];
     let currentFilter = 'waiting';
     let currentUser = null;
@@ -510,20 +513,116 @@
     let uploadedPartImages = [];
     let wakeLock = null;
 
+    // Default accounts fallback
+    let cachedCloudAccounts = { 
+      "dev": "admin123", 
+      "admin": "admin123", 
+      "josh": "1234", 
+      "shiela": "1234", 
+      "ken": "1234", 
+      "charl": "1234", 
+      "bert": "1234", 
+      "nel": "1234", 
+      "rocky": "1234", 
+      "mark": "1234" 
+    };
+
+    let cachedCloudPresence = {};
+
     const LEGACY_JOB_MAP = {
       "JB-298": "bert"
     };
 
-    // Presence & Heartbeat Tracking
-    function updateStaffHeartbeat(username, role) {
+    // 1. CLOUD SYNC: FETCH PERMANENT REGISTERED PASSWORDS & ACTIVE PRESENCE FROM SUPABASE
+    async function syncSystemCloudRecords() {
       try {
-        const presence = JSON.parse(localStorage.getItem('cartech_staff_presence') || '{}');
-        presence[username] = {
-          role: role,
-          lastSeen: Date.now()
-        };
-        localStorage.setItem('cartech_staff_presence', JSON.stringify(presence));
-      } catch (e){}
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
+          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+        });
+        if (res.ok) {
+          const records = await res.json();
+          records.forEach(rec => {
+            if (rec.id === USERS_RECORD_ID && rec.details) {
+              try {
+                const parsed = JSON.parse(rec.details);
+                cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
+                localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
+              } catch(e){}
+            }
+            if (rec.id === PRESENCE_RECORD_ID && rec.details) {
+              try {
+                cachedCloudPresence = JSON.parse(rec.details);
+              } catch(e){}
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Cloud account sync error:", e);
+      }
+    }
+
+    // 2. CLOUD SYNC: SAVE NEW ACCOUNT TO SUPABASE
+    async function saveAccountToCloud(username, password) {
+      cachedCloudAccounts[username] = password;
+      localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
+
+      const payload = {
+        id: USERS_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_USERS_RECORD",
+        plate: "N/A",
+        service: "Accounts Registry",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(cachedCloudAccounts),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error("Save account error:", err);
+      }
+    }
+
+    // 3. CLOUD SYNC: REAL-TIME CROSS-DEVICE ONLINE PRESENCE HEARTBEAT
+    async function sendPresenceHeartbeat() {
+      if (!currentUser || !currentRole) return;
+
+      cachedCloudPresence[currentUser] = {
+        role: currentRole,
+        lastSeen: Date.now()
+      };
+
+      const payload = {
+        id: PRESENCE_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_PRESENCE_RECORD",
+        plate: "N/A",
+        service: "Staff Presence",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(cachedCloudPresence),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {}
     }
 
     async function requestScreenWakeLock() {
@@ -556,19 +655,6 @@
       }
     }
 
-    function getRegisteredAccounts() {
-      try {
-        const accs = localStorage.getItem('cartech_registered_users');
-        return accs ? JSON.parse(accs) : { "dev": "admin123", "admin": "admin123", "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
-      } catch (e) {
-        return { "dev": "admin123", "admin": "admin123", "josh": "1234", "shiela": "1234", "ken": "1234", "charl": "1234", "bert": "1234", "nel": "1234", "rocky": "1234", "mark": "1234" };
-      }
-    }
-
-    function saveRegisteredAccounts(accs) {
-      localStorage.setItem('cartech_registered_users', JSON.stringify(accs));
-    }
-
     function switchAuthForm(type) {
       document.getElementById('authBoxLogin').classList.add('hidden');
       document.getElementById('authBoxRegister').classList.add('hidden');
@@ -589,8 +675,14 @@
       }
     }
 
-    function handleAuthLogin(e) {
+    // LOGIN ACTION
+    async function handleAuthLogin(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+
+      await syncSystemCloudRecords();
+
       const user = document.getElementById('loginUsername').value.trim().toLowerCase();
       const pass = document.getElementById('loginPassword').value.trim();
       const errorElem = document.getElementById('loginAuthError');
@@ -599,13 +691,15 @@
       if (!AUTHORIZED_ROSTER[user]) {
         errorMsg.innerText = "You are not allowed to access this workspace.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
-      const registeredUsers = getRegisteredAccounts();
+      const registeredUsers = cachedCloudAccounts;
       if (!registeredUsers[user] || registeredUsers[user] !== pass) {
         errorMsg.innerText = "Incorrect password or account not registered yet.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
@@ -616,15 +710,20 @@
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
 
-      updateStaffHeartbeat(currentUser, currentRole);
+      await sendPresenceHeartbeat();
       getAudioContext();
       requestPushNotificationPermission();
       requestScreenWakeLock();
+      btn.disabled = false;
       bootApp();
     }
 
-    function handleAuthRegister(e) {
+    // REGISTER ACCOUNT ACTION (PERMANENT SUPABASE SYNC)
+    async function handleAuthRegister(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnRegSubmit');
+      btn.disabled = true;
+
       const exactName = document.getElementById('regName').value.trim().toLowerCase();
       const pass = document.getElementById('regPassword').value.trim();
       const errorElem = document.getElementById('regError');
@@ -635,30 +734,36 @@
       successElem.classList.add('hidden');
 
       if (!AUTHORIZED_ROSTER[exactName]) {
-        errorMsg.innerText = "You are not allowed to create an account. (Exact name not found in CARTECH authorized roster)";
+        errorMsg.innerText = "You are not allowed to create an account. (Name not in CARTECH roster)";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
       if (pass.length < 4) {
         errorMsg.innerText = "Password must be at least 4 characters long.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
-      const registeredUsers = getRegisteredAccounts();
-      registeredUsers[exactName] = pass;
-      saveRegisteredAccounts(registeredUsers);
+      // Save directly into the Cloud DB
+      await saveAccountToCloud(exactName, pass);
 
       successElem.classList.remove('hidden');
+      btn.disabled = false;
       setTimeout(() => {
         document.getElementById('loginUsername').value = exactName;
         switchAuthForm('login');
-      }, 1400);
+      }, 1200);
     }
 
-    function handleAuthForgot(e) {
+    // FORGOT PASSWORD ACTION (PERMANENT SUPABASE SYNC)
+    async function handleAuthForgot(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnForgotSubmit');
+      btn.disabled = true;
+
       const user = document.getElementById('forgotUsername').value.trim().toLowerCase();
       const newPass = document.getElementById('forgotNewPassword').value.trim();
       const errorElem = document.getElementById('forgotError');
@@ -671,24 +776,25 @@
       if (!AUTHORIZED_ROSTER[user]) {
         errorMsg.innerText = "Username is not authorized in CARTECH records.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
       if (newPass.length < 4) {
         errorMsg.innerText = "New password must be at least 4 characters.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
-      const registeredUsers = getRegisteredAccounts();
-      registeredUsers[user] = newPass;
-      saveRegisteredAccounts(registeredUsers);
+      await saveAccountToCloud(user, newPass);
 
       successElem.classList.remove('hidden');
+      btn.disabled = false;
       setTimeout(() => {
         document.getElementById('loginUsername').value = user;
         switchAuthForm('login');
-      }, 1400);
+      }, 1200);
     }
 
     function getAudioContext() {
@@ -853,11 +959,12 @@
     }
 
     async function pullData() {
+      await syncSystemCloudRecords();
       if (currentUser && currentRole) {
-        updateStaffHeartbeat(currentUser, currentRole);
+        await sendPresenceHeartbeat();
       }
       try {
-        const res = await fetch(`${API_URL}?select=*&order=created_at.desc`, {
+        const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
@@ -1158,14 +1265,14 @@
     }
 
     async function clearAllTestingRecords() {
-      if (!confirm("Permanently wipe all records to reset the floor?")) {
+      if (!confirm("Permanently wipe vehicle records from floor? (Account registrations and settings will remain safe)")) {
         return;
       }
       state = [];
       render();
       updateAlarmState();
       try {
-        await fetch(`${API_URL}?id=neq.null`, { method: "DELETE", headers: HEADERS });
+        await fetch(`${API_URL}?status=neq.system_record`, { method: "DELETE", headers: HEADERS });
       } catch (err) {} finally {
         pullData();
       }
@@ -1212,7 +1319,7 @@
     }
 
     function renderDeveloperAnalytics() {
-      const registeredUsers = getRegisteredAccounts();
+      const registeredUsers = cachedCloudAccounts;
       const accountsList = Object.keys(registeredUsers);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
 
@@ -1220,20 +1327,15 @@
       document.getElementById('devTotalQueueJobs').innerText = state.length;
       document.getElementById('devTotalPartsReq').innerText = partsCount;
 
-      // Online status calculation (active within 15 seconds)
-      let presence = {};
-      try {
-        presence = JSON.parse(localStorage.getItem('cartech_staff_presence') || '{}');
-      } catch(e){}
-
       const now = Date.now();
       let onlineCount = 0;
       let presenceHTML = "";
 
       Object.keys(AUTHORIZED_ROSTER).forEach(user => {
         const userRole = AUTHORIZED_ROSTER[user];
-        const lastSeen = presence[user] ? presence[user].lastSeen : 0;
-        const isOnline = (now - lastSeen) < 15000;
+        const record = cachedCloudPresence[user];
+        const lastSeen = record ? record.lastSeen : 0;
+        const isOnline = (now - lastSeen) < 30000; // Active in last 30 seconds
         if (isOnline) onlineCount++;
 
         const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800');
@@ -1248,7 +1350,7 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online' : 'Offline'}</span>
+              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online (Live)' : 'Offline'}</span>
             </div>
           </div>
         `;
@@ -1261,9 +1363,12 @@
       let accHTML = "";
       accountsList.forEach(u => {
         accHTML += `
-          <div class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
-            <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
-            <span class="font-mono text-slate-500 text-xs">Pass: ${registeredUsers[u]}</span>
+          <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-user-check text-xs text-emerald-600"></i>
+              <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
+            </div>
+            <span class="font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 text-xs">Pass: ${registeredUsers[u]}</span>
           </div>
         `;
       });
@@ -1575,6 +1680,9 @@
       }
     }
 
+    // Initialize application and sync state
+    syncSystemCloudRecords();
+
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
@@ -1584,7 +1692,7 @@
       bootApp();
     }
 
-    setInterval(pullData, 1200);
+    setInterval(pullData, 1400);
   </script>
 </body>
 </html>
