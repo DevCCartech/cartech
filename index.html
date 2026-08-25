@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CARTECH - Hybrid Queue</title>
+  
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1329">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -32,7 +39,7 @@
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
-  <!-- 1. AUTH SCREEN (LOGIN / REGISTER / FORGOT PASSWORD) -->
+  <!-- 1. AUTH SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto">
       
@@ -186,7 +193,7 @@
         </div>
       </div>
 
-      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP (Office & Dev/Admin View) -->
+      <!-- 5 MECHANICS LIVE ROSTER STRIP ON TOP -->
       <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
@@ -255,7 +262,7 @@
         </div>
       </div>
 
-      <!-- WEEKLY MONITORING & MECHANIC LEADERBOARD (VISIBLE TO DEV & ADMIN) -->
+      <!-- WEEKLY MONITORING & MECHANIC LEADERBOARD -->
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-100 pb-3">
           <div>
@@ -302,7 +309,7 @@
           <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
         </div>
 
-        <!-- Cloud Registered Accounts & Flow Control (RESTRICTED ONLY TO DEV ROLE) -->
+        <!-- Cloud Registered Accounts & Flow Control -->
         <div id="devExclusiveControlPanel" class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
             <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Registered Staff & Developer Flow Control</h3>
@@ -420,6 +427,23 @@
 
     <!-- ==================== MECHANIC WORKSHOP (ONLY: charl, bert, nel, rocky, mark) ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
+      
+      <!-- PWA APP INSTALL BANNER -->
+      <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 to-amber-500 text-white p-4 rounded-3xl shadow-lg flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm">Install CARTECH App</h3>
+            <p class="text-[11px] text-white/90">Add to phone home screen for instant floor alerts.</p>
+          </div>
+        </div>
+        <button onclick="triggerPwaInstallPrompt()" class="bg-white text-slate-900 font-bold px-3.5 py-2 rounded-xl text-xs shadow hover:bg-slate-100 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-download text-orange-600"></i> Install
+        </button>
+      </div>
+
       <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
@@ -485,8 +509,8 @@
 
     // DEVELOPER VS ADMIN SEPARATION
     const AUTHORIZED_ROSTER = {
-      "dev": "developer",     // Full system access + registered account secrets
-      "admin": "admin",       // Performance telemetry & weekly analytics only (no registered staff account passwords)
+      "dev": "developer",     // Full control + registered passwords
+      "admin": "admin",       // Performance telemetry & weekly analysis only
       "shiela": "office",
       "josh": "office",
       "ken": "office",
@@ -521,6 +545,7 @@
     let alarmInterval = null;
     let uploadedPartImages = [];
     let wakeLock = null;
+    let deferredPwaPrompt = null;
 
     let cachedCloudAccounts = { 
       "dev": "admin123", 
@@ -532,6 +557,37 @@
     const LEGACY_JOB_MAP = {
       "JB-298": "bert"
     };
+
+    // REGISTER SERVICE WORKER FOR PWA INSTALLATION
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((err) => {
+          console.log('ServiceWorker registration ignored/failed: ', err);
+        });
+      });
+    }
+
+    // CAPTURE PWA INSTALL PROMPT EVENT
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner && currentRole === 'workshop') {
+        banner.classList.remove('hidden');
+      }
+    });
+
+    function triggerPwaInstallPrompt() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('pwaInstallBanner').classList.add('hidden');
+          }
+          deferredPwaPrompt = null;
+        });
+      }
+    }
 
     // 1. CLOUD SYNC: FETCH PASSWORDS & PRESENCE
     async function syncSystemCloudRecords() {
@@ -903,7 +959,6 @@
           topMechanicsStripOffice.classList.add('flex');
         }
 
-        // ROLE ISOLATION: Admin sees performance and staff presence, but NOT registered user passwords
         if (currentRole === 'admin') {
           devExclusive.classList.add('hidden');
           devRegisteredCard.classList.add('hidden');
@@ -927,6 +982,10 @@
         workshopView.classList.remove('hidden');
         topMechanicsStripOffice.classList.add('hidden');
         topMechanicsStripOffice.classList.remove('flex');
+        
+        if (deferredPwaPrompt) {
+          document.getElementById('pwaInstallBanner').classList.remove('hidden');
+        }
       }
 
       setFilter('waiting');
@@ -1395,7 +1454,6 @@
       return { text, images, mech, officeMsg };
     }
 
-    // COMPREHENSIVE WEEKLY SHOP MONITORING & MECHANIC LEADERBOARD ENGINE
     function calculateWeeklyAnalytics() {
       const now = Date.now();
       const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -1410,13 +1468,11 @@
       });
 
       state.forEach(job => {
-        // Count all jobs handled by mechanics
         const mech = resolveMechanicName(job);
         if (mech && mechanicHandledTotal[mech.toLowerCase()] !== undefined) {
           mechanicHandledTotal[mech.toLowerCase()]++;
         }
 
-        // Parse creation/completion timestamp
         let jobTime = job.created_at ? new Date(job.created_at).getTime() : now;
         const diff = now - jobTime;
 
@@ -1429,7 +1485,6 @@
         }
       });
 
-      // Find top mechanic
       let topMech = "None";
       let topCount = 0;
       Object.keys(mechanicHandledTotal).forEach(m => {
@@ -1439,13 +1494,11 @@
         }
       });
 
-      // Update KPI metrics on Dashboard
       document.getElementById('repairsThisWeek').innerText = thisWeekRepairs;
       document.getElementById('repairsLastWeek').innerText = lastWeekRepairs;
       document.getElementById('topMechanicName').innerText = topMech;
       document.getElementById('topMechanicSub').innerText = `${topCount} total jobs handled`;
 
-      // Calculate trend badge (Doing Good / Growth / Decline)
       const trendBadge = document.getElementById('weeklyTrendBadge');
       if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
         trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
@@ -1458,7 +1511,6 @@
         trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
       }
 
-      // Render mechanic performance leaderboard bars
       let barsHTML = "";
       const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
       MECHANIC_LIST.forEach(m => {
@@ -1524,7 +1576,6 @@
       document.getElementById('devOnlineStaffCount').innerText = onlineCount;
       document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
 
-      // Developer Exclusive Passwords Roster
       if (currentRole === 'developer') {
         let accHTML = "";
         accountsList.forEach(u => {
@@ -1574,7 +1625,6 @@
       const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
       const availableMechanicsCount = availableMechanics.length;
 
-      // Workshop Bell State
       const wsBell = document.getElementById('wsBellIcon');
       if (wsBell) {
         if (hasUnassignedWaiting) {
@@ -1584,7 +1634,6 @@
         }
       }
 
-      // Office Header 5 Mechanics Indicators
       let mechHTML = "";
       MECHANIC_LIST.forEach(m => {
         const load = mechanicLoads[m];
@@ -1606,7 +1655,6 @@
       document.getElementById('statParts').innerText = parts;
       document.getElementById('statDone').innerText = done;
 
-      // Office Available Mechanics Badge
       const officeBadge = document.getElementById('officeRemainingMechanicBadge');
       if (officeBadge) {
         if (availableMechanicsCount === 0) {
@@ -1618,7 +1666,6 @@
         }
       }
 
-      // Office Feed Render
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -1685,7 +1732,6 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  <!-- Office Reply Status Display -->
                   ${officeMsg ? `
                     <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                       <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
@@ -1697,7 +1743,6 @@
                       </div>
                     </div>` : ''}
 
-                  <!-- Office Interactive Reply Controls -->
                   <div class="flex items-center gap-2 pt-1">
                     <button onclick="officeSendPartsReply('${j.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
                       <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
@@ -1857,7 +1902,7 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
+                    <!-- Notice Sent by Front Desk / Office to Mechanic (HIGHLIGHTED RED) -->
                     ${officeMsg ? `
                       <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
                         <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
