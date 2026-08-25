@@ -3,47 +3,49 @@
   "name": "CARTECH PRO",
   "short_name": "CARTECH",
   "description": "Automotive shop real-time repair and bay management terminal.",
+  "lang": "en",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "window-controls-overlay"],
   "orientation": "portrait",
   "background_color": "#0b1329",
   "theme_color": "#0b1329",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "team.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/192/3067/3067443.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "team.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067443.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "team.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067443.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "team.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067443.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow",
-      "label": "CARTECH Team Terminal"
+      "label": "CARTECH Floor Queue"
     },
     {
-      "src": "team.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067443.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide",
-      "label": "CARTECH Team Overview"
+      "label": "CARTECH Operations Dashboard"
     }
   ]
 }
