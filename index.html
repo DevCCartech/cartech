@@ -425,12 +425,12 @@
             <i class="fa-solid fa-volume-high"></i>
           </div>
           <div>
-            <h3 class="font-black text-xs md:text-sm text-slate-900">Whistle Ringtone & Vibration</h3>
-            <p class="text-[11px] text-slate-500">Tap to allow background pocket alerts & test ringtone.</p>
+            <h3 class="font-black text-xs md:text-sm text-slate-900">Whistle Tone & Vibration Alert</h3>
+            <p class="text-[11px] text-slate-500">Tap to test whistle ringtone & hardware vibration.</p>
           </div>
         </div>
-        <button onclick="requestPocketAlertPermission()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
-          <i class="fa-solid fa-play text-[10px]"></i> Test / Allow
+        <button onclick="requestPocketAlertPermission()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 active:scale-95">
+          <i class="fa-solid fa-play text-[10px]"></i> Test Whistle
         </button>
       </div>
 
@@ -737,7 +737,7 @@
               body: body,
               icon: "team.jpg",
               badge: "team.jpg",
-              vibrate: [600, 200, 600, 200, 1000, 400, 1000],
+              vibrate: [1000, 200, 1000, 200, 1500, 300, 1500],
               tag: "cartech-urgent-car-alert",
               renotify: true,
               requireInteraction: true
@@ -747,15 +747,111 @@
       }
     }
 
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // REALISTIC TWO-TONE WHISTLE RINGTONE (SINE HARMONICS)
+    function triggerWhistleRingtone() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        // Double Whistle Burst: [Tune 1, Tune 2]
+        const whistleBursts = [0, 0.40];
+        whistleBursts.forEach((startTime) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1700, ctx.currentTime + startTime);
+          osc.frequency.exponentialRampToValueAtTime(2600, ctx.currentTime + startTime + 0.14);
+          osc.frequency.exponentialRampToValueAtTime(2200, ctx.currentTime + startTime + 0.32);
+
+          gain.gain.setValueAtTime(0.01, ctx.currentTime + startTime);
+          gain.gain.exponentialRampToValueAtTime(0.95, ctx.currentTime + startTime + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + startTime + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + startTime);
+          osc.stop(ctx.currentTime + startTime + 0.35);
+        });
+      } catch (e) {}
+    }
+
+    // DIRECT PERMISSION ACTIVATOR & TEST BUTTON
     function requestPocketAlertPermission() {
       getAudioContext();
       requestPushNotificationPermission();
       requestScreenWakeLock();
+      
+      // Fire immediate test whistle & vibration pattern
       triggerWhistleRingtone();
       if ("vibrate" in navigator) {
-        navigator.vibrate([600, 200, 600, 200, 1000]);
+        navigator.vibrate([1000, 200, 1000, 200, 1500]);
       }
-      alert("✅ Pocket alert sound, vibration, and background notifications are now active!");
+      showSystemNotification("🚨 WHISTLE & VIBRATION TEST", "New car dispatched! Pocket siren is verified.");
+    }
+
+    // CONTINUOUS VIBRATION & WHISTLE LOOP
+    function triggerContinuousAlarm() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([1000, 200, 1000, 200, 1500]);
+      }
+      triggerWhistleRingtone();
+    }
+
+    function playDoneChime() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([150, 100, 150]);
+      }
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const freqs = [523.25, 659.25, 783.99, 1046.50];
+        freqs.forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.08);
+          osc.stop(ctx.currentTime + i * 0.08 + 0.25);
+        });
+      } catch (e) {}
+    }
+
+    function updateAlarmState() {
+      if (currentRole !== 'workshop') {
+        if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
+        return;
+      }
+      const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+      if (hasPendingCars) {
+        showSystemNotification("🚨 CAR WAITING ON FLOOR!", "New vehicle dispatched. Accept into Bay now.");
+        if (!alarmInterval) {
+          triggerContinuousAlarm();
+          alarmInterval = setInterval(triggerContinuousAlarm, 2800);
+        }
+      } else {
+        if (alarmInterval) {
+          clearInterval(alarmInterval);
+          alarmInterval = null;
+        }
+      }
     }
 
     function switchAuthForm(type) {
@@ -881,99 +977,6 @@
         render();
       } else if (newPass !== null) {
         alert("Password must be at least 4 characters.");
-      }
-    }
-
-    function getAudioContext() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-          audioCtx = new AudioContext();
-        }
-      }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      return audioCtx;
-    }
-
-    // REALISTIC TWO-TONE WHISTLE RINGTONE (SINE HARMONICS)
-    function triggerWhistleRingtone() {
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-
-        const whistleBursts = [0, 0.38];
-        whistleBursts.forEach((startTime) => {
-          // Whistle tone slide 1600Hz -> 2400Hz -> 2100Hz
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(1600, ctx.currentTime + startTime);
-          osc.frequency.exponentialRampToValueAtTime(2450, ctx.currentTime + startTime + 0.12);
-          osc.frequency.exponentialRampToValueAtTime(2150, ctx.currentTime + startTime + 0.28);
-
-          gain.gain.setValueAtTime(0.01, ctx.currentTime + startTime);
-          gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + startTime + 0.04);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + startTime + 0.30);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + startTime);
-          osc.stop(ctx.currentTime + startTime + 0.30);
-        });
-      } catch (e) {}
-    }
-
-    // HARDWARE VIBRATION & CONTINUOUS WHISTLE LOOP
-    function triggerContinuousAlarm() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([600, 200, 600, 200, 1000, 400, 1000]);
-      }
-      triggerWhistleRingtone();
-    }
-
-    function playDoneChime() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([150, 100, 150]);
-      }
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        const freqs = [523.25, 659.25, 783.99, 1046.50];
-        freqs.forEach((f, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.value = f;
-          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + i * 0.08);
-          osc.stop(ctx.currentTime + i * 0.08 + 0.25);
-        });
-      } catch (e) {}
-    }
-
-    function updateAlarmState() {
-      if (currentRole !== 'workshop') {
-        if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
-        return;
-      }
-      const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
-      if (hasPendingCars) {
-        showSystemNotification("🚨 CAR WAITING ON FLOOR!", "New vehicle dispatched. Accept into Bay now.");
-        if (!alarmInterval) {
-          triggerContinuousAlarm();
-          alarmInterval = setInterval(triggerContinuousAlarm, 2600);
-        }
-      } else {
-        if (alarmInterval) {
-          clearInterval(alarmInterval);
-          alarmInterval = null;
-        }
       }
     }
 
