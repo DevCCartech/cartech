@@ -436,7 +436,7 @@
           </div>
           <div>
             <h3 class="font-black text-sm leading-tight">Install CARTECH App</h3>
-            <p class="text-[11px] text-orange-100 mt-0.5">Add to home screen for loud pocket alerts.</p>
+            <p class="text-[11px] text-orange-100 mt-0.5">Tap install to download Android application.</p>
           </div>
         </div>
         <button onclick="triggerPwaInstallPrompt()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-3.5 py-2 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5">
@@ -507,9 +507,10 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
+    // DEVELOPER VS ADMIN SEPARATION
     const AUTHORIZED_ROSTER = {
-      "dev": "developer",
-      "admin": "admin",
+      "dev": "developer",     // Full control + registered passwords
+      "admin": "admin",       // Performance telemetry & weekly analysis only
       "shiela": "office",
       "josh": "office",
       "ken": "office",
@@ -572,18 +573,25 @@
       deferredPwaPrompt = e;
     });
 
-    // PWA INSTALL TRIGGER WITH AUTOMATIC PHONE FALLBACK
+    // DIRECT APK DOWNLOAD & PWA INSTALL HANDLER
     function triggerPwaInstallPrompt() {
       if (deferredPwaPrompt) {
         deferredPwaPrompt.prompt();
         deferredPwaPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            document.getElementById('pwaInstallBanner').classList.add('hidden');
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.classList.add('hidden');
           }
           deferredPwaPrompt = null;
         });
       } else {
-        alert("To install CARTECH on your phone:\n\n1. Tap the 3 dots (⋮) in Chrome.\n2. Tap 'Add to Home screen' or 'Install App'.");
+        // Automatically triggers the cartech.apk file download
+        const link = document.createElement('a');
+        link.href = 'cartech.apk';
+        link.download = 'cartech.apk';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     }
 
