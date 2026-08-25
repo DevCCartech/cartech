@@ -428,18 +428,18 @@
     <!-- ==================== MECHANIC WORKSHOP (ONLY: charl, bert, nel, rocky, mark) ==================== -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       
-      <!-- PWA APP INSTALL BANNER -->
-      <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 to-amber-500 text-white p-4 rounded-3xl shadow-lg flex items-center justify-between">
+      <!-- PERMANENT MOBILE APP INSTALL BANNER -->
+      <div id="pwaInstallBanner" class="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg">
-            <i class="fa-solid fa-mobile-screen-button"></i>
+          <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
+            <i class="fa-solid fa-mobile-screen-button text-white"></i>
           </div>
           <div>
-            <h3 class="font-black text-sm">Install CARTECH App</h3>
-            <p class="text-[11px] text-white/90">Add to phone home screen for instant floor alerts.</p>
+            <h3 class="font-black text-sm leading-tight">Install CARTECH App</h3>
+            <p class="text-[11px] text-orange-100 mt-0.5">Add to home screen for loud pocket alerts.</p>
           </div>
         </div>
-        <button onclick="triggerPwaInstallPrompt()" class="bg-white text-slate-900 font-bold px-3.5 py-2 rounded-xl text-xs shadow hover:bg-slate-100 transition flex items-center gap-1.5">
+        <button onclick="triggerPwaInstallPrompt()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-3.5 py-2 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5">
           <i class="fa-solid fa-download text-orange-600"></i> Install
         </button>
       </div>
@@ -507,10 +507,9 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // DEVELOPER VS ADMIN SEPARATION
     const AUTHORIZED_ROSTER = {
-      "dev": "developer",     // Full control + registered passwords
-      "admin": "admin",       // Performance telemetry & weekly analysis only
+      "dev": "developer",
+      "admin": "admin",
       "shiela": "office",
       "josh": "office",
       "ken": "office",
@@ -558,7 +557,7 @@
       "JB-298": "bert"
     };
 
-    // REGISTER SERVICE WORKER FOR PWA INSTALLATION
+    // REGISTER SERVICE WORKER
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch((err) => {
@@ -571,12 +570,9 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
-      const banner = document.getElementById('pwaInstallBanner');
-      if (banner && currentRole === 'workshop') {
-        banner.classList.remove('hidden');
-      }
     });
 
+    // PWA INSTALL TRIGGER WITH AUTOMATIC PHONE FALLBACK
     function triggerPwaInstallPrompt() {
       if (deferredPwaPrompt) {
         deferredPwaPrompt.prompt();
@@ -586,6 +582,8 @@
           }
           deferredPwaPrompt = null;
         });
+      } else {
+        alert("To install CARTECH on your phone:\n\n1. Tap the 3 dots (⋮) in Chrome.\n2. Tap 'Add to Home screen' or 'Install App'.");
       }
     }
 
@@ -982,10 +980,6 @@
         workshopView.classList.remove('hidden');
         topMechanicsStripOffice.classList.add('hidden');
         topMechanicsStripOffice.classList.remove('flex');
-        
-        if (deferredPwaPrompt) {
-          document.getElementById('pwaInstallBanner').classList.remove('hidden');
-        }
       }
 
       setFilter('waiting');
