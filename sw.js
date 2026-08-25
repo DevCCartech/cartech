@@ -1,4 +1,3 @@
-// CARTECH HARDWARE BACKGROUND SERVICE WORKER
 self.addEventListener("install", (e) => {
   self.skipWaiting();
 });
@@ -7,16 +6,16 @@ self.addEventListener("activate", (e) => {
   return self.clients.claim();
 });
 
-// DISCORD-STYLE PERSISTENT HARDWARE NOTIFICATION & VIBRATION
+// FAST REPEATING DOORBELL VIBRATION PATTERN
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "CAR_WAITING_ALERT") {
-    const title = "🚨 CARTECH: CAR DISPATCHED ON FLOOR!";
+    const title = "🚨 CARTECH: CAR WAITING OUTSIDE!";
     const options = {
-      body: event.data.msg || "New vehicle waiting for service. Open app to accept into Bay.",
+      body: event.data.msg || "Fast Doorbell Alert: New vehicle waiting on floor!",
       icon: "team.jpg",
       badge: "team.jpg",
-      // Heavy Discord-style repeating vibration pulses: [Vibrate, Pause, Vibrate, Pause...]
-      vibrate: [1000, 250, 1000, 250, 1000, 500, 1500, 300, 1500],
+      // Rapid pulse pattern: [Ding-Dong, Ding-Dong, Ding-Dong]
+      vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
       tag: "cartech-urgent-floor-alarm",
       renotify: true,
       requireInteraction: true,
