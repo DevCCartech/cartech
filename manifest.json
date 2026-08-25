@@ -4,49 +4,47 @@
   "short_name": "CARTECH",
   "description": "Automotive shop real-time repair and bay management terminal.",
   "lang": "en",
-  "dir": "ltr",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "fullscreen"],
   "orientation": "portrait",
   "background_color": "#0b1329",
   "theme_color": "#0b1329",
-  "categories": ["business", "productivity", "utilities"],
+  "categories": ["business", "utilities"],
   "icons": [
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wrench_font_awesome.svg/192px-Wrench_font_awesome.svg.png",
+      "src": "team.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "team.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wrench_font_awesome.svg/512px-Wrench_font_awesome.svg.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wrench_font_awesome.svg/512px-Wrench_font_awesome.svg.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wrench_font_awesome.svg/512px-Wrench_font_awesome.svg.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "CARTECH Floor Queue"
+      "label": "CARTECH Mobile Station"
     },
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wrench_font_awesome.svg/512px-Wrench_font_awesome.svg.png",
+      "src": "team.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "CARTECH Operations Dashboard"
+      "label": "CARTECH Desktop Floor"
     }
   ]
 }
