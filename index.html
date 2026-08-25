@@ -1078,16 +1078,14 @@
       }
     }
 
-    // TWO-WAY OFFICE & MECHANIC PARTS REPLY FLOW
     async function officeSendPartsReply(jobId) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
 
-      const replyText = prompt("Enter reply / price update for mechanic (e.g. 'I will ask the customer first regarding the pricelist'):", "I will ask first customer and pricelist");
+      const replyText = prompt("Enter message/reply for mechanic (will be highlighted in RED for mechanic):", "okay wait, checking with customer");
       if (!replyText || !replyText.trim()) return;
 
       let currentSlot = currentItem.auto_schedule_slot || "";
-      // Clean previous reply tag if any and append new one
       currentSlot = currentSlot.replace(/\[OFFICE_MSG:.*?\]/gi, '');
       currentSlot += ` [OFFICE_MSG:${replyText.trim()}]`;
 
@@ -1104,7 +1102,6 @@
       pullData();
     }
 
-    // OFFICE MARKS PART READY TO PICK UP -> AUTOMATICALLY ADVANCES MECHANIC TO BAY WORK
     async function officePartsReadyToPickUp(jobId) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
@@ -1539,13 +1536,15 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  <!-- Office Reply Status Display -->
+                  <!-- Office Reply Status Display (Red Alert Styling) -->
                   ${officeMsg ? `
-                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
-                      <i class="fa-solid fa-comment-dots text-amber-600 mt-0.5"></i>
-                      <div>
-                        <span class="font-bold text-[10px] uppercase text-amber-700">Office Reply to Mechanic:</span>
-                        <p class="font-semibold text-xs mt-0.5">${officeMsg}</p>
+                    <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                      <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                        <i class="fa-solid fa-envelope"></i>
+                      </div>
+                      <div class="flex-1">
+                        <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message Sent to Mechanic:</span>
+                        <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
                       </div>
                     </div>` : ''}
 
@@ -1656,9 +1655,14 @@
                     </div>
 
                     ${officeNotice ? `
-                      <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                        <span class="font-bold">${officeNotice}</span>
+                      <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                          <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="flex-1">
+                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message / Update:</span>
+                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeNotice}</p>
+                        </div>
                       </div>` : ''}
 
                     <div class="flex items-center gap-2">
@@ -1695,8 +1699,8 @@
               }
 
               actionArea = `
-                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2">
-                  <div class="bg-purple-50 p-3 rounded-2xl border border-purple-100 space-y-1.5">
+                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
+                  <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
                       <span class="text-[10px] font-bold text-purple-700">${images.length} Photo${images.length > 1 ? 's' : ''}</span>
@@ -1704,13 +1708,18 @@
                     <p class="text-xs font-bold text-purple-800">${text}</p>
                     ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
+                    <!-- Notice Sent by Front Desk / Office to Mechanic (HIGHLIGHTED RED & CLEAR) -->
                     ${officeMsg ? `
-                      <div class="mt-2 p-2 bg-amber-100/90 rounded-xl border border-amber-300 text-xs text-amber-900 space-y-0.5">
-                        <span class="font-extrabold text-[10px] uppercase text-amber-800 flex items-center gap-1">
-                          <i class="fa-solid fa-bell text-amber-600"></i> Note from Front Desk / Office:
-                        </span>
-                        <p class="font-bold text-xs">${officeMsg}</p>
+                      <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                          <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <div class="flex-1">
+                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">
+                            Message from Office / Front Desk:
+                          </span>
+                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
+                        </div>
                       </div>` : ''}
                   </div>
                   ${resumeBtn}
