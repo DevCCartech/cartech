@@ -191,7 +191,6 @@
         </div>
       </div>
 
-      <!-- Header Action -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -210,7 +209,10 @@
           <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry & Flow Control</h2>
           <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <a id="btnExcelDiagnostic" href="https://login.live.com/oauth20_authorize.srf?client_id=c9a559d2-7aab-4f13-a6ed-e7e9c52aec87&scope=openid+profile&redirect_uri=https%3a%2f%2fforms.cloud.microsoft%2flanding&response_type=code&state=eyJ2ZXJzaW9uIjoxLCJkYXRhIjp7IklkZW50aXR5UHJvdmlkZXIiOiJBUTBCTGM3MnE1R3c5RjdkRFZoeGVTaHNjTXBrYTZpLUwtWGl6VkNfM0Z4MGtzODdlUXoxRGFJQjNNZUlwN3c4azdHeEQ3LW05VEhCNXhhT3FOUG9ZRGMiLCJUZW5hbnRJZCI6IkFTdUZIY000cV9QNFBQTHJld0xpLWd0dXZtRWpMU1NjeHFsSmVHTFZJbjlnSi1IYmNTbFpOVENkTmVyalNCeS1kR3FJR18yNnpfMW0xXy12X2JSRkNpVTNFMmRxM3gyQW96UFNqcklQR01VdkxnaTBNemFHVTQzSnFENVA4eXdpbXciLCIucmVkaXJlY3QiOiIvUGFnZXMvRGVzaWduUGFnZVYyLmFzcHg_c3VicGFnZT1kZXNpZ24mdG9rZW49ZTMwNTA5NDNiM2IyNDA1YzgyNmIwZjZlM2U3OGFiNTQmaWQ9RFFTSWtXZHNXMHl4RWphakJMWnRyUUFBQUFBQUFBQUFBQU5fXzU4d1ppeFVOMEpOT0RSVU5rRlRWRVl4VnpSQk9EVXlTek5RV0ZkSVJpNHUmYW5hbHlzaXM9ZmFsc2UiLCIueHNyZiI6IkFjWER4RGNRRURlbkVFazlJVC1kUzMzSlN0ZV9qWWJzTHlIOFdhOC15YVVOZ0ZzbF8yS2xZZWMzcml0Z19BYWQ0RUxzak9sRE82S25hWG9BdW95enhta0VDOE1CeXFNaW5CZEFub195Q1V2MWo3d0c4amdpWmpPWFJSc0I0UWlVZ3ciLCJPcGVuSWRDb25uZWN0LkNvZGUuUmVkaXJlY3RVcmkiOiJBZElWLTJTVHJFUC1zWHViTGZkRS1lUkVKMGJVYzFiRzFzbU9IUlVEX2VHZkY0Nndzc1JJenVvNS0xRHF2ejFwQlF1SVc3TUhnaUhzVWFNZmhZblFzdG9jWUgwZVNuNXo1MjR5QnFlQWI4cFNvLUUtTmM2Z2RWQm1TdGt2NFNyM3BnIn19&response_mode=form_post&nonce=639233841747991511.NmViODZlMWUtYTRlZi00NWNjLWI1YWMtOTVhYjIwODQ2ZDg1YjAwNDAyZWEtNTljMC00YTYwLTk1ODktM2E1MDlkOGYxMmY5&x-client-SKU=ID_NET10_0&x-client-Ver=8.19.2.0&uaid=25efcd24e4924a5db3b9bc2d07430a8f&msproxy=1&issuer=mso&tenant=consumers&ui_locales=en-US&epctrc=yOJX%2fCzKU%2bM7bu%2bRieA7j%2bQKl15TCNJvTKlzphETEyY%3d3%3a1%3aCANARY%3awC%2b%2b9PnW0sp8waE7kCymPcPccQhSJbTlqTN7jQazO8M%3d&epct=PAQABDgEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzCAAAAAAASzpTmm67kf7tT-LOYiEcyxyX4HjIq8B_cnXhg3n_J1QhRK3g5umuQ_PTjvN9SbPsuJvVzzHvd-QjucBPvMIUni1h5AK0auTgonoheXCfbiUnv5WANpQaMps9zmG3mN4jCzkUK0IUFEKVLkUlDRLnBqBk_iz4sACEgTgb2_sCBdsuGRt_p0nmr41lfaDa_0qLkk6AGothAJXCo6PJprIcqyAA&jshs=0#" target="_blank" rel="noopener noreferrer" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-emerald-200 transition shadow-sm">
+            <i class="fa-solid fa-file-excel text-emerald-600"></i> Excel Diagnostic Form
+          </a>
           <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
             <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
           </button>
@@ -417,21 +419,21 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Pending</div>
                 </div>
               </div>
-              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
+              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xs"><i class="fa-solid fa-wrench"></i></div>
                 <div>
                   <div id="statActive" class="text-lg font-black text-slate-900 leading-none">0</div>
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Working Bay</div>
                 </div>
               </div>
-              <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-purple-400 transition transform active:scale-95">
+              <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-purple-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-gears"></i></div>
                 <div>
                   <div id="statParts" class="text-lg font-black text-slate-900 leading-none">0</div>
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -461,6 +463,27 @@
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
+      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
+            <div id="myMechanicAvatarImg" class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-base flex items-center justify-center uppercase shadow-md border-2 border-indigo-500">
+              M
+            </div>
+            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+            <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900 uppercase leading-tight" id="workshopStaffName">Mechanic</h3>
+            <p class="text-[11px] text-slate-500">Tap avatar photo to update your profile image.</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
+          <i class="fa-solid fa-camera text-[10px]"></i> Photo
+        </button>
+      </div>
+
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -829,7 +852,7 @@
         alert("Permission denied. Only Developer can manage accounts.");
         return;
       }
-      if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
+      if (!confirm(`Revoke access and delete [${username.toUpperCase()}]?`)) return;
 
       delete cachedCloudAccounts[username];
       delete AUTHORIZED_ROSTER[username];
