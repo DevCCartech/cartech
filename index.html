@@ -426,7 +426,7 @@
           </div>
           <div>
             <h3 class="font-black text-xs md:text-sm">Activate Fast Doorbell Alert</h3>
-            <p class="text-[11px] text-orange-100">Tap once to test fast doorbell ring & heavy vibrate.</p>
+            <p class="text-[11px] text-orange-100">Tap once to enable alert sound & vibrate.</p>
           </div>
         </div>
         <button onclick="requestPocketAlertPermission()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-4 py-2.5 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5">
@@ -491,10 +491,10 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Multiple Allowed)</label>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Max 10 Photos - Auto Compressed)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
           
-          <div id="partPhotosGrid" class="grid grid-cols-3 gap-2 mt-2.5"></div>
+          <div id="partPhotosGrid" class="grid grid-cols-4 gap-2 mt-2.5"></div>
         </div>
       </div>
 
@@ -770,18 +770,17 @@
       return audioCtx;
     }
 
-    // FAST HIGH-PITCH "DING-DONG" DOORBELL / RING SYNTHESIZER
+    // FAST HIGH-PITCH "DING-DONG" DOORBELL SYNTHESIZER
     function triggerFastDoorbellSound() {
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
 
-        // Sequence: Double Ding-Dong Chime [Ding (High), Dong (Low), Ding (High), Dong (Low)]
         const doorbellChimes = [
-          { f: 880.00, start: 0.00, dur: 0.28 },  // A5 (Ding)
-          { f: 659.25, start: 0.18, dur: 0.38 },  // E5 (Dong)
-          { f: 1046.50, start: 0.48, dur: 0.28 }, // C6 (Ding - High)
-          { f: 783.99, start: 0.66, dur: 0.45 }   // G5 (Dong - Deep)
+          { f: 880.00, start: 0.00, dur: 0.28 },  // A5
+          { f: 659.25, start: 0.18, dur: 0.38 },  // E5
+          { f: 1046.50, start: 0.48, dur: 0.28 }, // C6
+          { f: 783.99, start: 0.66, dur: 0.45 }   // G5
         ];
 
         doorbellChimes.forEach(chime => {
@@ -793,7 +792,6 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(chime.f, startTime);
 
-          // Rich bell strike envelope
           gain.gain.setValueAtTime(0.01, startTime);
           gain.gain.exponentialRampToValueAtTime(0.95, startTime + 0.015);
           gain.gain.exponentialRampToValueAtTime(0.001, startTime + chime.dur);
@@ -864,7 +862,6 @@
         showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
         if (!alarmInterval) {
           triggerContinuousAlarm();
-          // Faster loop rate: repeats every 1.6s for immediate mechanic notice
           alarmInterval = setInterval(triggerContinuousAlarm, 1600);
         }
       } else {
@@ -1282,25 +1279,41 @@
       }
     }
 
-    async function officeSendPartsReply(jobId) {
+    // TWO-WAY CHAT THREAD: SENDS MESSAGES (FROM EITHER OFFICE OR MECHANIC)
+    async function sendConversationMessage(jobId, senderRole) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
 
-      const replyText = prompt("Enter message/reply for mechanic (will be highlighted in RED for mechanic):", "okay wait, checking with customer");
-      if (!replyText || !replyText.trim()) return;
+      const promptTitle = senderRole === 'office' ? 'Office Message / Price to Mechanic:' : 'Mechanic Reply to Office:';
+      const messageText = prompt(promptTitle, "");
+      if (!messageText || !messageText.trim()) return;
 
-      let currentSlot = currentItem.auto_schedule_slot || "";
-      currentSlot = currentSlot.replace(/\[OFFICE_MSG:.*?\]/gi, '');
-      currentSlot += ` [OFFICE_MSG:${replyText.trim()}]`;
+      const info = parsePartsInfo(currentItem.auto_schedule_slot);
+      const newChatEntry = {
+        sender: senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase(),
+        role: senderRole,
+        text: messageText.trim(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
 
-      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: currentSlot } : j));
+      const updatedChatList = [...info.chatList, newChatEntry];
+
+      // Rebuild auto_schedule_slot cleanly without bloating payload
+      let slotBase = (currentItem.auto_schedule_slot || "")
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .trim();
+
+      const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
+
+      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       render();
 
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
           method: "PATCH",
           headers: HEADERS,
-          body: JSON.stringify({ auto_schedule_slot: currentSlot })
+          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch (e){}
       pullData();
@@ -1360,9 +1373,15 @@
       document.getElementById('partsModal').classList.add('hidden');
     }
 
+    // ULTRA-FAST LIGHTWEIGHT THUMBNAIL COMPRESSION (STOPS MOBILE LAG)
     function handleMultiplePartImages(event) {
       const files = Array.from(event.target.files);
       if (!files.length) return;
+
+      if (uploadedPartImages.length + files.length > 10) {
+        alert("Maximum 10 photos allowed per parts request.");
+        return;
+      }
 
       files.forEach(file => {
         const reader = new FileReader();
@@ -1372,7 +1391,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 1200;
+            const maxDim = 400; // Ultra-light 400px thumbnail size
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -1384,8 +1403,9 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            const base64 = canvas.toDataURL('image/jpeg', 0.85);
             
+            // Ultra-compressed lightweight JPEG (15-20 KB each)
+            const base64 = canvas.toDataURL('image/jpeg', 0.55);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
@@ -1399,7 +1419,7 @@
     function renderModalPhotoGrid() {
       const grid = document.getElementById('partPhotosGrid');
       grid.innerHTML = uploadedPartImages.map((src, index) => `
-        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-20 group">
+        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-16 group">
           <img src="${src}" class="w-full h-full object-cover">
           <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
             <i class="fa-solid fa-xmark"></i>
@@ -1504,17 +1524,21 @@
       return null;
     }
 
+    // SAFE PARSER: PREVENTS BASE64 LEAKS AND PARSES 2-WAY CHAT THREADS
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null, officeMsg: null };
+      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '' };
       let images = [];
+      let chatList = [];
       
-      let targetStr = rawStr;
-      if (rawStr.includes('[PARTS_LOGGED]')) {
-        const pMatch = rawStr.match(/\[PARTS_LOGGED\](.*?)\[\/PARTS_LOGGED\]/);
+      let targetStr = String(rawStr);
+
+      if (targetStr.includes('[PARTS_LOGGED]')) {
+        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
         if (pMatch) targetStr = pMatch[1];
       }
 
-      const multiMatch = targetStr.match(/\[IMGS\](.*?)\[\/IMGS\]/);
+      // Parse multi-images cleanly
+      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
       if (multiMatch) {
         try { images = JSON.parse(multiMatch[1]); } catch(e){}
       } else {
@@ -1522,21 +1546,85 @@
         if (singleMatch) images = [singleMatch[1]];
       }
 
-      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
+      // Parse conversation chat thread
+      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
+      if (chatMatch) {
+        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
+      }
+
+      // Fallback legacy office single message
+      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
+      if (offMsgMatch && chatList.length === 0) {
+        chatList.push({
+          sender: "OFFICE",
+          role: "office",
+          text: offMsgMatch[1],
+          time: "Just now"
+        });
+      }
+
+      const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
       const mech = mMatch ? mMatch[1].toUpperCase() : null;
 
-      const offMsgMatch = rawStr.match(/\[OFFICE_MSG:(.*?)\]/i);
-      const officeMsg = offMsgMatch ? offMsgMatch[1] : null;
+      // Extract Bay name cleanly
+      const bayMatch = targetStr.match(/Bay #\d+/i);
+      const cleanBay = bayMatch ? bayMatch[0] : '';
 
+      // Strip all raw payload tags so no Base64 leaks onto the screen
       const text = targetStr
-        .replace(/\[IMGS\].*?\[\/IMGS\]/, '')
-        .replace(/\[IMG\].*?\[\/IMG\]/, '')
+        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
+        .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
         .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .replace('Waiting for Car Parts:', '')
+        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
+        .replace(/Waiting for Car Parts:/gi, '')
+        .replace(/Bay #\d+/gi, '')
+        .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, mech, officeMsg };
+      return { text, images, mech, chatList, cleanBay };
+    }
+
+    // RENDERS THE 2-WAY CHAT BUBBLES
+    function renderChatThreadHTML(chatList, jobId, isOfficeView) {
+      if (!chatList || chatList.length === 0) return '';
+
+      const bubbles = chatList.map(msg => {
+        const isFromOffice = msg.role === 'office';
+        return `
+          <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
+            <div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mb-0.5">
+              <span>${msg.sender}</span> • <span>${msg.time}</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-bold ${
+              isFromOffice 
+                ? 'bg-rose-100 text-rose-950 border border-rose-200' 
+                : 'bg-indigo-600 text-white shadow-sm'
+            }">
+              ${msg.text}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
+          <div class="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
+            <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-comments text-indigo-600"></i> Office & Workshop Live Conversation:
+            </span>
+          </div>
+          <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+            ${bubbles}
+          </div>
+          <div class="pt-1">
+            <button onclick="sendConversationMessage('${jobId}', '${isOfficeView ? 'office' : 'workshop'}')" class="w-full ${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-reply text-[10px]"></i> ${isOfficeView ? 'Reply as Office / Desk' : 'Reply as Mechanic'}
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     function calculateWeeklyAnalytics() {
@@ -1751,6 +1839,7 @@
         }
       }
 
+      // Render Office List
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -1765,14 +1854,14 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
+            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay || 'Bay'}</span>`;
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
@@ -1791,19 +1880,12 @@
                 <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
                   <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
                 </span>`;
-            } else if (j.status === 'inprogress') {
-              mechanicHighlightTag = `
-                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold rounded-lg flex items-center gap-1">
-                  <i class="fa-solid fa-user-gear text-amber-600"></i> In Bay Floor
-                </span>`;
             }
 
             let partsSection = "";
-            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
-
             if (j.status === 'waiting_parts') {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               partsSection = `
@@ -1815,22 +1897,14 @@
                     <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
                   </div>
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  ${officeMsg ? `
-                    <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                      <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-envelope"></i>
-                      </div>
-                      <div class="flex-1">
-                        <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message Sent to Mechanic:</span>
-                        <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
-                      </div>
-                    </div>` : ''}
+                  <!-- 2-WAY LIVE CONVERSATION THREAD -->
+                  ${renderChatThreadHTML(chatList, j.id, true)}
 
                   <div class="flex items-center gap-2 pt-1">
-                    <button onclick="officeSendPartsReply('${j.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
+                    <button onclick="sendConversationMessage('${j.id}', 'office')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-message"></i> Send Price / Chat Update
                     </button>
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
@@ -1839,7 +1913,7 @@
                 </div>`;
             } else if (j.status === 'completed' && partText) {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               partsSection = `
@@ -1848,14 +1922,12 @@
                     <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
                       <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
                     </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''} (Click to view full)</span>` : ''}
+                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
                   </div>
                   <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                 </div>`;
             }
-
-            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
@@ -1876,7 +1948,7 @@
 
                 <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${j.status !== 'waiting_parts' && cleanBaySlot && cleanBaySlot !== 'Completed Service' ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBaySlot}</p>` : ''}
+                  ${cleanBay ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBay}</p>` : ''}
                   ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
                 ${partsSection}
@@ -1885,6 +1957,7 @@
         }
       }
 
+      // Render Workshop Feed
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -1902,6 +1975,7 @@
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
+            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -1915,33 +1989,20 @@
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-              const offMsgMatch = String(j.auto_schedule_slot || '').match(/\[OFFICE_MSG:(.*?)\]/i);
-              const officeNotice = offMsgMatch ? offMsgMatch[1] : null;
-
               if (isMyJob) {
                 actionArea = `
                   <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
                     <div class="flex items-center justify-between">
                       <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        ${cleanBay} • <strong>You are handling this car</strong>
+                        ${cleanBay || 'Bay'} • <strong>You are handling this car</strong>
                       </span>
                       <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
                       </button>
                     </div>
 
-                    ${officeNotice ? `
-                      <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                          <i class="fa-solid fa-envelope"></i>
-                        </div>
-                        <div class="flex-1">
-                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message / Update:</span>
-                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeNotice}</p>
-                        </div>
-                      </div>` : ''}
+                    ${renderChatThreadHTML(chatList, j.id, false)}
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
@@ -1956,16 +2017,15 @@
                 const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>${cleanBay}</span>
+                    <span>${cleanBay || 'Working in Bay'}</span>
                     <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
                       <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
                     </span>
                   </div>`;
               }
             } else if (j.status === 'waiting_parts') {
-              const { text, images, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
-              const photosThumbnails = images.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+              const photosThumbnails = partImages.map(img => `
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               let resumeBtn = "";
@@ -1981,31 +2041,19 @@
                   <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${images.length} Photo${images.length > 1 ? 's' : ''}</span>
+                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
                     </div>
-                    <p class="text-xs font-bold text-purple-800">${text}</p>
-                    ${images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
+                    <p class="text-xs font-bold text-purple-800">${partText}</p>
+                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- Notice Sent by Front Desk / Office to Mechanic -->
-                    ${officeMsg ? `
-                      <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                          <i class="fa-solid fa-comment-dots"></i>
-                        </div>
-                        <div class="flex-1">
-                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">
-                            Message from Office / Front Desk:
-                          </span>
-                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
-                        </div>
-                      </div>` : ''}
+                    <!-- 2-WAY CONVERSATION THREAD IN MECHANIC STATION -->
+                    ${renderChatThreadHTML(chatList, j.id, false)}
                   </div>
                   ${resumeBtn}
                 </div>`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
@@ -2018,7 +2066,7 @@
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : cleanBaySlot)}
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))}
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
@@ -2042,7 +2090,8 @@
       bootApp();
     }
 
-    setInterval(pullData, 1500);
+    // Smooth polling every 2 seconds
+    setInterval(pullData, 2000);
   </script>
 </body>
 </html>
