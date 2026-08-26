@@ -640,7 +640,7 @@
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    // EXACT 10 AUTOMOTIVE PART PHOTOS FROM PICTURE 2
+    // EXACT 10 PHOTOS FOR TUCSON OVERHAUL
     const TUCSON_10_PART_PHOTOS = [
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
@@ -666,7 +666,7 @@
         priority: "Normal",
         details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [OFFICE_MSG:approve]`,
+        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
         time_created: "11:14 PM"
       },
       {
@@ -770,6 +770,7 @@
       if (banner) banner.classList.add('hidden');
     }
 
+    // ROBUST CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?select=*`, {
@@ -932,6 +933,7 @@
       render();
     }
 
+    // INSTANT LOCAL & CLOUD RESTORE
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
@@ -1288,6 +1290,14 @@
         officeView.classList.remove('hidden');
       } else {
         workshopView.classList.remove('hidden');
+        document.getElementById('workshopStaffName').innerText = currentUser;
+
+        const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
+        if (cachedCloudAvatars[currentUser]) {
+          avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
+        } else {
+          avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
+        }
         
         const whistleCard = document.getElementById('whistlePermissionCard');
         if (whistleCard) {
@@ -1374,6 +1384,10 @@
 
           render();
           updateAlarmState();
+          
+          if (activeModalChatJobId) {
+            updateModalChatStream(activeModalChatJobId);
+          }
         }
       } catch (e) {
         if (state.length === 0) {
@@ -1772,7 +1786,7 @@
         }).join('');
       }
 
-      // Office Queue List Renderer (EXACT REPLICA OF PICTURE 2)
+      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -2032,9 +2046,11 @@
               <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
                 <div class="flex justify-between items-start">
                   <div>
-                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                      <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                      <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                    </div>
                   </div>
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
@@ -2061,6 +2077,9 @@
       currentUser = savedAuthUser;
       currentRole = savedAuthRole;
       bootApp();
+    } else {
+      // Auto-load core records on boot so screen is never empty
+      render();
     }
 
     setInterval(pullData, 2000);
