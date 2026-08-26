@@ -191,12 +191,7 @@
         </div>
       </div>
 
-      <!-- Live Roster Strip -->
-      <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
-        <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
-      </div>
-
+      <!-- Header Action -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -205,14 +200,14 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
+    <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
             <i class="fa-solid fa-sliders mr-1"></i> Admin & Dev Control Terminal
           </span>
-          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry, Sub-Mechanic Expiry & Flow Control</h2>
+          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry & Flow Control</h2>
           <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -225,20 +220,20 @@
         </div>
       </div>
 
-      <!-- Metric KPI Cards -->
+      <!-- KPI Metrics -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Total Registered Accounts</div>
+            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-signal"></i></div>
           <div>
             <div id="devOnlineStaffCount" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Online Staff (Live Sync)</div>
+            <div class="text-[11px] font-semibold text-slate-400">Online Staff</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -258,23 +253,19 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- COLUMN 1: LIVE ACTIVE PRESENCE & SUB-MECHANIC REGISTRATION -->
         <div class="lg:col-span-6 space-y-6">
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-user-plus text-indigo-600"></i> Register Sub-Mechanic / Staff
               </h3>
-              <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">
-                Timed Access Control
-              </span>
+              <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Timed Access</span>
             </div>
 
             <form onsubmit="handleAdminCreateSubAccount(event)" class="space-y-3">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Username / Mechanic Name *</label>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Username / Name *</label>
                   <input id="subUsername" required placeholder="e.g. jomar, tony" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
@@ -292,7 +283,7 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Access Expiry Duration *</label>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Access Duration *</label>
                   <select id="subDuration" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
                     <option value="4">4 Hours (Half Day)</option>
                     <option value="8">8 Hours (1 Full Shift)</option>
@@ -310,26 +301,22 @@
             </form>
           </div>
 
-          <!-- REAL-TIME STAFF ACTIVITY -->
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity (Cross-Device)
+                <i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity
               </h3>
-              <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
-                <i class="fa-solid fa-circle text-[7px] mr-1 animate-ping"></i> Live Sync
-              </span>
+              <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">Live Sync</span>
             </div>
             <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
           </div>
         </div>
 
-        <!-- COLUMN 2: REGISTERED ACCOUNTS & TIME-LIMIT CONTROL PANEL -->
         <div class="lg:col-span-6 space-y-6">
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-id-card-clip text-indigo-600"></i> Registered Staff & Active Sub-Mechanics
+                <i class="fa-solid fa-id-card-clip text-indigo-600"></i> Registered Staff & Active Accounts
               </h3>
               <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
             </div>
@@ -354,53 +341,17 @@
             </div>
           </div>
         </div>
-
-      </div>
-
-      <!-- WEEKLY PERFORMANCE MONITORING -->
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-              <i class="fa-solid fa-chart-line mr-1"></i> Weekly Performance & Growth Monitoring
-            </span>
-            <h3 class="text-xl font-black text-slate-900 mt-1">End of Week Shop Repair Analysis</h3>
-          </div>
-          <div id="weeklyTrendBadge" class="px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">This Week Repairs (Total Cars)</span>
-            <div id="repairsThisWeek" class="text-2xl font-black text-slate-900 mt-1">0</div>
-            <p class="text-xs text-slate-500 mt-0.5">Completed jobs in past 7 days</p>
-          </div>
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Previous Week (7-14 Days Ago)</span>
-            <div id="repairsLastWeek" class="text-2xl font-black text-slate-900 mt-1">0</div>
-            <p class="text-xs text-slate-500 mt-0.5">Historical comparison benchmark</p>
-          </div>
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Top Mechanic (Most Handled)</span>
-            <div id="topMechanicName" class="text-2xl font-black text-emerald-600 mt-1">None</div>
-            <p id="topMechanicSub" class="text-xs text-slate-500 mt-0.5">Leading throughput score</p>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-2.5">Mechanic Individual Handled Leaderboard:</h4>
-          <div id="mechanicPerformanceBars" class="space-y-2"></div>
-        </div>
       </div>
     </main>
 
     <!-- OFFICE VIEW -->
-    <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
-      <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
+    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
+      <!-- Intake Column -->
+      <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Intake Terminal</span>
-            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">New dispatch</h2>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">New dispatch</h2>
           </div>
           <button type="button" onclick="document.getElementById('intakeForm').reset()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 flex items-center justify-center text-xs font-bold transition" title="Reset fields">
             <i class="fa-solid fa-rotate-left"></i>
@@ -436,53 +387,72 @@
         </form>
       </div>
 
-      <div class="lg:col-span-7 space-y-5">
-        <div class="flex justify-between items-center">
+      <!-- Center & Right Feed -->
+      <div class="lg:col-span-8 space-y-4">
+        <!-- Metric Cards Row & Messenger Header Strip -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
-            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">Vehicle Queue</h2>
+            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Vehicle Queue</h2>
           </div>
           <div id="officeRemainingMechanicBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
-          <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
-            <div>
-              <div id="statWaiting" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Pending</div>
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+          <!-- Metric Cards & Job Feed List -->
+          <div class="xl:col-span-9 space-y-3.5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-2.5">
+              <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-amber-400 transition transform active:scale-95">
+                <div class="w-7 h-7 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-xs"><i class="fa-regular fa-clock"></i></div>
+                <div>
+                  <div id="statWaiting" class="text-lg font-black text-slate-900 leading-none">0</div>
+                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Pending</div>
+                </div>
+              </div>
+              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
+                <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xs"><i class="fa-solid fa-wrench"></i></div>
+                <div>
+                  <div id="statActive" class="text-lg font-black text-slate-900 leading-none">0</div>
+                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Working Bay</div>
+                </div>
+              </div>
+              <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-purple-400 transition transform active:scale-95">
+                <div class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-gears"></i></div>
+                <div>
+                  <div id="statParts" class="text-lg font-black text-slate-900 leading-none">0</div>
+                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
+                </div>
+              </div>
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+                <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
+                <div>
+                  <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
+                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Completed</div>
+                </div>
+              </div>
             </div>
+
+            <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
-          <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-blue-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
-            <div>
-              <div id="statActive" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Working Bay</div>
+
+          <!-- MESSENGER CIRCLE AVATAR SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <i class="fa-brands fa-facebook-messenger text-indigo-600"></i> Parts Chat Hub
+              </span>
+              <span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200">Floor</span>
             </div>
-          </div>
-          <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-purple-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-gears"></i></div>
-            <div>
-              <div id="statParts" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Waiting Parts</div>
-            </div>
-          </div>
-          <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-emerald-400 hover:shadow transition transform active:scale-95">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-regular fa-circle-check"></i></div>
-            <div>
-              <div id="statDone" class="text-xl font-black text-slate-900 leading-none">0</div>
-              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Completed</div>
-            </div>
+
+            <!-- Vertical Circles Container -->
+            <div id="messengerSidebarAvatars" class="flex flex-row xl:flex-col gap-2.5 overflow-x-auto xl:overflow-visible pb-1 xl:pb-0"></div>
           </div>
         </div>
-
-        <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
       </div>
     </main>
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -533,7 +503,42 @@
     </main>
   </div>
 
-  <!-- MODAL: PARTS -->
+  <!-- 3. MESSENGER CHAT DIALOGUE MODAL (FOR DIRECT PARTS CONVERSATION) -->
+  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4" onclick="closeMessengerModal()">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div id="modalAvatarCircle" class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm uppercase shadow">
+            M
+          </div>
+          <div>
+            <h3 id="modalChatTitle" class="font-black text-sm">Mechanic Chat</h3>
+            <p id="modalChatSub" class="text-[10px] text-slate-400">Parts Request & Price Inquiry</p>
+          </div>
+        </div>
+        <button onclick="closeMessengerModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Parts Overview Strip inside Modal -->
+      <div id="modalPartsOverview" class="p-3 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-1.5"></div>
+
+      <!-- Messages Stream (Reverse bottom anchored) -->
+      <div id="modalChatStream" class="flex-1 p-4 overflow-y-auto space-y-2.5 bg-slate-50 flex flex-col-reverse max-h-72"></div>
+
+      <!-- Input Bar -->
+      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. MODAL: PARTS REQUEST -->
   <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -568,7 +573,7 @@
     </div>
   </div>
 
-  <!-- LIGHTBOX -->
+  <!-- 5. LIGHTBOX -->
   <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
@@ -595,7 +600,10 @@
     };
 
     let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-    let MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
+    // Exact requested sequence: bert, charl, mark, nel, rocky
+    let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky"];
+    let MECHANIC_LIST = [...MECHANIC_ORDER];
+
     const TOTAL_BAYS = 4;
     const MAX_JOBS_PER_MECHANIC = 3;
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
@@ -622,9 +630,7 @@
     let deferredPwaPrompt = null;
     let swRegistration = null;
     let previousCompletedJobCount = null;
-
-    // Persisted In-Memory Draft Store to Stop Typing Interruptions
-    const activeChatDrafts = {};
+    let activeModalChatJobId = null;
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
@@ -712,7 +718,7 @@
                 localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
 
                 AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-                MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
+                MECHANIC_LIST = [...MECHANIC_ORDER];
 
                 Object.keys(cachedCloudAccounts).forEach(u => {
                   const acc = cachedCloudAccounts[u];
@@ -911,7 +917,7 @@
       }
 
       await pullData();
-      alert("✅ All shop records restored!");
+      alert("✅ Shop records restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1252,7 +1258,6 @@
       const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
-      const topMechanicsStripOffice = document.getElementById('topMechanicsStripOffice');
 
       devView.classList.add('hidden');
       officeView.classList.add('hidden');
@@ -1260,20 +1265,10 @@
 
       if (currentRole === 'developer' || currentRole === 'admin') {
         devView.classList.remove('hidden');
-        if (window.innerWidth >= 768) {
-          topMechanicsStripOffice.classList.remove('hidden');
-          topMechanicsStripOffice.classList.add('flex');
-        }
       } else if (currentRole === 'office') {
         officeView.classList.remove('hidden');
-        if (window.innerWidth >= 768) {
-          topMechanicsStripOffice.classList.remove('hidden');
-          topMechanicsStripOffice.classList.add('flex');
-        }
       } else {
         workshopView.classList.remove('hidden');
-        topMechanicsStripOffice.classList.add('hidden');
-        topMechanicsStripOffice.classList.remove('flex');
         
         const whistleCard = document.getElementById('whistlePermissionCard');
         if (whistleCard) {
@@ -1348,7 +1343,7 @@
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
                 playLoudVehicleHorn();
-                showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic just marked a car DONE. Ready for invoicing/pickup.");
+                showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic marked a job DONE.");
               }
             }
             previousCompletedJobCount = currentDoneCount;
@@ -1356,6 +1351,11 @@
             state = data;
             render();
             updateAlarmState();
+            
+            // If messenger modal is currently open, refresh stream live
+            if (activeModalChatJobId) {
+              updateModalChatStream(activeModalChatJobId);
+            }
           }
         }
       } catch (e) {}
@@ -1514,61 +1514,6 @@
       }
     }
 
-    // ONINPUT EVENT LISTENER: SAVES EVERY KEYSTROKE TO MEMORY DRAFT
-    function handleChatInputType(jobId, element) {
-      activeChatDrafts[jobId] = element.value;
-    }
-
-    // DISCORD/MESSENGER INLINE CHAT SENDER (PRESERVES DRAFT AND DOES NOT RELOAD)
-    async function sendInlineChatMessage(event, jobId, senderRole) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
-      const input = document.getElementById(`chatInput_${jobId}`);
-      const messageText = (input ? input.value : (activeChatDrafts[jobId] || "")).trim();
-      if (!messageText) return false;
-
-      // Clear draft memory and input box
-      activeChatDrafts[jobId] = "";
-      if (input) input.value = "";
-
-      const currentItem = state.find(j => j.id === jobId);
-      if (!currentItem) return false;
-
-      const info = parsePartsInfo(currentItem.auto_schedule_slot);
-      const newChatEntry = {
-        sender: senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase(),
-        role: senderRole,
-        text: messageText,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      const updatedChatList = [...info.chatList, newChatEntry];
-
-      let slotBase = (currentItem.auto_schedule_slot || "")
-        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .trim();
-
-      const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
-
-      // Update local state directly
-      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
-      render();
-
-      try {
-        await fetch(`${API_URL}?id=eq.${jobId}`, {
-          method: "PATCH",
-          headers: HEADERS,
-          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
-        });
-      } catch (e){}
-      pullData();
-      return false;
-    }
-
     async function officePartsReadyToPickUp(jobId) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
@@ -1681,7 +1626,7 @@
       renderModalPhotoGrid();
     }
 
-    // SUBMITS PART ORDER & ACTIVATES CHAT IMMEDIATELY
+    // SUBMIT PARTS REQUEST & CREATE FIRST CHAT MESSAGE
     async function submitPartsRequest() {
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
@@ -1824,20 +1769,59 @@
       return { text, images, mech, chatList, cleanBay, hasPartOrder };
     }
 
-    // MESSENGER-STYLE CHAT
-    function renderChatThreadHTML(chatList, jobId, isOfficeView) {
-      const activeRole = isOfficeView ? 'office' : 'workshop';
-      const reversedList = chatList ? [...chatList].reverse() : [];
-      const savedDraft = activeChatDrafts[jobId] || "";
+    // OPEN MESSENGER CHAT DIALOGUE MODAL FOR SPECIFIC MECHANIC / JOB
+    function openMessengerChatForJob(jobId, mechName) {
+      activeModalChatJobId = jobId;
+      const job = state.find(j => j.id === jobId);
+      const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
 
-      const bubbles = reversedList.length > 0 ? reversedList.map(msg => {
+      document.getElementById('modalAvatarCircle').innerText = mechName.charAt(0).toUpperCase();
+      document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
+      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
+
+      // Parts Overview & Photos
+      const photosHTML = info.images.map(img => `
+        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-10 h-10 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
+      `).join('');
+
+      document.getElementById('modalPartsOverview').innerHTML = `
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-[11px] text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
+          <span class="text-[10px] text-purple-600 font-bold">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
+        </div>
+        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${photosHTML}</div>` : ''}
+      `;
+
+      updateModalChatStream(jobId);
+      document.getElementById('messengerModal').classList.remove('hidden');
+      
+      setTimeout(() => {
+        const inp = document.getElementById('modalChatInput');
+        if (inp) inp.focus();
+      }, 100);
+    }
+
+    function updateModalChatStream(jobId) {
+      const job = state.find(j => j.id === jobId);
+      const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
+      const reversedList = info.chatList ? [...info.chatList].reverse() : [];
+
+      const stream = document.getElementById('modalChatStream');
+      if (!stream) return;
+
+      if (reversedList.length === 0) {
+        stream.innerHTML = `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet. Send price or question below.</p>`;
+        return;
+      }
+
+      stream.innerHTML = reversedList.map(msg => {
         const isFromOffice = msg.role === 'office';
         return `
           <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
             <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
               <span>${msg.sender}</span> • <span>${msg.time}</span>
             </div>
-            <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
+            <div class="px-3.5 py-2 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
               isFromOffice 
                 ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
                 : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
@@ -1846,30 +1830,58 @@
             </div>
           </div>
         `;
-      }).join('') : `<p class="text-center text-[11px] text-slate-400 italic py-2">No messages yet. Send price or question below.</p>`;
+      }).join('');
+    }
 
-      return `
-        <div class="bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 space-y-2.5">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
-            <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-comments text-indigo-600"></i> Messenger Live Chat
-            </span>
-            <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Fast Sync</span>
-          </div>
+    function closeMessengerModal() {
+      activeModalChatJobId = null;
+      document.getElementById('messengerModal').classList.add('hidden');
+    }
 
-          <div id="chatBox_${jobId}" class="flex flex-col-reverse space-y-reverse space-y-2 max-h-44 overflow-y-auto pr-1">
-            ${bubbles}
-          </div>
+    async function handleModalChatSubmit(event) {
+      event.preventDefault();
+      if (!activeModalChatJobId) return;
 
-          <form onsubmit="return sendInlineChatMessage(event, '${jobId}', '${activeRole}')" class="flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
-            <input id="chatInput_${jobId}" type="text" value="${savedDraft.replace(/"/g, '&quot;')}" oninput="handleChatInputType('${jobId}', this)" placeholder="${isOfficeView ? 'Reply price or notice to mechanic...' : 'Reply to office / front desk...'}" 
-                   class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
-            <button type="submit" class="${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold p-2 rounded-xl text-xs transition shadow-sm flex items-center justify-center">
-              <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-          </form>
-        </div>
-      `;
+      const input = document.getElementById('modalChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      const currentItem = state.find(j => j.id === activeModalChatJobId);
+      if (!currentItem) return;
+
+      const info = parsePartsInfo(currentItem.auto_schedule_slot);
+      const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
+      const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
+
+      const newChatEntry = {
+        sender: senderName,
+        role: senderRole,
+        text: text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const updatedChatList = [...info.chatList, newChatEntry];
+
+      let slotBase = (currentItem.auto_schedule_slot || "")
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .trim();
+
+      const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
+
+      state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      updateModalChatStream(activeModalChatJobId);
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${activeModalChatJobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
+        });
+      } catch (e){}
+      pullData();
     }
 
     function calculateWeeklyAnalytics() {
@@ -2076,12 +2088,6 @@
     }
 
     function render() {
-      // Capture currently focused input and cursor positions
-      const activeEl = document.activeElement;
-      const activeInputId = (activeEl && activeEl.tagName === 'INPUT') ? activeEl.id : null;
-      const activeSelectionStart = activeEl && activeEl.selectionStart !== undefined ? activeEl.selectionStart : null;
-      const activeSelectionEnd = activeEl && activeEl.selectionEnd !== undefined ? activeEl.selectionEnd : null;
-
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
       const parts = state.filter(j => j.status === 'waiting_parts').length;
@@ -2117,22 +2123,6 @@
         }
       }
 
-      let mechHTML = "";
-      MECHANIC_LIST.forEach(m => {
-        const load = mechanicLoads[m] || 0;
-        const isFull = load >= MAX_JOBS_PER_MECHANIC;
-        if (isFull) {
-          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC} Full)</span>`;
-        } else if (load > 0) {
-          mechHTML += `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC})</span>`;
-        } else {
-          mechHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ${m.toUpperCase()}</span>`;
-        }
-      });
-
-      const indDesktop = document.getElementById('mechanicsIndicators');
-      if (indDesktop) indDesktop.innerHTML = mechHTML;
-
       const sWait = document.getElementById('statWaiting');
       const sAct = document.getElementById('statActive');
       const sPart = document.getElementById('statParts');
@@ -2154,7 +2144,51 @@
         }
       }
 
-      // Office Queue Renderer
+      // RENDER MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY)
+      const sidebarContainer = document.getElementById('messengerSidebarAvatars');
+      if (sidebarContainer) {
+        sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
+          // Find mechanic's active job (if any)
+          const activeMechJob = state.find(j => {
+            if (j.status === 'completed') return false;
+            const res = resolveMechanicName(j);
+            return res && res.toLowerCase() === m;
+          });
+
+          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
+          const msgCount = info.chatList ? info.chatList.length : 0;
+          const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
+
+          // Color coded circles
+          let ringColor = "ring-2 ring-slate-200";
+          if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
+          else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
+
+          return `
+            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
+                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
+              <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
+                  ${m.charAt(0)}
+                </div>
+                ${msgCount > 0 ? `
+                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    ${msgCount}
+                  </span>
+                ` : ''}
+              </div>
+              <div class="text-center xl:text-left mt-1 xl:mt-0">
+                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
+                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
+                  ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -2214,11 +2248,12 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  ${renderChatThreadHTML(chatList, j.id, true)}
-
-                  <div class="pt-1">
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up (Resume Bay)
+                  <div class="flex items-center gap-2 pt-1">
+                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
+                    </button>
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
                     </button>
                   </div>
                 </div>`;
@@ -2313,7 +2348,11 @@
                       </button>
                     </div>
 
-                    ${hasPartOrder ? renderChatThreadHTML(chatList, j.id, false) : ''}
+                    ${hasPartOrder ? `
+                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${chatList.length} msgs)
+                      </button>
+                    ` : ''}
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
@@ -2357,7 +2396,9 @@
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    ${renderChatThreadHTML(chatList, j.id, false)}
+                    <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
+                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
+                    </button>
                   </div>
                   ${resumeBtn}
                 </div>`;
@@ -2385,17 +2426,6 @@
                 ${actionArea}
               </div>`;
           }).join('');
-        }
-      }
-
-      // Restore active input focus and cursor position
-      if (activeInputId) {
-        const reFocusedInput = document.getElementById(activeInputId);
-        if (reFocusedInput) {
-          reFocusedInput.focus();
-          if (activeSelectionStart !== null && activeSelectionEnd !== null) {
-            reFocusedInput.setSelectionRange(activeSelectionStart, activeSelectionEnd);
-          }
         }
       }
     }
