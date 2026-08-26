@@ -7,7 +7,7 @@
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -207,7 +207,7 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN PERFORMANCE & USER MANAGEMENT VIEW -->
+    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -340,13 +340,16 @@
             
             <div class="space-y-3">
               <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-                <p class="font-bold text-slate-900">Quick Operations Flow:</p>
-                <div class="grid grid-cols-2 gap-2">
-                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-plus text-xs"></i> Inject Test Job
+                <p class="font-bold text-slate-900">Data Management & Recovery Flow:</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
+                    <i class="fa-solid fa-rotate-left"></i> Restore Shop Data
                   </button>
-                  <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-trash-can text-xs"></i> Purge All Records
+                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
+                    <i class="fa-solid fa-plus"></i> Inject Test Job
+                  </button>
+                  <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
+                    <i class="fa-solid fa-trash-can"></i> Purge All
                   </button>
                 </div>
               </div>
@@ -587,7 +590,6 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // Core default roster
     const DEFAULT_ROSTER = {
       "dev": "developer",
       "admin": "admin",
@@ -692,7 +694,7 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // CLOUD SYNC WITH FAIL-SAFE NORMALIZATION
+    // CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -705,7 +707,6 @@
               try {
                 const parsed = JSON.parse(rec.details);
                 
-                // Normalizes both legacy string and new object accounts
                 Object.keys(parsed).forEach(k => {
                   if (typeof parsed[k] === 'string') {
                     parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
@@ -715,7 +716,6 @@
                 cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
                 localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
 
-                // Re-populate dynamic roster
                 AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
                 MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
 
@@ -740,7 +740,6 @@
       } catch (e) {}
     }
 
-    // AUTO-KICKOUT ENFORCER
     function checkCurrentSessionExpiry() {
       if (!currentUser) return;
       const acc = cachedCloudAccounts[currentUser];
@@ -754,7 +753,6 @@
       }
     }
 
-    // SAVE ACCOUNT TO SUPABASE
     async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
       const now = Date.now();
       const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
@@ -847,6 +845,79 @@
         });
       } catch (e){}
       render();
+    }
+
+    // ONE-CLICK COMPLETE SHOP RECORD RESTORE
+    async function restoreInitialShopRecords() {
+      const originalJobs = [
+        {
+          id: "JB-408",
+          customer: "Arian Lumanta",
+          phone: "0909-323-93-93",
+          vehicle: "Hyundai Tucson",
+          plate: "CAR-408",
+          service: "Major Overhaul & Bushing",
+          est_time: 120,
+          priority: "Normal",
+          details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
+          status: "waiting_parts",
+          auto_schedule_slot: "Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]",
+          time_created: "11:14 PM"
+        },
+        {
+          id: "JB-298",
+          customer: "Gilberto Deliman",
+          phone: "0912-345-67-89",
+          vehicle: "Toyota Hilux 2018",
+          plate: "B1141",
+          service: "Preventive Maintenance",
+          est_time: 60,
+          priority: "Normal",
+          details: "Change Engine Oil, Air Filter, Cabin Filter replacement.",
+          status: "inprogress",
+          auto_schedule_slot: "Bay #2 [MECH:bert]",
+          time_created: "10:30 AM"
+        },
+        {
+          id: "JB-613",
+          customer: "Rey Buscabus",
+          phone: "N/A",
+          vehicle: "Traviz",
+          plate: "TRV-613",
+          service: "Oil & Brake Cleaning",
+          est_time: 45,
+          priority: "Normal",
+          details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
+          status: "inprogress",
+          auto_schedule_slot: "Bay #1 [MECH:rocky]",
+          time_created: "09:45 AM"
+        },
+        {
+          id: "JB-104",
+          customer: "Manuel Santos",
+          phone: "N/A",
+          vehicle: "Mitsubishi Montero Sport",
+          plate: "MON-104",
+          service: "Diagnostic Check",
+          est_time: 30,
+          priority: "High",
+          details: "Check Engine light on dashboard, scan OBD codes.",
+          status: "waiting",
+          auto_schedule_slot: null,
+          time_created: "12:05 PM"
+        }
+      ];
+
+      for (const job of originalJobs) {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: HEADERS,
+          body: JSON.stringify(job)
+        });
+      }
+
+      await pullData();
+      alert("✅ All shop records, Tucson parts request, and Bay assignments are restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1817,41 +1888,51 @@
         }
       });
 
-      document.getElementById('repairsThisWeek').innerText = thisWeekRepairs;
-      document.getElementById('repairsLastWeek').innerText = lastWeekRepairs;
-      document.getElementById('topMechanicName').innerText = topMech;
-      document.getElementById('topMechanicSub').innerText = `${topCount} total jobs handled`;
-
+      const repThis = document.getElementById('repairsThisWeek');
+      const repLast = document.getElementById('repairsLastWeek');
+      const topName = document.getElementById('topMechanicName');
+      const topSub = document.getElementById('topMechanicSub');
       const trendBadge = document.getElementById('weeklyTrendBadge');
-      if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
-        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
-        trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
-      } else if (thisWeekRepairs < lastWeekRepairs) {
-        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
-        trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
-      } else {
-        trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
-        trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
+
+      if (repThis) repThis.innerText = thisWeekRepairs;
+      if (repLast) repLast.innerText = lastWeekRepairs;
+      if (topName) topName.innerText = topMech;
+      if (topSub) topSub.innerText = `${topCount} total jobs handled`;
+
+      if (trendBadge) {
+        if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
+        } else if (thisWeekRepairs < lastWeekRepairs) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
+        } else {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
+        }
       }
 
-      let barsHTML = "";
-      const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
-      MECHANIC_LIST.forEach(m => {
-        const count = mechanicHandledTotal[m];
-        const percent = Math.round((count / maxLeaderboardCount) * 100);
-        barsHTML += `
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-bold">
-              <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
-              <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
+      const barsContainer = document.getElementById('mechanicPerformanceBars');
+      if (barsContainer) {
+        let barsHTML = "";
+        const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
+        MECHANIC_LIST.forEach(m => {
+          const count = mechanicHandledTotal[m] || 0;
+          const percent = Math.round((count / maxLeaderboardCount) * 100);
+          barsHTML += `
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold">
+                <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
+                <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+              </div>
             </div>
-            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
-              <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('mechanicPerformanceBars').innerHTML = barsHTML;
+          `;
+        });
+        barsContainer.innerHTML = barsHTML;
+      }
     }
 
     function renderDeveloperAnalytics() {
@@ -1868,10 +1949,15 @@
         }
       });
 
-      document.getElementById('devTotalRegistered').innerText = accountsList.length;
-      document.getElementById('devTotalQueueJobs').innerText = state.length;
-      document.getElementById('devTotalPartsReq').innerText = partsCount;
-      document.getElementById('devActiveSubCount').innerText = subCount;
+      const elReg = document.getElementById('devTotalRegistered');
+      const elJobs = document.getElementById('devTotalQueueJobs');
+      const elParts = document.getElementById('devTotalPartsReq');
+      const elSub = document.getElementById('devActiveSubCount');
+
+      if (elReg) elReg.innerText = accountsList.length;
+      if (elJobs) elJobs.innerText = state.length;
+      if (elParts) elParts.innerText = partsCount;
+      if (elSub) elSub.innerText = subCount;
 
       calculateWeeklyAnalytics();
 
@@ -1907,58 +1993,62 @@
         `;
       });
 
-      document.getElementById('devOnlineStaffCount').innerText = onlineCount;
-      document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
+      const elOnline = document.getElementById('devOnlineStaffCount');
+      const elStaffList = document.getElementById('devStaffPresenceList');
+      if (elOnline) elOnline.innerText = onlineCount;
+      if (elStaffList) elStaffList.innerHTML = presenceHTML;
 
-      // Sub-Mechanic list
-      let accHTML = "";
-      accountsList.forEach(u => {
-        const acc = cachedCloudAccounts[u];
-        let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
+      const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
+      if (elAccContainer) {
+        let accHTML = "";
+        accountsList.forEach(u => {
+          const acc = cachedCloudAccounts[u];
+          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
 
-        if (acc && acc.expiresAt && acc.expiresAt > 0) {
-          const timeLeftMs = acc.expiresAt - now;
-          if (timeLeftMs > 0) {
-            const hoursLeft = Math.floor(timeLeftMs / (3600000));
-            const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
-            timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
-          } else {
-            timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
+          if (acc && acc.expiresAt && acc.expiresAt > 0) {
+            const timeLeftMs = acc.expiresAt - now;
+            if (timeLeftMs > 0) {
+              const hoursLeft = Math.floor(timeLeftMs / (3600000));
+              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
+              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
+            } else {
+              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
+            }
           }
-        }
 
-        const isPermanentAdmin = u === 'dev' || u === 'admin';
+          const isPermanentAdmin = u === 'dev' || u === 'admin';
 
-        accHTML += `
-          <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
-                <i class="fa-solid fa-user"></i>
-              </div>
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
-                  <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
+          accHTML += `
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
+                  <i class="fa-solid fa-user"></i>
                 </div>
-                <div class="mt-0.5">${timerBadge}</div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
+                    <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
+                  </div>
+                  <div class="mt-0.5">${timerBadge}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5 self-end sm:self-center">
+                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
+                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                ${!isPermanentAdmin ? `
+                  <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
+                    <i class="fa-solid fa-user-xmark"></i>
+                  </button>
+                ` : ''}
               </div>
             </div>
-
-            <div class="flex items-center gap-1.5 self-end sm:self-center">
-              <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
-              <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              ${!isPermanentAdmin ? `
-                <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
-                  <i class="fa-solid fa-user-xmark"></i>
-                </button>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
+          `;
+        });
+        elAccContainer.innerHTML = accHTML;
+      }
     }
 
     function render() {
@@ -1999,7 +2089,7 @@
 
       let mechHTML = "";
       MECHANIC_LIST.forEach(m => {
-        const load = mechanicLoads[m];
+        const load = mechanicLoads[m] || 0;
         const isFull = load >= MAX_JOBS_PER_MECHANIC;
         if (isFull) {
           mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC} Full)</span>`;
@@ -2013,10 +2103,15 @@
       const indDesktop = document.getElementById('mechanicsIndicators');
       if (indDesktop) indDesktop.innerHTML = mechHTML;
 
-      document.getElementById('statWaiting').innerText = waiting;
-      document.getElementById('statActive').innerText = inProg;
-      document.getElementById('statParts').innerText = parts;
-      document.getElementById('statDone').innerText = done;
+      const sWait = document.getElementById('statWaiting');
+      const sAct = document.getElementById('statActive');
+      const sPart = document.getElementById('statParts');
+      const sDone = document.getElementById('statDone');
+
+      if (sWait) sWait.innerText = waiting;
+      if (sAct) sAct.innerText = inProg;
+      if (sPart) sPart.innerText = parts;
+      if (sDone) sDone.innerText = done;
 
       const officeBadge = document.getElementById('officeRemainingMechanicBadge');
       if (officeBadge) {
@@ -2029,7 +2124,7 @@
         }
       }
 
-      // Office queue renderer
+      // Office Queue Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -2146,7 +2241,7 @@
         }
       }
 
-      // Workshop feed renderer
+      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
