@@ -334,9 +334,17 @@
                 </div>
               </div>
 
-              <div>
+              <!-- DEVELOPER-ONLY ACCOUNTS & PASSWORDS SECTION -->
+              <div id="developerAccountsWrapper">
                 <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Account Registry & Timer Status:</p>
                 <div id="devRegisteredAccountsContainer" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
+              </div>
+
+              <!-- ADMIN RESTRICTED NOTICE -->
+              <div id="adminRestrictedAccountsNotice" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-center space-y-1">
+                <i class="fa-solid fa-lock text-xl text-amber-600 mb-1"></i>
+                <p class="font-bold">Staff Credentials Protected</p>
+                <p class="text-[11px] text-amber-800">Password registry is restricted to Developer access only.</p>
               </div>
             </div>
           </div>
@@ -817,6 +825,10 @@
     }
 
     async function devDeleteStaffAccount(username) {
+      if (currentRole !== 'developer') {
+        alert("Permission denied. Only Developer can manage accounts.");
+        return;
+      }
       if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
 
       delete cachedCloudAccounts[username];
@@ -1234,6 +1246,10 @@
     }
 
     async function devChangeStaffPassword(username) {
+      if (currentRole !== 'developer') {
+        alert("Permission denied. Only Developer can modify staff passwords.");
+        return;
+      }
       const acc = cachedCloudAccounts[username];
       const currentPass = acc ? acc.pass : '';
       const newPass = prompt(`Set new password for staff member [${username.toUpperCase()}]:`, currentPass);
@@ -1972,6 +1988,13 @@
     }
 
     function renderDeveloperAnalytics() {
+      const isDev = currentRole === 'developer';
+      const accountsWrapper = document.getElementById('developerAccountsWrapper');
+      const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
+
+      if (accountsWrapper) accountsWrapper.classList.toggle('hidden', !isDev);
+      if (restrictedNotice) restrictedNotice.classList.toggle('hidden', isDev);
+
       const accountsList = Object.keys(cachedCloudAccounts);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
 
@@ -2033,6 +2056,8 @@
       const elStaffList = document.getElementById('devStaffPresenceList');
       if (elOnline) elOnline.innerText = onlineCount;
       if (elStaffList) elStaffList.innerHTML = presenceHTML;
+
+      if (!isDev) return;
 
       const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
       if (elAccContainer) {
