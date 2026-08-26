@@ -34,6 +34,9 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
+    .chat-scroll {
+      scroll-behavior: smooth;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -197,12 +200,11 @@
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
+      <!-- Header Action (Safe Logout Only - Purge Button Removed From Header) -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
-        <button id="btnHeaderPurge" onclick="clearAllTestingRecords()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Purge Testing Records">
-          <i class="fa-solid fa-trash-can"></i>
-        </button>
-        <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" title="Sign Out">
+        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="hidden sm:inline">Logout</span>
         </button>
       </div>
     </header>
@@ -341,15 +343,12 @@
             <div class="space-y-3">
               <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
                 <p class="font-bold text-slate-900">Data Management & Recovery Flow:</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
                     <i class="fa-solid fa-rotate-left"></i> Restore Shop Data
                   </button>
                   <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
                     <i class="fa-solid fa-plus"></i> Inject Test Job
-                  </button>
-                  <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs">
-                    <i class="fa-solid fa-trash-can"></i> Purge All
                   </button>
                 </div>
               </div>
@@ -1504,19 +1503,23 @@
       }
     }
 
-    async function sendConversationMessage(jobId, senderRole) {
+    // MESSENGER-STYLE INLINE MESSAGE SEND HANDLER
+    async function sendInlineChatMessage(event, jobId, senderRole) {
+      if (event) event.preventDefault();
+      const input = document.getElementById(`chatInput_${jobId}`);
+      if (!input || !input.value.trim()) return;
+
+      const messageText = input.value.trim();
+      input.value = "";
+
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
-
-      const promptTitle = senderRole === 'office' ? 'Office Message / Price Update to Mechanic:' : 'Mechanic Reply to Office:';
-      const messageText = prompt(promptTitle, "");
-      if (!messageText || !messageText.trim()) return;
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
       const newChatEntry = {
         sender: senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase(),
         role: senderRole,
-        text: messageText.trim(),
+        text: messageText,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -1531,6 +1534,12 @@
 
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       render();
+
+      // Keep messenger scroll to bottom
+      setTimeout(() => {
+        const box = document.getElementById(`chatBox_${jobId}`);
+        if (box) box.scrollTop = box.scrollHeight;
+      }, 50);
 
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
@@ -1722,20 +1731,6 @@
       }
     }
 
-    async function clearAllTestingRecords() {
-      if (!confirm("Permanently wipe vehicle records from floor? (Registered user accounts are kept safe in Cloud)")) {
-        return;
-      }
-      state = [];
-      render();
-      updateAlarmState();
-      try {
-        await fetch(`${API_URL}?status=neq.system_record`, { method: "DELETE", headers: HEADERS });
-      } catch (err) {} finally {
-        pullData();
-      }
-    }
-
     function resolveMechanicName(job) {
       if (!job) return null;
       const rawStr = String(job.auto_schedule_slot || '');
@@ -1800,50 +1795,50 @@
       return { text, images, mech, chatList, cleanBay };
     }
 
+    // DISCORD / MESSENGER-STYLE CHAT COMPONENT
     function renderChatThreadHTML(chatList, jobId, isOfficeView) {
-      if (!chatList || chatList.length === 0) {
-        return `
-          <div class="pt-1">
-            <button onclick="sendConversationMessage('${jobId}', '${isOfficeView ? 'office' : 'workshop'}')" class="w-full ${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-message text-[10px]"></i> ${isOfficeView ? 'Send Message / Price to Mechanic' : 'Message Office'}
-            </button>
-          </div>
-        `;
-      }
+      const activeRole = isOfficeView ? 'office' : 'workshop';
 
-      const bubbles = chatList.map(msg => {
+      const bubbles = (chatList && chatList.length > 0) ? chatList.map(msg => {
         const isFromOffice = msg.role === 'office';
         return `
           <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
-            <div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mb-0.5">
+            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
               <span>${msg.sender}</span> • <span>${msg.time}</span>
             </div>
-            <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-bold ${
+            <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
               isFromOffice 
-                ? 'bg-rose-100 text-rose-950 border border-rose-200' 
-                : 'bg-indigo-600 text-white shadow-sm'
+                ? 'bg-white text-slate-900 border border-slate-200/80 shadow-sm rounded-tl-sm' 
+                : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
             }">
               ${msg.text}
             </div>
           </div>
         `;
-      }).join('');
+      }).join('') : `<p class="text-center text-[11px] text-slate-400 italic py-2">No messages yet. Send price or question below.</p>`;
 
       return `
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
-          <div class="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
-            <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1">
-              <i class="fa-solid fa-comments text-indigo-600"></i> Office & Workshop Live Conversation:
+        <div class="bg-slate-100/80 border border-slate-200/90 rounded-2xl p-3 space-y-2.5">
+          <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
+            <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-comments text-indigo-600"></i> Messenger Live Chat
             </span>
+            <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Thread</span>
           </div>
-          <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+
+          <!-- Messenger Scrollable View -->
+          <div id="chatBox_${jobId}" class="space-y-2 max-h-36 overflow-y-auto pr-1 chat-scroll">
             ${bubbles}
           </div>
-          <div class="pt-1">
-            <button onclick="sendConversationMessage('${jobId}', '${isOfficeView ? 'office' : 'workshop'}')" class="w-full ${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-reply text-[10px]"></i> ${isOfficeView ? 'Reply as Office / Desk' : 'Reply as Mechanic'}
+
+          <!-- Inline Messenger Input Field -->
+          <form onsubmit="sendInlineChatMessage(event, '${jobId}', '${activeRole}')" class="flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
+            <input id="chatInput_${jobId}" type="text" placeholder="${isOfficeView ? 'Reply price or notice to mechanic...' : 'Reply to office / front desk...'}" 
+                   class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
+            <button type="submit" class="${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold p-2 rounded-xl text-xs transition shadow-sm flex items-center justify-center">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
             </button>
-          </div>
+          </form>
         </div>
       `;
     }
@@ -2052,6 +2047,16 @@
     }
 
     function render() {
+      // Save existing chat input values & scroll state before re-render
+      const savedChatInputs = {};
+      const savedChatScrolls = {};
+      document.querySelectorAll('[id^="chatInput_"]').forEach(inp => {
+        savedChatInputs[inp.id] = inp.value;
+      });
+      document.querySelectorAll('[id^="chatBox_"]').forEach(box => {
+        savedChatScrolls[box.id] = box.scrollTop;
+      });
+
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
       const parts = state.filter(j => j.status === 'waiting_parts').length;
@@ -2186,12 +2191,9 @@
                   
                   ${renderChatThreadHTML(chatList, j.id, true)}
 
-                  <div class="flex items-center gap-2 pt-1">
-                    <button onclick="sendConversationMessage('${j.id}', 'office')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-message"></i> Send Message / Price
-                    </button>
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
+                  <div class="pt-1">
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up (Resume Bay)
                     </button>
                   </div>
                 </div>`;
@@ -2360,6 +2362,16 @@
           }).join('');
         }
       }
+
+      // Restore inputs and chat scroll positions after rendering
+      Object.keys(savedChatInputs).forEach(id => {
+        const inp = document.getElementById(id);
+        if (inp) inp.value = savedChatInputs[id];
+      });
+      Object.keys(savedChatScrolls).forEach(id => {
+        const box = document.getElementById(id);
+        if (box) box.scrollTop = savedChatScrolls[id];
+      });
     }
 
     syncSystemCloudRecords();
