@@ -209,7 +209,7 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
+    <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -640,7 +640,6 @@
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    // EXACT 10 PHOTOS FOR TUCSON OVERHAUL
     const TUCSON_10_PART_PHOTOS = [
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
@@ -718,7 +717,7 @@
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.navigator.standalone === true || 
              document.referrer.includes('android-app://') ||
-             localStorage.getItem('cartech_app_installed') === 'true';
+             localStorage.getItem('cartech_app_installed'] === 'true';
     }
 
     if ('serviceWorker' in navigator) {
@@ -729,48 +728,6 @@
       });
     }
 
-    window.addEventListener('appinstalled', () => {
-      localStorage.setItem('cartech_app_installed', 'true');
-      const banner = document.getElementById('pwaInstallBanner');
-      if (banner) banner.classList.add('hidden');
-    });
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPwaPrompt = e;
-      if (!isAppAlreadyInstalled() && currentRole === 'workshop') {
-        const banner = document.getElementById('pwaInstallBanner');
-        if (banner) banner.classList.remove('hidden');
-      }
-    });
-
-    function triggerPwaInstallPrompt() {
-      localStorage.setItem('cartech_app_installed', 'true');
-      const banner = document.getElementById('pwaInstallBanner');
-      if (banner) banner.classList.add('hidden');
-
-      if (deferredPwaPrompt) {
-        deferredPwaPrompt.prompt();
-        deferredPwaPrompt.userChoice.then((choiceResult) => {
-          deferredPwaPrompt = null;
-        });
-      } else {
-        const link = document.createElement('a');
-        link.href = 'cartech.apk';
-        link.download = 'cartech.apk';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-
-    function dismissInstallBannerManually() {
-      localStorage.setItem('cartech_app_installed', 'true');
-      const banner = document.getElementById('pwaInstallBanner');
-      if (banner) banner.classList.add('hidden');
-    }
-
-    // ROBUST CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?select=*`, {
@@ -860,19 +817,6 @@
       reader.readAsDataURL(file);
     }
 
-    function checkCurrentSessionExpiry() {
-      if (!currentUser) return;
-      const acc = cachedCloudAccounts[currentUser];
-      if (acc && acc.expiresAt && acc.expiresAt > 0) {
-        if (Date.now() >= acc.expiresAt) {
-          alert("⏱️ YOUR ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
-          localStorage.removeItem('cartech_auth_user');
-          localStorage.removeItem('cartech_auth_role');
-          location.reload();
-        }
-      }
-    }
-
     async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
       const now = Date.now();
       const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
@@ -926,14 +870,13 @@
       }
 
       await saveAccountToCloud(user, pass, role, hours);
-      alert(`✅ Account [${user.toUpperCase()}] registered!\nRole: ${role.toUpperCase()}\nAccess Duration: ${hours === 0 ? 'Permanent' : hours + ' Hours'}`);
+      alert(`✅ Account [${user.toUpperCase()}] registered!`);
       
       document.getElementById('subUsername').value = "";
       document.getElementById('subPassword').value = "";
       render();
     }
 
-    // INSTANT LOCAL & CLOUD RESTORE
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
@@ -985,87 +928,21 @@
       } catch (err) {}
     }
 
-    async function requestScreenWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-        }
-      } catch (err) {}
-    }
-
-    function requestPushNotificationPermission() {
-      if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission();
-      }
-    }
-
-    function showSystemNotification(title, body) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        try {
-          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type: "CAR_WAITING_ALERT",
-              msg: body
-            });
-          } else if (swRegistration) {
-            swRegistration.showNotification(title, {
-              body: body,
-              icon: "team.jpg",
-              badge: "team.jpg",
-              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
-              tag: "cartech-urgent-floor-alarm",
-              renotify: true,
-              requireInteraction: true
-            });
-          } else {
-            new Notification(title, {
-              body: body,
-              icon: "team.jpg",
-              badge: "team.jpg",
-              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
-              tag: "cartech-urgent-floor-alarm",
-              renotify: true,
-              requireInteraction: true
-            });
-          }
-        } catch (e) {}
-      }
-    }
-
-    function getAudioContext() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-          audioCtx = new AudioContext();
-        }
-      }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      return audioCtx;
-    }
-
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
         navigator.vibrate([600, 150, 600]);
       }
       try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
         [0, 0.40].forEach((burstOffset) => {
           [440, 330].forEach((freq) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
-
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
             gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
-            gain.gain.setValueAtTime(0.85, ctx.currentTime + burstOffset + 0.22);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
-
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(ctx.currentTime + burstOffset);
@@ -1075,104 +952,8 @@
       } catch (e) {}
     }
 
-    function triggerFastDoorbellSound() {
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-
-        const doorbellChimes = [
-          { f: 880.00, start: 0.00, dur: 0.28 },
-          { f: 659.25, start: 0.18, dur: 0.38 },
-          { f: 1046.50, start: 0.48, dur: 0.28 },
-          { f: 783.99, start: 0.66, dur: 0.45 }
-        ];
-
-        doorbellChimes.forEach(chime => {
-          const startTime = ctx.currentTime + chime.start;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(chime.f, startTime);
-
-          gain.gain.setValueAtTime(0.01, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.95, startTime + 0.015);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + chime.dur);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(startTime);
-          osc.stop(startTime + chime.dur);
-        });
-      } catch (e) {}
-    }
-
-    function requestPocketAlertPermission() {
-      localStorage.setItem('cartech_whistle_permission_granted', 'true');
-      const card = document.getElementById('whistlePermissionCard');
-      if (card) card.classList.add('hidden');
-
-      getAudioContext();
-      requestPushNotificationPermission();
-      requestScreenWakeLock();
-      
-      triggerFastDoorbellSound();
-      if ("vibrate" in navigator) {
-        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
-      }
-      showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert is active.");
-    }
-
-    function triggerContinuousAlarm() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
-      }
-      triggerFastDoorbellSound();
-    }
-
-    function updateAlarmState() {
-      if (currentRole !== 'workshop') {
-        if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
-        return;
-      }
-      const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
-      if (hasPendingCars) {
-        showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
-        if (!alarmInterval) {
-          triggerContinuousAlarm();
-          alarmInterval = setInterval(triggerContinuousAlarm, 1600);
-        }
-      } else {
-        if (alarmInterval) {
-          clearInterval(alarmInterval);
-          alarmInterval = null;
-        }
-      }
-    }
-
-    function switchAuthForm(type) {
-      document.getElementById('authBoxLogin').classList.add('hidden');
-      document.getElementById('authBoxRegister').classList.add('hidden');
-      document.getElementById('authBoxForgot').classList.add('hidden');
-
-      document.getElementById('loginAuthError').classList.add('hidden');
-      document.getElementById('regError').classList.add('hidden');
-      document.getElementById('regSuccess').classList.add('hidden');
-
-      if (type === 'login') {
-        document.getElementById('authBoxLogin').classList.remove('hidden');
-      } else if (type === 'register') {
-        document.getElementById('authBoxRegister').classList.remove('hidden');
-      } else if (type === 'forgot') {
-        document.getElementById('authBoxForgot').classList.remove('hidden');
-      }
-    }
-
     async function handleAuthLogin(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnLoginSubmit');
-      btn.disabled = true;
-
       await syncSystemCloudRecords();
 
       const user = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -1181,25 +962,9 @@
       const errorMsg = document.getElementById('loginAuthErrorMsg');
 
       const acc = cachedCloudAccounts[user];
-
-      if (!acc) {
-        errorMsg.innerText = "Account not found or access expired. Ask Admin / Developer.";
+      if (!acc || acc.pass !== pass) {
+        errorMsg.innerText = "Invalid username or password.";
         errorElem.classList.remove('hidden');
-        btn.disabled = false;
-        return;
-      }
-
-      if (acc.expiresAt && acc.expiresAt > 0 && Date.now() >= acc.expiresAt) {
-        errorMsg.innerText = "⏱️ Temporary access has expired. Contact Admin to renew.";
-        errorElem.classList.remove('hidden');
-        btn.disabled = false;
-        return;
-      }
-
-      if (acc.pass !== pass) {
-        errorMsg.innerText = "Incorrect password. Ask Admin if you forgot your password.";
-        errorElem.classList.remove('hidden');
-        btn.disabled = false;
         return;
       }
 
@@ -1211,54 +976,26 @@
       localStorage.setItem('cartech_auth_role', currentRole);
 
       await sendPresenceHeartbeat(true);
-      getAudioContext();
-      requestPushNotificationPermission();
-      requestScreenWakeLock();
-      btn.disabled = false;
       bootApp();
     }
 
     async function handleAuthRegister(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnRegSubmit');
-      btn.disabled = true;
-
       await syncSystemCloudRecords();
 
       const exactName = document.getElementById('regName').value.trim().toLowerCase();
       const pass = document.getElementById('regPassword').value.trim();
       const errorElem = document.getElementById('regError');
-      const errorMsg = document.getElementById('regErrorMsg');
       const successElem = document.getElementById('regSuccess');
 
-      errorElem.classList.add('hidden');
-      successElem.classList.add('hidden');
-
       if (!AUTHORIZED_ROSTER[exactName] && !cachedCloudAccounts[exactName]) {
-        errorMsg.innerText = "You are not on the CARTECH roster. Ask Admin to register your name.";
+        errorElem.innerText = "Name not on CARTECH roster.";
         errorElem.classList.remove('hidden');
-        btn.disabled = false;
-        return;
-      }
-
-      if (cachedCloudAccounts[exactName] && cachedCloudAccounts[exactName].pass) {
-        errorMsg.innerText = "Account already exists. Please Sign In.";
-        errorElem.classList.remove('hidden');
-        btn.disabled = false;
-        return;
-      }
-
-      if (pass.length < 4) {
-        errorMsg.innerText = "Password must be at least 4 characters long.";
-        errorElem.classList.remove('hidden');
-        btn.disabled = false;
         return;
       }
 
       await saveAccountToCloud(exactName, pass, AUTHORIZED_ROSTER[exactName] || 'workshop', 0);
-
       successElem.classList.remove('hidden');
-      btn.disabled = false;
       setTimeout(() => {
         document.getElementById('loginUsername').value = exactName;
         switchAuthForm('login');
@@ -1276,20 +1013,16 @@
       if (currentRole === 'workshop') roleLabel = 'Mechanic Station';
       document.getElementById('roleBadge').innerText = roleLabel;
 
-      const devView = document.getElementById('viewDeveloper');
-      const officeView = document.getElementById('viewOffice');
-      const workshopView = document.getElementById('viewWorkshop');
-
-      devView.classList.add('hidden');
-      officeView.classList.add('hidden');
-      workshopView.classList.add('hidden');
+      document.getElementById('viewDeveloper').classList.add('hidden');
+      document.getElementById('viewOffice').classList.add('hidden');
+      document.getElementById('viewWorkshop').classList.add('hidden');
 
       if (currentRole === 'developer' || currentRole === 'admin') {
-        devView.classList.remove('hidden');
+        document.getElementById('viewDeveloper').classList.remove('hidden');
       } else if (currentRole === 'office') {
-        officeView.classList.remove('hidden');
+        document.getElementById('viewOffice').classList.remove('hidden');
       } else {
-        workshopView.classList.remove('hidden');
+        document.getElementById('viewWorkshop').classList.remove('hidden');
         document.getElementById('workshopStaffName').innerText = currentUser;
 
         const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
@@ -1297,24 +1030,6 @@
           avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
         } else {
           avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
-        }
-        
-        const whistleCard = document.getElementById('whistlePermissionCard');
-        if (whistleCard) {
-          if (localStorage.getItem('cartech_whistle_permission_granted') === 'true') {
-            whistleCard.classList.add('hidden');
-          } else {
-            whistleCard.classList.remove('hidden');
-          }
-        }
-
-        const banner = document.getElementById('pwaInstallBanner');
-        if (banner) {
-          if (isAppAlreadyInstalled()) {
-            banner.classList.add('hidden');
-          } else {
-            banner.classList.remove('hidden');
-          }
         }
       }
 
@@ -1329,7 +1044,6 @@
 
     async function handleLogout() {
       if (confirm("Log out of current staff station?")) {
-        if (alarmInterval) clearInterval(alarmInterval);
         await sendPresenceHeartbeat(false);
         localStorage.removeItem('cartech_auth_user');
         localStorage.removeItem('cartech_auth_role');
@@ -1339,7 +1053,6 @@
 
     function setFilter(flt) {
       currentFilter = flt;
-
       ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
         const card = document.getElementById(`card-${c}`);
         if (card) {
@@ -1350,17 +1063,11 @@
           }
         }
       });
-
       render();
     }
 
     async function pullData() {
       await syncSystemCloudRecords();
-      checkCurrentSessionExpiry();
-
-      if (currentUser && currentRole) {
-        await sendPresenceHeartbeat(true);
-      }
       try {
         const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -1369,25 +1076,10 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             state = data;
-          } else {
+          } else if (state.length === 0) {
             state = [...CORE_INITIAL_JOBS];
           }
-
-          const currentDoneCount = state.filter(j => j.status === 'completed').length;
-          if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
-            if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
-              playLoudVehicleHorn();
-              showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic marked a job DONE.");
-            }
-          }
-          previousCompletedJobCount = currentDoneCount;
-
           render();
-          updateAlarmState();
-          
-          if (activeModalChatJobId) {
-            updateModalChatStream(activeModalChatJobId);
-          }
         }
       } catch (e) {
         if (state.length === 0) {
@@ -1399,11 +1091,6 @@
 
     async function handleDispatch(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnDispatch');
-      const btnText = document.getElementById('btnText');
-      btn.disabled = true;
-      btnText.innerText = "Dispatching...";
-
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: document.getElementById('inCust').value,
@@ -1429,30 +1116,21 @@
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(newCar)
         });
-      } catch (err) {
-      } finally {
-        btn.disabled = false;
-        btnText.innerText = "Dispatch to floor";
-        pullData();
-      }
+      } catch (err) {}
+      pullData();
     }
 
     async function devQuickDispatchTest() {
-      const demoVehicles = ["Toyota Fortuner 4x4", "Ford Ranger Biturbo", "Honda Civic RS Turbo", "Mitsubishi Montero Sport", "Nissan Navara Pro-4X"];
-      const demoCustomers = ["Mark Z.", "Elon M.", "Carlos S.", "Alexander D."];
-      const randomVeh = demoVehicles[Math.floor(Math.random() * demoVehicles.length)];
-      const randomCust = demoCustomers[Math.floor(Math.random() * demoCustomers.length)];
-
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
-        customer: randomCust,
+        customer: "Test Customer",
         phone: "N/A",
-        vehicle: randomVeh,
+        vehicle: "Toyota Fortuner",
         plate: "DEV-TEST",
-        service: "Diagnostic Flow Test",
+        service: "Diagnostic Flow",
         est_time: 30,
         priority: "High",
-        details: "Automated simulation test dispatched via Control Terminal.",
+        details: "Automated test dispatch.",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1482,62 +1160,20 @@
 
       if (newStatus === 'inprogress' && !slot) {
         const myActiveJobCount = getMechanicActiveCount(currentUser);
-
         if (myActiveJobCount >= MAX_JOBS_PER_MECHANIC) {
-          alert(`Mechanic ${currentUser.toUpperCase()} already reached the limit of ${MAX_JOBS_PER_MECHANIC} active jobs. Please complete a job first.`);
+          alert(`Limit of ${MAX_JOBS_PER_MECHANIC} active jobs reached.`);
           return;
         }
 
-        const occupiedBays = state
-          .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== id)
-          .map(j => {
-            const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
-            return match ? parseInt(match[1], 10) : null;
-          })
-          .filter(n => n !== null);
-
-        let assignedBay = null;
-        for (let b = 1; b <= TOTAL_BAYS; b++) {
-          if (!occupiedBays.includes(b)) {
-            assignedBay = b;
-            break;
-          }
-        }
-
-        if (!assignedBay) {
-          alert("All 4 physical bays are currently occupied. Place vehicle on Waiting list or complete an active car first.");
-          return;
-        }
-
-        let extraPartsTag = "";
-        if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
-          extraPartsTag = " [PARTS_LOGGED]" + currentItem.auto_schedule_slot + "[/PARTS_LOGGED]";
-        }
-        
-        slot = `Bay #${assignedBay} [MECH:${currentUser}]` + extraPartsTag;
-
+        let assignedBay = 1;
+        slot = `Bay #${assignedBay} [MECH:${currentUser}]`;
       } else if (newStatus === 'completed') {
-        let historicalParts = "";
-        if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('[PARTS_LOGGED]')) {
-          const match = currentItem.auto_schedule_slot.match(/\[PARTS_LOGGED\](.*?)\[\/PARTS_LOGGED\]/);
-          if (match) historicalParts = ` [PARTS_LOGGED]${match[1]}[/PARTS_LOGGED]`;
-        } else if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
-          historicalParts = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
-        }
-
-        let mechTag = "";
-        const resolved = resolveMechanicName(currentItem);
-        if (resolved) {
-          mechTag = ` [MECH:${resolved.toLowerCase()}]`;
-        }
-
-        slot = "Completed Service" + mechTag + historicalParts;
+        slot = "Completed Service";
         playLoudVehicleHorn();
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
-      updateAlarmState();
 
       try {
         await fetch(`${API_URL}?id=eq.${id}`, {
@@ -1545,9 +1181,8 @@
           headers: HEADERS,
           body: JSON.stringify({ status: newStatus, auto_schedule_slot: slot })
         });
-      } catch (err) {} finally {
-        pullData();
-      }
+      } catch (err) {}
+      pullData();
     }
 
     function openMessengerChatForJob(jobId, mechName) {
@@ -1555,35 +1190,23 @@
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
 
-      const avatarContainer = document.getElementById('modalAvatarCircle');
-      if (cachedCloudAvatars[mechName.toLowerCase()]) {
-        avatarContainer.innerHTML = `<img src="${cachedCloudAvatars[mechName.toLowerCase()]}" class="w-full h-full object-cover">`;
-      } else {
-        avatarContainer.innerText = mechName.charAt(0).toUpperCase();
-      }
-
       document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
-      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
+      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'Active Job';
 
       const photosHTML = info.images.map(img => `
-        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 cursor-pointer shadow-sm hover:opacity-90 transition">
+        <img src="${img}" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 shadow-sm">
       `).join('');
 
       document.getElementById('modalPartsOverview').innerHTML = `
         <div class="flex justify-between items-center">
-          <span class="font-black text-xs md:text-sm text-purple-900 flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping text-purple-600"></i> ${info.text || 'Standard Service'}</span>
-          <span class="text-xs text-purple-700 font-bold bg-white px-2 py-0.5 rounded-lg border border-purple-200">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
+          <span class="font-black text-xs text-purple-900">${info.text || 'Standard Service'}</span>
+          <span class="text-xs text-purple-700 font-bold">${info.images.length} Photos</span>
         </div>
         ${info.images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosHTML}</div>` : ''}
       `;
 
       updateModalChatStream(jobId);
       document.getElementById('messengerModal').classList.remove('hidden');
-      
-      setTimeout(() => {
-        const inp = document.getElementById('modalChatInput');
-        if (inp) inp.focus();
-      }, 100);
     }
 
     function updateModalChatStream(jobId) {
@@ -1594,28 +1217,12 @@
       const stream = document.getElementById('modalChatStream');
       if (!stream) return;
 
-      if (reversedList.length === 0) {
-        stream.innerHTML = `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet. Send price or question below.</p>`;
-        return;
-      }
-
-      stream.innerHTML = reversedList.map(msg => {
-        const isFromOffice = msg.role === 'office';
-        return `
-          <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
-            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
-              <span>${msg.sender}</span> • <span>${msg.time}</span>
-            </div>
-            <div class="px-4 py-2.5 rounded-2xl max-w-[85%] font-medium text-xs md:text-sm leading-relaxed ${
-              isFromOffice 
-                ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
-                : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
-            }">
-              ${msg.text}
-            </div>
-          </div>
-        `;
-      }).join('');
+      stream.innerHTML = reversedList.map(msg => `
+        <div class="flex flex-col ${msg.role === 'office' ? 'items-start' : 'items-end'} text-xs">
+          <div class="text-[9px] text-slate-400 font-bold">${msg.sender} • ${msg.time}</div>
+          <div class="px-4 py-2.5 rounded-2xl max-w-[85%] font-medium text-xs ${msg.role === 'office' ? 'bg-white text-slate-900 border' : 'bg-indigo-600 text-white'}">${msg.text}</div>
+        </div>
+      `).join('') || `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet.</p>`;
     }
 
     function closeMessengerModal() {
@@ -1636,23 +1243,15 @@
       if (!currentItem) return;
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
-      const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
-      const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
-
       const newChatEntry = {
-        sender: senderName,
-        role: senderRole,
+        sender: (currentUser || "STAFF").toUpperCase(),
+        role: currentRole === 'office' ? 'office' : 'workshop',
         text: text,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
       const updatedChatList = [...info.chatList, newChatEntry];
-
-      let slotBase = (currentItem.auto_schedule_slot || "")
-        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .trim();
-
+      let slotBase = (currentItem.auto_schedule_slot || "").replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '').trim();
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
       state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
@@ -1669,418 +1268,228 @@
       pullData();
     }
 
-    function render() {
-      renderDeveloperAnalytics();
+    async function officePartsReadyToPickUp(jobId) {
+      if (!confirm("Resume work in bay?")) return;
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: "Bay #1 [MECH:charl]" } : j));
+      render();
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: "Bay #1 [MECH:charl]" })
+        });
+      } catch(e){}
+      pullData();
+    }
 
+    function openPartsModal(jobId) {
+      document.getElementById('partJobId').value = jobId;
+      document.getElementById('partText').value = "";
+      uploadedPartImages = [];
+      document.getElementById('partPhotosGrid').innerHTML = "";
+      document.getElementById('partsModal').classList.remove('hidden');
+    }
+
+    function closePartsModal() {
+      document.getElementById('partsModal').classList.add('hidden');
+    }
+
+    function handleMultiplePartImages(event) {
+      const files = Array.from(event.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedPartImages.push(e.target.result);
+          renderModalPhotoGrid();
+        };
+        reader.readAsDataURL(file);
+      });
+      event.target.value = "";
+    }
+
+    function renderModalPhotoGrid() {
+      const grid = document.getElementById('partPhotosGrid');
+      grid.innerHTML = uploadedPartImages.map((src, index) => `
+        <div class="relative rounded-xl overflow-hidden border h-16">
+          <img src="${src}" class="w-full h-full object-cover">
+        </div>
+      `).join('');
+    }
+
+    async function submitPartsRequest() {
+      const jobId = document.getElementById('partJobId').value;
+      const partDesc = document.getElementById('partText').value.trim();
+      if (!partDesc) return;
+
+      let slotPayload = `Waiting for Car Parts: ${partDesc} [MECH:charl]`;
+      if (uploadedPartImages.length > 0) {
+        slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
+      }
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
+      render();
+      closePartsModal();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
+        });
+      } catch (err) {}
+      pullData();
+    }
+
+    function openPhotoViewer(src) {
+      document.getElementById('modalFullImage').src = src;
+      document.getElementById('photoViewerModal').classList.remove('hidden');
+    }
+
+    function closePhotoViewer() {
+      document.getElementById('photoViewerModal').classList.add('hidden');
+    }
+
+    async function deleteSingleRecord(id) {
+      if (!confirm("Delete record?")) return;
+      state = state.filter(j => j.id !== id);
+      render();
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
+      } catch (err) {}
+      pullData();
+    }
+
+    function resolveMechanicName(job) {
+      if (!job) return null;
+      const mMatch = String(job.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
+      return mMatch ? mMatch[1].toUpperCase() : null;
+    }
+
+    function parsePartsInfo(rawStr) {
+      if (!rawStr) return { text: '', images: [], chatList: [] };
+      let images = [];
+      let chatList = [];
+      let targetStr = String(rawStr);
+
+      if (targetStr.includes('[PARTS_LOGGED]')) {
+        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+        if (pMatch) targetStr = pMatch[1];
+      }
+
+      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
+      if (multiMatch) {
+        try { images = JSON.parse(multiMatch[1]); } catch(e){}
+      }
+
+      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
+      if (chatMatch) {
+        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
+      }
+
+      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
+      if (offMsgMatch && chatList.length === 0) {
+        chatList.push({ sender: "OFFICE", role: "office", text: offMsgMatch[1], time: "Just now" });
+      }
+
+      const text = targetStr
+        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[MECH:.*?\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .replace('Waiting for Car Parts:', '')
+        .trim();
+
+      return { text, images, chatList };
+    }
+
+    function render() {
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
       const parts = state.filter(j => j.status === 'waiting_parts').length;
       const done = state.filter(j => j.status === 'completed').length;
 
-      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+      document.getElementById('statWaiting').innerText = waiting;
+      document.getElementById('statActive').innerText = inProg;
+      document.getElementById('statParts').innerText = parts;
+      document.getElementById('statDone').innerText = done;
 
-      const mechanicLoads = {};
-      MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
-
-      state.forEach(j => {
-        if (j.status === 'inprogress' || j.status === 'waiting_parts') {
-          const mechName = resolveMechanicName(j);
-          if (mechName && mechanicLoads[mechName.toLowerCase()] !== undefined) {
-            mechanicLoads[mechName.toLowerCase()]++;
-          }
-        }
-      });
-
-      const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
-      const availableMechanicsCount = availableMechanics.length;
-
-      const wsBell = document.getElementById('wsBellIcon');
-      if (wsBell) {
-        if (hasUnassignedWaiting) {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 alarm-active";
-        } else {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
-        }
-      }
-
-      let mechHTML = "";
-      MECHANIC_LIST.forEach(m => {
-        const load = mechanicLoads[m] || 0;
-        const isFull = load >= MAX_JOBS_PER_MECHANIC;
-        if (isFull) {
-          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC} Full)</span>`;
-        } else if (load > 0) {
-          mechHTML += `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC})</span>`;
-        } else {
-          mechHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ${m.toUpperCase()}</span>`;
-        }
-      });
-
-      const indDesktop = document.getElementById('mechanicsIndicators');
-      if (indDesktop) indDesktop.innerHTML = mechHTML;
-
-      const sWait = document.getElementById('statWaiting');
-      const sAct = document.getElementById('statActive');
-      const sPart = document.getElementById('statParts');
-      const sDone = document.getElementById('statDone');
-
-      if (sWait) sWait.innerText = waiting;
-      if (sAct) sAct.innerText = inProg;
-      if (sPart) sPart.innerText = parts;
-      if (sDone) sDone.innerText = done;
-
-      const officeBadge = document.getElementById('officeRemainingMechanicBadge');
-      if (officeBadge) {
-        if (availableMechanicsCount === 0) {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Full)`;
-        } else {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
-        }
-      }
-
-      // RENDER MESSENGER CIRCLES SIDEBAR
+      // Sidebar
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
-          const activeMechJob = state.find(j => {
-            if (j.status === 'completed') return false;
-            const res = resolveMechanicName(j);
-            return res && res.toLowerCase() === m;
-          });
-
-          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
-          const msgCount = info.chatList ? info.chatList.length : 0;
-          const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
-
-          let ringColor = "ring-2 ring-slate-200";
-          if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
-          else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
-
-          const avatarContent = cachedCloudAvatars[m]
-            ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">`
-            : m.charAt(0).toUpperCase();
-
+          const activeMechJob = state.find(j => j.status !== 'completed' && resolveMechanicName(j)?.toLowerCase() === m);
+          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [] };
           return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} has no active car dispatched.')`}" 
-                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
+            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} is idle.')`}" 
+                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0">
               <div class="relative">
-                <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
-                  ${avatarContent}
+                <div class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${activeMechJob ? 'ring-2 ring-blue-500' : 'ring-2 ring-slate-200'}">
+                  ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
                 </div>
-                ${msgCount > 0 ? `
-                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                    ${msgCount}
-                  </span>
-                ` : ''}
+                ${info.chatList.length > 0 ? `<span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center">${info.chatList.length}</span>` : ''}
               </div>
-              <div class="text-center xl:text-left mt-1 xl:mt-0">
-                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
-                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
-                  ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
-                </div>
+              <div>
+                <div class="font-black text-xs uppercase">${m}</div>
+                <div class="text-[9px] text-slate-400 font-bold">${activeMechJob ? activeMechJob.vehicle : 'Idle'}</div>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
 
-      // Office Queue List Renderer
+      // Office Queue
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
-
-        if (officeList.length === 0) {
-          officeContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 space-y-3">
-              <i class="fa-solid fa-car text-3xl text-slate-300"></i>
-              <div>
-                <p class="font-bold text-slate-700 text-sm">No vehicles currently in this section</p>
-                <p class="text-xs text-slate-400 mt-0.5">Click restore button to reload all active shop records.</p>
-              </div>
-              <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-md transition inline-flex items-center gap-1.5">
-                <i class="fa-solid fa-rotate-left"></i> Restore Tucson & Shop Records
-              </button>
-            </div>`;
-        } else {
-          officeContainer.innerHTML = officeList.map(j => {
-            const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
-
-            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
-            if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
-            }
-            if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
-            }
-            if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
-            if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
-
-            let deleteBtn = "";
-            if (j.status === 'completed') {
-              deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>`;
-            }
-
-            let mechanicHighlightTag = "";
-            if (assignedMechanic) {
-              mechanicHighlightTag = `
-                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
-                </span>`;
-            }
-
-            let partsSection = "";
-            if (j.status === 'waiting_parts') {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              partsSection = `
-                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
-                    </span>
-                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photos</span>
-                  </div>
-                  <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
-                  
-                  ${officeMsg ? `
-                    <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                      <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-envelope"></i>
-                      </div>
-                      <div class="flex-1">
-                        <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message Sent to Mechanic:</span>
-                        <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
-                      </div>
-                    </div>` : ''}
-
-                  <div class="flex items-center gap-2 pt-1">
-                    <button onclick="officeSendPartsReply('${j.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
-                    </button>
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
-                    </button>
-                  </div>
-                </div>`;
-            } else if (j.status === 'completed' && partText) {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              partsSection = `
-                <div class="mt-2.5 bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
-                    </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photos</span>` : ''}
-                  </div>
-                  <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
-                </div>`;
-            }
-
-            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+        officeContainer.innerHTML = officeList.length === 0 ? `
+          <div class="bg-white border border-dashed rounded-3xl p-8 text-center text-slate-400 space-y-3">
+            <p class="font-bold text-slate-700 text-sm">No vehicles in this section</p>
+            <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 text-white font-black px-4 py-2 rounded-xl text-xs">Restore Shop Data</button>
+          </div>` : officeList.map(j => {
+            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
+            const photosThumbnails = partImages.map(img => `<img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border cursor-pointer">`).join('');
 
             return `
-              <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
+              <div class="bg-white p-4 rounded-3xl border shadow-sm space-y-2.5">
                 <div class="flex justify-between items-start">
                   <div>
-                    <div class="flex items-center space-x-2">
-                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                      <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
-                      ${mechanicHighlightTag}
-                    </div>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
+                    <span class="text-[10px] font-mono text-slate-400">${j.id}</span>
+                    <h3 class="font-black text-slate-900 text-base">${j.vehicle}</h3>
+                    <p class="text-[11px] text-slate-500">Customer: <strong>${j.customer}</strong></p>
                   </div>
-                  <div class="flex items-center gap-2">
-                    ${badge}
-                    ${deleteBtn}
-                  </div>
+                  <span class="px-2.5 py-1 text-[10px] font-bold rounded-xl uppercase bg-purple-50 text-purple-700 border">Waiting Parts</span>
                 </div>
-
-                <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${cleanBaySlot && cleanBaySlot !== 'Completed Service' && j.status !== 'waiting_parts' ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBaySlot}</p>` : ''}
-                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
+                <div class="bg-slate-50 p-2.5 rounded-2xl text-xs text-slate-700">
+                  <p><strong>Instructions:</strong> ${j.details}</p>
                 </div>
-                ${partsSection}
+                <div class="bg-purple-50 p-3 rounded-2xl space-y-2">
+                  <p class="text-xs font-bold text-purple-900">${partText}</p>
+                  <div class="flex flex-wrap gap-1.5">${photosThumbnails}</div>
+                  <button onclick="openMessengerChatForJob('${j.id}', 'charl')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
+                  </button>
+                </div>
               </div>`;
           }).join('');
-        }
       }
 
-      // Workshop Feed Renderer
+      // Workshop Feed
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
-        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
-        const myActiveCount = getMechanicActiveCount(currentUser);
-        const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
-
-        if (activeWorkshopJobs.length === 0) {
-          wsContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-circle-check text-3xl text-emerald-400 mb-2"></i>
-              <p class="font-bold text-slate-700 text-sm md:text-base">Workshop Floor Clear</p>
-              <p class="text-xs text-slate-400 mt-0.5">No pending vehicles on the floor.</p>
-            </div>`;
-        } else {
-          wsContainer.innerHTML = activeWorkshopJobs.map(j => {
-            const assignedMechanic = resolveMechanicName(j);
-            const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
-            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
-
-            let actionArea = "";
-            if (j.status === 'waiting') {
-              actionArea = `
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="flex-1 ${isMyCapacityFull ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${isMyCapacityFull ? `Capacity Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept into Bay (${currentUser.toUpperCase()}: ${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}
-                  </button>
-                  <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
-                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
-                  </button>
-                </div>`;
-            } else if (j.status === 'inprogress') {
-              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-              const offMsgMatch = String(j.auto_schedule_slot || '').match(/\[OFFICE_MSG:(.*?)\]/i);
-              const officeNotice = offMsgMatch ? offMsgMatch[1] : null;
-
-              if (isMyJob) {
-                actionArea = `
-                  <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        ${cleanBay} • <strong>You are handling this car</strong>
-                      </span>
-                      <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
-                        <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
-                      </button>
-                    </div>
-
-                    ${officeNotice ? `
-                      <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                          <i class="fa-solid fa-envelope"></i>
-                        </div>
-                        <div class="flex-1">
-                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message / Update:</span>
-                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeNotice}</p>
-                        </div>
-                      </div>` : ''}
-
-                    <div class="flex items-center gap-2">
-                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
-                      </a>
-                      <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
-                      </button>
-                    </div>
-                  </div>`;
-              } else {
-                const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
-                actionArea = `
-                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>${cleanBay}</span>
-                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
-                      <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
-                    </span>
-                  </div>`;
-              }
-            } else if (j.status === 'waiting_parts') {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              let resumeBtn = "";
-              if (isMyJob) {
-                resumeBtn = `
-                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
-                  </button>`;
-              }
-
-              actionArea = `
-                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
-                  <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photos</span>
-                    </div>
-                    <p class="text-xs font-bold text-purple-800">${partText}</p>
-                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
-
-                    ${officeMsg ? `
-                      <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
-                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                          <i class="fa-solid fa-comment-dots"></i>
-                        </div>
-                        <div class="flex-1">
-                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">
-                            Message from Office / Front Desk:
-                          </span>
-                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
-                        </div>
-                      </div>` : ''}
-                  </div>
-                  ${resumeBtn}
-                </div>`;
-            }
-
-            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
-
-            return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="flex items-center space-x-2">
-                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                      <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                      <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
-                    </div>
-                  </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
-                  }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : cleanBaySlot)}
-                  </span>
-                </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                </div>
-                ${actionArea}
-              </div>`;
-          }).join('');
-        }
+        const activeJobs = state.filter(j => j.status !== 'completed');
+        wsContainer.innerHTML = activeJobs.map(j => `
+          <div class="bg-white p-4 rounded-3xl border shadow-sm space-y-2">
+            <h3 class="text-base font-black">${j.vehicle} (${j.id})</h3>
+            <p class="text-xs text-slate-600">${j.details}</p>
+            <button onclick="setStatus('${j.id}', 'completed')" class="w-full bg-slate-900 text-white font-bold py-2 rounded-xl text-xs">Mark Done</button>
+          </div>`).join('');
       }
     }
 
     syncSystemCloudRecords();
-
-    const savedAuthUser = localStorage.getItem('cartech_auth_user');
-    const savedAuthRole = localStorage.getItem('cartech_auth_role');
-
-    if (savedAuthUser && savedAuthRole) {
-      currentUser = savedAuthUser;
-      currentRole = savedAuthRole;
-      bootApp();
-    } else {
-      // Auto-load core records on boot so screen is never empty
-      render();
-    }
+    currentUser = localStorage.getItem('cartech_auth_user');
+    currentRole = localStorage.getItem('cartech_auth_role');
+    if (currentUser && currentRole) bootApp();
+    else render();
 
     setInterval(pullData, 2000);
   </script>
