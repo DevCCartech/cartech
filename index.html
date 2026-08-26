@@ -56,7 +56,7 @@
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-orange-600 tracking-wider">Staff Security Portal</span>
           <h3 class="text-xl font-black text-slate-900 mt-0.5">Account Sign In</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Enter your registered credentials to enter workspace.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Enter your credentials to access your station.</p>
         </div>
 
         <form onsubmit="handleAuthLogin(event)" class="space-y-3.5">
@@ -153,13 +153,13 @@
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-amber-600 tracking-wider">Account Recovery</span>
           <h3 class="text-xl font-black text-slate-900 mt-0.5">Password Recovery</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Security policy requires admin or developer verification.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Contact the developer or admin to manage accounts.</p>
         </div>
 
         <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2 text-center">
           <i class="fa-solid fa-headset text-2xl text-amber-600 mb-1"></i>
           <p class="font-bold text-sm">Contact Admin / Developer</p>
-          <p class="text-amber-800 leading-relaxed">Please ask the <strong>Admin or Developer</strong> to reset or manage your account from the Access Panel.</p>
+          <p class="text-amber-800 leading-relaxed">Ask the <strong>Admin or Developer</strong> to reset or manage your account from the Control Terminal.</p>
         </div>
 
         <div class="text-center pt-2 border-t border-slate-100">
@@ -191,7 +191,8 @@
         </div>
       </div>
 
-      <div id="topMechanicsStripOffice" class="hidden items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
+      <!-- Live Roster Strip -->
+      <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
@@ -226,6 +227,7 @@
         </div>
       </div>
 
+      <!-- Metric KPI Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
@@ -585,8 +587,8 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    // CORE PERMANENT ROSTER
-    let AUTHORIZED_ROSTER = {
+    // Core default roster
+    const DEFAULT_ROSTER = {
       "dev": "developer",
       "admin": "admin",
       "shiela": "office",
@@ -599,6 +601,7 @@
       "mark": "workshop"
     };
 
+    let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
     let MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
     const TOTAL_BAYS = 4;
     const MAX_JOBS_PER_MECHANIC = 3;
@@ -626,17 +629,12 @@
     let deferredPwaPrompt = null;
     let swRegistration = null;
 
-    // ACCOUNTS SCHEMA WITH EXPIRY TIMESTAMPS
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
       "admin": { pass: "admin123", role: "admin", expiresAt: 0 }
     };
 
     let cachedCloudPresence = {};
-
-    const LEGACY_JOB_MAP = {
-      "JB-298": "bert"
-    };
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -694,7 +692,7 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // CLOUD SYNC: PASSWORDS, TIMED ACCOUNTS & EXPIRATION CHECK
+    // CLOUD SYNC WITH FAIL-SAFE NORMALIZATION
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -707,21 +705,25 @@
               try {
                 const parsed = JSON.parse(rec.details);
                 
-                // Migrate legacy plain string format to object format
+                // Normalizes both legacy string and new object accounts
                 Object.keys(parsed).forEach(k => {
                   if (typeof parsed[k] === 'string') {
-                    parsed[k] = { pass: parsed[k], role: AUTHORIZED_ROSTER[k] || 'workshop', expiresAt: 0 };
+                    parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
                   }
                 });
 
                 cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
                 localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
 
-                // Dynamically update runtime roster
+                // Re-populate dynamic roster
+                AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
+                MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
+
                 Object.keys(cachedCloudAccounts).forEach(u => {
                   const acc = cachedCloudAccounts[u];
-                  AUTHORIZED_ROSTER[u] = acc.role || 'workshop';
-                  if (acc.role === 'workshop' && !MECHANIC_LIST.includes(u)) {
+                  const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
+                  AUTHORIZED_ROSTER[u] = role;
+                  if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
                     MECHANIC_LIST.push(u);
                   }
                 });
@@ -738,13 +740,13 @@
       } catch (e) {}
     }
 
-    // ENFORCE EXPIRY & KICKOUT ENGINE
+    // AUTO-KICKOUT ENFORCER
     function checkCurrentSessionExpiry() {
       if (!currentUser) return;
       const acc = cachedCloudAccounts[currentUser];
       if (acc && acc.expiresAt && acc.expiresAt > 0) {
         if (Date.now() >= acc.expiresAt) {
-          alert("⏱️ YOUR TEMPORARY ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
+          alert("⏱️ YOUR ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
           localStorage.removeItem('cartech_auth_user');
           localStorage.removeItem('cartech_auth_role');
           location.reload();
@@ -752,7 +754,7 @@
       }
     }
 
-    // SAVE/UPDATE CLOUD ACCOUNT
+    // SAVE ACCOUNT TO SUPABASE
     async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
       const now = Date.now();
       const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
@@ -795,7 +797,6 @@
       } catch (err) {}
     }
 
-    // ADMIN/DEV CREATES A SUB-MECHANIC ACCOUNT WITH TIMER
     async function handleAdminCreateSubAccount(e) {
       e.preventDefault();
       const user = document.getElementById('subUsername').value.trim().toLowerCase();
@@ -809,16 +810,15 @@
       }
 
       await saveAccountToCloud(user, pass, role, hours);
-      alert(`✅ Account [${user.toUpperCase()}] successfully registered!\nRole: ${role.toUpperCase()}\nAccess Duration: ${hours === 0 ? 'Permanent' : hours + ' Hours'}`);
+      alert(`✅ Account [${user.toUpperCase()}] registered!\nRole: ${role.toUpperCase()}\nAccess Duration: ${hours === 0 ? 'Permanent' : hours + ' Hours'}`);
       
       document.getElementById('subUsername').value = "";
       document.getElementById('subPassword').value = "";
       render();
     }
 
-    // ADMIN/DEV DELETES OR KICKS OUT A SUB-MECHANIC
     async function devDeleteStaffAccount(username) {
-      if (!confirm(`Permanently revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
+      if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
 
       delete cachedCloudAccounts[username];
       delete AUTHORIZED_ROSTER[username];
@@ -947,10 +947,10 @@
         if (!ctx) return;
 
         const doorbellChimes = [
-          { f: 880.00, start: 0.00, dur: 0.28 },  // A5
-          { f: 659.25, start: 0.18, dur: 0.38 },  // E5
-          { f: 1046.50, start: 0.48, dur: 0.28 }, // C6
-          { f: 783.99, start: 0.66, dur: 0.45 }   // G5
+          { f: 880.00, start: 0.00, dur: 0.28 },
+          { f: 659.25, start: 0.18, dur: 0.38 },
+          { f: 1046.50, start: 0.48, dur: 0.28 },
+          { f: 783.99, start: 0.66, dur: 0.45 }
         ];
 
         doorbellChimes.forEach(chime => {
@@ -987,7 +987,7 @@
       if ("vibrate" in navigator) {
         navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
       }
-      showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert will now ring doorbell and vibrate fast!");
+      showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert is active.");
     }
 
     function triggerContinuousAlarm() {
@@ -1058,7 +1058,6 @@
       }
     }
 
-    // SIGN IN AUTHENTICATION WITH TIME EXPIRY VALIDATION
     async function handleAuthLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnLoginSubmit');
@@ -1080,7 +1079,6 @@
         return;
       }
 
-      // Check Expired Access Timer
       if (acc.expiresAt && acc.expiresAt > 0 && Date.now() >= acc.expiresAt) {
         errorMsg.innerText = "⏱️ Temporary access has expired. Contact Admin to renew.";
         errorElem.classList.remove('hidden');
@@ -1435,7 +1433,6 @@
       }
     }
 
-    // TWO-WAY CONVERSATION ENGINE
     async function sendConversationMessage(jobId, senderRole) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
@@ -1673,7 +1670,6 @@
       const rawStr = String(job.auto_schedule_slot || '');
       const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
       if (mMatch) return mMatch[1].toUpperCase();
-      if (LEGACY_JOB_MAP[job.id]) return LEGACY_JOB_MAP[job.id].toUpperCase();
       return null;
     }
 
@@ -1882,7 +1878,6 @@
       let onlineCount = 0;
       let presenceHTML = "";
 
-      // List all live presence
       const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
 
       allDisplayUsers.forEach(user => {
@@ -1915,7 +1910,7 @@
       document.getElementById('devOnlineStaffCount').innerText = onlineCount;
       document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
 
-      // Render Sub-Mechanic / Staff Registry Cards
+      // Sub-Mechanic list
       let accHTML = "";
       accountsList.forEach(u => {
         const acc = cachedCloudAccounts[u];
@@ -2027,14 +2022,14 @@
       if (officeBadge) {
         if (availableMechanicsCount === 0) {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All 3/3 Full)`;
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Full)`;
         } else {
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
           officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
         }
       }
 
-      // Render Office List
+      // Office queue renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -2098,7 +2093,7 @@
 
                   <div class="flex items-center gap-2 pt-1">
                     <button onclick="sendConversationMessage('${j.id}', 'office')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-message"></i> Send Price / Chat Update
+                      <i class="fa-solid fa-message"></i> Send Message / Price
                     </button>
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
@@ -2151,7 +2146,7 @@
         }
       }
 
-      // Render Workshop Feed
+      // Workshop feed renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
