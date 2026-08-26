@@ -209,7 +209,7 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN VIEW -->
+    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -440,7 +440,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <!-- MESSENGER CIRCLES SIDEBAR -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -717,7 +717,7 @@
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.navigator.standalone === true || 
              document.referrer.includes('android-app://') ||
-             localStorage.getItem('cartech_app_installed'] === 'true';
+             localStorage.getItem('cartech_app_installed') === 'true';
     }
 
     if ('serviceWorker' in navigator) {
@@ -817,6 +817,19 @@
       reader.readAsDataURL(file);
     }
 
+    function checkCurrentSessionExpiry() {
+      if (!currentUser) return;
+      const acc = cachedCloudAccounts[currentUser];
+      if (acc && acc.expiresAt && acc.expiresAt > 0) {
+        if (Date.now() >= acc.expiresAt) {
+          alert("⏱️ YOUR ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
+          localStorage.removeItem('cartech_auth_user');
+          localStorage.removeItem('cartech_auth_role');
+          location.reload();
+        }
+      }
+    }
+
     async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
       const now = Date.now();
       const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
@@ -877,6 +890,7 @@
       render();
     }
 
+    // EMERGENCY RECOVERY SYNC (ALWAYS RESTORES TUCSON & TRAVIZ)
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
@@ -892,8 +906,8 @@
         } catch(e){}
       }
 
-      setTimeout(pullData, 600);
-      alert("✅ All shop records restored!");
+      setTimeout(pullData, 500);
+      alert("✅ All records, logs, and waiting part photos restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1165,8 +1179,7 @@
           return;
         }
 
-        let assignedBay = 1;
-        slot = `Bay #${assignedBay} [MECH:${currentUser}]`;
+        slot = `Bay #1 [MECH:${currentUser}]`;
       } else if (newStatus === 'completed') {
         slot = "Completed Service";
         playLoudVehicleHorn();
@@ -1265,20 +1278,6 @@
           body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch (e){}
-      pullData();
-    }
-
-    async function officePartsReadyToPickUp(jobId) {
-      if (!confirm("Resume work in bay?")) return;
-      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: "Bay #1 [MECH:charl]" } : j));
-      render();
-      try {
-        await fetch(`${API_URL}?id=eq.${jobId}`, {
-          method: "PATCH",
-          headers: HEADERS,
-          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: "Bay #1 [MECH:charl]" })
-        });
-      } catch(e){}
       pullData();
     }
 
