@@ -209,7 +209,7 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN VIEW -->
+    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -640,7 +640,16 @@
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    // DEFAULT ESSENTIAL SHOP JOBS (AUTO-LOADS ALWAYS)
+    // 10 SAMPLE EMBEDDED THUMBNAILS FOR TUCSON OVERHAUL RESTORE
+    const TUCSON_DEMO_PHOTOS = [
+      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80"
+    ];
+
+    // CLEAN REALISTIC INITIAL JOBS
     const CORE_INITIAL_JOBS = [
       {
         id: "JB-408",
@@ -653,41 +662,27 @@
         priority: "Normal",
         details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
         status: "waiting_parts",
-        auto_schedule_slot: "Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]",
+        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_DEMO_PHOTOS)}[/IMGS] [CHAT][{"sender":"OFFICE","role":"office","text":"approve, proceed with order","time":"11:14 PM"}][/CHAT]`,
         time_created: "11:14 PM"
-      },
-      {
-        id: "JB-298",
-        customer: "Gilberto Deliman",
-        phone: "0912-345-67-89",
-        vehicle: "Toyota Hilux 2018",
-        plate: "B1141",
-        service: "Preventive Maintenance",
-        est_time: 60,
-        priority: "Normal",
-        details: "Change Engine Oil, Air Filter, Cabin Filter replacement.",
-        status: "inprogress",
-        auto_schedule_slot: "Bay #2 [MECH:bert]",
-        time_created: "10:30 AM"
       },
       {
         id: "JB-613",
         customer: "Rey Buscabus",
-        phone: "N/A",
+        phone: "0921-987-65-43",
         vehicle: "Traviz",
         plate: "TRV-613",
         service: "Oil & Brake Cleaning",
         est_time: 45,
         priority: "Normal",
         details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
-        status: "inprogress",
-        auto_schedule_slot: "Bay #1 [MECH:rocky]",
+        status: "completed",
+        auto_schedule_slot: "Completed Service [MECH:rocky]",
         time_created: "09:45 AM"
       },
       {
         id: "JB-104",
         customer: "Manuel Santos",
-        phone: "N/A",
+        phone: "0918-123-45-67",
         vehicle: "Mitsubishi Montero Sport",
         plate: "MON-104",
         service: "Diagnostic Check",
@@ -785,7 +780,7 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // CLOUD SYNC WITH FAIL-SAFE ROSTER PROTECTION
+    // CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?select=*`, {
@@ -980,7 +975,7 @@
       render();
     }
 
-    // GUARANTEED ONE-CLICK RESTORE AND RE-SYNC
+    // COMPLETE RELIABLE RESTORE
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
@@ -997,7 +992,7 @@
       }
 
       setTimeout(pullData, 800);
-      alert("✅ All shop records, Tucson parts request, and Bay assignments are fully restored!");
+      alert("✅ All shop records, Tucson parts request with photos, and Bay status are restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1425,33 +1420,29 @@
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) {
-            // Auto-fallback: if database has zero cars, maintain default roster jobs
-            if (data.length === 0) {
-              state = [...CORE_INITIAL_JOBS];
-            } else {
-              state = data;
-            }
+          if (Array.isArray(data) && data.length > 0) {
+            state = data;
+          } else {
+            state = [...CORE_INITIAL_JOBS];
+          }
 
-            const currentDoneCount = state.filter(j => j.status === 'completed').length;
-            if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
-              if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
-                playLoudVehicleHorn();
-                showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic marked a job DONE.");
-              }
+          const currentDoneCount = state.filter(j => j.status === 'completed').length;
+          if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
+            if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
+              playLoudVehicleHorn();
+              showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic marked a job DONE.");
             }
-            previousCompletedJobCount = currentDoneCount;
+          }
+          previousCompletedJobCount = currentDoneCount;
 
-            render();
-            updateAlarmState();
-            
-            if (activeModalChatJobId) {
-              updateModalChatStream(activeModalChatJobId);
-            }
+          render();
+          updateAlarmState();
+          
+          if (activeModalChatJobId) {
+            updateModalChatStream(activeModalChatJobId);
           }
         }
       } catch (e) {
-        // Safe offline/fallback state
         if (state.length === 0) {
           state = [...CORE_INITIAL_JOBS];
           render();
@@ -2197,7 +2188,6 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // Mechanic Active Counts
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
 
