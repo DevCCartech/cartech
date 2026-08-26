@@ -194,13 +194,11 @@
         </div>
       </div>
 
-      <!-- Live Roster Strip -->
       <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
-      <!-- Header Action (Safe Logout Only - Purge Button Removed From Header) -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -266,7 +264,6 @@
         <!-- COLUMN 1: LIVE ACTIVE PRESENCE & SUB-MECHANIC REGISTRATION -->
         <div class="lg:col-span-6 space-y-6">
           
-          <!-- SUB-MECHANIC REGISTRATION CARD -->
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -489,7 +486,6 @@
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       
-      <!-- PERMISSION ACTIVATOR -->
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -505,7 +501,6 @@
         </button>
       </div>
 
-      <!-- INSTALL BANNER -->
       <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -629,6 +624,7 @@
     let wakeLock = null;
     let deferredPwaPrompt = null;
     let swRegistration = null;
+    let previousCompletedJobCount = null;
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
@@ -1011,6 +1007,38 @@
       return audioCtx;
     }
 
+    // LOUD DUAL-TONE AUTOMOTIVE HORN FOR "MARK AS DONE"
+    function playLoudVehicleHorn() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([600, 150, 600]);
+      }
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        // Dual Frequencies: 440 Hz (A4) + 330 Hz (E4) Realistic Dual Horn Blast
+        [0, 0.40].forEach((burstOffset) => {
+          [440, 330].forEach((freq) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
+
+            gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
+            gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
+            gain.gain.setValueAtTime(0.85, ctx.currentTime + burstOffset + 0.22);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + burstOffset);
+            osc.stop(ctx.currentTime + burstOffset + 0.28);
+          });
+        });
+      } catch (e) {}
+    }
+
     function triggerFastDoorbellSound() {
       try {
         const ctx = getAudioContext();
@@ -1065,29 +1093,6 @@
         navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
       }
       triggerFastDoorbellSound();
-    }
-
-    function playDoneChime() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([150, 100, 150]);
-      }
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        const freqs = [523.25, 659.25, 783.99, 1046.50];
-        freqs.forEach((f, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.value = f;
-          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + i * 0.08);
-          osc.stop(ctx.currentTime + i * 0.08 + 0.25);
-        });
-      } catch (e) {}
     }
 
     function updateAlarmState() {
@@ -1342,6 +1347,17 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
+            
+            // Check for new completed jobs to trigger loud Horn on Office/Admin screens
+            const currentDoneCount = data.filter(j => j.status === 'completed').length;
+            if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
+              if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
+                playLoudVehicleHorn();
+                showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic just marked a car DONE. Ready for invoicing/pickup.");
+              }
+            }
+            previousCompletedJobCount = currentDoneCount;
+
             state = data;
             render();
             updateAlarmState();
@@ -1485,7 +1501,7 @@
         }
 
         slot = "Completed Service" + mechTag + historicalParts;
-        playDoneChime();
+        playLoudVehicleHorn();
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
@@ -1503,7 +1519,6 @@
       }
     }
 
-    // MESSENGER-STYLE INLINE MESSAGE SEND HANDLER
     async function sendInlineChatMessage(event, jobId, senderRole) {
       if (event) event.preventDefault();
       const input = document.getElementById(`chatInput_${jobId}`);
@@ -1535,7 +1550,6 @@
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       render();
 
-      // Keep messenger scroll to bottom
       setTimeout(() => {
         const box = document.getElementById(`chatBox_${jobId}`);
         if (box) box.scrollTop = box.scrollHeight;
@@ -1795,7 +1809,6 @@
       return { text, images, mech, chatList, cleanBay };
     }
 
-    // DISCORD / MESSENGER-STYLE CHAT COMPONENT
     function renderChatThreadHTML(chatList, jobId, isOfficeView) {
       const activeRole = isOfficeView ? 'office' : 'workshop';
 
@@ -1826,12 +1839,10 @@
             <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Thread</span>
           </div>
 
-          <!-- Messenger Scrollable View -->
           <div id="chatBox_${jobId}" class="space-y-2 max-h-36 overflow-y-auto pr-1 chat-scroll">
             ${bubbles}
           </div>
 
-          <!-- Inline Messenger Input Field -->
           <form onsubmit="sendInlineChatMessage(event, '${jobId}', '${activeRole}')" class="flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
             <input id="chatInput_${jobId}" type="text" placeholder="${isOfficeView ? 'Reply price or notice to mechanic...' : 'Reply to office / front desk...'}" 
                    class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
@@ -2047,7 +2058,10 @@
     }
 
     function render() {
-      // Save existing chat input values & scroll state before re-render
+      // PREVENT TYPING/SCROLL JUMPS: If user is actively typing in a chat box, pause innerHTML redraw
+      const activeElement = document.activeElement;
+      const isUserTypingInChat = activeElement && activeElement.id && activeElement.id.startsWith('chatInput_');
+      
       const savedChatInputs = {};
       const savedChatScrolls = {};
       document.querySelectorAll('[id^="chatInput_"]').forEach(inp => {
@@ -2128,6 +2142,9 @@
           officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
         }
       }
+
+      // Skip innerHTML destruction if typing in chat box
+      if (isUserTypingInChat) return;
 
       // Office Queue Renderer
       const officeContainer = document.getElementById('officeQueueList');
@@ -2363,7 +2380,7 @@
         }
       }
 
-      // Restore inputs and chat scroll positions after rendering
+      // Restore inputs and scroll positions
       Object.keys(savedChatInputs).forEach(id => {
         const inp = document.getElementById(id);
         if (inp) inp.value = savedChatInputs[id];
