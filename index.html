@@ -34,9 +34,13 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
-    .chat-scroll {
-      scroll-behavior: smooth;
+    @keyframes typing-bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
     }
+    .dot-1 { animation: typing-bounce 1.2s infinite ease-in-out; }
+    .dot-2 { animation: typing-bounce 1.2s infinite ease-in-out 0.2s; }
+    .dot-3 { animation: typing-bounce 1.2s infinite ease-in-out 0.4s; }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -200,7 +204,6 @@
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
-      <!-- Header Safe Logout Button -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -314,7 +317,6 @@
             </form>
           </div>
 
-          <!-- REAL-TIME STAFF ACTIVITY -->
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -633,6 +635,7 @@
     };
 
     let cachedCloudPresence = {};
+    let localTypingTimers = {};
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -690,7 +693,6 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -1515,6 +1517,49 @@
       }
     }
 
+    // REAL-TIME TYPING INDICATOR BROADCASTER
+    async function handleTypingIndicator(jobId, senderRole) {
+      if (localTypingTimers[jobId]) clearTimeout(localTypingTimers[jobId]);
+
+      // Throttle typing updates to server every 2 seconds
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
+
+      const now = Date.now();
+      const typingTag = senderRole === 'office' ? `[TYPING_OFFICE:${now}]` : `[TYPING_MECH:${now}]`;
+
+      let slotBase = (currentItem.auto_schedule_slot || "")
+        .replace(/\[TYPING_OFFICE:\d+\]/gi, '')
+        .replace(/\[TYPING_MECH:\d+\]/gi, '')
+        .trim();
+
+      const newSlotPayload = `${slotBase} ${typingTag}`;
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
+        });
+      } catch (e) {}
+
+      // Clear typing after 3 seconds of inactivity
+      localTypingTimers[jobId] = setTimeout(async () => {
+        const cleanBase = (currentItem.auto_schedule_slot || "")
+          .replace(/\[TYPING_OFFICE:\d+\]/gi, '')
+          .replace(/\[TYPING_MECH:\d+\]/gi, '')
+          .trim();
+        try {
+          await fetch(`${API_URL}?id=eq.${jobId}`, {
+            method: "PATCH",
+            headers: HEADERS,
+            body: JSON.stringify({ auto_schedule_slot: cleanBase })
+          });
+        } catch (e) {}
+      }, 3500);
+    }
+
+    // ZERO-LATENCY INSTANT OPTIMISTIC CHAT SENDER
     async function sendInlineChatMessage(event, jobId, senderRole) {
       if (event) event.preventDefault();
       const input = document.getElementById(`chatInput_${jobId}`);
@@ -1536,16 +1581,39 @@
 
       const updatedChatList = [...info.chatList, newChatEntry];
 
+      // Clean base payload and clear typing indicators on send
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .replace(/\[TYPING_OFFICE:\d+\]/gi, '')
+        .replace(/\[TYPING_MECH:\d+\]/gi, '')
         .trim();
 
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
+      // 1. INSTANT LOCAL UPDATE (0 Milliseconds render)
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
-      render();
+      
+      const chatBox = document.getElementById(`chatBox_${jobId}`);
+      if (chatBox) {
+        const isFromOffice = senderRole === 'office';
+        const newBubbleHTML = `
+          <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
+            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
+              <span>${newChatEntry.sender}</span> • <span>${newChatEntry.time}</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
+              isFromOffice 
+                ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
+                : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
+            }">
+              ${newChatEntry.text}
+            </div>
+          </div>
+        `;
+        chatBox.insertAdjacentHTML('afterbegin', newBubbleHTML);
+      }
 
+      // 2. BACKGROUND SERVER SYNC
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
           method: "PATCH",
@@ -1553,7 +1621,6 @@
           body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch (e){}
-      pullData();
     }
 
     async function officePartsReadyToPickUp(jobId) {
@@ -1668,7 +1735,6 @@
       renderModalPhotoGrid();
     }
 
-    // SUBMITS PART ORDER & ACTIVATES CHAT IMMEDIATELY
     async function submitPartsRequest() {
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
@@ -1689,7 +1755,6 @@
         mechTag = ` [MECH:${resolved.toLowerCase()}]`;
       }
 
-      // Automatically create the first conversation log entry
       const initialChat = [
         {
           sender: (currentUser || "MECHANIC").toUpperCase(),
@@ -1756,7 +1821,7 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
+      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false, isOfficeTyping: false, isMechTyping: false };
       let images = [];
       let chatList = [];
       
@@ -1781,6 +1846,13 @@
         try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
       }
 
+      const now = Date.now();
+      const offTypeMatch = targetStr.match(/\[TYPING_OFFICE:(\d+)\]/i);
+      const isOfficeTyping = offTypeMatch ? (now - parseInt(offTypeMatch[1], 10) < 4000) : false;
+
+      const mechTypeMatch = targetStr.match(/\[TYPING_MECH:(\d+)\]/i);
+      const isMechTyping = mechTypeMatch ? (now - parseInt(mechTypeMatch[1], 10) < 4000) : false;
+
       const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
       if (offMsgMatch && chatList.length === 0) {
         chatList.push({
@@ -1801,6 +1873,8 @@
         .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
         .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[TYPING_OFFICE:\d+\]/gi, '')
+        .replace(/\[TYPING_MECH:\d+\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
         .replace(/\[OFFICE_MSG:.*?\]/gi, '')
         .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
@@ -1809,13 +1883,35 @@
         .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, mech, chatList, cleanBay, hasPartOrder };
+      return { text, images, mech, chatList, cleanBay, hasPartOrder, isOfficeTyping, isMechTyping };
     }
 
-    // MESSENGER-STYLE CHAT
-    function renderChatThreadHTML(chatList, jobId, isOfficeView) {
+    // DISCORD & MESSENGER-STYLE CHAT WITH LIVE TYPING BUBBLES
+    function renderChatThreadHTML(chatList, jobId, isOfficeView, isOfficeTyping, isMechTyping) {
       const activeRole = isOfficeView ? 'office' : 'workshop';
       const reversedList = chatList ? [...chatList].reverse() : [];
+
+      let typingIndicatorHTML = '';
+      // Show typing indicator if the OTHER party is typing
+      if (isOfficeView && isMechTyping) {
+        typingIndicatorHTML = `
+          <div class="flex items-center gap-1.5 p-2 bg-slate-200/80 rounded-2xl w-fit text-slate-600 text-xs font-semibold">
+            <span class="text-[10px]">Mechanic is typing</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-1"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-2"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-3"></span>
+          </div>
+        `;
+      } else if (!isOfficeView && isOfficeTyping) {
+        typingIndicatorHTML = `
+          <div class="flex items-center gap-1.5 p-2 bg-slate-200/80 rounded-2xl w-fit text-slate-600 text-xs font-semibold">
+            <span class="text-[10px]">Office is typing</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-1"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-2"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500 dot-3"></span>
+          </div>
+        `;
+      }
 
       const bubbles = reversedList.length > 0 ? reversedList.map(msg => {
         const isFromOffice = msg.role === 'office';
@@ -1841,15 +1937,17 @@
             <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1.5">
               <i class="fa-solid fa-comments text-indigo-600"></i> Messenger Live Chat
             </span>
-            <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Thread</span>
+            <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Fast Sync</span>
           </div>
 
+          <!-- Bottom-Anchored Messenger View Container -->
           <div id="chatBox_${jobId}" class="flex flex-col-reverse space-y-reverse space-y-2 max-h-44 overflow-y-auto pr-1">
+            ${typingIndicatorHTML}
             ${bubbles}
           </div>
 
           <form onsubmit="sendInlineChatMessage(event, '${jobId}', '${activeRole}')" class="flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
-            <input id="chatInput_${jobId}" type="text" placeholder="${isOfficeView ? 'Reply price or notice to mechanic...' : 'Reply to office / front desk...'}" 
+            <input id="chatInput_${jobId}" type="text" oninput="handleTypingIndicator('${jobId}', '${activeRole}')" placeholder="${isOfficeView ? 'Reply price or notice to mechanic...' : 'Reply to office / front desk...'}" 
                    class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
             <button type="submit" class="${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold p-2 rounded-xl text-xs transition shadow-sm flex items-center justify-center">
               <i class="fa-solid fa-paper-plane text-xs"></i>
@@ -2064,7 +2162,9 @@
 
     function render() {
       const activeElement = document.activeElement;
-      const isUserTypingInChat = activeElement && activeElement.id && activeElement.id.startsWith('chatInput_');
+      const activeInputId = (activeElement && activeElement.id && activeElement.id.startsWith('chatInput_')) ? activeElement.id : null;
+      const activeSelectionStart = activeInputId ? activeElement.selectionStart : null;
+      const activeSelectionEnd = activeInputId ? activeElement.selectionEnd : null;
       
       const savedChatInputs = {};
       document.querySelectorAll('[id^="chatInput_"]').forEach(inp => {
@@ -2143,8 +2243,6 @@
         }
       }
 
-      if (isUserTypingInChat) return;
-
       // Office Queue Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
@@ -2160,7 +2258,7 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder, isOfficeTyping, isMechTyping } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
@@ -2205,7 +2303,7 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  ${renderChatThreadHTML(chatList, j.id, true)}
+                  ${renderChatThreadHTML(chatList, j.id, true, isOfficeTyping, isMechTyping)}
 
                   <div class="pt-1">
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
@@ -2277,7 +2375,7 @@
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder, isOfficeTyping, isMechTyping } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -2304,8 +2402,7 @@
                       </button>
                     </div>
 
-                    <!-- CHAT ONLY APPEARS IF PARTS ORDER WAS TRIGGERED -->
-                    ${hasPartOrder ? renderChatThreadHTML(chatList, j.id, false) : ''}
+                    ${hasPartOrder ? renderChatThreadHTML(chatList, j.id, false, isOfficeTyping, isMechTyping) : ''}
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
@@ -2349,8 +2446,7 @@
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- CHAT ACTIVE IN PARTS ORDER -->
-                    ${renderChatThreadHTML(chatList, j.id, false)}
+                    ${renderChatThreadHTML(chatList, j.id, false, isOfficeTyping, isMechTyping)}
                   </div>
                   ${resumeBtn}
                 </div>`;
@@ -2381,9 +2477,18 @@
         }
       }
 
+      // Restore active input focus and cursor position seamlessly
       Object.keys(savedChatInputs).forEach(id => {
         const inp = document.getElementById(id);
-        if (inp) inp.value = savedChatInputs[id];
+        if (inp) {
+          inp.value = savedChatInputs[id];
+          if (id === activeInputId) {
+            inp.focus();
+            if (activeSelectionStart !== null && activeSelectionEnd !== null) {
+              inp.setSelectionRange(activeSelectionStart, activeSelectionEnd);
+            }
+          }
+        }
       });
     }
 
@@ -2398,7 +2503,8 @@
       bootApp();
     }
 
-    setInterval(pullData, 2000);
+    // High-speed responsive synchronization
+    setInterval(pullData, 800);
   </script>
 </body>
 </html>
