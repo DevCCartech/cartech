@@ -191,7 +191,12 @@
         </div>
       </div>
 
-      <!-- Header Action -->
+      <!-- Live Roster Strip -->
+      <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
+        <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
+      </div>
+
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -200,14 +205,14 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN VIEW -->
+    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
             <i class="fa-solid fa-sliders mr-1"></i> Admin & Dev Control Terminal
           </span>
-          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry & Flow Control</h2>
+          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry, Sub-Mechanic Expiry & Flow Control</h2>
           <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -220,20 +225,20 @@
         </div>
       </div>
 
-      <!-- KPI Metrics -->
+      <!-- Metric KPI Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
+            <div class="text-[11px] font-semibold text-slate-400">Total Registered Accounts</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-signal"></i></div>
           <div>
             <div id="devOnlineStaffCount" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Online Staff</div>
+            <div class="text-[11px] font-semibold text-slate-400">Online Staff (Live Sync)</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -389,7 +394,6 @@
 
       <!-- Center & Right Feed -->
       <div class="lg:col-span-8 space-y-4">
-        <!-- Metric Cards Row & Messenger Header Strip -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
@@ -435,7 +439,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLE AVATAR SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <!-- MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -444,7 +448,6 @@
               <span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200">Floor</span>
             </div>
 
-            <!-- Vertical Circles Container -->
             <div id="messengerSidebarAvatars" class="flex flex-row xl:flex-col gap-2.5 overflow-x-auto xl:overflow-visible pb-1 xl:pb-0"></div>
           </div>
         </div>
@@ -453,6 +456,29 @@
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
+      
+      <!-- MECHANIC PROFILE CARD WITH AVATAR UPLOAD -->
+      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
+            <div id="myMechanicAvatarImg" class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-base flex items-center justify-center uppercase shadow-md border-2 border-indigo-500">
+              M
+            </div>
+            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+            <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900 uppercase leading-tight" id="workshopStaffName">Mechanic</h3>
+            <p class="text-[11px] text-slate-500">Tap avatar photo to update your profile image.</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
+          <i class="fa-solid fa-camera text-[10px]"></i> Photo
+        </button>
+      </div>
+
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -503,35 +529,36 @@
     </main>
   </div>
 
-  <!-- 3. MESSENGER CHAT DIALOGUE MODAL (FOR DIRECT PARTS CONVERSATION) -->
-  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4" onclick="closeMessengerModal()">
-    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
+  <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL (EXPANDED TO LARGE SCREEN) -->
+  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeMessengerModal()">
+    <div class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
       <!-- Modal Header -->
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-3">
-          <div id="modalAvatarCircle" class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm uppercase shadow">
+          <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
             M
           </div>
           <div>
-            <h3 id="modalChatTitle" class="font-black text-sm">Mechanic Chat</h3>
-            <p id="modalChatSub" class="text-[10px] text-slate-400">Parts Request & Price Inquiry</p>
+            <h3 id="modalChatTitle" class="font-black text-base md:text-lg leading-tight">Mechanic Chat</h3>
+            <p id="modalChatSub" class="text-xs text-slate-400 mt-0.5">Parts Request & Price Discussion</p>
           </div>
         </div>
-        <button onclick="closeMessengerModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm">
+        <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Parts Overview Strip inside Modal -->
-      <div id="modalPartsOverview" class="p-3 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-1.5"></div>
+      <!-- Parts Specs & Photos Area -->
+      <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
 
       <!-- Messages Stream (Reverse bottom anchored) -->
-      <div id="modalChatStream" class="flex-1 p-4 overflow-y-auto space-y-2.5 bg-slate-50 flex flex-col-reverse max-h-72"></div>
+      <div id="modalChatStream" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-3 bg-slate-50 flex flex-col-reverse"></div>
 
       <!-- Input Bar -->
-      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
-        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center">
+      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3.5 md:p-4 bg-white border-t border-slate-200 flex items-center gap-2">
+        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs md:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-xs md:text-sm shadow-md transition flex items-center justify-center gap-1.5">
+          <span>Send</span>
           <i class="fa-solid fa-paper-plane text-xs"></i>
         </button>
       </form>
@@ -600,7 +627,6 @@
     };
 
     let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-    // Exact requested sequence: bert, charl, mark, nel, rocky
     let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky"];
     let MECHANIC_LIST = [...MECHANIC_ORDER];
 
@@ -618,6 +644,7 @@
 
     const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
+    const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
     let state = [];
     let currentFilter = 'waiting';
@@ -638,6 +665,7 @@
     };
 
     let cachedCloudPresence = {};
+    let cachedCloudAvatars = {};
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -698,7 +726,7 @@
     // CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
-        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${AVATARS_RECORD_ID})`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
@@ -707,13 +735,11 @@
             if (rec.id === USERS_RECORD_ID && rec.details) {
               try {
                 const parsed = JSON.parse(rec.details);
-                
                 Object.keys(parsed).forEach(k => {
                   if (typeof parsed[k] === 'string') {
                     parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
                   }
                 });
-
                 cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
                 localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
 
@@ -728,7 +754,6 @@
                     MECHANIC_LIST.push(u);
                   }
                 });
-
               } catch(e){}
             }
             if (rec.id === PRESENCE_RECORD_ID && rec.details) {
@@ -736,9 +761,72 @@
                 cachedCloudPresence = JSON.parse(rec.details);
               } catch(e){}
             }
+            if (rec.id === AVATARS_RECORD_ID && rec.details) {
+              try {
+                cachedCloudAvatars = JSON.parse(rec.details);
+              } catch(e){}
+            }
           });
         }
       } catch (e) {}
+    }
+
+    // PROFILE PHOTO UPLOAD & CLOUD SYNC
+    function handleProfilePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 200; // Small 200px square thumbnail
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const base64 = canvas.toDataURL('image/jpeg', 0.65);
+          cachedCloudAvatars[currentUser] = base64;
+
+          const payload = {
+            id: AVATARS_RECORD_ID,
+            customer: "SYSTEM",
+            phone: "N/A",
+            vehicle: "CLOUD_AVATARS_RECORD",
+            plate: "N/A",
+            service: "Avatars Registry",
+            est_time: 0,
+            priority: "Normal",
+            details: JSON.stringify(cachedCloudAvatars),
+            status: "system_record",
+            time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            auto_schedule_slot: null
+          };
+
+          try {
+            await fetch(API_URL, {
+              method: "POST",
+              headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+              body: JSON.stringify(payload)
+            });
+            alert("✅ Profile photo uploaded & synced!");
+            render();
+          } catch(err){}
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function checkCurrentSessionExpiry() {
@@ -917,7 +1005,7 @@
       }
 
       await pullData();
-      alert("✅ Shop records restored!");
+      alert("✅ All shop records restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1076,7 +1164,6 @@
 
     function requestPocketAlertPermission() {
       localStorage.setItem('cartech_whistle_permission_granted', 'true');
-      
       const card = document.getElementById('whistlePermissionCard');
       if (card) card.classList.add('hidden');
 
@@ -1269,6 +1356,14 @@
         officeView.classList.remove('hidden');
       } else {
         workshopView.classList.remove('hidden');
+        document.getElementById('workshopStaffName').innerText = currentUser;
+
+        const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
+        if (cachedCloudAvatars[currentUser]) {
+          avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
+        } else {
+          avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
+        }
         
         const whistleCard = document.getElementById('whistlePermissionCard');
         if (whistleCard) {
@@ -1352,7 +1447,6 @@
             render();
             updateAlarmState();
             
-            // If messenger modal is currently open, refresh stream live
             if (activeModalChatJobId) {
               updateModalChatStream(activeModalChatJobId);
             }
@@ -1514,282 +1608,33 @@
       }
     }
 
-    async function officePartsReadyToPickUp(jobId) {
-      const currentItem = state.find(j => j.id === jobId);
-      if (!currentItem) return;
-
-      if (!confirm("Notify mechanic that parts are ready to pick up and automatically resume work in bay?")) {
-        return;
-      }
-
-      let assignedBay = null;
-      const occupiedBays = state
-        .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== jobId)
-        .map(j => {
-          const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
-          return match ? parseInt(match[1], 10) : null;
-        })
-        .filter(n => n !== null);
-
-      for (let b = 1; b <= TOTAL_BAYS; b++) {
-        if (!occupiedBays.includes(b)) {
-          assignedBay = b;
-          break;
-        }
-      }
-
-      const bayStr = assignedBay ? `Bay #${assignedBay}` : 'Bay #1';
-      const resolvedMech = resolveMechanicName(currentItem) || 'CHARL';
-      const partsHistory = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
-      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up!]` + partsHistory;
-
-      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: newSlot } : j));
-      render();
-
-      try {
-        await fetch(`${API_URL}?id=eq.${jobId}`, {
-          method: "PATCH",
-          headers: HEADERS,
-          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: newSlot })
-        });
-      } catch (e){}
-      pullData();
-    }
-
-    function openPartsModal(jobId) {
-      document.getElementById('partJobId').value = jobId;
-      document.getElementById('partText').value = "";
-      uploadedPartImages = [];
-      document.getElementById('partPhotosGrid').innerHTML = "";
-      document.getElementById('partsModal').classList.remove('hidden');
-    }
-
-    function closePartsModal() {
-      document.getElementById('partsModal').classList.add('hidden');
-    }
-
-    function handleMultiplePartImages(event) {
-      const files = Array.from(event.target.files);
-      if (!files.length) return;
-
-      if (uploadedPartImages.length + files.length > 10) {
-        alert("Maximum 10 photos allowed per parts request.");
-        return;
-      }
-
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-            const maxDim = 400;
-            if (width > height && width > maxDim) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else if (height > maxDim) {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            const base64 = canvas.toDataURL('image/jpeg', 0.55);
-            uploadedPartImages.push(base64);
-            renderModalPhotoGrid();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-      event.target.value = "";
-    }
-
-    function renderModalPhotoGrid() {
-      const grid = document.getElementById('partPhotosGrid');
-      grid.innerHTML = uploadedPartImages.map((src, index) => `
-        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-16 group">
-          <img src="${src}" class="w-full h-full object-cover">
-          <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function removeModalPhoto(index) {
-      uploadedPartImages.splice(index, 1);
-      renderModalPhotoGrid();
-    }
-
-    // SUBMIT PARTS REQUEST & CREATE FIRST CHAT MESSAGE
-    async function submitPartsRequest() {
-      const jobId = document.getElementById('partJobId').value;
-      const partDesc = document.getElementById('partText').value.trim();
-      const currentItem = state.find(j => j.id === jobId);
-
-      if (!partDesc) {
-        alert("Please describe the replacement parts required.");
-        return;
-      }
-
-      const btn = document.getElementById('btnSubmitPart');
-      btn.disabled = true;
-      btn.innerText = "Submitting...";
-
-      let mechTag = "";
-      const resolved = resolveMechanicName(currentItem);
-      if (resolved) {
-        mechTag = ` [MECH:${resolved.toLowerCase()}]`;
-      }
-
-      const initialChat = [
-        {
-          sender: (currentUser || "MECHANIC").toUpperCase(),
-          role: "workshop",
-          text: `Requested Parts: ${partDesc}`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ];
-
-      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
-      if (uploadedPartImages.length > 0) {
-        slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
-      }
-
-      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
-      render();
-      closePartsModal();
-
-      try {
-        await fetch(`${API_URL}?id=eq.${jobId}`, {
-          method: "PATCH",
-          headers: HEADERS,
-          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
-        });
-      } catch (err) {} finally {
-        btn.disabled = false;
-        btn.innerText = "Submit to Office";
-        pullData();
-      }
-    }
-
-    function openPhotoViewer(src) {
-      document.getElementById('modalFullImage').src = src;
-      document.getElementById('photoViewerModal').classList.remove('hidden');
-    }
-
-    function closePhotoViewer() {
-      document.getElementById('photoViewerModal').classList.add('hidden');
-    }
-
-    async function deleteSingleRecord(id) {
-      if (!confirm("Delete this completed vehicle record permanently?")) {
-        return;
-      }
-      state = state.filter(j => j.id !== id);
-      render();
-
-      try {
-        await fetch(`${API_URL}?id=eq.${id}`, {
-          method: "DELETE",
-          headers: HEADERS
-        });
-      } catch (err) {} finally {
-        pullData();
-      }
-    }
-
-    function resolveMechanicName(job) {
-      if (!job) return null;
-      const rawStr = String(job.auto_schedule_slot || '');
-      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
-      if (mMatch) return mMatch[1].toUpperCase();
-      return null;
-    }
-
-    function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
-      let images = [];
-      let chatList = [];
-      
-      let targetStr = String(rawStr);
-      let hasPartOrder = targetStr.includes('Waiting for Car Parts:') || targetStr.includes('[PARTS_LOGGED]');
-
-      if (targetStr.includes('[PARTS_LOGGED]')) {
-        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-        if (pMatch) targetStr = pMatch[1];
-      }
-
-      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
-      if (multiMatch) {
-        try { images = JSON.parse(multiMatch[1]); } catch(e){}
-      } else {
-        const singleMatch = targetStr.match(/\[IMG\](.*?)\[\/IMG\]/);
-        if (singleMatch) images = [singleMatch[1]];
-      }
-
-      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
-      if (chatMatch) {
-        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
-      }
-
-      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
-      if (offMsgMatch && chatList.length === 0) {
-        chatList.push({
-          sender: "OFFICE",
-          role: "office",
-          text: offMsgMatch[1],
-          time: "Just now"
-        });
-      }
-
-      const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
-      const mech = mMatch ? mMatch[1].toUpperCase() : null;
-
-      const bayMatch = targetStr.match(/Bay #\d+/i);
-      const cleanBay = bayMatch ? bayMatch[0] : '';
-
-      const text = targetStr
-        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
-        .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
-        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[MECH:.*?\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
-        .replace(/Waiting for Car Parts:/gi, '')
-        .replace(/Bay #\d+/gi, '')
-        .replace(/Completed Service/gi, '')
-        .trim();
-
-      return { text, images, mech, chatList, cleanBay, hasPartOrder };
-    }
-
-    // OPEN MESSENGER CHAT DIALOGUE MODAL FOR SPECIFIC MECHANIC / JOB
+    // OPEN LARGE MESSENGER CHAT FOR A JOB
     function openMessengerChatForJob(jobId, mechName) {
       activeModalChatJobId = jobId;
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
 
-      document.getElementById('modalAvatarCircle').innerText = mechName.charAt(0).toUpperCase();
+      const avatarContainer = document.getElementById('modalAvatarCircle');
+      if (cachedCloudAvatars[mechName.toLowerCase()]) {
+        avatarContainer.innerHTML = `<img src="${cachedCloudAvatars[mechName.toLowerCase()]}" class="w-full h-full object-cover">`;
+      } else {
+        avatarContainer.innerText = mechName.charAt(0).toUpperCase();
+      }
+
       document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
       document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
 
-      // Parts Overview & Photos
+      // Full-size previews
       const photosHTML = info.images.map(img => `
-        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-10 h-10 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
+        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 cursor-pointer shadow-sm hover:opacity-90 transition">
       `).join('');
 
       document.getElementById('modalPartsOverview').innerHTML = `
         <div class="flex justify-between items-center">
-          <span class="font-bold text-[11px] text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
-          <span class="text-[10px] text-purple-600 font-bold">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
+          <span class="font-black text-xs md:text-sm text-purple-900 flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping text-purple-600"></i> ${info.text || 'Standard Service'}</span>
+          <span class="text-xs text-purple-700 font-bold bg-white px-2 py-0.5 rounded-lg border border-purple-200">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
         </div>
-        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${photosHTML}</div>` : ''}
+        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosHTML}</div>` : ''}
       `;
 
       updateModalChatStream(jobId);
@@ -1821,7 +1666,7 @@
             <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
               <span>${msg.sender}</span> • <span>${msg.time}</span>
             </div>
-            <div class="px-3.5 py-2 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
+            <div class="px-4 py-2.5 rounded-2xl max-w-[85%] font-medium text-xs md:text-sm leading-relaxed ${
               isFromOffice 
                 ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
                 : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
@@ -1884,209 +1729,6 @@
       pullData();
     }
 
-    function calculateWeeklyAnalytics() {
-      const now = Date.now();
-      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-      const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
-
-      let thisWeekRepairs = 0;
-      let lastWeekRepairs = 0;
-      const mechanicHandledTotal = {};
-
-      MECHANIC_LIST.forEach(m => {
-        mechanicHandledTotal[m] = 0;
-      });
-
-      state.forEach(job => {
-        const mech = resolveMechanicName(job);
-        if (mech && mechanicHandledTotal[mech.toLowerCase()] !== undefined) {
-          mechanicHandledTotal[mech.toLowerCase()]++;
-        }
-
-        let jobTime = job.created_at ? new Date(job.created_at).getTime() : now;
-        const diff = now - jobTime;
-
-        if (job.status === 'completed') {
-          if (diff <= ONE_WEEK_MS) {
-            thisWeekRepairs++;
-          } else if (diff <= TWO_WEEKS_MS) {
-            lastWeekRepairs++;
-          }
-        }
-      });
-
-      let topMech = "None";
-      let topCount = 0;
-      Object.keys(mechanicHandledTotal).forEach(m => {
-        if (mechanicHandledTotal[m] > topCount) {
-          topCount = mechanicHandledTotal[m];
-          topMech = m.toUpperCase();
-        }
-      });
-
-      const repThis = document.getElementById('repairsThisWeek');
-      const repLast = document.getElementById('repairsLastWeek');
-      const topName = document.getElementById('topMechanicName');
-      const topSub = document.getElementById('topMechanicSub');
-      const trendBadge = document.getElementById('weeklyTrendBadge');
-
-      if (repThis) repThis.innerText = thisWeekRepairs;
-      if (repLast) repLast.innerText = lastWeekRepairs;
-      if (topName) topName.innerText = topMech;
-      if (topSub) topSub.innerText = `${topCount} total jobs handled`;
-
-      if (trendBadge) {
-        if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
-          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
-          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
-        } else if (thisWeekRepairs < lastWeekRepairs) {
-          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
-          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
-        } else {
-          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
-          trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
-        }
-      }
-
-      const barsContainer = document.getElementById('mechanicPerformanceBars');
-      if (barsContainer) {
-        let barsHTML = "";
-        const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
-        MECHANIC_LIST.forEach(m => {
-          const count = mechanicHandledTotal[m] || 0;
-          const percent = Math.round((count / maxLeaderboardCount) * 100);
-          barsHTML += `
-            <div class="space-y-1">
-              <div class="flex justify-between text-xs font-bold">
-                <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
-                <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
-                <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
-              </div>
-            </div>
-          `;
-        });
-        barsContainer.innerHTML = barsHTML;
-      }
-    }
-
-    function renderDeveloperAnalytics() {
-      const accountsList = Object.keys(cachedCloudAccounts);
-      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
-
-      let subCount = 0;
-      const now = Date.now();
-
-      accountsList.forEach(u => {
-        const acc = cachedCloudAccounts[u];
-        if (acc && acc.expiresAt && acc.expiresAt > 0 && acc.expiresAt > now) {
-          subCount++;
-        }
-      });
-
-      const elReg = document.getElementById('devTotalRegistered');
-      const elJobs = document.getElementById('devTotalQueueJobs');
-      const elParts = document.getElementById('devTotalPartsReq');
-      const elSub = document.getElementById('devActiveSubCount');
-
-      if (elReg) elReg.innerText = accountsList.length;
-      if (elJobs) elJobs.innerText = state.length;
-      if (elParts) elParts.innerText = partsCount;
-      if (elSub) elSub.innerText = subCount;
-
-      calculateWeeklyAnalytics();
-
-      let onlineCount = 0;
-      let presenceHTML = "";
-
-      const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
-
-      allDisplayUsers.forEach(user => {
-        const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
-        const record = cachedCloudPresence[user];
-        const lastSeen = record ? record.lastSeen : 0;
-        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
-        if (isOnline) onlineCount++;
-
-        const isRegistered = !!cachedCloudAccounts[user];
-        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
-
-        presenceHTML += `
-          <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
-              <div>
-                <span class="font-black text-slate-900 uppercase text-xs">${user}</span>
-                <span class="ml-1.5 px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${roleBadgeColor}">${userRole}</span>
-                <span class="ml-1 text-[9px] font-bold ${isRegistered ? 'text-emerald-600' : 'text-slate-400'}">${isRegistered ? '(Registered)' : '(Not Created)'}</span>
-              </div>
-            </div>
-            <div class="text-right">
-              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online (Live)' : 'Offline'}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      const elOnline = document.getElementById('devOnlineStaffCount');
-      const elStaffList = document.getElementById('devStaffPresenceList');
-      if (elOnline) elOnline.innerText = onlineCount;
-      if (elStaffList) elStaffList.innerHTML = presenceHTML;
-
-      const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
-      if (elAccContainer) {
-        let accHTML = "";
-        accountsList.forEach(u => {
-          const acc = cachedCloudAccounts[u];
-          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
-
-          if (acc && acc.expiresAt && acc.expiresAt > 0) {
-            const timeLeftMs = acc.expiresAt - now;
-            if (timeLeftMs > 0) {
-              const hoursLeft = Math.floor(timeLeftMs / (3600000));
-              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
-              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
-            } else {
-              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
-            }
-          }
-
-          const isPermanentAdmin = u === 'dev' || u === 'admin';
-
-          accHTML += `
-            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
-                  <i class="fa-solid fa-user"></i>
-                </div>
-                <div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
-                    <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
-                  </div>
-                  <div class="mt-0.5">${timerBadge}</div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-1.5 self-end sm:self-center">
-                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
-                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                ${!isPermanentAdmin ? `
-                  <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
-                    <i class="fa-solid fa-user-xmark"></i>
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-          `;
-        });
-        elAccContainer.innerHTML = accHTML;
-      }
-    }
-
     function render() {
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
@@ -2144,11 +1786,10 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY)
+      // RENDER MESSENGER CIRCLES WITH CLOUD AVATAR PHOTOS
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
-          // Find mechanic's active job (if any)
           const activeMechJob = state.find(j => {
             if (j.status === 'completed') return false;
             const res = resolveMechanicName(j);
@@ -2159,17 +1800,20 @@
           const msgCount = info.chatList ? info.chatList.length : 0;
           const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
 
-          // Color coded circles
           let ringColor = "ring-2 ring-slate-200";
           if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
           else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
 
+          const avatarContent = cachedCloudAvatars[m]
+            ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">`
+            : m.charAt(0).toUpperCase();
+
           return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
+            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} has no active car dispatched.')`}" 
                  class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
               <div class="relative">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
-                  ${m.charAt(0)}
+                <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
+                  ${avatarContent}
                 </div>
                 ${msgCount > 0 ? `
                   <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
@@ -2225,9 +1869,13 @@
 
             let mechanicHighlightTag = "";
             if (assignedMechanic) {
+              const mechAvatar = cachedCloudAvatars[assignedMechanic.toLowerCase()]
+                ? `<img src="${cachedCloudAvatars[assignedMechanic.toLowerCase()]}" class="w-4 h-4 rounded-full object-cover inline-block mr-1">`
+                : `<i class="fa-solid fa-user-gear text-emerald-600"></i>`;
+
               mechanicHighlightTag = `
                 <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
+                  ${mechAvatar} Handled by: ${assignedMechanic}
                 </span>`;
             }
 
