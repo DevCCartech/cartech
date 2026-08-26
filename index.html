@@ -34,6 +34,9 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
+    .chat-scroll {
+      scroll-behavior: smooth;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -197,6 +200,7 @@
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
       </div>
 
+      <!-- Header Safe Logout Button -->
       <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
         <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -261,7 +265,6 @@
         
         <!-- COLUMN 1: LIVE ACTIVE PRESENCE & SUB-MECHANIC REGISTRATION -->
         <div class="lg:col-span-6 space-y-6">
-          
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -1512,7 +1515,6 @@
       }
     }
 
-    // DISCORD/MESSENGER INLINE CHAT SENDER (PRESERVES SCROLL & STOPS RESETS)
     async function sendInlineChatMessage(event, jobId, senderRole) {
       if (event) event.preventDefault();
       const input = document.getElementById(`chatInput_${jobId}`);
@@ -1542,8 +1544,6 @@
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
-      
-      // Update DOM smoothly
       render();
 
       try {
@@ -1668,6 +1668,7 @@
       renderModalPhotoGrid();
     }
 
+    // SUBMITS PART ORDER & ACTIVATES CHAT IMMEDIATELY
     async function submitPartsRequest() {
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
@@ -1688,7 +1689,17 @@
         mechTag = ` [MECH:${resolved.toLowerCase()}]`;
       }
 
-      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag}`;
+      // Automatically create the first conversation log entry
+      const initialChat = [
+        {
+          sender: (currentUser || "MECHANIC").toUpperCase(),
+          role: "workshop",
+          text: `Requested Parts: ${partDesc}`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ];
+
+      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
@@ -1745,11 +1756,12 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '' };
+      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
       let images = [];
       let chatList = [];
       
       let targetStr = String(rawStr);
+      let hasPartOrder = targetStr.includes('Waiting for Car Parts:') || targetStr.includes('[PARTS_LOGGED]');
 
       if (targetStr.includes('[PARTS_LOGGED]')) {
         const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
@@ -1797,14 +1809,12 @@
         .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, mech, chatList, cleanBay };
+      return { text, images, mech, chatList, cleanBay, hasPartOrder };
     }
 
-    // MESSENGER-STYLE LIVE CONVERSATION COMPONENT (LATEST MESSAGES ALWAYS AT BOTTOM)
+    // MESSENGER-STYLE CHAT
     function renderChatThreadHTML(chatList, jobId, isOfficeView) {
       const activeRole = isOfficeView ? 'office' : 'workshop';
-
-      // Reverse list to show newest on bottom naturally
       const reversedList = chatList ? [...chatList].reverse() : [];
 
       const bubbles = reversedList.length > 0 ? reversedList.map(msg => {
@@ -1834,7 +1844,6 @@
             <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Thread</span>
           </div>
 
-          <!-- Bottom-Anchored Messenger View Container -->
           <div id="chatBox_${jobId}" class="flex flex-col-reverse space-y-reverse space-y-2 max-h-44 overflow-y-auto pr-1">
             ${bubbles}
           </div>
@@ -2151,7 +2160,7 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
@@ -2268,7 +2277,7 @@
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
-            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -2295,7 +2304,8 @@
                       </button>
                     </div>
 
-                    ${renderChatThreadHTML(chatList, j.id, false)}
+                    <!-- CHAT ONLY APPEARS IF PARTS ORDER WAS TRIGGERED -->
+                    ${hasPartOrder ? renderChatThreadHTML(chatList, j.id, false) : ''}
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
@@ -2339,6 +2349,7 @@
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
+                    <!-- CHAT ACTIVE IN PARTS ORDER -->
                     ${renderChatThreadHTML(chatList, j.id, false)}
                   </div>
                   ${resumeBtn}
