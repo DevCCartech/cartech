@@ -198,11 +198,11 @@
       </div>
 
       <div class="flex items-center space-x-2">
-        <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow transition">
+        <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition">
           <i class="fa-solid fa-rotate-left"></i>
           <span>Restore Data</span>
         </button>
-        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5 bg-slate-900 border border-slate-800">
+        <button onclick="handleLogout()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5 bg-slate-900 border border-slate-800">
           <i class="fa-solid fa-right-from-bracket"></i>
           <span class="hidden sm:inline">Logout</span>
         </button>
@@ -414,7 +414,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Pending</div>
                 </div>
               </div>
-              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
+              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xs"><i class="fa-solid fa-wrench"></i></div>
                 <div>
                   <div id="statActive" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -655,7 +655,15 @@
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
-      "admin": { pass: "admin123", role: "admin", expiresAt: 0 }
+      "admin": { pass: "admin123", role: "admin", expiresAt: 0 },
+      "shiela": { pass: "1234", role: "office", expiresAt: 0 },
+      "josh": { pass: "1234", role: "office", expiresAt: 0 },
+      "ken": { pass: "1234", role: "office", expiresAt: 0 },
+      "charl": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "bert": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "nel": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "rocky": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "mark": { pass: "1234", role: "workshop", expiresAt: 0 }
     };
 
     let cachedCloudPresence = {};
@@ -929,7 +937,7 @@
       render();
     }
 
-    // RELIABLE AUTO RECOVERY (UPSERT WITH MERGE DUPLICATES)
+    // INSTANT LOCAL + CLOUD FULL SHOP RESTORE
     async function restoreInitialShopRecords() {
       const originalJobs = [
         {
@@ -990,16 +998,23 @@
         }
       ];
 
+      // Instant UI populate
+      currentFilter = 'waiting_parts';
+      state = originalJobs;
+      render();
+
+      // Send to Supabase
       for (const job of originalJobs) {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(job)
-        });
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+            body: JSON.stringify(job)
+          });
+        } catch(e){}
       }
 
       await pullData();
-      alert("✅ All shop records restored successfully!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1378,7 +1393,7 @@
         }
       }
 
-      setFilter('waiting');
+      setFilter('waiting_parts');
       pullData();
     }
 
@@ -1958,17 +1973,17 @@
             <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 space-y-3">
               <i class="fa-solid fa-car text-3xl text-slate-300"></i>
               <div>
-                <p class="font-bold text-slate-700 text-sm">No vehicles currently in this section</p>
-                <p class="text-xs text-slate-400 mt-0.5">Click restore button below to repopulate all active shop records.</p>
+                <p class="font-bold text-slate-700 text-sm">No vehicles in this section</p>
+                <p class="text-xs text-slate-400 mt-0.5">Click restore button to reload all active shop records.</p>
               </div>
               <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-md transition inline-flex items-center gap-1.5">
-                <i class="fa-solid fa-rotate-left"></i> Restore Tucson & Shop Cars
+                <i class="fa-solid fa-rotate-left"></i> Restore Tucson & Shop Records
               </button>
             </div>`;
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
