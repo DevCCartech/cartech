@@ -34,9 +34,6 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
-    .chat-scroll {
-      scroll-behavior: smooth;
-    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -194,6 +191,7 @@
         </div>
       </div>
 
+      <!-- Live Roster Strip -->
       <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
         <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
@@ -842,7 +840,6 @@
       render();
     }
 
-    // ONE-CLICK COMPLETE SHOP RECORD RESTORE
     async function restoreInitialShopRecords() {
       const originalJobs = [
         {
@@ -1007,7 +1004,6 @@
       return audioCtx;
     }
 
-    // LOUD DUAL-TONE AUTOMOTIVE HORN FOR "MARK AS DONE"
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
         navigator.vibrate([600, 150, 600]);
@@ -1016,7 +1012,6 @@
         const ctx = getAudioContext();
         if (!ctx) return;
 
-        // Dual Frequencies: 440 Hz (A4) + 330 Hz (E4) Realistic Dual Horn Blast
         [0, 0.40].forEach((burstOffset) => {
           [440, 330].forEach((freq) => {
             const osc = ctx.createOscillator();
@@ -1347,8 +1342,6 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            
-            // Check for new completed jobs to trigger loud Horn on Office/Admin screens
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1519,6 +1512,7 @@
       }
     }
 
+    // DISCORD/MESSENGER INLINE CHAT SENDER (PRESERVES SCROLL & STOPS RESETS)
     async function sendInlineChatMessage(event, jobId, senderRole) {
       if (event) event.preventDefault();
       const input = document.getElementById(`chatInput_${jobId}`);
@@ -1548,12 +1542,9 @@
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      
+      // Update DOM smoothly
       render();
-
-      setTimeout(() => {
-        const box = document.getElementById(`chatBox_${jobId}`);
-        if (box) box.scrollTop = box.scrollHeight;
-      }, 50);
 
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
@@ -1809,10 +1800,14 @@
       return { text, images, mech, chatList, cleanBay };
     }
 
+    // MESSENGER-STYLE LIVE CONVERSATION COMPONENT (LATEST MESSAGES ALWAYS AT BOTTOM)
     function renderChatThreadHTML(chatList, jobId, isOfficeView) {
       const activeRole = isOfficeView ? 'office' : 'workshop';
 
-      const bubbles = (chatList && chatList.length > 0) ? chatList.map(msg => {
+      // Reverse list to show newest on bottom naturally
+      const reversedList = chatList ? [...chatList].reverse() : [];
+
+      const bubbles = reversedList.length > 0 ? reversedList.map(msg => {
         const isFromOffice = msg.role === 'office';
         return `
           <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
@@ -1821,7 +1816,7 @@
             </div>
             <div class="px-3 py-1.5 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
               isFromOffice 
-                ? 'bg-white text-slate-900 border border-slate-200/80 shadow-sm rounded-tl-sm' 
+                ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
                 : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
             }">
               ${msg.text}
@@ -1831,7 +1826,7 @@
       }).join('') : `<p class="text-center text-[11px] text-slate-400 italic py-2">No messages yet. Send price or question below.</p>`;
 
       return `
-        <div class="bg-slate-100/80 border border-slate-200/90 rounded-2xl p-3 space-y-2.5">
+        <div class="bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
             <span class="text-[10px] font-black uppercase text-slate-700 tracking-wider flex items-center gap-1.5">
               <i class="fa-solid fa-comments text-indigo-600"></i> Messenger Live Chat
@@ -1839,7 +1834,8 @@
             <span class="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Live Thread</span>
           </div>
 
-          <div id="chatBox_${jobId}" class="space-y-2 max-h-36 overflow-y-auto pr-1 chat-scroll">
+          <!-- Bottom-Anchored Messenger View Container -->
+          <div id="chatBox_${jobId}" class="flex flex-col-reverse space-y-reverse space-y-2 max-h-44 overflow-y-auto pr-1">
             ${bubbles}
           </div>
 
@@ -2058,17 +2054,12 @@
     }
 
     function render() {
-      // PREVENT TYPING/SCROLL JUMPS: If user is actively typing in a chat box, pause innerHTML redraw
       const activeElement = document.activeElement;
       const isUserTypingInChat = activeElement && activeElement.id && activeElement.id.startsWith('chatInput_');
       
       const savedChatInputs = {};
-      const savedChatScrolls = {};
       document.querySelectorAll('[id^="chatInput_"]').forEach(inp => {
         savedChatInputs[inp.id] = inp.value;
-      });
-      document.querySelectorAll('[id^="chatBox_"]').forEach(box => {
-        savedChatScrolls[box.id] = box.scrollTop;
       });
 
       const waiting = state.filter(j => j.status === 'waiting').length;
@@ -2143,7 +2134,6 @@
         }
       }
 
-      // Skip innerHTML destruction if typing in chat box
       if (isUserTypingInChat) return;
 
       // Office Queue Renderer
@@ -2380,14 +2370,9 @@
         }
       }
 
-      // Restore inputs and scroll positions
       Object.keys(savedChatInputs).forEach(id => {
         const inp = document.getElementById(id);
         if (inp) inp.value = savedChatInputs[id];
-      });
-      Object.keys(savedChatScrolls).forEach(id => {
-        const box = document.getElementById(id);
-        if (box) box.scrollTop = savedChatScrolls[id];
       });
     }
 
