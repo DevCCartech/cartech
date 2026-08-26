@@ -817,80 +817,6 @@
       reader.readAsDataURL(file);
     }
 
-    function checkCurrentSessionExpiry() {
-      if (!currentUser) return;
-      const acc = cachedCloudAccounts[currentUser];
-      if (acc && acc.expiresAt && acc.expiresAt > 0) {
-        if (Date.now() >= acc.expiresAt) {
-          alert("⏱️ YOUR ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
-          localStorage.removeItem('cartech_auth_user');
-          localStorage.removeItem('cartech_auth_role');
-          location.reload();
-        }
-      }
-    }
-
-    async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
-      const now = Date.now();
-      const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
-
-      cachedCloudAccounts[username] = {
-        pass: password,
-        role: role,
-        expiresAt: expiresAt,
-        createdAt: now
-      };
-
-      AUTHORIZED_ROSTER[username] = role;
-      if (role === 'workshop' && !MECHANIC_LIST.includes(username)) {
-        MECHANIC_LIST.push(username);
-      }
-
-      const payload = {
-        id: USERS_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_USERS_RECORD",
-        plate: "N/A",
-        service: "Accounts Registry",
-        est_time: 0,
-        priority: "Normal",
-        details: JSON.stringify(cachedCloudAccounts),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {}
-    }
-
-    async function handleAdminCreateSubAccount(e) {
-      e.preventDefault();
-      const user = document.getElementById('subUsername').value.trim().toLowerCase();
-      const pass = document.getElementById('subPassword').value.trim();
-      const role = document.getElementById('subRole').value;
-      const hours = parseInt(document.getElementById('subDuration').value, 10);
-
-      if (!user || !pass) {
-        alert("Please enter username and password.");
-        return;
-      }
-
-      await saveAccountToCloud(user, pass, role, hours);
-      alert(`✅ Account [${user.toUpperCase()}] registered!`);
-      
-      document.getElementById('subUsername').value = "";
-      document.getElementById('subPassword').value = "";
-      render();
-    }
-
-    // EMERGENCY RECOVERY SYNC (ALWAYS RESTORES TUCSON & TRAVIZ)
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
@@ -907,7 +833,7 @@
       }
 
       setTimeout(pullData, 500);
-      alert("✅ All records, logs, and waiting part photos restored!");
+      alert("✅ All shop records restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -940,30 +866,6 @@
           body: JSON.stringify(payload)
         });
       } catch (err) {}
-    }
-
-    function playLoudVehicleHorn() {
-      if ("vibrate" in navigator) {
-        navigator.vibrate([600, 150, 600]);
-      }
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        [0, 0.40].forEach((burstOffset) => {
-          [440, 330].forEach((freq) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
-            gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
-            gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + burstOffset);
-            osc.stop(ctx.currentTime + burstOffset + 0.28);
-          });
-        });
-      } catch (e) {}
     }
 
     async function handleAuthLogin(e) {
