@@ -153,13 +153,13 @@
         <div class="text-center">
           <span class="text-[10px] font-bold uppercase text-amber-600 tracking-wider">Account Recovery</span>
           <h3 class="text-xl font-black text-slate-900 mt-0.5">Password Recovery</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Security policy requires developer verification.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Security policy requires admin or developer verification.</p>
         </div>
 
         <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2 text-center">
           <i class="fa-solid fa-headset text-2xl text-amber-600 mb-1"></i>
-          <p class="font-bold text-sm">Ask Developer to Change Password</p>
-          <p class="text-amber-800 leading-relaxed">For shop security, staff cannot reset passwords directly. Please contact the <strong>Developer</strong> to change or recover your password.</p>
+          <p class="font-bold text-sm">Contact Admin / Developer</p>
+          <p class="text-amber-800 leading-relaxed">Please ask the <strong>Admin or Developer</strong> to reset or manage your account from the Access Panel.</p>
         </div>
 
         <div class="text-center pt-2 border-t border-slate-100">
@@ -206,15 +206,15 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN VIEW -->
+    <!-- DEVELOPER & ADMIN PERFORMANCE & USER MANAGEMENT VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
-            <i class="fa-solid fa-code mr-1"></i> Developer Control Engine
+            <i class="fa-solid fa-sliders mr-1"></i> Admin & Dev Control Terminal
           </span>
-          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">System Analytics & Flow Control</h2>
-          <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time online status and live registered user management.</p>
+          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry, Sub-Mechanic Expiry & Flow Control</h2>
+          <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
@@ -227,11 +227,11 @@
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div id="devRegisteredCard" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
+            <div class="text-[11px] font-semibold text-slate-400">Total Registered Accounts</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -249,14 +249,117 @@
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-stopwatch"></i></div>
           <div>
-            <div id="devTotalPartsReq" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Parts Orders Logged</div>
+            <div id="devActiveSubCount" class="text-xl font-black text-amber-600">0</div>
+            <div class="text-[11px] font-semibold text-slate-400">Temporary Sub-Mechanics</div>
           </div>
         </div>
       </div>
 
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- COLUMN 1: LIVE ACTIVE PRESENCE & SUB-MECHANIC REGISTRATION -->
+        <div class="lg:col-span-6 space-y-6">
+          
+          <!-- SUB-MECHANIC REGISTRATION CARD -->
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-indigo-600"></i> Register Sub-Mechanic / Staff
+              </h3>
+              <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">
+                Timed Access Control
+              </span>
+            </div>
+
+            <form onsubmit="handleAdminCreateSubAccount(event)" class="space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Username / Mechanic Name *</label>
+                  <input id="subUsername" required placeholder="e.g. jomar, tony" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Password *</label>
+                  <input id="subPassword" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Assigned Role *</label>
+                  <select id="subRole" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="workshop">Workshop (Sub-Mechanic)</option>
+                    <option value="office">Office (Front Desk / Staff)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Access Expiry Duration *</label>
+                  <select id="subDuration" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="4">4 Hours (Half Day)</option>
+                    <option value="8">8 Hours (1 Full Shift)</option>
+                    <option value="24" selected>1 Day (24 Hours - Auto Kickout)</option>
+                    <option value="72">3 Days</option>
+                    <option value="168">1 Week</option>
+                    <option value="0">Permanent (No Expiry)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20">
+                <i class="fa-solid fa-user-check text-xs"></i> Create & Sync Account to Cloud
+              </button>
+            </form>
+          </div>
+
+          <!-- REAL-TIME STAFF ACTIVITY -->
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity (Cross-Device)
+              </h3>
+              <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                <i class="fa-solid fa-circle text-[7px] mr-1 animate-ping"></i> Live Sync
+              </span>
+            </div>
+            <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: REGISTERED ACCOUNTS & TIME-LIMIT CONTROL PANEL -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-id-card-clip text-indigo-600"></i> Registered Staff & Active Sub-Mechanics
+              </h3>
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+                <p class="font-bold text-slate-900">Quick Operations Flow:</p>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-plus text-xs"></i> Inject Test Job
+                  </button>
+                  <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-trash-can text-xs"></i> Purge All Records
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Account Registry & Timer Status:</p>
+                <div id="devRegisteredAccountsContainer" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- WEEKLY PERFORMANCE MONITORING -->
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-100 pb-3">
           <div>
@@ -289,42 +392,6 @@
         <div>
           <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-2.5">Mechanic Individual Handled Leaderboard:</h4>
           <div id="mechanicPerformanceBars" class="space-y-2"></div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity (Cross-Device)</h3>
-            <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200"><i class="fa-solid fa-circle text-[7px] mr-1 animate-ping"></i> Live Sync</span>
-          </div>
-          <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
-        </div>
-
-        <div id="devExclusiveControlPanel" class="lg:col-span-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-            <h3 class="font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-600"></i> Registered Staff & Developer Flow Control</h3>
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
-          </div>
-          
-          <div class="space-y-3">
-            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-              <p class="font-bold text-slate-900">Developer Flow Controls:</p>
-              <div class="grid grid-cols-2 gap-2">
-                <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
-                  <i class="fa-solid fa-plus text-xs"></i> Inject Test Job
-                </button>
-                <button onclick="clearAllTestingRecords()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
-                  <i class="fa-solid fa-trash-can text-xs"></i> Purge All Records
-                </button>
-              </div>
-            </div>
-
-            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-              <p class="font-bold text-slate-900">Registered Accounts & Passwords (Developer Only):</p>
-              <div id="devRegisteredAccountsContainer" class="space-y-1.5 max-h-[180px] overflow-y-auto"></div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
@@ -518,7 +585,8 @@
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
-    const AUTHORIZED_ROSTER = {
+    // CORE PERMANENT ROSTER
+    let AUTHORIZED_ROSTER = {
       "dev": "developer",
       "admin": "admin",
       "shiela": "office",
@@ -531,7 +599,7 @@
       "mark": "workshop"
     };
 
-    const MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
+    let MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
     const TOTAL_BAYS = 4;
     const MAX_JOBS_PER_MECHANIC = 3;
     const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
@@ -558,9 +626,10 @@
     let deferredPwaPrompt = null;
     let swRegistration = null;
 
+    // ACCOUNTS SCHEMA WITH EXPIRY TIMESTAMPS
     let cachedCloudAccounts = { 
-      "dev": "admin123", 
-      "admin": "admin123"
+      "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
+      "admin": { pass: "admin123", role: "admin", expiresAt: 0 }
     };
 
     let cachedCloudPresence = {};
@@ -625,6 +694,7 @@
       if (banner) banner.classList.add('hidden');
     }
 
+    // CLOUD SYNC: PASSWORDS, TIMED ACCOUNTS & EXPIRATION CHECK
     async function syncSystemCloudRecords() {
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
@@ -636,8 +706,26 @@
             if (rec.id === USERS_RECORD_ID && rec.details) {
               try {
                 const parsed = JSON.parse(rec.details);
+                
+                // Migrate legacy plain string format to object format
+                Object.keys(parsed).forEach(k => {
+                  if (typeof parsed[k] === 'string') {
+                    parsed[k] = { pass: parsed[k], role: AUTHORIZED_ROSTER[k] || 'workshop', expiresAt: 0 };
+                  }
+                });
+
                 cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
                 localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
+
+                // Dynamically update runtime roster
+                Object.keys(cachedCloudAccounts).forEach(u => {
+                  const acc = cachedCloudAccounts[u];
+                  AUTHORIZED_ROSTER[u] = acc.role || 'workshop';
+                  if (acc.role === 'workshop' && !MECHANIC_LIST.includes(u)) {
+                    MECHANIC_LIST.push(u);
+                  }
+                });
+
               } catch(e){}
             }
             if (rec.id === PRESENCE_RECORD_ID && rec.details) {
@@ -650,8 +738,37 @@
       } catch (e) {}
     }
 
-    async function saveAccountToCloud(username, password) {
-      cachedCloudAccounts[username] = password;
+    // ENFORCE EXPIRY & KICKOUT ENGINE
+    function checkCurrentSessionExpiry() {
+      if (!currentUser) return;
+      const acc = cachedCloudAccounts[currentUser];
+      if (acc && acc.expiresAt && acc.expiresAt > 0) {
+        if (Date.now() >= acc.expiresAt) {
+          alert("⏱️ YOUR TEMPORARY ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
+          localStorage.removeItem('cartech_auth_user');
+          localStorage.removeItem('cartech_auth_role');
+          location.reload();
+        }
+      }
+    }
+
+    // SAVE/UPDATE CLOUD ACCOUNT
+    async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
+      const now = Date.now();
+      const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
+
+      cachedCloudAccounts[username] = {
+        pass: password,
+        role: role,
+        expiresAt: expiresAt,
+        createdAt: now
+      };
+
+      AUTHORIZED_ROSTER[username] = role;
+      if (role === 'workshop' && !MECHANIC_LIST.includes(username)) {
+        MECHANIC_LIST.push(username);
+      }
+
       localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
 
       const payload = {
@@ -676,6 +793,60 @@
           body: JSON.stringify(payload)
         });
       } catch (err) {}
+    }
+
+    // ADMIN/DEV CREATES A SUB-MECHANIC ACCOUNT WITH TIMER
+    async function handleAdminCreateSubAccount(e) {
+      e.preventDefault();
+      const user = document.getElementById('subUsername').value.trim().toLowerCase();
+      const pass = document.getElementById('subPassword').value.trim();
+      const role = document.getElementById('subRole').value;
+      const hours = parseInt(document.getElementById('subDuration').value, 10);
+
+      if (!user || !pass) {
+        alert("Please enter username and password.");
+        return;
+      }
+
+      await saveAccountToCloud(user, pass, role, hours);
+      alert(`✅ Account [${user.toUpperCase()}] successfully registered!\nRole: ${role.toUpperCase()}\nAccess Duration: ${hours === 0 ? 'Permanent' : hours + ' Hours'}`);
+      
+      document.getElementById('subUsername').value = "";
+      document.getElementById('subPassword').value = "";
+      render();
+    }
+
+    // ADMIN/DEV DELETES OR KICKS OUT A SUB-MECHANIC
+    async function devDeleteStaffAccount(username) {
+      if (!confirm(`Permanently revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
+
+      delete cachedCloudAccounts[username];
+      delete AUTHORIZED_ROSTER[username];
+      MECHANIC_LIST = MECHANIC_LIST.filter(m => m !== username);
+
+      const payload = {
+        id: USERS_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_USERS_RECORD",
+        plate: "N/A",
+        service: "Accounts Registry",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(cachedCloudAccounts),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e){}
+      render();
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -770,7 +941,6 @@
       return audioCtx;
     }
 
-    // FAST HIGH-PITCH "DING-DONG" DOORBELL SYNTHESIZER
     function triggerFastDoorbellSound() {
       try {
         const ctx = getAudioContext();
@@ -785,7 +955,6 @@
 
         doorbellChimes.forEach(chime => {
           const startTime = ctx.currentTime + chime.start;
-          
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
 
@@ -821,7 +990,6 @@
       showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert will now ring doorbell and vibrate fast!");
     }
 
-    // CONTINUOUS FAST DOORBELL & HARDWARE VIBRATION LOOP
     function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
         navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
@@ -890,6 +1058,7 @@
       }
     }
 
+    // SIGN IN AUTHENTICATION WITH TIME EXPIRY VALIDATION
     async function handleAuthLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnLoginSubmit');
@@ -902,23 +1071,25 @@
       const errorElem = document.getElementById('loginAuthError');
       const errorMsg = document.getElementById('loginAuthErrorMsg');
 
-      if (!AUTHORIZED_ROSTER[user]) {
-        errorMsg.innerText = "You are not allowed to access this workspace.";
+      const acc = cachedCloudAccounts[user];
+
+      if (!acc) {
+        errorMsg.innerText = "Account not found or access expired. Ask Admin / Developer.";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
       }
 
-      const registeredUsers = cachedCloudAccounts;
-      if (!registeredUsers[user]) {
-        errorMsg.innerText = "Account not created yet. Please click 'Create Account' first.";
+      // Check Expired Access Timer
+      if (acc.expiresAt && acc.expiresAt > 0 && Date.now() >= acc.expiresAt) {
+        errorMsg.innerText = "⏱️ Temporary access has expired. Contact Admin to renew.";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
       }
 
-      if (registeredUsers[user] !== pass) {
-        errorMsg.innerText = "Incorrect password. Ask Developer if you forgot your password.";
+      if (acc.pass !== pass) {
+        errorMsg.innerText = "Incorrect password. Ask Admin if you forgot your password.";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
@@ -926,7 +1097,7 @@
 
       errorElem.classList.add('hidden');
       currentUser = user;
-      currentRole = AUTHORIZED_ROSTER[user];
+      currentRole = acc.role || AUTHORIZED_ROSTER[user] || 'workshop';
 
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
@@ -955,15 +1126,15 @@
       errorElem.classList.add('hidden');
       successElem.classList.add('hidden');
 
-      if (!AUTHORIZED_ROSTER[exactName]) {
-        errorMsg.innerText = "You are not allowed to create an account. (Name not on CARTECH roster)";
+      if (!AUTHORIZED_ROSTER[exactName] && !cachedCloudAccounts[exactName]) {
+        errorMsg.innerText = "You are not on the CARTECH roster. Ask Admin to register your name.";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
       }
 
-      if (cachedCloudAccounts[exactName]) {
-        errorMsg.innerText = "You already created an account. Please sign in or ask the Developer if you forgot your password.";
+      if (cachedCloudAccounts[exactName] && cachedCloudAccounts[exactName].pass) {
+        errorMsg.innerText = "Account already exists. Please Sign In.";
         errorElem.classList.remove('hidden');
         btn.disabled = false;
         return;
@@ -976,7 +1147,7 @@
         return;
       }
 
-      await saveAccountToCloud(exactName, pass);
+      await saveAccountToCloud(exactName, pass, AUTHORIZED_ROSTER[exactName] || 'workshop', 0);
 
       successElem.classList.remove('hidden');
       btn.disabled = false;
@@ -987,14 +1158,13 @@
     }
 
     async function devChangeStaffPassword(username) {
-      const currentPass = cachedCloudAccounts[username] || 'Not Set';
+      const acc = cachedCloudAccounts[username];
+      const currentPass = acc ? acc.pass : '';
       const newPass = prompt(`Set new password for staff member [${username.toUpperCase()}]:`, currentPass);
       if (newPass && newPass.trim().length >= 4) {
-        await saveAccountToCloud(username, newPass.trim());
-        alert(`Password for ${username.toUpperCase()} updated successfully to: ${newPass.trim()}`);
+        await saveAccountToCloud(username, newPass.trim(), acc ? acc.role : 'workshop', acc && acc.expiresAt ? Math.round((acc.expiresAt - Date.now()) / (3600000)) : 0);
+        alert(`Password for ${username.toUpperCase()} updated successfully!`);
         render();
-      } else if (newPass !== null) {
-        alert("Password must be at least 4 characters.");
       }
     }
 
@@ -1005,7 +1175,7 @@
       
       let roleLabel = 'Front Desk';
       if (currentRole === 'developer') roleLabel = 'Developer Terminal';
-      if (currentRole === 'admin') roleLabel = 'Admin Monitor Terminal';
+      if (currentRole === 'admin') roleLabel = 'Admin Control Terminal';
       if (currentRole === 'workshop') roleLabel = 'Mechanic Station';
       document.getElementById('roleBadge').innerText = roleLabel;
 
@@ -1013,8 +1183,6 @@
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
       const topMechanicsStripOffice = document.getElementById('topMechanicsStripOffice');
-      const devExclusive = document.getElementById('devExclusiveControlPanel');
-      const devRegisteredCard = document.getElementById('devRegisteredCard');
 
       devView.classList.add('hidden');
       officeView.classList.add('hidden');
@@ -1025,20 +1193,6 @@
         if (window.innerWidth >= 768) {
           topMechanicsStripOffice.classList.remove('hidden');
           topMechanicsStripOffice.classList.add('flex');
-        }
-
-        if (currentRole === 'admin') {
-          devExclusive.classList.add('hidden');
-          devRegisteredCard.classList.add('hidden');
-          document.getElementById('devBadgeTitle').innerHTML = '<i class="fa-solid fa-gauge-high mr-1"></i> Admin Operations Monitor';
-          document.getElementById('devMainTitle').innerText = 'Shop Performance & Flow Monitoring';
-          document.getElementById('devSubTitle').innerText = 'Live telemetry of mechanics load, bay status, and week-over-week performance.';
-        } else {
-          devExclusive.classList.remove('hidden');
-          devRegisteredCard.classList.remove('hidden');
-          document.getElementById('devBadgeTitle').innerHTML = '<i class="fa-solid fa-code mr-1"></i> Developer Control Engine';
-          document.getElementById('devMainTitle').innerText = 'System Analytics & Flow Control';
-          document.getElementById('devSubTitle').innerText = 'Full system control, real-time online status, and live registered user management.';
         }
       } else if (currentRole === 'office') {
         officeView.classList.remove('hidden');
@@ -1108,6 +1262,8 @@
 
     async function pullData() {
       await syncSystemCloudRecords();
+      checkCurrentSessionExpiry();
+
       if (currentUser && currentRole) {
         await sendPresenceHeartbeat(true);
       }
@@ -1181,7 +1337,7 @@
         service: "Diagnostic Flow Test",
         est_time: 30,
         priority: "High",
-        details: "Automated simulation test dispatched via Developer Terminal.",
+        details: "Automated simulation test dispatched via Control Terminal.",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1279,12 +1435,12 @@
       }
     }
 
-    // TWO-WAY CHAT THREAD: SENDS MESSAGES (FROM EITHER OFFICE OR MECHANIC)
+    // TWO-WAY CONVERSATION ENGINE
     async function sendConversationMessage(jobId, senderRole) {
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
 
-      const promptTitle = senderRole === 'office' ? 'Office Message / Price to Mechanic:' : 'Mechanic Reply to Office:';
+      const promptTitle = senderRole === 'office' ? 'Office Message / Price Update to Mechanic:' : 'Mechanic Reply to Office:';
       const messageText = prompt(promptTitle, "");
       if (!messageText || !messageText.trim()) return;
 
@@ -1298,7 +1454,6 @@
 
       const updatedChatList = [...info.chatList, newChatEntry];
 
-      // Rebuild auto_schedule_slot cleanly without bloating payload
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
         .replace(/\[OFFICE_MSG:.*?\]/gi, '')
@@ -1373,7 +1528,6 @@
       document.getElementById('partsModal').classList.add('hidden');
     }
 
-    // ULTRA-FAST LIGHTWEIGHT THUMBNAIL COMPRESSION (STOPS MOBILE LAG)
     function handleMultiplePartImages(event) {
       const files = Array.from(event.target.files);
       if (!files.length) return;
@@ -1391,7 +1545,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 400; // Ultra-light 400px thumbnail size
+            const maxDim = 400;
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -1404,7 +1558,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            // Ultra-compressed lightweight JPEG (15-20 KB each)
             const base64 = canvas.toDataURL('image/jpeg', 0.55);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
@@ -1524,7 +1677,6 @@
       return null;
     }
 
-    // SAFE PARSER: PREVENTS BASE64 LEAKS AND PARSES 2-WAY CHAT THREADS
     function parsePartsInfo(rawStr) {
       if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '' };
       let images = [];
@@ -1537,7 +1689,6 @@
         if (pMatch) targetStr = pMatch[1];
       }
 
-      // Parse multi-images cleanly
       const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
       if (multiMatch) {
         try { images = JSON.parse(multiMatch[1]); } catch(e){}
@@ -1546,13 +1697,11 @@
         if (singleMatch) images = [singleMatch[1]];
       }
 
-      // Parse conversation chat thread
       const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
       if (chatMatch) {
         try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
       }
 
-      // Fallback legacy office single message
       const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
       if (offMsgMatch && chatList.length === 0) {
         chatList.push({
@@ -1566,11 +1715,9 @@
       const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
       const mech = mMatch ? mMatch[1].toUpperCase() : null;
 
-      // Extract Bay name cleanly
       const bayMatch = targetStr.match(/Bay #\d+/i);
       const cleanBay = bayMatch ? bayMatch[0] : '';
 
-      // Strip all raw payload tags so no Base64 leaks onto the screen
       const text = targetStr
         .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
         .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
@@ -1586,9 +1733,16 @@
       return { text, images, mech, chatList, cleanBay };
     }
 
-    // RENDERS THE 2-WAY CHAT BUBBLES
     function renderChatThreadHTML(chatList, jobId, isOfficeView) {
-      if (!chatList || chatList.length === 0) return '';
+      if (!chatList || chatList.length === 0) {
+        return `
+          <div class="pt-1">
+            <button onclick="sendConversationMessage('${jobId}', '${isOfficeView ? 'office' : 'workshop'}')" class="w-full ${isOfficeView ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-message text-[10px]"></i> ${isOfficeView ? 'Send Message / Price to Mechanic' : 'Message Office'}
+            </button>
+          </div>
+        `;
+      }
 
       const bubbles = chatList.map(msg => {
         const isFromOffice = msg.role === 'office';
@@ -1705,28 +1859,40 @@
     }
 
     function renderDeveloperAnalytics() {
-      const registeredUsers = cachedCloudAccounts;
-      const accountsList = Object.keys(registeredUsers);
+      const accountsList = Object.keys(cachedCloudAccounts);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
+
+      let subCount = 0;
+      const now = Date.now();
+
+      accountsList.forEach(u => {
+        const acc = cachedCloudAccounts[u];
+        if (acc && acc.expiresAt && acc.expiresAt > 0 && acc.expiresAt > now) {
+          subCount++;
+        }
+      });
 
       document.getElementById('devTotalRegistered').innerText = accountsList.length;
       document.getElementById('devTotalQueueJobs').innerText = state.length;
       document.getElementById('devTotalPartsReq').innerText = partsCount;
+      document.getElementById('devActiveSubCount').innerText = subCount;
 
       calculateWeeklyAnalytics();
 
-      const now = Date.now();
       let onlineCount = 0;
       let presenceHTML = "";
 
-      Object.keys(AUTHORIZED_ROSTER).forEach(user => {
-        const userRole = AUTHORIZED_ROSTER[user];
+      // List all live presence
+      const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
+
+      allDisplayUsers.forEach(user => {
+        const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
         const record = cachedCloudPresence[user];
         const lastSeen = record ? record.lastSeen : 0;
         const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
         if (isOnline) onlineCount++;
 
-        const isRegistered = !!registeredUsers[user];
+        const isRegistered = !!cachedCloudAccounts[user];
         const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
 
         presenceHTML += `
@@ -1749,26 +1915,55 @@
       document.getElementById('devOnlineStaffCount').innerText = onlineCount;
       document.getElementById('devStaffPresenceList').innerHTML = presenceHTML;
 
-      if (currentRole === 'developer') {
-        let accHTML = "";
-        accountsList.forEach(u => {
-          accHTML += `
-            <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-user-check text-xs text-emerald-600"></i>
-                <span class="font-bold text-slate-900 uppercase text-xs">${u}</span>
+      // Render Sub-Mechanic / Staff Registry Cards
+      let accHTML = "";
+      accountsList.forEach(u => {
+        const acc = cachedCloudAccounts[u];
+        let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
+
+        if (acc && acc.expiresAt && acc.expiresAt > 0) {
+          const timeLeftMs = acc.expiresAt - now;
+          if (timeLeftMs > 0) {
+            const hoursLeft = Math.floor(timeLeftMs / (3600000));
+            const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
+            timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
+          } else {
+            timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
+          }
+        }
+
+        const isPermanentAdmin = u === 'dev' || u === 'admin';
+
+        accHTML += `
+          <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
+                <i class="fa-solid fa-user"></i>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 text-xs">Pass: ${registeredUsers[u]}</span>
-                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold border border-indigo-200" title="Change Password for staff">
-                  <i class="fa-solid fa-pen-to-square"></i> Change
-                </button>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
+                  <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
+                </div>
+                <div class="mt-0.5">${timerBadge}</div>
               </div>
             </div>
-          `;
-        });
-        document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
-      }
+
+            <div class="flex items-center gap-1.5 self-end sm:self-center">
+              <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
+              <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              ${!isPermanentAdmin ? `
+                <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
+                  <i class="fa-solid fa-user-xmark"></i>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('devRegisteredAccountsContainer').innerHTML = accHTML;
     }
 
     function render() {
@@ -1899,7 +2094,6 @@
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
-                  <!-- 2-WAY LIVE CONVERSATION THREAD -->
                   ${renderChatThreadHTML(chatList, j.id, true)}
 
                   <div class="flex items-center gap-2 pt-1">
@@ -2046,7 +2240,6 @@
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <!-- 2-WAY CONVERSATION THREAD IN MECHANIC STATION -->
                     ${renderChatThreadHTML(chatList, j.id, false)}
                   </div>
                   ${resumeBtn}
@@ -2090,7 +2283,6 @@
       bootApp();
     }
 
-    // Smooth polling every 2 seconds
     setInterval(pullData, 2000);
   </script>
 </body>
