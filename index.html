@@ -191,32 +191,23 @@
         </div>
       </div>
 
-      <!-- Live Roster Strip -->
-      <div id="topMechanicsStripOffice" class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-inner">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1"><i class="fa-solid fa-users-gear mr-1 text-orange-400"></i> Mechanics:</span>
-        <div id="mechanicsIndicators" class="flex items-center space-x-1.5"></div>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition">
-          <i class="fa-solid fa-rotate-left"></i>
-          <span>Restore Shop Data</span>
-        </button>
-        <button onclick="handleLogout()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5 bg-slate-900 border border-slate-800">
+      <!-- Header Action -->
+      <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
+        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
           <span class="hidden sm:inline">Logout</span>
         </button>
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
+    <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
             <i class="fa-solid fa-sliders mr-1"></i> Admin & Dev Control Terminal
           </span>
-          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry, Sub-Mechanic Expiry & Flow Control</h2>
+          <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry & Flow Control</h2>
           <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -229,20 +220,20 @@
         </div>
       </div>
 
-      <!-- Metric KPI Cards -->
+      <!-- KPI Metrics -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
             <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Total Registered Accounts</div>
+            <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-signal"></i></div>
           <div>
             <div id="devOnlineStaffCount" class="text-xl font-black text-slate-900">0</div>
-            <div class="text-[11px] font-semibold text-slate-400">Online Staff (Live Sync)</div>
+            <div class="text-[11px] font-semibold text-slate-400">Online Staff</div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -355,6 +346,7 @@
 
     <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
+      <!-- Intake Column -->
       <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
@@ -395,7 +387,9 @@
         </form>
       </div>
 
+      <!-- Center & Right Feed -->
       <div class="lg:col-span-8 space-y-4">
+        <!-- Metric Cards Row & Messenger Header Strip -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
@@ -405,6 +399,7 @@
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+          <!-- Metric Cards & Job Feed List -->
           <div class="xl:col-span-9 space-y-3.5">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-2.5">
               <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-amber-400 transition transform active:scale-95">
@@ -440,7 +435,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLES SIDEBAR -->
+          <!-- MESSENGER CIRCLE AVATAR SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -449,6 +444,7 @@
               <span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200">Floor</span>
             </div>
 
+            <!-- Vertical Circles Container -->
             <div id="messengerSidebarAvatars" class="flex flex-row xl:flex-col gap-2.5 overflow-x-auto xl:overflow-visible pb-1 xl:pb-0"></div>
           </div>
         </div>
@@ -457,27 +453,6 @@
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
-            <div id="myMechanicAvatarImg" class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-base flex items-center justify-center uppercase shadow-md border-2 border-indigo-500">
-              M
-            </div>
-            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition">
-              <i class="fa-solid fa-camera"></i>
-            </div>
-            <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
-          </div>
-          <div>
-            <h3 class="font-black text-sm text-slate-900 uppercase leading-tight" id="workshopStaffName">Mechanic</h3>
-            <p class="text-[11px] text-slate-500">Tap avatar photo to update your profile image.</p>
-          </div>
-        </div>
-        <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
-          <i class="fa-solid fa-camera text-[10px]"></i> Photo
-        </button>
-      </div>
-
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -528,31 +503,35 @@
     </main>
   </div>
 
-  <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL -->
-  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeMessengerModal()">
-    <div class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
+  <!-- 3. MESSENGER CHAT DIALOGUE MODAL (FOR DIRECT PARTS CONVERSATION) -->
+  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4" onclick="closeMessengerModal()">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
+          <div id="modalAvatarCircle" class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm uppercase shadow">
             M
           </div>
           <div>
-            <h3 id="modalChatTitle" class="font-black text-base md:text-lg leading-tight">Mechanic Chat</h3>
-            <p id="modalChatSub" class="text-xs text-slate-400 mt-0.5">Parts Request & Price Discussion</p>
+            <h3 id="modalChatTitle" class="font-black text-sm">Mechanic Chat</h3>
+            <p id="modalChatSub" class="text-[10px] text-slate-400">Parts Request & Price Inquiry</p>
           </div>
         </div>
-        <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
+        <button onclick="closeMessengerModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
-      <div id="modalChatStream" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-3 bg-slate-50 flex flex-col-reverse"></div>
+      <!-- Parts Overview Strip inside Modal -->
+      <div id="modalPartsOverview" class="p-3 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-1.5"></div>
 
-      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3.5 md:p-4 bg-white border-t border-slate-200 flex items-center gap-2">
-        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs md:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-xs md:text-sm shadow-md transition flex items-center justify-center gap-1.5">
-          <span>Send</span>
+      <!-- Messages Stream (Reverse bottom anchored) -->
+      <div id="modalChatStream" class="flex-1 p-4 overflow-y-auto space-y-2.5 bg-slate-50 flex flex-col-reverse max-h-72"></div>
+
+      <!-- Input Bar -->
+      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center">
           <i class="fa-solid fa-paper-plane text-xs"></i>
         </button>
       </form>
@@ -621,6 +600,7 @@
     };
 
     let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
+    // Exact requested sequence: bert, charl, mark, nel, rocky
     let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky"];
     let MECHANIC_LIST = [...MECHANIC_ORDER];
 
@@ -638,54 +618,9 @@
 
     const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
-    const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    const TUCSON_10_PART_PHOTOS = [
-      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=150&q=80"
-    ];
-
-    const CORE_INITIAL_JOBS = [
-      {
-        id: "JB-408",
-        customer: "Arian Lumanta",
-        phone: "0909-323-93-93",
-        vehicle: "Hyundai Tucson",
-        plate: "CAR-408",
-        service: "Major Overhaul & Bushing",
-        est_time: 120,
-        priority: "Normal",
-        details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
-        status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
-        time_created: "11:14 PM"
-      },
-      {
-        id: "JB-613",
-        customer: "Rey Buscabus",
-        phone: "0921-987-65-43",
-        vehicle: "Traviz",
-        plate: "TRV-613",
-        service: "Oil & Brake Cleaning",
-        est_time: 45,
-        priority: "Normal",
-        details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
-        status: "completed",
-        auto_schedule_slot: "Completed Service [MECH:rocky]",
-        time_created: "09:45 AM"
-      }
-    ];
-
-    let state = [...CORE_INITIAL_JOBS];
-    let currentFilter = 'waiting_parts';
+    let state = [];
+    let currentFilter = 'waiting';
     let currentUser = null;
     let currentRole = null;
     let audioCtx = null;
@@ -699,19 +634,10 @@
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
-      "admin": { pass: "admin123", role: "admin", expiresAt: 0 },
-      "shiela": { pass: "1234", role: "office", expiresAt: 0 },
-      "josh": { pass: "1234", role: "office", expiresAt: 0 },
-      "ken": { pass: "1234", role: "office", expiresAt: 0 },
-      "charl": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "bert": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "nel": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "rocky": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "mark": { pass: "1234", role: "workshop", expiresAt: 0 }
+      "admin": { pass: "admin123", role: "admin", expiresAt: 0 }
     };
 
     let cachedCloudPresence = {};
-    let cachedCloudAvatars = {};
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -728,112 +654,270 @@
       });
     }
 
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem('cartech_app_installed', 'true');
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.add('hidden');
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      if (!isAppAlreadyInstalled() && currentRole === 'workshop') {
+        const banner = document.getElementById('pwaInstallBanner');
+        if (banner) banner.classList.remove('hidden');
+      }
+    });
+
+    function triggerPwaInstallPrompt() {
+      localStorage.setItem('cartech_app_installed', 'true');
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.add('hidden');
+
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+          deferredPwaPrompt = null;
+        });
+      } else {
+        const link = document.createElement('a');
+        link.href = 'cartech.apk';
+        link.download = 'cartech.apk';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function dismissInstallBannerManually() {
+      localStorage.setItem('cartech_app_installed', 'true');
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    // CLOUD SYNC
     async function syncSystemCloudRecords() {
       try {
-        const res = await fetch(`${API_URL}?select=*`, {
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID})`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const records = await res.json();
-          if (Array.isArray(records)) {
-            records.forEach(rec => {
-              if (rec.id === USERS_RECORD_ID && rec.details) {
-                try {
-                  const parsed = JSON.parse(rec.details);
-                  Object.keys(parsed).forEach(k => {
-                    if (typeof parsed[k] === 'string') {
-                      parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
-                    }
-                  });
-                  cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
-                } catch(e){}
-              }
-              if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-                try { cachedCloudPresence = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === AVATARS_RECORD_ID && rec.details) {
-                try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
-              }
-            });
-          }
+          records.forEach(rec => {
+            if (rec.id === USERS_RECORD_ID && rec.details) {
+              try {
+                const parsed = JSON.parse(rec.details);
+                
+                Object.keys(parsed).forEach(k => {
+                  if (typeof parsed[k] === 'string') {
+                    parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
+                  }
+                });
+
+                cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
+                localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
+
+                AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
+                MECHANIC_LIST = [...MECHANIC_ORDER];
+
+                Object.keys(cachedCloudAccounts).forEach(u => {
+                  const acc = cachedCloudAccounts[u];
+                  const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
+                  AUTHORIZED_ROSTER[u] = role;
+                  if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
+                    MECHANIC_LIST.push(u);
+                  }
+                });
+
+              } catch(e){}
+            }
+            if (rec.id === PRESENCE_RECORD_ID && rec.details) {
+              try {
+                cachedCloudPresence = JSON.parse(rec.details);
+              } catch(e){}
+            }
+          });
         }
       } catch (e) {}
     }
 
-    function handleProfilePhotoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+    function checkCurrentSessionExpiry() {
+      if (!currentUser) return;
+      const acc = cachedCloudAccounts[currentUser];
+      if (acc && acc.expiresAt && acc.expiresAt > 0) {
+        if (Date.now() >= acc.expiresAt) {
+          alert("⏱️ YOUR ACCESS HAS EXPIRED.\nYou have been logged out by security policy.");
+          localStorage.removeItem('cartech_auth_user');
+          localStorage.removeItem('cartech_auth_role');
+          location.reload();
+        }
+      }
+    }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const maxDim = 200;
-          if (width > height && width > maxDim) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else if (height > maxDim) {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+    async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
+      const now = Date.now();
+      const expiresAt = hours > 0 ? now + (hours * 60 * 60 * 1000) : 0;
 
-          const base64 = canvas.toDataURL('image/jpeg', 0.65);
-          cachedCloudAvatars[currentUser] = base64;
-
-          const payload = {
-            id: AVATARS_RECORD_ID,
-            customer: "SYSTEM",
-            phone: "N/A",
-            vehicle: "CLOUD_AVATARS_RECORD",
-            plate: "N/A",
-            service: "Avatars Registry",
-            est_time: 0,
-            priority: "Normal",
-            details: JSON.stringify(cachedCloudAvatars),
-            status: "system_record",
-            time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            auto_schedule_slot: null
-          };
-
-          try {
-            await fetch(API_URL, {
-              method: "POST",
-              headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-              body: JSON.stringify(payload)
-            });
-            alert("✅ Profile photo uploaded & synced!");
-            render();
-          } catch(err){}
-        };
-        img.src = e.target.result;
+      cachedCloudAccounts[username] = {
+        pass: password,
+        role: role,
+        expiresAt: expiresAt,
+        createdAt: now
       };
-      reader.readAsDataURL(file);
+
+      AUTHORIZED_ROSTER[username] = role;
+      if (role === 'workshop' && !MECHANIC_LIST.includes(username)) {
+        MECHANIC_LIST.push(username);
+      }
+
+      localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
+
+      const payload = {
+        id: USERS_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_USERS_RECORD",
+        plate: "N/A",
+        service: "Accounts Registry",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(cachedCloudAccounts),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {}
+    }
+
+    async function handleAdminCreateSubAccount(e) {
+      e.preventDefault();
+      const user = document.getElementById('subUsername').value.trim().toLowerCase();
+      const pass = document.getElementById('subPassword').value.trim();
+      const role = document.getElementById('subRole').value;
+      const hours = parseInt(document.getElementById('subDuration').value, 10);
+
+      if (!user || !pass) {
+        alert("Please enter username and password.");
+        return;
+      }
+
+      await saveAccountToCloud(user, pass, role, hours);
+      alert(`✅ Account [${user.toUpperCase()}] registered!\nRole: ${role.toUpperCase()}\nAccess Duration: ${hours === 0 ? 'Permanent' : hours + ' Hours'}`);
+      
+      document.getElementById('subUsername').value = "";
+      document.getElementById('subPassword').value = "";
+      render();
+    }
+
+    async function devDeleteStaffAccount(username) {
+      if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
+
+      delete cachedCloudAccounts[username];
+      delete AUTHORIZED_ROSTER[username];
+      MECHANIC_LIST = MECHANIC_LIST.filter(m => m !== username);
+
+      const payload = {
+        id: USERS_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_USERS_RECORD",
+        plate: "N/A",
+        service: "Accounts Registry",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(cachedCloudAccounts),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e){}
+      render();
     }
 
     async function restoreInitialShopRecords() {
-      state = [...CORE_INITIAL_JOBS];
-      currentFilter = 'waiting_parts';
-      render();
+      const originalJobs = [
+        {
+          id: "JB-408",
+          customer: "Arian Lumanta",
+          phone: "0909-323-93-93",
+          vehicle: "Hyundai Tucson",
+          plate: "CAR-408",
+          service: "Major Overhaul & Bushing",
+          est_time: 120,
+          priority: "Normal",
+          details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
+          status: "waiting_parts",
+          auto_schedule_slot: "Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]",
+          time_created: "11:14 PM"
+        },
+        {
+          id: "JB-298",
+          customer: "Gilberto Deliman",
+          phone: "0912-345-67-89",
+          vehicle: "Toyota Hilux 2018",
+          plate: "B1141",
+          service: "Preventive Maintenance",
+          est_time: 60,
+          priority: "Normal",
+          details: "Change Engine Oil, Air Filter, Cabin Filter replacement.",
+          status: "inprogress",
+          auto_schedule_slot: "Bay #2 [MECH:bert]",
+          time_created: "10:30 AM"
+        },
+        {
+          id: "JB-613",
+          customer: "Rey Buscabus",
+          phone: "N/A",
+          vehicle: "Traviz",
+          plate: "TRV-613",
+          service: "Oil & Brake Cleaning",
+          est_time: 45,
+          priority: "Normal",
+          details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
+          status: "inprogress",
+          auto_schedule_slot: "Bay #1 [MECH:rocky]",
+          time_created: "09:45 AM"
+        },
+        {
+          id: "JB-104",
+          customer: "Manuel Santos",
+          phone: "N/A",
+          vehicle: "Mitsubishi Montero Sport",
+          plate: "MON-104",
+          service: "Diagnostic Check",
+          est_time: 30,
+          priority: "High",
+          details: "Check Engine light on dashboard, scan OBD codes.",
+          status: "waiting",
+          auto_schedule_slot: null,
+          time_created: "12:05 PM"
+        }
+      ];
 
-      for (const job of CORE_INITIAL_JOBS) {
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-            body: JSON.stringify(job)
-          });
-        } catch(e){}
+      for (const job of originalJobs) {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: HEADERS,
+          body: JSON.stringify(job)
+        });
       }
 
-      setTimeout(pullData, 500);
-      alert("✅ All shop records restored!");
+      await pullData();
+      alert("✅ Shop records restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -868,8 +952,195 @@
       } catch (err) {}
     }
 
+    async function requestScreenWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {}
+    }
+
+    function requestPushNotificationPermission() {
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+    }
+
+    function showSystemNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: "CAR_WAITING_ALERT",
+              msg: body
+            });
+          } else if (swRegistration) {
+            swRegistration.showNotification(title, {
+              body: body,
+              icon: "team.jpg",
+              badge: "team.jpg",
+              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
+              tag: "cartech-urgent-floor-alarm",
+              renotify: true,
+              requireInteraction: true
+            });
+          } else {
+            new Notification(title, {
+              body: body,
+              icon: "team.jpg",
+              badge: "team.jpg",
+              vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
+              tag: "cartech-urgent-floor-alarm",
+              renotify: true,
+              requireInteraction: true
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playLoudVehicleHorn() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([600, 150, 600]);
+      }
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        [0, 0.40].forEach((burstOffset) => {
+          [440, 330].forEach((freq) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
+
+            gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
+            gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
+            gain.gain.setValueAtTime(0.85, ctx.currentTime + burstOffset + 0.22);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + burstOffset);
+            osc.stop(ctx.currentTime + burstOffset + 0.28);
+          });
+        });
+      } catch (e) {}
+    }
+
+    function triggerFastDoorbellSound() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        const doorbellChimes = [
+          { f: 880.00, start: 0.00, dur: 0.28 },
+          { f: 659.25, start: 0.18, dur: 0.38 },
+          { f: 1046.50, start: 0.48, dur: 0.28 },
+          { f: 783.99, start: 0.66, dur: 0.45 }
+        ];
+
+        doorbellChimes.forEach(chime => {
+          const startTime = ctx.currentTime + chime.start;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(chime.f, startTime);
+
+          gain.gain.setValueAtTime(0.01, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.95, startTime + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + chime.dur);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(startTime);
+          osc.stop(startTime + chime.dur);
+        });
+      } catch (e) {}
+    }
+
+    function requestPocketAlertPermission() {
+      localStorage.setItem('cartech_whistle_permission_granted', 'true');
+      
+      const card = document.getElementById('whistlePermissionCard');
+      if (card) card.classList.add('hidden');
+
+      getAudioContext();
+      requestPushNotificationPermission();
+      requestScreenWakeLock();
+      
+      triggerFastDoorbellSound();
+      if ("vibrate" in navigator) {
+        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
+      }
+      showSystemNotification("🚨 FAST DOORBELL ACTIVATED", "New vehicle alert is active.");
+    }
+
+    function triggerContinuousAlarm() {
+      if ("vibrate" in navigator) {
+        navigator.vibrate([400, 100, 600, 150, 400, 100, 600]);
+      }
+      triggerFastDoorbellSound();
+    }
+
+    function updateAlarmState() {
+      if (currentRole !== 'workshop') {
+        if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
+        return;
+      }
+      const hasPendingCars = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+      if (hasPendingCars) {
+        showSystemNotification("🚨 CAR WAITING OUTSIDE!", "New vehicle dispatched to floor. Open terminal to accept.");
+        if (!alarmInterval) {
+          triggerContinuousAlarm();
+          alarmInterval = setInterval(triggerContinuousAlarm, 1600);
+        }
+      } else {
+        if (alarmInterval) {
+          clearInterval(alarmInterval);
+          alarmInterval = null;
+        }
+      }
+    }
+
+    function switchAuthForm(type) {
+      document.getElementById('authBoxLogin').classList.add('hidden');
+      document.getElementById('authBoxRegister').classList.add('hidden');
+      document.getElementById('authBoxForgot').classList.add('hidden');
+
+      document.getElementById('loginAuthError').classList.add('hidden');
+      document.getElementById('regError').classList.add('hidden');
+      document.getElementById('regSuccess').classList.add('hidden');
+
+      if (type === 'login') {
+        document.getElementById('authBoxLogin').classList.remove('hidden');
+      } else if (type === 'register') {
+        document.getElementById('authBoxRegister').classList.remove('hidden');
+      } else if (type === 'forgot') {
+        document.getElementById('authBoxForgot').classList.remove('hidden');
+      }
+    }
+
     async function handleAuthLogin(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+
       await syncSystemCloudRecords();
 
       const user = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -878,9 +1149,25 @@
       const errorMsg = document.getElementById('loginAuthErrorMsg');
 
       const acc = cachedCloudAccounts[user];
-      if (!acc || acc.pass !== pass) {
-        errorMsg.innerText = "Invalid username or password.";
+
+      if (!acc) {
+        errorMsg.innerText = "Account not found or access expired. Ask Admin / Developer.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
+        return;
+      }
+
+      if (acc.expiresAt && acc.expiresAt > 0 && Date.now() >= acc.expiresAt) {
+        errorMsg.innerText = "⏱️ Temporary access has expired. Contact Admin to renew.";
+        errorElem.classList.remove('hidden');
+        btn.disabled = false;
+        return;
+      }
+
+      if (acc.pass !== pass) {
+        errorMsg.innerText = "Incorrect password. Ask Admin if you forgot your password.";
+        errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
@@ -892,30 +1179,69 @@
       localStorage.setItem('cartech_auth_role', currentRole);
 
       await sendPresenceHeartbeat(true);
+      getAudioContext();
+      requestPushNotificationPermission();
+      requestScreenWakeLock();
+      btn.disabled = false;
       bootApp();
     }
 
     async function handleAuthRegister(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnRegSubmit');
+      btn.disabled = true;
+
       await syncSystemCloudRecords();
 
       const exactName = document.getElementById('regName').value.trim().toLowerCase();
       const pass = document.getElementById('regPassword').value.trim();
       const errorElem = document.getElementById('regError');
+      const errorMsg = document.getElementById('regErrorMsg');
       const successElem = document.getElementById('regSuccess');
 
+      errorElem.classList.add('hidden');
+      successElem.classList.add('hidden');
+
       if (!AUTHORIZED_ROSTER[exactName] && !cachedCloudAccounts[exactName]) {
-        errorElem.innerText = "Name not on CARTECH roster.";
+        errorMsg.innerText = "You are not on the CARTECH roster. Ask Admin to register your name.";
         errorElem.classList.remove('hidden');
+        btn.disabled = false;
+        return;
+      }
+
+      if (cachedCloudAccounts[exactName] && cachedCloudAccounts[exactName].pass) {
+        errorMsg.innerText = "Account already exists. Please Sign In.";
+        errorElem.classList.remove('hidden');
+        btn.disabled = false;
+        return;
+      }
+
+      if (pass.length < 4) {
+        errorMsg.innerText = "Password must be at least 4 characters long.";
+        errorElem.classList.remove('hidden');
+        btn.disabled = false;
         return;
       }
 
       await saveAccountToCloud(exactName, pass, AUTHORIZED_ROSTER[exactName] || 'workshop', 0);
+
       successElem.classList.remove('hidden');
+      btn.disabled = false;
       setTimeout(() => {
         document.getElementById('loginUsername').value = exactName;
         switchAuthForm('login');
       }, 1200);
+    }
+
+    async function devChangeStaffPassword(username) {
+      const acc = cachedCloudAccounts[username];
+      const currentPass = acc ? acc.pass : '';
+      const newPass = prompt(`Set new password for staff member [${username.toUpperCase()}]:`, currentPass);
+      if (newPass && newPass.trim().length >= 4) {
+        await saveAccountToCloud(username, newPass.trim(), acc ? acc.role : 'workshop', acc && acc.expiresAt ? Math.round((acc.expiresAt - Date.now()) / (3600000)) : 0);
+        alert(`Password for ${username.toUpperCase()} updated successfully!`);
+        render();
+      }
     }
 
     function bootApp() {
@@ -929,27 +1255,41 @@
       if (currentRole === 'workshop') roleLabel = 'Mechanic Station';
       document.getElementById('roleBadge').innerText = roleLabel;
 
-      document.getElementById('viewDeveloper').classList.add('hidden');
-      document.getElementById('viewOffice').classList.add('hidden');
-      document.getElementById('viewWorkshop').classList.add('hidden');
+      const devView = document.getElementById('viewDeveloper');
+      const officeView = document.getElementById('viewOffice');
+      const workshopView = document.getElementById('viewWorkshop');
+
+      devView.classList.add('hidden');
+      officeView.classList.add('hidden');
+      workshopView.classList.add('hidden');
 
       if (currentRole === 'developer' || currentRole === 'admin') {
-        document.getElementById('viewDeveloper').classList.remove('hidden');
+        devView.classList.remove('hidden');
       } else if (currentRole === 'office') {
-        document.getElementById('viewOffice').classList.remove('hidden');
+        officeView.classList.remove('hidden');
       } else {
-        document.getElementById('viewWorkshop').classList.remove('hidden');
-        document.getElementById('workshopStaffName').innerText = currentUser;
+        workshopView.classList.remove('hidden');
+        
+        const whistleCard = document.getElementById('whistlePermissionCard');
+        if (whistleCard) {
+          if (localStorage.getItem('cartech_whistle_permission_granted') === 'true') {
+            whistleCard.classList.add('hidden');
+          } else {
+            whistleCard.classList.remove('hidden');
+          }
+        }
 
-        const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
-        if (cachedCloudAvatars[currentUser]) {
-          avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
-        } else {
-          avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
+        const banner = document.getElementById('pwaInstallBanner');
+        if (banner) {
+          if (isAppAlreadyInstalled()) {
+            banner.classList.add('hidden');
+          } else {
+            banner.classList.remove('hidden');
+          }
         }
       }
 
-      setFilter('waiting_parts');
+      setFilter('waiting');
       pullData();
     }
 
@@ -960,6 +1300,7 @@
 
     async function handleLogout() {
       if (confirm("Log out of current staff station?")) {
+        if (alarmInterval) clearInterval(alarmInterval);
         await sendPresenceHeartbeat(false);
         localStorage.removeItem('cartech_auth_user');
         localStorage.removeItem('cartech_auth_role');
@@ -969,6 +1310,7 @@
 
     function setFilter(flt) {
       currentFilter = flt;
+
       ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
         const card = document.getElementById(`card-${c}`);
         if (card) {
@@ -979,34 +1321,53 @@
           }
         }
       });
+
       render();
     }
 
     async function pullData() {
       await syncSystemCloudRecords();
+      checkCurrentSessionExpiry();
+
+      if (currentUser && currentRole) {
+        await sendPresenceHeartbeat(true);
+      }
       try {
         const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
+            const currentDoneCount = data.filter(j => j.status === 'completed').length;
+            if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
+              if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
+                playLoudVehicleHorn();
+                showSystemNotification("🚗 VEHICLE REPAIR COMPLETED!", "A mechanic marked a job DONE.");
+              }
+            }
+            previousCompletedJobCount = currentDoneCount;
+
             state = data;
-          } else if (state.length === 0) {
-            state = [...CORE_INITIAL_JOBS];
+            render();
+            updateAlarmState();
+            
+            // If messenger modal is currently open, refresh stream live
+            if (activeModalChatJobId) {
+              updateModalChatStream(activeModalChatJobId);
+            }
           }
-          render();
         }
-      } catch (e) {
-        if (state.length === 0) {
-          state = [...CORE_INITIAL_JOBS];
-          render();
-        }
-      }
+      } catch (e) {}
     }
 
     async function handleDispatch(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnDispatch');
+      const btnText = document.getElementById('btnText');
+      btn.disabled = true;
+      btnText.innerText = "Dispatching...";
+
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: document.getElementById('inCust').value,
@@ -1029,24 +1390,33 @@
       try {
         await fetch(API_URL, {
           method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          headers: HEADERS,
           body: JSON.stringify(newCar)
         });
-      } catch (err) {}
-      pullData();
+      } catch (err) {
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Dispatch to floor";
+        pullData();
+      }
     }
 
     async function devQuickDispatchTest() {
+      const demoVehicles = ["Toyota Fortuner 4x4", "Ford Ranger Biturbo", "Honda Civic RS Turbo", "Mitsubishi Montero Sport", "Nissan Navara Pro-4X"];
+      const demoCustomers = ["Mark Z.", "Elon M.", "Carlos S.", "Alexander D."];
+      const randomVeh = demoVehicles[Math.floor(Math.random() * demoVehicles.length)];
+      const randomCust = demoCustomers[Math.floor(Math.random() * demoCustomers.length)];
+
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
-        customer: "Test Customer",
+        customer: randomCust,
         phone: "N/A",
-        vehicle: "Toyota Fortuner",
+        vehicle: randomVeh,
         plate: "DEV-TEST",
-        service: "Diagnostic Flow",
+        service: "Diagnostic Flow Test",
         est_time: 30,
         priority: "High",
-        details: "Automated test dispatch.",
+        details: "Automated simulation test dispatched via Control Terminal.",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1055,7 +1425,7 @@
       state.unshift(newCar);
       render();
       try {
-        await fetch(API_URL, { method: "POST", headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify(newCar) });
+        await fetch(API_URL, { method: "POST", headers: HEADERS, body: JSON.stringify(newCar) });
       } catch (e){}
       pullData();
     }
@@ -1076,19 +1446,62 @@
 
       if (newStatus === 'inprogress' && !slot) {
         const myActiveJobCount = getMechanicActiveCount(currentUser);
+
         if (myActiveJobCount >= MAX_JOBS_PER_MECHANIC) {
-          alert(`Limit of ${MAX_JOBS_PER_MECHANIC} active jobs reached.`);
+          alert(`Mechanic ${currentUser.toUpperCase()} already reached the limit of ${MAX_JOBS_PER_MECHANIC} active jobs. Please complete a job first.`);
           return;
         }
 
-        slot = `Bay #1 [MECH:${currentUser}]`;
+        const occupiedBays = state
+          .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== id)
+          .map(j => {
+            const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
+            return match ? parseInt(match[1], 10) : null;
+          })
+          .filter(n => n !== null);
+
+        let assignedBay = null;
+        for (let b = 1; b <= TOTAL_BAYS; b++) {
+          if (!occupiedBays.includes(b)) {
+            assignedBay = b;
+            break;
+          }
+        }
+
+        if (!assignedBay) {
+          alert("All 4 physical bays are currently occupied. Place vehicle on Waiting list or complete an active car first.");
+          return;
+        }
+
+        let extraPartsTag = "";
+        if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
+          extraPartsTag = " [PARTS_LOGGED]" + currentItem.auto_schedule_slot + "[/PARTS_LOGGED]";
+        }
+        
+        slot = `Bay #${assignedBay} [MECH:${currentUser}]` + extraPartsTag;
+
       } else if (newStatus === 'completed') {
-        slot = "Completed Service";
+        let historicalParts = "";
+        if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('[PARTS_LOGGED]')) {
+          const match = currentItem.auto_schedule_slot.match(/\[PARTS_LOGGED\](.*?)\[\/PARTS_LOGGED\]/);
+          if (match) historicalParts = ` [PARTS_LOGGED]${match[1]}[/PARTS_LOGGED]`;
+        } else if (currentItem && currentItem.auto_schedule_slot && currentItem.auto_schedule_slot.includes('Waiting for Car Parts:')) {
+          historicalParts = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
+        }
+
+        let mechTag = "";
+        const resolved = resolveMechanicName(currentItem);
+        if (resolved) {
+          mechTag = ` [MECH:${resolved.toLowerCase()}]`;
+        }
+
+        slot = "Completed Service" + mechTag + historicalParts;
         playLoudVehicleHorn();
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
+      updateAlarmState();
 
       try {
         await fetch(`${API_URL}?id=eq.${id}`, {
@@ -1096,32 +1509,296 @@
           headers: HEADERS,
           body: JSON.stringify({ status: newStatus, auto_schedule_slot: slot })
         });
-      } catch (err) {}
+      } catch (err) {} finally {
+        pullData();
+      }
+    }
+
+    async function officePartsReadyToPickUp(jobId) {
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
+
+      if (!confirm("Notify mechanic that parts are ready to pick up and automatically resume work in bay?")) {
+        return;
+      }
+
+      let assignedBay = null;
+      const occupiedBays = state
+        .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== jobId)
+        .map(j => {
+          const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
+          return match ? parseInt(match[1], 10) : null;
+        })
+        .filter(n => n !== null);
+
+      for (let b = 1; b <= TOTAL_BAYS; b++) {
+        if (!occupiedBays.includes(b)) {
+          assignedBay = b;
+          break;
+        }
+      }
+
+      const bayStr = assignedBay ? `Bay #${assignedBay}` : 'Bay #1';
+      const resolvedMech = resolveMechanicName(currentItem) || 'CHARL';
+      const partsHistory = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
+      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up!]` + partsHistory;
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: newSlot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: newSlot })
+        });
+      } catch (e){}
       pullData();
     }
 
+    function openPartsModal(jobId) {
+      document.getElementById('partJobId').value = jobId;
+      document.getElementById('partText').value = "";
+      uploadedPartImages = [];
+      document.getElementById('partPhotosGrid').innerHTML = "";
+      document.getElementById('partsModal').classList.remove('hidden');
+    }
+
+    function closePartsModal() {
+      document.getElementById('partsModal').classList.add('hidden');
+    }
+
+    function handleMultiplePartImages(event) {
+      const files = Array.from(event.target.files);
+      if (!files.length) return;
+
+      if (uploadedPartImages.length + files.length > 10) {
+        alert("Maximum 10 photos allowed per parts request.");
+        return;
+      }
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 400;
+            if (width > height && width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const base64 = canvas.toDataURL('image/jpeg', 0.55);
+            uploadedPartImages.push(base64);
+            renderModalPhotoGrid();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      event.target.value = "";
+    }
+
+    function renderModalPhotoGrid() {
+      const grid = document.getElementById('partPhotosGrid');
+      grid.innerHTML = uploadedPartImages.map((src, index) => `
+        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-16 group">
+          <img src="${src}" class="w-full h-full object-cover">
+          <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeModalPhoto(index) {
+      uploadedPartImages.splice(index, 1);
+      renderModalPhotoGrid();
+    }
+
+    // SUBMIT PARTS REQUEST & CREATE FIRST CHAT MESSAGE
+    async function submitPartsRequest() {
+      const jobId = document.getElementById('partJobId').value;
+      const partDesc = document.getElementById('partText').value.trim();
+      const currentItem = state.find(j => j.id === jobId);
+
+      if (!partDesc) {
+        alert("Please describe the replacement parts required.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitPart');
+      btn.disabled = true;
+      btn.innerText = "Submitting...";
+
+      let mechTag = "";
+      const resolved = resolveMechanicName(currentItem);
+      if (resolved) {
+        mechTag = ` [MECH:${resolved.toLowerCase()}]`;
+      }
+
+      const initialChat = [
+        {
+          sender: (currentUser || "MECHANIC").toUpperCase(),
+          role: "workshop",
+          text: `Requested Parts: ${partDesc}`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ];
+
+      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
+      if (uploadedPartImages.length > 0) {
+        slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
+      }
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
+      render();
+      closePartsModal();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
+        });
+      } catch (err) {} finally {
+        btn.disabled = false;
+        btn.innerText = "Submit to Office";
+        pullData();
+      }
+    }
+
+    function openPhotoViewer(src) {
+      document.getElementById('modalFullImage').src = src;
+      document.getElementById('photoViewerModal').classList.remove('hidden');
+    }
+
+    function closePhotoViewer() {
+      document.getElementById('photoViewerModal').classList.add('hidden');
+    }
+
+    async function deleteSingleRecord(id) {
+      if (!confirm("Delete this completed vehicle record permanently?")) {
+        return;
+      }
+      state = state.filter(j => j.id !== id);
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, {
+          method: "DELETE",
+          headers: HEADERS
+        });
+      } catch (err) {} finally {
+        pullData();
+      }
+    }
+
+    function resolveMechanicName(job) {
+      if (!job) return null;
+      const rawStr = String(job.auto_schedule_slot || '');
+      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
+      if (mMatch) return mMatch[1].toUpperCase();
+      return null;
+    }
+
+    function parsePartsInfo(rawStr) {
+      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
+      let images = [];
+      let chatList = [];
+      
+      let targetStr = String(rawStr);
+      let hasPartOrder = targetStr.includes('Waiting for Car Parts:') || targetStr.includes('[PARTS_LOGGED]');
+
+      if (targetStr.includes('[PARTS_LOGGED]')) {
+        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+        if (pMatch) targetStr = pMatch[1];
+      }
+
+      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
+      if (multiMatch) {
+        try { images = JSON.parse(multiMatch[1]); } catch(e){}
+      } else {
+        const singleMatch = targetStr.match(/\[IMG\](.*?)\[\/IMG\]/);
+        if (singleMatch) images = [singleMatch[1]];
+      }
+
+      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
+      if (chatMatch) {
+        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
+      }
+
+      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
+      if (offMsgMatch && chatList.length === 0) {
+        chatList.push({
+          sender: "OFFICE",
+          role: "office",
+          text: offMsgMatch[1],
+          time: "Just now"
+        });
+      }
+
+      const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
+      const mech = mMatch ? mMatch[1].toUpperCase() : null;
+
+      const bayMatch = targetStr.match(/Bay #\d+/i);
+      const cleanBay = bayMatch ? bayMatch[0] : '';
+
+      const text = targetStr
+        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
+        .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[MECH:.*?\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
+        .replace(/Waiting for Car Parts:/gi, '')
+        .replace(/Bay #\d+/gi, '')
+        .replace(/Completed Service/gi, '')
+        .trim();
+
+      return { text, images, mech, chatList, cleanBay, hasPartOrder };
+    }
+
+    // OPEN MESSENGER CHAT DIALOGUE MODAL FOR SPECIFIC MECHANIC / JOB
     function openMessengerChatForJob(jobId, mechName) {
       activeModalChatJobId = jobId;
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
 
+      document.getElementById('modalAvatarCircle').innerText = mechName.charAt(0).toUpperCase();
       document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
-      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'Active Job';
+      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
 
+      // Parts Overview & Photos
       const photosHTML = info.images.map(img => `
-        <img src="${img}" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 shadow-sm">
+        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-10 h-10 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
       `).join('');
 
       document.getElementById('modalPartsOverview').innerHTML = `
         <div class="flex justify-between items-center">
-          <span class="font-black text-xs text-purple-900">${info.text || 'Standard Service'}</span>
-          <span class="text-xs text-purple-700 font-bold">${info.images.length} Photos</span>
+          <span class="font-bold text-[11px] text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
+          <span class="text-[10px] text-purple-600 font-bold">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
         </div>
-        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosHTML}</div>` : ''}
+        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${photosHTML}</div>` : ''}
       `;
 
       updateModalChatStream(jobId);
       document.getElementById('messengerModal').classList.remove('hidden');
+      
+      setTimeout(() => {
+        const inp = document.getElementById('modalChatInput');
+        if (inp) inp.focus();
+      }, 100);
     }
 
     function updateModalChatStream(jobId) {
@@ -1132,12 +1809,28 @@
       const stream = document.getElementById('modalChatStream');
       if (!stream) return;
 
-      stream.innerHTML = reversedList.map(msg => `
-        <div class="flex flex-col ${msg.role === 'office' ? 'items-start' : 'items-end'} text-xs">
-          <div class="text-[9px] text-slate-400 font-bold">${msg.sender} • ${msg.time}</div>
-          <div class="px-4 py-2.5 rounded-2xl max-w-[85%] font-medium text-xs ${msg.role === 'office' ? 'bg-white text-slate-900 border' : 'bg-indigo-600 text-white'}">${msg.text}</div>
-        </div>
-      `).join('') || `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet.</p>`;
+      if (reversedList.length === 0) {
+        stream.innerHTML = `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet. Send price or question below.</p>`;
+        return;
+      }
+
+      stream.innerHTML = reversedList.map(msg => {
+        const isFromOffice = msg.role === 'office';
+        return `
+          <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
+            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
+              <span>${msg.sender}</span> • <span>${msg.time}</span>
+            </div>
+            <div class="px-3.5 py-2 rounded-2xl max-w-[85%] font-medium leading-relaxed ${
+              isFromOffice 
+                ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
+                : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
+            }">
+              ${msg.text}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function closeMessengerModal() {
@@ -1158,15 +1851,23 @@
       if (!currentItem) return;
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
+      const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
+      const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
+
       const newChatEntry = {
-        sender: (currentUser || "STAFF").toUpperCase(),
-        role: currentRole === 'office' ? 'office' : 'workshop',
+        sender: senderName,
+        role: senderRole,
         text: text,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
       const updatedChatList = [...info.chatList, newChatEntry];
-      let slotBase = (currentItem.auto_schedule_slot || "").replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '').trim();
+
+      let slotBase = (currentItem.auto_schedule_slot || "")
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .trim();
+
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
       state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
@@ -1183,124 +1884,207 @@
       pullData();
     }
 
-    function openPartsModal(jobId) {
-      document.getElementById('partJobId').value = jobId;
-      document.getElementById('partText').value = "";
-      uploadedPartImages = [];
-      document.getElementById('partPhotosGrid').innerHTML = "";
-      document.getElementById('partsModal').classList.remove('hidden');
-    }
+    function calculateWeeklyAnalytics() {
+      const now = Date.now();
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
 
-    function closePartsModal() {
-      document.getElementById('partsModal').classList.add('hidden');
-    }
+      let thisWeekRepairs = 0;
+      let lastWeekRepairs = 0;
+      const mechanicHandledTotal = {};
 
-    function handleMultiplePartImages(event) {
-      const files = Array.from(event.target.files);
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          uploadedPartImages.push(e.target.result);
-          renderModalPhotoGrid();
-        };
-        reader.readAsDataURL(file);
+      MECHANIC_LIST.forEach(m => {
+        mechanicHandledTotal[m] = 0;
       });
-      event.target.value = "";
-    }
 
-    function renderModalPhotoGrid() {
-      const grid = document.getElementById('partPhotosGrid');
-      grid.innerHTML = uploadedPartImages.map((src, index) => `
-        <div class="relative rounded-xl overflow-hidden border h-16">
-          <img src="${src}" class="w-full h-full object-cover">
-        </div>
-      `).join('');
-    }
+      state.forEach(job => {
+        const mech = resolveMechanicName(job);
+        if (mech && mechanicHandledTotal[mech.toLowerCase()] !== undefined) {
+          mechanicHandledTotal[mech.toLowerCase()]++;
+        }
 
-    async function submitPartsRequest() {
-      const jobId = document.getElementById('partJobId').value;
-      const partDesc = document.getElementById('partText').value.trim();
-      if (!partDesc) return;
+        let jobTime = job.created_at ? new Date(job.created_at).getTime() : now;
+        const diff = now - jobTime;
 
-      let slotPayload = `Waiting for Car Parts: ${partDesc} [MECH:charl]`;
-      if (uploadedPartImages.length > 0) {
-        slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
+        if (job.status === 'completed') {
+          if (diff <= ONE_WEEK_MS) {
+            thisWeekRepairs++;
+          } else if (diff <= TWO_WEEKS_MS) {
+            lastWeekRepairs++;
+          }
+        }
+      });
+
+      let topMech = "None";
+      let topCount = 0;
+      Object.keys(mechanicHandledTotal).forEach(m => {
+        if (mechanicHandledTotal[m] > topCount) {
+          topCount = mechanicHandledTotal[m];
+          topMech = m.toUpperCase();
+        }
+      });
+
+      const repThis = document.getElementById('repairsThisWeek');
+      const repLast = document.getElementById('repairsLastWeek');
+      const topName = document.getElementById('topMechanicName');
+      const topSub = document.getElementById('topMechanicSub');
+      const trendBadge = document.getElementById('weeklyTrendBadge');
+
+      if (repThis) repThis.innerText = thisWeekRepairs;
+      if (repLast) repLast.innerText = lastWeekRepairs;
+      if (topName) topName.innerText = topMech;
+      if (topSub) topSub.innerText = `${topCount} total jobs handled`;
+
+      if (trendBadge) {
+        if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
+        } else if (thisWeekRepairs < lastWeekRepairs) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
+        } else {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
+        }
       }
 
-      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
-      render();
-      closePartsModal();
-
-      try {
-        await fetch(`${API_URL}?id=eq.${jobId}`, {
-          method: "PATCH",
-          headers: HEADERS,
-          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
+      const barsContainer = document.getElementById('mechanicPerformanceBars');
+      if (barsContainer) {
+        let barsHTML = "";
+        const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
+        MECHANIC_LIST.forEach(m => {
+          const count = mechanicHandledTotal[m] || 0;
+          const percent = Math.round((count / maxLeaderboardCount) * 100);
+          barsHTML += `
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold">
+                <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
+                <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+              </div>
+            </div>
+          `;
         });
-      } catch (err) {}
-      pullData();
-    }
-
-    function openPhotoViewer(src) {
-      document.getElementById('modalFullImage').src = src;
-      document.getElementById('photoViewerModal').classList.remove('hidden');
-    }
-
-    function closePhotoViewer() {
-      document.getElementById('photoViewerModal').classList.add('hidden');
-    }
-
-    async function deleteSingleRecord(id) {
-      if (!confirm("Delete record?")) return;
-      state = state.filter(j => j.id !== id);
-      render();
-      try {
-        await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
-      } catch (err) {}
-      pullData();
-    }
-
-    function resolveMechanicName(job) {
-      if (!job) return null;
-      const mMatch = String(job.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
-      return mMatch ? mMatch[1].toUpperCase() : null;
-    }
-
-    function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], chatList: [] };
-      let images = [];
-      let chatList = [];
-      let targetStr = String(rawStr);
-
-      if (targetStr.includes('[PARTS_LOGGED]')) {
-        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-        if (pMatch) targetStr = pMatch[1];
+        barsContainer.innerHTML = barsHTML;
       }
+    }
 
-      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
-      if (multiMatch) {
-        try { images = JSON.parse(multiMatch[1]); } catch(e){}
+    function renderDeveloperAnalytics() {
+      const accountsList = Object.keys(cachedCloudAccounts);
+      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
+
+      let subCount = 0;
+      const now = Date.now();
+
+      accountsList.forEach(u => {
+        const acc = cachedCloudAccounts[u];
+        if (acc && acc.expiresAt && acc.expiresAt > 0 && acc.expiresAt > now) {
+          subCount++;
+        }
+      });
+
+      const elReg = document.getElementById('devTotalRegistered');
+      const elJobs = document.getElementById('devTotalQueueJobs');
+      const elParts = document.getElementById('devTotalPartsReq');
+      const elSub = document.getElementById('devActiveSubCount');
+
+      if (elReg) elReg.innerText = accountsList.length;
+      if (elJobs) elJobs.innerText = state.length;
+      if (elParts) elParts.innerText = partsCount;
+      if (elSub) elSub.innerText = subCount;
+
+      calculateWeeklyAnalytics();
+
+      let onlineCount = 0;
+      let presenceHTML = "";
+
+      const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
+
+      allDisplayUsers.forEach(user => {
+        const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
+        const record = cachedCloudPresence[user];
+        const lastSeen = record ? record.lastSeen : 0;
+        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
+        if (isOnline) onlineCount++;
+
+        const isRegistered = !!cachedCloudAccounts[user];
+        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
+
+        presenceHTML += `
+          <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
+              <div>
+                <span class="font-black text-slate-900 uppercase text-xs">${user}</span>
+                <span class="ml-1.5 px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${roleBadgeColor}">${userRole}</span>
+                <span class="ml-1 text-[9px] font-bold ${isRegistered ? 'text-emerald-600' : 'text-slate-400'}">${isRegistered ? '(Registered)' : '(Not Created)'}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online (Live)' : 'Offline'}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      const elOnline = document.getElementById('devOnlineStaffCount');
+      const elStaffList = document.getElementById('devStaffPresenceList');
+      if (elOnline) elOnline.innerText = onlineCount;
+      if (elStaffList) elStaffList.innerHTML = presenceHTML;
+
+      const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
+      if (elAccContainer) {
+        let accHTML = "";
+        accountsList.forEach(u => {
+          const acc = cachedCloudAccounts[u];
+          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
+
+          if (acc && acc.expiresAt && acc.expiresAt > 0) {
+            const timeLeftMs = acc.expiresAt - now;
+            if (timeLeftMs > 0) {
+              const hoursLeft = Math.floor(timeLeftMs / (3600000));
+              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
+              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
+            } else {
+              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
+            }
+          }
+
+          const isPermanentAdmin = u === 'dev' || u === 'admin';
+
+          accHTML += `
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
+                    <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
+                  </div>
+                  <div class="mt-0.5">${timerBadge}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5 self-end sm:self-center">
+                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
+                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                ${!isPermanentAdmin ? `
+                  <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
+                    <i class="fa-solid fa-user-xmark"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+        elAccContainer.innerHTML = accHTML;
       }
-
-      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
-      if (chatMatch) {
-        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
-      }
-
-      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
-      if (offMsgMatch && chatList.length === 0) {
-        chatList.push({ sender: "OFFICE", role: "office", text: offMsgMatch[1], time: "Just now" });
-      }
-
-      const text = targetStr
-        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
-        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[MECH:.*?\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .replace('Waiting for Car Parts:', '')
-        .trim();
-
-      return { text, images, chatList };
     }
 
     function render() {
@@ -1309,88 +2093,353 @@
       const parts = state.filter(j => j.status === 'waiting_parts').length;
       const done = state.filter(j => j.status === 'completed').length;
 
-      document.getElementById('statWaiting').innerText = waiting;
-      document.getElementById('statActive').innerText = inProg;
-      document.getElementById('statParts').innerText = parts;
-      document.getElementById('statDone').innerText = done;
+      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      // Sidebar
+      if (currentRole === 'developer' || currentRole === 'admin') {
+        renderDeveloperAnalytics();
+      }
+
+      const mechanicLoads = {};
+      MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
+
+      state.forEach(j => {
+        if (j.status === 'inprogress' || j.status === 'waiting_parts') {
+          const mechName = resolveMechanicName(j);
+          if (mechName && mechanicLoads[mechName.toLowerCase()] !== undefined) {
+            mechanicLoads[mechName.toLowerCase()]++;
+          }
+        }
+      });
+
+      const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
+      const availableMechanicsCount = availableMechanics.length;
+
+      const wsBell = document.getElementById('wsBellIcon');
+      if (wsBell) {
+        if (hasUnassignedWaiting) {
+          wsBell.className = "w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 alarm-active";
+        } else {
+          wsBell.className = "w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
+        }
+      }
+
+      const sWait = document.getElementById('statWaiting');
+      const sAct = document.getElementById('statActive');
+      const sPart = document.getElementById('statParts');
+      const sDone = document.getElementById('statDone');
+
+      if (sWait) sWait.innerText = waiting;
+      if (sAct) sAct.innerText = inProg;
+      if (sPart) sPart.innerText = parts;
+      if (sDone) sDone.innerText = done;
+
+      const officeBadge = document.getElementById('officeRemainingMechanicBadge');
+      if (officeBadge) {
+        if (availableMechanicsCount === 0) {
+          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Full)`;
+        } else {
+          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
+          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
+        }
+      }
+
+      // RENDER MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY)
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
-          const activeMechJob = state.find(j => j.status !== 'completed' && resolveMechanicName(j)?.toLowerCase() === m);
-          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [] };
+          // Find mechanic's active job (if any)
+          const activeMechJob = state.find(j => {
+            if (j.status === 'completed') return false;
+            const res = resolveMechanicName(j);
+            return res && res.toLowerCase() === m;
+          });
+
+          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
+          const msgCount = info.chatList ? info.chatList.length : 0;
+          const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
+
+          // Color coded circles
+          let ringColor = "ring-2 ring-slate-200";
+          if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
+          else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
+
           return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} is idle.')`}" 
-                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0">
+            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
+                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
               <div class="relative">
-                <div class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${activeMechJob ? 'ring-2 ring-blue-500' : 'ring-2 ring-slate-200'}">
-                  ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
+                  ${m.charAt(0)}
                 </div>
-                ${info.chatList.length > 0 ? `<span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center">${info.chatList.length}</span>` : ''}
+                ${msgCount > 0 ? `
+                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    ${msgCount}
+                  </span>
+                ` : ''}
               </div>
-              <div>
-                <div class="font-black text-xs uppercase">${m}</div>
-                <div class="text-[9px] text-slate-400 font-bold">${activeMechJob ? activeMechJob.vehicle : 'Idle'}</div>
+              <div class="text-center xl:text-left mt-1 xl:mt-0">
+                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
+                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
+                  ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
+                </div>
               </div>
-            </div>`;
+            </div>
+          `;
         }).join('');
       }
 
-      // Office Queue
+      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
-        officeContainer.innerHTML = officeList.length === 0 ? `
-          <div class="bg-white border border-dashed rounded-3xl p-8 text-center text-slate-400 space-y-3">
-            <p class="font-bold text-slate-700 text-sm">No vehicles in this section</p>
-            <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 text-white font-black px-4 py-2 rounded-xl text-xs">Restore Shop Data</button>
-          </div>` : officeList.map(j => {
-            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
-            const photosThumbnails = partImages.map(img => `<img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border cursor-pointer">`).join('');
+
+        if (officeList.length === 0) {
+          officeContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
+              <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
+              <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
+              <p class="text-xs text-slate-400 mt-0.5">Tap on any metric card above to view respective records.</p>
+            </div>`;
+        } else {
+          officeContainer.innerHTML = officeList.map(j => {
+            const assignedMechanic = resolveMechanicName(j);
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+
+            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
+            if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
+            }
+            if (j.status === 'inprogress') {
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay || 'Bay'}</span>`;
+            }
+            if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
+            if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
+
+            let deleteBtn = "";
+            if (j.status === 'completed') {
+              deleteBtn = `
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>`;
+            }
+
+            let mechanicHighlightTag = "";
+            if (assignedMechanic) {
+              mechanicHighlightTag = `
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
+                </span>`;
+            }
+
+            let partsSection = "";
+            if (j.status === 'waiting_parts') {
+              const photosThumbnails = partImages.map(img => `
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+              `).join('');
+
+              partsSection = `
+                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
+                      <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
+                    </span>
+                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+                  </div>
+                  <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+                  
+                  <div class="flex items-center gap-2 pt-1">
+                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
+                    </button>
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
+                    </button>
+                  </div>
+                </div>`;
+            } else if (j.status === 'completed' && partText) {
+              const photosThumbnails = partImages.map(img => `
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+              `).join('');
+
+              partsSection = `
+                <div class="mt-2.5 bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
+                      <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
+                    </span>
+                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
+                  </div>
+                  <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+                </div>`;
+            }
 
             return `
-              <div class="bg-white p-4 rounded-3xl border shadow-sm space-y-2.5">
+              <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
                 <div class="flex justify-between items-start">
                   <div>
-                    <span class="text-[10px] font-mono text-slate-400">${j.id}</span>
-                    <h3 class="font-black text-slate-900 text-base">${j.vehicle}</h3>
-                    <p class="text-[11px] text-slate-500">Customer: <strong>${j.customer}</strong></p>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                      <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
+                      ${mechanicHighlightTag}
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
                   </div>
-                  <span class="px-2.5 py-1 text-[10px] font-bold rounded-xl uppercase bg-purple-50 text-purple-700 border">Waiting Parts</span>
+                  <div class="flex items-center gap-2">
+                    ${badge}
+                    ${deleteBtn}
+                  </div>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-2xl text-xs text-slate-700">
-                  <p><strong>Instructions:</strong> ${j.details}</p>
+
+                <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  ${cleanBay ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBay}</p>` : ''}
+                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
-                <div class="bg-purple-50 p-3 rounded-2xl space-y-2">
-                  <p class="text-xs font-bold text-purple-900">${partText}</p>
-                  <div class="flex flex-wrap gap-1.5">${photosThumbnails}</div>
-                  <button onclick="openMessengerChatForJob('${j.id}', 'charl')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
-                    <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
-                  </button>
-                </div>
+                ${partsSection}
               </div>`;
           }).join('');
+        }
       }
 
-      // Workshop Feed
+      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
-        const activeJobs = state.filter(j => j.status !== 'completed');
-        wsContainer.innerHTML = activeJobs.map(j => `
-          <div class="bg-white p-4 rounded-3xl border shadow-sm space-y-2">
-            <h3 class="text-base font-black">${j.vehicle} (${j.id})</h3>
-            <p class="text-xs text-slate-600">${j.details}</p>
-            <button onclick="setStatus('${j.id}', 'completed')" class="w-full bg-slate-900 text-white font-bold py-2 rounded-xl text-xs">Mark Done</button>
-          </div>`).join('');
+        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
+        const myActiveCount = getMechanicActiveCount(currentUser);
+        const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
+
+        if (activeWorkshopJobs.length === 0) {
+          wsContainer.innerHTML = `
+            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
+              <i class="fa-solid fa-circle-check text-3xl text-emerald-400 mb-2"></i>
+              <p class="font-bold text-slate-700 text-sm md:text-base">Workshop Floor Clear</p>
+              <p class="text-xs text-slate-400 mt-0.5">No pending vehicles on the floor.</p>
+            </div>`;
+        } else {
+          wsContainer.innerHTML = activeWorkshopJobs.map(j => {
+            const assignedMechanic = resolveMechanicName(j);
+            const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
+            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+
+            let actionArea = "";
+            if (j.status === 'waiting') {
+              actionArea = `
+                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+                  <button onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="flex-1 ${isMyCapacityFull ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition">
+                    <i class="fa-solid fa-check mr-1.5"></i> ${isMyCapacityFull ? `Capacity Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept into Bay (${currentUser.toUpperCase()}: ${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}
+                  </button>
+                  <button onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20">
+                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
+                  </button>
+                </div>`;
+            } else if (j.status === 'inprogress') {
+              if (isMyJob) {
+                actionArea = `
+                  <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                        ${cleanBay || 'Bay'} • <strong>You are handling this car</strong>
+                      </span>
+                      <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
+                      </button>
+                    </div>
+
+                    ${hasPartOrder ? `
+                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${chatList.length} msgs)
+                      </button>
+                    ` : ''}
+
+                    <div class="flex items-center gap-2">
+                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
+                      </a>
+                      <button onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
+                      </button>
+                    </div>
+                  </div>`;
+              } else {
+                const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
+                actionArea = `
+                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                    <span>${cleanBay || 'Working in Bay'}</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
+                      <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
+                    </span>
+                  </div>`;
+              }
+            } else if (j.status === 'waiting_parts') {
+              const photosThumbnails = partImages.map(img => `
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+              `).join('');
+
+              let resumeBtn = "";
+              if (isMyJob) {
+                resumeBtn = `
+                  <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
+                  </button>`;
+              }
+
+              actionArea = `
+                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
+                  <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
+                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+                    </div>
+                    <p class="text-xs font-bold text-purple-800">${partText}</p>
+                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+
+                    <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
+                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
+                    </button>
+                  </div>
+                  ${resumeBtn}
+                </div>`;
+            }
+
+            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
+
+            return `
+              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                  </div>
+                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
+                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
+                  }">
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))}
+                  </span>
+                </div>
+                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                </div>
+                ${actionArea}
+              </div>`;
+          }).join('');
+        }
       }
     }
 
     syncSystemCloudRecords();
-    currentUser = localStorage.getItem('cartech_auth_user');
-    currentRole = localStorage.getItem('cartech_auth_role');
-    if (currentUser && currentRole) bootApp();
-    else render();
+
+    const savedAuthUser = localStorage.getItem('cartech_auth_user');
+    const savedAuthRole = localStorage.getItem('cartech_auth_role');
+
+    if (savedAuthUser && savedAuthRole) {
+      currentUser = savedAuthUser;
+      currentRole = savedAuthRole;
+      bootApp();
+    }
 
     setInterval(pullData, 2000);
   </script>
