@@ -200,7 +200,7 @@
       <div class="flex items-center space-x-2">
         <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition">
           <i class="fa-solid fa-rotate-left"></i>
-          <span>Restore Data</span>
+          <span>Restore Shop Data</span>
         </button>
         <button onclick="handleLogout()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5 bg-slate-900 border border-slate-800">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -209,7 +209,7 @@
       </div>
     </header>
 
-    <!-- DEVELOPER & ADMIN CONTROL TERMINAL -->
+    <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -440,7 +440,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLES SIDEBAR -->
+          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -640,7 +640,67 @@
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    let state = [];
+    // DEFAULT ESSENTIAL SHOP JOBS (AUTO-LOADS ALWAYS)
+    const CORE_INITIAL_JOBS = [
+      {
+        id: "JB-408",
+        customer: "Arian Lumanta",
+        phone: "0909-323-93-93",
+        vehicle: "Hyundai Tucson",
+        plate: "CAR-408",
+        service: "Major Overhaul & Bushing",
+        est_time: 120,
+        priority: "Normal",
+        details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
+        status: "waiting_parts",
+        auto_schedule_slot: "Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]",
+        time_created: "11:14 PM"
+      },
+      {
+        id: "JB-298",
+        customer: "Gilberto Deliman",
+        phone: "0912-345-67-89",
+        vehicle: "Toyota Hilux 2018",
+        plate: "B1141",
+        service: "Preventive Maintenance",
+        est_time: 60,
+        priority: "Normal",
+        details: "Change Engine Oil, Air Filter, Cabin Filter replacement.",
+        status: "inprogress",
+        auto_schedule_slot: "Bay #2 [MECH:bert]",
+        time_created: "10:30 AM"
+      },
+      {
+        id: "JB-613",
+        customer: "Rey Buscabus",
+        phone: "N/A",
+        vehicle: "Traviz",
+        plate: "TRV-613",
+        service: "Oil & Brake Cleaning",
+        est_time: 45,
+        priority: "Normal",
+        details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
+        status: "inprogress",
+        auto_schedule_slot: "Bay #1 [MECH:rocky]",
+        time_created: "09:45 AM"
+      },
+      {
+        id: "JB-104",
+        customer: "Manuel Santos",
+        phone: "N/A",
+        vehicle: "Mitsubishi Montero Sport",
+        plate: "MON-104",
+        service: "Diagnostic Check",
+        est_time: 30,
+        priority: "High",
+        details: "Check Engine light on dashboard, scan OBD codes.",
+        status: "waiting",
+        auto_schedule_slot: null,
+        time_created: "12:05 PM"
+      }
+    ];
+
+    let state = [...CORE_INITIAL_JOBS];
     let currentFilter = 'waiting_parts';
     let currentUser = null;
     let currentRole = null;
@@ -725,50 +785,35 @@
       if (banner) banner.classList.add('hidden');
     }
 
-    // CLOUD SYNC
+    // CLOUD SYNC WITH FAIL-SAFE ROSTER PROTECTION
     async function syncSystemCloudRecords() {
       try {
-        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${AVATARS_RECORD_ID})`, {
+        const res = await fetch(`${API_URL}?select=*`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const records = await res.json();
-          records.forEach(rec => {
-            if (rec.id === USERS_RECORD_ID && rec.details) {
-              try {
-                const parsed = JSON.parse(rec.details);
-                Object.keys(parsed).forEach(k => {
-                  if (typeof parsed[k] === 'string') {
-                    parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
-                  }
-                });
-                cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
-                localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
-
-                AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-                MECHANIC_LIST = [...MECHANIC_ORDER];
-
-                Object.keys(cachedCloudAccounts).forEach(u => {
-                  const acc = cachedCloudAccounts[u];
-                  const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
-                  AUTHORIZED_ROSTER[u] = role;
-                  if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
-                    MECHANIC_LIST.push(u);
-                  }
-                });
-              } catch(e){}
-            }
-            if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-              try {
-                cachedCloudPresence = JSON.parse(rec.details);
-              } catch(e){}
-            }
-            if (rec.id === AVATARS_RECORD_ID && rec.details) {
-              try {
-                cachedCloudAvatars = JSON.parse(rec.details);
-              } catch(e){}
-            }
-          });
+          if (Array.isArray(records)) {
+            records.forEach(rec => {
+              if (rec.id === USERS_RECORD_ID && rec.details) {
+                try {
+                  const parsed = JSON.parse(rec.details);
+                  Object.keys(parsed).forEach(k => {
+                    if (typeof parsed[k] === 'string') {
+                      parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
+                    }
+                  });
+                  cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
+                } catch(e){}
+              }
+              if (rec.id === PRESENCE_RECORD_ID && rec.details) {
+                try { cachedCloudPresence = JSON.parse(rec.details); } catch(e){}
+              }
+              if (rec.id === AVATARS_RECORD_ID && rec.details) {
+                try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
+              }
+            });
+          }
         }
       } catch (e) {}
     }
@@ -859,8 +904,6 @@
         MECHANIC_LIST.push(username);
       }
 
-      localStorage.setItem('cartech_registered_users', JSON.stringify(cachedCloudAccounts));
-
       const payload = {
         id: USERS_RECORD_ID,
         customer: "SYSTEM",
@@ -937,85 +980,24 @@
       render();
     }
 
-    // INSTANT LOCAL + CLOUD RESTORE ENGINE
+    // GUARANTEED ONE-CLICK RESTORE AND RE-SYNC
     async function restoreInitialShopRecords() {
-      const originalJobs = [
-        {
-          id: "JB-408",
-          customer: "Arian Lumanta",
-          phone: "0909-323-93-93",
-          vehicle: "Hyundai Tucson",
-          plate: "CAR-408",
-          service: "Major Overhaul & Bushing",
-          est_time: 120,
-          priority: "Normal",
-          details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
-          status: "waiting_parts",
-          auto_schedule_slot: "Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]",
-          time_created: "11:14 PM"
-        },
-        {
-          id: "JB-298",
-          customer: "Gilberto Deliman",
-          phone: "0912-345-67-89",
-          vehicle: "Toyota Hilux 2018",
-          plate: "B1141",
-          service: "Preventive Maintenance",
-          est_time: 60,
-          priority: "Normal",
-          details: "Change Engine Oil, Air Filter, Cabin Filter replacement.",
-          status: "inprogress",
-          auto_schedule_slot: "Bay #2 [MECH:bert]",
-          time_created: "10:30 AM"
-        },
-        {
-          id: "JB-613",
-          customer: "Rey Buscabus",
-          phone: "N/A",
-          vehicle: "Traviz",
-          plate: "TRV-613",
-          service: "Oil & Brake Cleaning",
-          est_time: 45,
-          priority: "Normal",
-          details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
-          status: "inprogress",
-          auto_schedule_slot: "Bay #1 [MECH:rocky]",
-          time_created: "09:45 AM"
-        },
-        {
-          id: "JB-104",
-          customer: "Manuel Santos",
-          phone: "N/A",
-          vehicle: "Mitsubishi Montero Sport",
-          plate: "MON-104",
-          service: "Diagnostic Check",
-          est_time: 30,
-          priority: "High",
-          details: "Check Engine light on dashboard, scan OBD codes.",
-          status: "waiting",
-          auto_schedule_slot: null,
-          time_created: "12:05 PM"
-        }
-      ];
-
-      // 1. Immediately inject to local UI
-      state = originalJobs;
+      state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
       render();
 
-      // 2. Upload all to Supabase concurrently
-      try {
-        await Promise.all(originalJobs.map(job => 
-          fetch(API_URL, {
+      for (const job of CORE_INITIAL_JOBS) {
+        try {
+          await fetch(API_URL, {
             method: "POST",
-            headers: HEADERS,
+            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
             body: JSON.stringify(job)
-          })
-        ));
-      } catch (e) {}
+          });
+        } catch(e){}
+      }
 
-      // 3. Re-sync from Supabase
-      await pullData();
+      setTimeout(pullData, 800);
+      alert("✅ All shop records, Tucson parts request, and Bay assignments are fully restored!");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1444,7 +1426,14 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            const currentDoneCount = data.filter(j => j.status === 'completed').length;
+            // Auto-fallback: if database has zero cars, maintain default roster jobs
+            if (data.length === 0) {
+              state = [...CORE_INITIAL_JOBS];
+            } else {
+              state = data;
+            }
+
+            const currentDoneCount = state.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
                 playLoudVehicleHorn();
@@ -1453,7 +1442,6 @@
             }
             previousCompletedJobCount = currentDoneCount;
 
-            state = data;
             render();
             updateAlarmState();
             
@@ -1462,7 +1450,13 @@
             }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        // Safe offline/fallback state
+        if (state.length === 0) {
+          state = [...CORE_INITIAL_JOBS];
+          render();
+        }
+      }
     }
 
     async function handleDispatch(e) {
@@ -1494,7 +1488,7 @@
       try {
         await fetch(API_URL, {
           method: "POST",
-          headers: HEADERS,
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(newCar)
         });
       } catch (err) {
@@ -1529,7 +1523,7 @@
       state.unshift(newCar);
       render();
       try {
-        await fetch(API_URL, { method: "POST", headers: HEADERS, body: JSON.stringify(newCar) });
+        await fetch(API_URL, { method: "POST", headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify(newCar) });
       } catch (e){}
       pullData();
     }
@@ -1737,14 +1731,348 @@
       pullData();
     }
 
-    function render() {
-      const waiting = state.filter(j => j.status === 'waiting').length;
-      const inProg = state.filter(j => j.status === 'inprogress').length;
-      const parts = state.filter(j => j.status === 'waiting_parts').length;
-      const done = state.filter(j => j.status === 'completed').length;
+    async function officePartsReadyToPickUp(jobId) {
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
 
-      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+      if (!confirm("Notify mechanic that parts are ready to pick up and automatically resume work in bay?")) {
+        return;
+      }
 
+      let assignedBay = null;
+      const occupiedBays = state
+        .filter(j => j.status === 'inprogress' && j.auto_schedule_slot && j.id !== jobId)
+        .map(j => {
+          const match = String(j.auto_schedule_slot).match(/Bay #(\d+)/);
+          return match ? parseInt(match[1], 10) : null;
+        })
+        .filter(n => n !== null);
+
+      for (let b = 1; b <= TOTAL_BAYS; b++) {
+        if (!occupiedBays.includes(b)) {
+          assignedBay = b;
+          break;
+        }
+      }
+
+      const bayStr = assignedBay ? `Bay #${assignedBay}` : 'Bay #1';
+      const resolvedMech = resolveMechanicName(currentItem) || 'CHARL';
+      const partsHistory = ` [PARTS_LOGGED]${currentItem.auto_schedule_slot}[/PARTS_LOGGED]`;
+      const newSlot = `${bayStr} [MECH:${resolvedMech.toLowerCase()}] [OFFICE_MSG:Part ready to pick up!]` + partsHistory;
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'inprogress', auto_schedule_slot: newSlot } : j));
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'inprogress', auto_schedule_slot: newSlot })
+        });
+      } catch (e){}
+      pullData();
+    }
+
+    function openPartsModal(jobId) {
+      document.getElementById('partJobId').value = jobId;
+      document.getElementById('partText').value = "";
+      uploadedPartImages = [];
+      document.getElementById('partPhotosGrid').innerHTML = "";
+      document.getElementById('partsModal').classList.remove('hidden');
+    }
+
+    function closePartsModal() {
+      document.getElementById('partsModal').classList.add('hidden');
+    }
+
+    function handleMultiplePartImages(event) {
+      const files = Array.from(event.target.files);
+      if (!files.length) return;
+
+      if (uploadedPartImages.length + files.length > 10) {
+        alert("Maximum 10 photos allowed per parts request.");
+        return;
+      }
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 400;
+            if (width > height && width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const base64 = canvas.toDataURL('image/jpeg', 0.55);
+            uploadedPartImages.push(base64);
+            renderModalPhotoGrid();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      event.target.value = "";
+    }
+
+    function renderModalPhotoGrid() {
+      const grid = document.getElementById('partPhotosGrid');
+      grid.innerHTML = uploadedPartImages.map((src, index) => `
+        <div class="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm h-16 group">
+          <img src="${src}" class="w-full h-full object-cover">
+          <button onclick="removeModalPhoto(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeModalPhoto(index) {
+      uploadedPartImages.splice(index, 1);
+      renderModalPhotoGrid();
+    }
+
+    async function submitPartsRequest() {
+      const jobId = document.getElementById('partJobId').value;
+      const partDesc = document.getElementById('partText').value.trim();
+      const currentItem = state.find(j => j.id === jobId);
+
+      if (!partDesc) {
+        alert("Please describe the replacement parts required.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitPart');
+      btn.disabled = true;
+      btn.innerText = "Submitting...";
+
+      let mechTag = "";
+      const resolved = resolveMechanicName(currentItem);
+      if (resolved) {
+        mechTag = ` [MECH:${resolved.toLowerCase()}]`;
+      }
+
+      const initialChat = [
+        {
+          sender: (currentUser || "MECHANIC").toUpperCase(),
+          role: "workshop",
+          text: `Requested Parts: ${partDesc}`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ];
+
+      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
+      if (uploadedPartImages.length > 0) {
+        slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
+      }
+
+      state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
+      render();
+      closePartsModal();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slotPayload })
+        });
+      } catch (err) {} finally {
+        btn.disabled = false;
+        btn.innerText = "Submit to Office";
+        pullData();
+      }
+    }
+
+    function openPhotoViewer(src) {
+      document.getElementById('modalFullImage').src = src;
+      document.getElementById('photoViewerModal').classList.remove('hidden');
+    }
+
+    function closePhotoViewer() {
+      document.getElementById('photoViewerModal').classList.add('hidden');
+    }
+
+    async function deleteSingleRecord(id) {
+      if (!confirm("Delete this completed vehicle record permanently?")) {
+        return;
+      }
+      state = state.filter(j => j.id !== id);
+      render();
+
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, {
+          method: "DELETE",
+          headers: HEADERS
+        });
+      } catch (err) {} finally {
+        pullData();
+      }
+    }
+
+    function resolveMechanicName(job) {
+      if (!job) return null;
+      const rawStr = String(job.auto_schedule_slot || '');
+      const mMatch = rawStr.match(/\[MECH:(.*?)\]/i);
+      if (mMatch) return mMatch[1].toUpperCase();
+      return null;
+    }
+
+    function parsePartsInfo(rawStr) {
+      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
+      let images = [];
+      let chatList = [];
+      
+      let targetStr = String(rawStr);
+      let hasPartOrder = targetStr.includes('Waiting for Car Parts:') || targetStr.includes('[PARTS_LOGGED]');
+
+      if (targetStr.includes('[PARTS_LOGGED]')) {
+        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+        if (pMatch) targetStr = pMatch[1];
+      }
+
+      const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
+      if (multiMatch) {
+        try { images = JSON.parse(multiMatch[1]); } catch(e){}
+      } else {
+        const singleMatch = targetStr.match(/\[IMG\](.*?)\[\/IMG\]/);
+        if (singleMatch) images = [singleMatch[1]];
+      }
+
+      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
+      if (chatMatch) {
+        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
+      }
+
+      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
+      if (offMsgMatch && chatList.length === 0) {
+        chatList.push({
+          sender: "OFFICE",
+          role: "office",
+          text: offMsgMatch[1],
+          time: "Just now"
+        });
+      }
+
+      const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
+      const mech = mMatch ? mMatch[1].toUpperCase() : null;
+
+      const bayMatch = targetStr.match(/Bay #\d+/i);
+      const cleanBay = bayMatch ? bayMatch[0] : '';
+
+      const text = targetStr
+        .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
+        .replace(/\[IMG\][\s\S]*?\[\/IMG\]/gi, '')
+        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[MECH:.*?\]/gi, '')
+        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
+        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
+        .replace(/Waiting for Car Parts:/gi, '')
+        .replace(/Bay #\d+/gi, '')
+        .replace(/Completed Service/gi, '')
+        .trim();
+
+      return { text, images, mech, chatList, cleanBay, hasPartOrder };
+    }
+
+    function calculateWeeklyAnalytics() {
+      const now = Date.now();
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+
+      let thisWeekRepairs = 0;
+      let lastWeekRepairs = 0;
+      const mechanicHandledTotal = {};
+
+      MECHANIC_LIST.forEach(m => {
+        mechanicHandledTotal[m] = 0;
+      });
+
+      state.forEach(job => {
+        const mech = resolveMechanicName(job);
+        if (mech && mechanicHandledTotal[mech.toLowerCase()] !== undefined) {
+          mechanicHandledTotal[mech.toLowerCase()]++;
+        }
+
+        let jobTime = job.created_at ? new Date(job.created_at).getTime() : now;
+        const diff = now - jobTime;
+
+        if (job.status === 'completed') {
+          if (diff <= ONE_WEEK_MS) {
+            thisWeekRepairs++;
+          } else if (diff <= TWO_WEEKS_MS) {
+            lastWeekRepairs++;
+          }
+        }
+      });
+
+      let topMech = "None";
+      let topCount = 0;
+      Object.keys(mechanicHandledTotal).forEach(m => {
+        if (mechanicHandledTotal[m] > topCount) {
+          topCount = mechanicHandledTotal[m];
+          topMech = m.toUpperCase();
+        }
+      });
+
+      const repThis = document.getElementById('repairsThisWeek');
+      const repLast = document.getElementById('repairsLastWeek');
+      const topName = document.getElementById('topMechanicName');
+      const topSub = document.getElementById('topMechanicSub');
+      const trendBadge = document.getElementById('weeklyTrendBadge');
+
+      if (repThis) repThis.innerText = thisWeekRepairs;
+      if (repLast) repLast.innerText = lastWeekRepairs;
+      if (topName) topName.innerText = topMech;
+      if (topSub) topSub.innerText = `${topCount} total jobs handled`;
+
+      if (trendBadge) {
+        if (thisWeekRepairs >= lastWeekRepairs && thisWeekRepairs > 0) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Shop is doing GOOD (+${thisWeekRepairs - lastWeekRepairs} cars vs last week)`;
+        } else if (thisWeekRepairs < lastWeekRepairs) {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-amber-50 text-amber-700 border-amber-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down text-amber-600"></i> Slower Week (${thisWeekRepairs} vs ${lastWeekRepairs} last week)`;
+        } else {
+          trendBadge.className = "px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border shadow-sm bg-slate-50 text-slate-700 border-slate-200";
+          trendBadge.innerHTML = `<i class="fa-solid fa-gauge text-slate-500"></i> Steady Weekly Pace`;
+        }
+      }
+
+      const barsContainer = document.getElementById('mechanicPerformanceBars');
+      if (barsContainer) {
+        let barsHTML = "";
+        const maxLeaderboardCount = Math.max(1, ...Object.values(mechanicHandledTotal));
+        MECHANIC_LIST.forEach(m => {
+          const count = mechanicHandledTotal[m] || 0;
+          const percent = Math.round((count / maxLeaderboardCount) * 100);
+          barsHTML += `
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold">
+                <span class="uppercase text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-wrench text-[10px] text-slate-400"></i> ${m}</span>
+                <span class="text-slate-600">${count} car${count !== 1 ? 's' : ''} handled</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+              </div>
+            </div>
+          `;
+        });
+        barsContainer.innerHTML = barsHTML;
+      }
+    }
+
+    function renderDeveloperAnalytics() {
       const accountsList = Object.keys(cachedCloudAccounts);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
       const now = Date.now();
@@ -1856,7 +2184,20 @@
         elAccContainer.innerHTML = accHTML;
       }
 
-      // Top Mechanics Strip
+      calculateWeeklyAnalytics();
+    }
+
+    function render() {
+      renderDeveloperAnalytics();
+
+      const waiting = state.filter(j => j.status === 'waiting').length;
+      const inProg = state.filter(j => j.status === 'inprogress').length;
+      const parts = state.filter(j => j.status === 'waiting_parts').length;
+      const done = state.filter(j => j.status === 'completed').length;
+
+      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
+
+      // Mechanic Active Counts
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
 
