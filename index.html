@@ -354,12 +354,12 @@
     </main>
 
     <!-- OFFICE VIEW -->
-    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
-      <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
+    <main id="viewOffice" class="hidden max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+      <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-5">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Intake Terminal</span>
-            <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">New dispatch</h2>
+            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">New dispatch</h2>
           </div>
           <button type="button" onclick="document.getElementById('intakeForm').reset()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 flex items-center justify-center text-xs font-bold transition" title="Reset fields">
             <i class="fa-solid fa-rotate-left"></i>
@@ -395,89 +395,52 @@
         </form>
       </div>
 
-      <div class="lg:col-span-8 space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="lg:col-span-7 space-y-5">
+        <div class="flex justify-between items-center">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Live System Feed</span>
-            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Vehicle Queue</h2>
+            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-1">Vehicle Queue</h2>
           </div>
           <div id="officeRemainingMechanicBadge" class="px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5"></div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
-          <div class="xl:col-span-9 space-y-3.5">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-2.5">
-              <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-amber-400 transition transform active:scale-95">
-                <div class="w-7 h-7 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-xs"><i class="fa-regular fa-clock"></i></div>
-                <div>
-                  <div id="statWaiting" class="text-lg font-black text-slate-900 leading-none">0</div>
-                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Pending</div>
-                </div>
-              </div>
-              <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-blue-400 transition transform active:scale-95">
-                <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xs"><i class="fa-solid fa-wrench"></i></div>
-                <div>
-                  <div id="statActive" class="text-lg font-black text-slate-900 leading-none">0</div>
-                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Working Bay</div>
-                </div>
-              </div>
-              <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-purple-400 transition transform active:scale-95">
-                <div class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-gears"></i></div>
-                <div>
-                  <div id="statParts" class="text-lg font-black text-slate-900 leading-none">0</div>
-                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
-                </div>
-              </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
-                <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
-                <div>
-                  <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
-                  <div class="text-[9px] font-bold text-slate-400 mt-0.5">Completed</div>
-                </div>
-              </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
+          <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-amber-400 hover:shadow transition transform active:scale-95">
+            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-regular fa-clock"></i></div>
+            <div>
+              <div id="statWaiting" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Pending</div>
             </div>
-
-            <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
-
-          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
-          <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                <i class="fa-brands fa-facebook-messenger text-indigo-600"></i> Parts Chat Hub
-              </span>
-              <span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200">Floor</span>
+          <div onclick="setFilter('inprogress')" id="card-inprogress" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-blue-400 hover:shadow transition transform active:scale-95">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
+            <div>
+              <div id="statActive" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Working Bay</div>
             </div>
-
-            <div id="messengerSidebarAvatars" class="flex flex-row xl:flex-col gap-2.5 overflow-x-auto xl:overflow-visible pb-1 xl:pb-0"></div>
+          </div>
+          <div onclick="setFilter('waiting_parts')" id="card-waiting_parts" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-purple-400 hover:shadow transition transform active:scale-95">
+            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-gears"></i></div>
+            <div>
+              <div id="statParts" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Waiting Parts</div>
+            </div>
+          </div>
+          <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2.5 cursor-pointer hover:border-emerald-400 hover:shadow transition transform active:scale-95">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-regular fa-circle-check"></i></div>
+            <div>
+              <div id="statDone" class="text-xl font-black text-slate-900 leading-none">0</div>
+              <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Completed</div>
+            </div>
           </div>
         </div>
+
+        <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
       </div>
     </main>
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
-            <div id="myMechanicAvatarImg" class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-base flex items-center justify-center uppercase shadow-md border-2 border-indigo-500">
-              M
-            </div>
-            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition">
-              <i class="fa-solid fa-camera"></i>
-            </div>
-            <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
-          </div>
-          <div>
-            <h3 class="font-black text-sm text-slate-900 uppercase leading-tight" id="workshopStaffName">Mechanic</h3>
-            <p class="text-[11px] text-slate-500">Tap avatar photo to update your profile image.</p>
-          </div>
-        </div>
-        <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
-          <i class="fa-solid fa-camera text-[10px]"></i> Photo
-        </button>
-      </div>
-
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -528,38 +491,7 @@
     </main>
   </div>
 
-  <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL -->
-  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeMessengerModal()">
-    <div class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
-        <div class="flex items-center space-x-3">
-          <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
-            M
-          </div>
-          <div>
-            <h3 id="modalChatTitle" class="font-black text-base md:text-lg leading-tight">Mechanic Chat</h3>
-            <p id="modalChatSub" class="text-xs text-slate-400 mt-0.5">Parts Request & Price Discussion</p>
-          </div>
-        </div>
-        <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
-      <div id="modalChatStream" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-3 bg-slate-50 flex flex-col-reverse"></div>
-
-      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3.5 md:p-4 bg-white border-t border-slate-200 flex items-center gap-2">
-        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs md:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-xs md:text-sm shadow-md transition flex items-center justify-center gap-1.5">
-          <span>Send</span>
-          <i class="fa-solid fa-paper-plane text-xs"></i>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 4. MODAL: PARTS REQUEST -->
+  <!-- 3. MODAL: PARTS REQUEST -->
   <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -594,7 +526,7 @@
     </div>
   </div>
 
-  <!-- 5. LIGHTBOX -->
+  <!-- 4. LIGHTBOX -->
   <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
@@ -621,8 +553,7 @@
     };
 
     let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-    let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky"];
-    let MECHANIC_LIST = [...MECHANIC_ORDER];
+    let MECHANIC_LIST = ["charl", "bert", "nel", "rocky", "mark"];
 
     const TOTAL_BAYS = 4;
     const MAX_JOBS_PER_MECHANIC = 3;
@@ -638,18 +569,22 @@
 
     const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
-    const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
 
-    // 10 SAMPLE EMBEDDED THUMBNAILS FOR TUCSON OVERHAUL RESTORE
-    const TUCSON_DEMO_PHOTOS = [
+    // 10 REAL AUTOMOTIVE PART PHOTO THUMBNAILS FOR TUCSON OVERHAUL (RESTORED EXACTLY AS PICTURE 2)
+    const TUCSON_10_PART_PHOTOS = [
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80"
+      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=150&q=80"
     ];
 
-    // CLEAN REALISTIC INITIAL JOBS
+    // CLEAN INITIAL JOBS: BERT HAS NO CARS (BERT IS IDLE), TRAVIZ IS DONE, TUCSON HAS 10 PHOTOS
     const CORE_INITIAL_JOBS = [
       {
         id: "JB-408",
@@ -662,8 +597,22 @@
         priority: "Normal",
         details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_DEMO_PHOTOS)}[/IMGS] [CHAT][{"sender":"OFFICE","role":"office","text":"approve, proceed with order","time":"11:14 PM"}][/CHAT]`,
+        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [OFFICE_MSG:approve]`,
         time_created: "11:14 PM"
+      },
+      {
+        id: "JB-104",
+        customer: "Manuel Santos",
+        phone: "0918-123-45-67",
+        vehicle: "Mitsubishi Montero Sport",
+        plate: "MON-104",
+        service: "Diagnostic Check",
+        est_time: 30,
+        priority: "High",
+        details: "Check Engine light on dashboard, scan OBD codes.",
+        status: "inprogress",
+        auto_schedule_slot: "Bay #1 [MECH:charl]",
+        time_created: "12:05 PM"
       },
       {
         id: "JB-613",
@@ -678,20 +627,6 @@
         status: "completed",
         auto_schedule_slot: "Completed Service [MECH:rocky]",
         time_created: "09:45 AM"
-      },
-      {
-        id: "JB-104",
-        customer: "Manuel Santos",
-        phone: "0918-123-45-67",
-        vehicle: "Mitsubishi Montero Sport",
-        plate: "MON-104",
-        service: "Diagnostic Check",
-        est_time: 30,
-        priority: "High",
-        details: "Check Engine light on dashboard, scan OBD codes.",
-        status: "waiting",
-        auto_schedule_slot: null,
-        time_created: "12:05 PM"
       }
     ];
 
@@ -706,7 +641,6 @@
     let deferredPwaPrompt = null;
     let swRegistration = null;
     let previousCompletedJobCount = null;
-    let activeModalChatJobId = null;
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
@@ -722,7 +656,6 @@
     };
 
     let cachedCloudPresence = {};
-    let cachedCloudAvatars = {};
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -804,70 +737,10 @@
               if (rec.id === PRESENCE_RECORD_ID && rec.details) {
                 try { cachedCloudPresence = JSON.parse(rec.details); } catch(e){}
               }
-              if (rec.id === AVATARS_RECORD_ID && rec.details) {
-                try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
-              }
             });
           }
         }
       } catch (e) {}
-    }
-
-    function handleProfilePhotoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const maxDim = 200;
-          if (width > height && width > maxDim) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else if (height > maxDim) {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const base64 = canvas.toDataURL('image/jpeg', 0.65);
-          cachedCloudAvatars[currentUser] = base64;
-
-          const payload = {
-            id: AVATARS_RECORD_ID,
-            customer: "SYSTEM",
-            phone: "N/A",
-            vehicle: "CLOUD_AVATARS_RECORD",
-            plate: "N/A",
-            service: "Avatars Registry",
-            est_time: 0,
-            priority: "Normal",
-            details: JSON.stringify(cachedCloudAvatars),
-            status: "system_record",
-            time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            auto_schedule_slot: null
-          };
-
-          try {
-            await fetch(API_URL, {
-              method: "POST",
-              headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-              body: JSON.stringify(payload)
-            });
-            alert("✅ Profile photo uploaded & synced!");
-            render();
-          } catch(err){}
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
     }
 
     function checkCurrentSessionExpiry() {
@@ -943,38 +816,6 @@
       render();
     }
 
-    async function devDeleteStaffAccount(username) {
-      if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
-
-      delete cachedCloudAccounts[username];
-      delete AUTHORIZED_ROSTER[username];
-      MECHANIC_LIST = MECHANIC_LIST.filter(m => m !== username);
-
-      const payload = {
-        id: USERS_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_USERS_RECORD",
-        plate: "N/A",
-        service: "Accounts Registry",
-        est_time: 0,
-        priority: "Normal",
-        details: JSON.stringify(cachedCloudAccounts),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-      } catch (e){}
-      render();
-    }
-
     // COMPLETE RELIABLE RESTORE
     async function restoreInitialShopRecords() {
       state = [...CORE_INITIAL_JOBS];
@@ -991,8 +832,8 @@
         } catch(e){}
       }
 
-      setTimeout(pullData, 800);
-      alert("✅ All shop records, Tucson parts request with photos, and Bay status are restored!");
+      setTimeout(pullData, 600);
+      alert("✅ All records restored! Tucson with 10 photos and clean bay assignments are active.");
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
@@ -1307,17 +1148,6 @@
       }, 1200);
     }
 
-    async function devChangeStaffPassword(username) {
-      const acc = cachedCloudAccounts[username];
-      const currentPass = acc ? acc.pass : '';
-      const newPass = prompt(`Set new password for staff member [${username.toUpperCase()}]:`, currentPass);
-      if (newPass && newPass.trim().length >= 4) {
-        await saveAccountToCloud(username, newPass.trim(), acc ? acc.role : 'workshop', acc && acc.expiresAt ? Math.round((acc.expiresAt - Date.now()) / (3600000)) : 0);
-        alert(`Password for ${username.toUpperCase()} updated successfully!`);
-        render();
-      }
-    }
-
     function bootApp() {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
@@ -1343,14 +1173,6 @@
         officeView.classList.remove('hidden');
       } else {
         workshopView.classList.remove('hidden');
-        document.getElementById('workshopStaffName').innerText = currentUser;
-
-        const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
-        if (cachedCloudAvatars[currentUser]) {
-          avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
-        } else {
-          avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
-        }
         
         const whistleCard = document.getElementById('whistlePermissionCard');
         if (whistleCard) {
@@ -1437,10 +1259,6 @@
 
           render();
           updateAlarmState();
-          
-          if (activeModalChatJobId) {
-            updateModalChatStream(activeModalChatJobId);
-          }
         }
       } catch (e) {
         if (state.length === 0) {
@@ -1603,120 +1421,25 @@
       }
     }
 
-    function openMessengerChatForJob(jobId, mechName) {
-      activeModalChatJobId = jobId;
-      const job = state.find(j => j.id === jobId);
-      const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
-
-      const avatarContainer = document.getElementById('modalAvatarCircle');
-      if (cachedCloudAvatars[mechName.toLowerCase()]) {
-        avatarContainer.innerHTML = `<img src="${cachedCloudAvatars[mechName.toLowerCase()]}" class="w-full h-full object-cover">`;
-      } else {
-        avatarContainer.innerText = mechName.charAt(0).toUpperCase();
-      }
-
-      document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
-      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
-
-      const photosHTML = info.images.map(img => `
-        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 cursor-pointer shadow-sm hover:opacity-90 transition">
-      `).join('');
-
-      document.getElementById('modalPartsOverview').innerHTML = `
-        <div class="flex justify-between items-center">
-          <span class="font-black text-xs md:text-sm text-purple-900 flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping text-purple-600"></i> ${info.text || 'Standard Service'}</span>
-          <span class="text-xs text-purple-700 font-bold bg-white px-2 py-0.5 rounded-lg border border-purple-200">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
-        </div>
-        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosHTML}</div>` : ''}
-      `;
-
-      updateModalChatStream(jobId);
-      document.getElementById('messengerModal').classList.remove('hidden');
-      
-      setTimeout(() => {
-        const inp = document.getElementById('modalChatInput');
-        if (inp) inp.focus();
-      }, 100);
-    }
-
-    function updateModalChatStream(jobId) {
-      const job = state.find(j => j.id === jobId);
-      const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
-      const reversedList = info.chatList ? [...info.chatList].reverse() : [];
-
-      const stream = document.getElementById('modalChatStream');
-      if (!stream) return;
-
-      if (reversedList.length === 0) {
-        stream.innerHTML = `<p class="text-center text-xs text-slate-400 italic my-auto">No messages yet. Send price or question below.</p>`;
-        return;
-      }
-
-      stream.innerHTML = reversedList.map(msg => {
-        const isFromOffice = msg.role === 'office';
-        return `
-          <div class="flex flex-col ${isFromOffice ? 'items-start' : 'items-end'} text-xs">
-            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
-              <span>${msg.sender}</span> • <span>${msg.time}</span>
-            </div>
-            <div class="px-4 py-2.5 rounded-2xl max-w-[85%] font-medium text-xs md:text-sm leading-relaxed ${
-              isFromOffice 
-                ? 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm' 
-                : 'bg-indigo-600 text-white shadow-sm rounded-tr-sm'
-            }">
-              ${msg.text}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function closeMessengerModal() {
-      activeModalChatJobId = null;
-      document.getElementById('messengerModal').classList.add('hidden');
-    }
-
-    async function handleModalChatSubmit(event) {
-      event.preventDefault();
-      if (!activeModalChatJobId) return;
-
-      const input = document.getElementById('modalChatInput');
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = "";
-      const currentItem = state.find(j => j.id === activeModalChatJobId);
+    async function officeSendPartsReply(jobId) {
+      const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
 
-      const info = parsePartsInfo(currentItem.auto_schedule_slot);
-      const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
-      const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
+      const replyText = prompt("Enter message/reply for mechanic (will be highlighted in RED for mechanic):", "okay wait, checking with customer");
+      if (!replyText || !replyText.trim()) return;
 
-      const newChatEntry = {
-        sender: senderName,
-        role: senderRole,
-        text: text,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
+      let currentSlot = currentItem.auto_schedule_slot || "";
+      currentSlot = currentSlot.replace(/\[OFFICE_MSG:.*?\]/gi, '');
+      currentSlot += ` [OFFICE_MSG:${replyText.trim()}]`;
 
-      const updatedChatList = [...info.chatList, newChatEntry];
-
-      let slotBase = (currentItem.auto_schedule_slot || "")
-        .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .trim();
-
-      const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
-
-      state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
-      updateModalChatStream(activeModalChatJobId);
+      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: currentSlot } : j));
       render();
 
       try {
-        await fetch(`${API_URL}?id=eq.${activeModalChatJobId}`, {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
           method: "PATCH",
           headers: HEADERS,
-          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
+          body: JSON.stringify({ auto_schedule_slot: currentSlot })
         });
       } catch (e){}
       pullData();
@@ -1854,16 +1577,7 @@
         mechTag = ` [MECH:${resolved.toLowerCase()}]`;
       }
 
-      const initialChat = [
-        {
-          sender: (currentUser || "MECHANIC").toUpperCase(),
-          role: "workshop",
-          text: `Requested Parts: ${partDesc}`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ];
-
-      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
+      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag}`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
@@ -1920,12 +1634,9 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], mech: null, chatList: [], cleanBay: '', hasPartOrder: false };
+      if (!rawStr) return { text: '', images: [], mech: null, officeMsg: null };
       let images = [];
-      let chatList = [];
-      
       let targetStr = String(rawStr);
-      let hasPartOrder = targetStr.includes('Waiting for Car Parts:') || targetStr.includes('[PARTS_LOGGED]');
 
       if (targetStr.includes('[PARTS_LOGGED]')) {
         const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
@@ -1940,26 +1651,11 @@
         if (singleMatch) images = [singleMatch[1]];
       }
 
-      const chatMatch = targetStr.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
-      if (chatMatch) {
-        try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
-      }
-
       const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
-      if (offMsgMatch && chatList.length === 0) {
-        chatList.push({
-          sender: "OFFICE",
-          role: "office",
-          text: offMsgMatch[1],
-          time: "Just now"
-        });
-      }
+      const officeMsg = offMsgMatch ? offMsgMatch[1] : null;
 
       const mMatch = targetStr.match(/\[MECH:(.*?)\]/i);
       const mech = mMatch ? mMatch[1].toUpperCase() : null;
-
-      const bayMatch = targetStr.match(/Bay #\d+/i);
-      const cleanBay = bayMatch ? bayMatch[0] : '';
 
       const text = targetStr
         .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
@@ -1973,7 +1669,7 @@
         .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, mech, chatList, cleanBay, hasPartOrder };
+      return { text, images, mech, officeMsg };
     }
 
     function calculateWeeklyAnalytics() {
@@ -2188,6 +1884,7 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
+      // Mechanic Active Counts
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
 
@@ -2249,53 +1946,7 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLES SIDEBAR
-      const sidebarContainer = document.getElementById('messengerSidebarAvatars');
-      if (sidebarContainer) {
-        sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
-          const activeMechJob = state.find(j => {
-            if (j.status === 'completed') return false;
-            const res = resolveMechanicName(j);
-            return res && res.toLowerCase() === m;
-          });
-
-          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
-          const msgCount = info.chatList ? info.chatList.length : 0;
-          const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
-
-          let ringColor = "ring-2 ring-slate-200";
-          if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
-          else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
-
-          const avatarContent = cachedCloudAvatars[m]
-            ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">`
-            : m.charAt(0).toUpperCase();
-
-          return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} has no active car dispatched.')`}" 
-                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
-              <div class="relative">
-                <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
-                  ${avatarContent}
-                </div>
-                ${msgCount > 0 ? `
-                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                    ${msgCount}
-                  </span>
-                ` : ''}
-              </div>
-              <div class="text-center xl:text-left mt-1 xl:mt-0">
-                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
-                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
-                  ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      // Office Queue List Renderer
+      // Office Queue List Renderer (EXACT REPLICA OF PICTURE 2 WITH 10 PHOTOS & HIGHLIGHTED RED MESSAGE)
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -2305,7 +1956,7 @@
             <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 space-y-3">
               <i class="fa-solid fa-car text-3xl text-slate-300"></i>
               <div>
-                <p class="font-bold text-slate-700 text-sm">No vehicles in this section</p>
+                <p class="font-bold text-slate-700 text-sm">No vehicles currently in this section</p>
                 <p class="text-xs text-slate-400 mt-0.5">Click restore button to reload all active shop records.</p>
               </div>
               <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-md transition inline-flex items-center gap-1.5">
@@ -2315,14 +1966,15 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay || 'Bay'}</span>`;
+              const cleanBay = String(j.auto_schedule_slot || 'Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay}</span>`;
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
@@ -2337,20 +1989,16 @@
 
             let mechanicHighlightTag = "";
             if (assignedMechanic) {
-              const mechAvatar = cachedCloudAvatars[assignedMechanic.toLowerCase()]
-                ? `<img src="${cachedCloudAvatars[assignedMechanic.toLowerCase()]}" class="w-4 h-4 rounded-full object-cover inline-block mr-1">`
-                : `<i class="fa-solid fa-user-gear text-emerald-600"></i>`;
-
               mechanicHighlightTag = `
                 <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
-                  ${mechAvatar} Handled by: ${assignedMechanic}
+                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
                 </span>`;
             }
 
             let partsSection = "";
             if (j.status === 'waiting_parts') {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               partsSection = `
@@ -2359,14 +2007,25 @@
                     <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
                       <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
                     </span>
-                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photos</span>
                   </div>
                   <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                   
+                  ${officeMsg ? `
+                    <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                      <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                        <i class="fa-solid fa-envelope"></i>
+                      </div>
+                      <div class="flex-1">
+                        <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message Sent to Mechanic:</span>
+                        <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
+                      </div>
+                    </div>` : ''}
+
                   <div class="flex items-center gap-2 pt-1">
-                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
+                    <button onclick="officeSendPartsReply('${j.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                      <i class="fa-solid fa-reply"></i> Reply Price / Ask Customer
                     </button>
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
@@ -2375,7 +2034,7 @@
                 </div>`;
             } else if (j.status === 'completed' && partText) {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               partsSection = `
@@ -2384,12 +2043,14 @@
                     <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
                       <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
                     </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
+                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photos</span>` : ''}
                   </div>
                   <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
                 </div>`;
             }
+
+            const cleanBaySlot = String(j.auto_schedule_slot || '').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
@@ -2410,7 +2071,7 @@
 
                 <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${cleanBay ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBay}</p>` : ''}
+                  ${cleanBaySlot && cleanBaySlot !== 'Completed Service' && j.status !== 'waiting_parts' ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBaySlot}</p>` : ''}
                   ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
                 ${partsSection}
@@ -2437,7 +2098,7 @@
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, officeMsg } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -2451,24 +2112,33 @@
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
+              const cleanBay = String(j.auto_schedule_slot || 'Working on the Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
+              const offMsgMatch = String(j.auto_schedule_slot || '').match(/\[OFFICE_MSG:(.*?)\]/i);
+              const officeNotice = offMsgMatch ? offMsgMatch[1] : null;
+
               if (isMyJob) {
                 actionArea = `
                   <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
                     <div class="flex items-center justify-between">
                       <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        ${cleanBay || 'Bay'} • <strong>You are handling this car</strong>
+                        ${cleanBay} • <strong>You are handling this car</strong>
                       </span>
                       <button onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
                       </button>
                     </div>
 
-                    ${hasPartOrder ? `
-                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
-                        <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${chatList.length} msgs)
-                      </button>
-                    ` : ''}
+                    ${officeNotice ? `
+                      <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                          <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="flex-1">
+                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">Office Message / Update:</span>
+                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeNotice}</p>
+                        </div>
+                      </div>` : ''}
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
@@ -2483,7 +2153,7 @@
                 const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>${cleanBay || 'Working in Bay'}</span>
+                    <span>${cleanBay}</span>
                     <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
                       <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
                     </span>
@@ -2491,7 +2161,7 @@
               }
             } else if (j.status === 'waiting_parts') {
               const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
+                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-14 h-14 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
               let resumeBtn = "";
@@ -2507,20 +2177,30 @@
                   <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photos</span>
                     </div>
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
-                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-2 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
-                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
-                    </button>
+                    ${officeMsg ? `
+                      <div class="mt-2 p-3 bg-rose-50 rounded-2xl border-2 border-rose-300 text-xs text-rose-950 flex items-start gap-2.5 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                          <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <div class="flex-1">
+                          <span class="font-black text-[10px] uppercase tracking-wider text-rose-700 block">
+                            Message from Office / Front Desk:
+                          </span>
+                          <p class="font-extrabold text-xs text-rose-900 mt-0.5 leading-snug">${officeMsg}</p>
+                        </div>
+                      </div>` : ''}
                   </div>
                   ${resumeBtn}
                 </div>`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
+            const cleanBaySlot = String(j.auto_schedule_slot || 'In Bay').replace(/\[MECH:.*?\]/gi, '').replace(/\[OFFICE_MSG:.*?\]/gi, '').replace(/\[PARTS_LOGGED\].*?\[\/PARTS_LOGGED\]/, '').trim();
 
             return `
               <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
@@ -2533,7 +2213,7 @@
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))}
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : cleanBaySlot)}
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
