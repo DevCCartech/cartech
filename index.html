@@ -351,7 +351,6 @@
 
     <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
-      <!-- Intake Column -->
       <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
@@ -392,7 +391,6 @@
         </form>
       </div>
 
-      <!-- Center & Right Feed -->
       <div class="lg:col-span-8 space-y-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
@@ -403,7 +401,6 @@
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
-          <!-- Metric Cards & Job Feed List -->
           <div class="xl:col-span-9 space-y-3.5">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-2.5">
               <div onclick="setFilter('waiting')" id="card-waiting" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-amber-400 transition transform active:scale-95">
@@ -439,7 +436,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -456,8 +453,6 @@
 
     <!-- MECHANIC WORKSHOP -->
     <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      
-      <!-- MECHANIC PROFILE CARD WITH AVATAR UPLOAD -->
       <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
@@ -529,10 +524,9 @@
     </main>
   </div>
 
-  <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL (EXPANDED TO LARGE SCREEN) -->
+  <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL -->
   <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeMessengerModal()">
     <div class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-      <!-- Modal Header -->
       <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-3">
           <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
@@ -548,13 +542,9 @@
         </button>
       </div>
 
-      <!-- Parts Specs & Photos Area -->
       <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
-
-      <!-- Messages Stream (Reverse bottom anchored) -->
       <div id="modalChatStream" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-3 bg-slate-50 flex flex-col-reverse"></div>
 
-      <!-- Input Bar -->
       <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3.5 md:p-4 bg-white border-t border-slate-200 flex items-center gap-2">
         <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs md:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-xs md:text-sm shadow-md transition flex items-center justify-center gap-1.5">
@@ -661,7 +651,15 @@
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
-      "admin": { pass: "admin123", role: "admin", expiresAt: 0 }
+      "admin": { pass: "admin123", role: "admin", expiresAt: 0 },
+      "shiela": { pass: "1234", role: "office", expiresAt: 0 },
+      "josh": { pass: "1234", role: "office", expiresAt: 0 },
+      "ken": { pass: "1234", role: "office", expiresAt: 0 },
+      "charl": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "bert": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "nel": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "rocky": { pass: "1234", role: "workshop", expiresAt: 0 },
+      "mark": { pass: "1234", role: "workshop", expiresAt: 0 }
     };
 
     let cachedCloudPresence = {};
@@ -771,7 +769,6 @@
       } catch (e) {}
     }
 
-    // PROFILE PHOTO UPLOAD & CLOUD SYNC
     function handleProfilePhotoUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -783,7 +780,7 @@
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const maxDim = 200; // Small 200px square thumbnail
+          const maxDim = 200;
           if (width > height && width > maxDim) {
             height = Math.round((height * maxDim) / width);
             width = maxDim;
@@ -936,6 +933,7 @@
       render();
     }
 
+    // RESTORE INITIAL RECORDS
     async function restoreInitialShopRecords() {
       const originalJobs = [
         {
@@ -1608,7 +1606,6 @@
       }
     }
 
-    // OPEN LARGE MESSENGER CHAT FOR A JOB
     function openMessengerChatForJob(jobId, mechName) {
       activeModalChatJobId = jobId;
       const job = state.find(j => j.id === jobId);
@@ -1624,7 +1621,6 @@
       document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
       document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
 
-      // Full-size previews
       const photosHTML = info.images.map(img => `
         <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-200 cursor-pointer shadow-sm hover:opacity-90 transition">
       `).join('');
@@ -1737,10 +1733,119 @@
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
-      if (currentRole === 'developer' || currentRole === 'admin') {
-        renderDeveloperAnalytics();
+      // Render Admin/Developer Telemetry
+      const accountsList = Object.keys(cachedCloudAccounts);
+      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
+      const now = Date.now();
+
+      let subCount = 0;
+      accountsList.forEach(u => {
+        const acc = cachedCloudAccounts[u];
+        if (acc && acc.expiresAt && acc.expiresAt > 0 && acc.expiresAt > now) {
+          subCount++;
+        }
+      });
+
+      const elReg = document.getElementById('devTotalRegistered');
+      const elJobs = document.getElementById('devTotalQueueJobs');
+      const elParts = document.getElementById('devTotalPartsReq');
+      const elSub = document.getElementById('devActiveSubCount');
+
+      if (elReg) elReg.innerText = accountsList.length;
+      if (elJobs) elJobs.innerText = state.length;
+      if (elParts) elParts.innerText = partsCount;
+      if (elSub) elSub.innerText = subCount;
+
+      let onlineCount = 0;
+      let presenceHTML = "";
+
+      const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
+
+      allDisplayUsers.forEach(user => {
+        const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
+        const record = cachedCloudPresence[user];
+        const lastSeen = record ? record.lastSeen : 0;
+        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
+        if (isOnline) onlineCount++;
+
+        const isRegistered = !!cachedCloudAccounts[user];
+        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
+
+        presenceHTML += `
+          <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
+              <div>
+                <span class="font-black text-slate-900 uppercase text-xs">${user}</span>
+                <span class="ml-1.5 px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${roleBadgeColor}">${userRole}</span>
+                <span class="ml-1 text-[9px] font-bold ${isRegistered ? 'text-emerald-600' : 'text-slate-400'}">${isRegistered ? '(Registered)' : '(Not Created)'}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online (Live)' : 'Offline'}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      const elOnline = document.getElementById('devOnlineStaffCount');
+      const elStaffList = document.getElementById('devStaffPresenceList');
+      if (elOnline) elOnline.innerText = onlineCount;
+      if (elStaffList) elStaffList.innerHTML = presenceHTML;
+
+      const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
+      if (elAccContainer) {
+        let accHTML = "";
+        accountsList.forEach(u => {
+          const acc = cachedCloudAccounts[u];
+          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
+
+          if (acc && acc.expiresAt && acc.expiresAt > 0) {
+            const timeLeftMs = acc.expiresAt - now;
+            if (timeLeftMs > 0) {
+              const hoursLeft = Math.floor(timeLeftMs / (3600000));
+              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
+              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
+            } else {
+              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
+            }
+          }
+
+          const isPermanentAdmin = u === 'dev' || u === 'admin';
+
+          accHTML += `
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
+                    <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
+                  </div>
+                  <div class="mt-0.5">${timerBadge}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5 self-end sm:self-center">
+                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
+                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                ${!isPermanentAdmin ? `
+                  <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
+                    <i class="fa-solid fa-user-xmark"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+        elAccContainer.innerHTML = accHTML;
       }
 
+      // Top Mechanics Strip
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
 
@@ -1765,6 +1870,22 @@
         }
       }
 
+      let mechHTML = "";
+      MECHANIC_LIST.forEach(m => {
+        const load = mechanicLoads[m] || 0;
+        const isFull = load >= MAX_JOBS_PER_MECHANIC;
+        if (isFull) {
+          mechHTML += `<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC} Full)</span>`;
+        } else if (load > 0) {
+          mechHTML += `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${m.toUpperCase()} (${load}/${MAX_JOBS_PER_MECHANIC})</span>`;
+        } else {
+          mechHTML += `<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-lg flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ${m.toUpperCase()}</span>`;
+        }
+      });
+
+      const indDesktop = document.getElementById('mechanicsIndicators');
+      if (indDesktop) indDesktop.innerHTML = mechHTML;
+
       const sWait = document.getElementById('statWaiting');
       const sAct = document.getElementById('statActive');
       const sPart = document.getElementById('statParts');
@@ -1786,7 +1907,7 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLES WITH CLOUD AVATAR PHOTOS
+      // RENDER MESSENGER CIRCLES SIDEBAR
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
@@ -1847,7 +1968,7 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, cleanBay } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
