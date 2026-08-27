@@ -354,6 +354,20 @@
               </div>
             </div>
           </div>
+
+          <!-- DEVELOPER EXCLUSIVE: DELETED CUSTOMER LOG RECOVERY -->
+          <div id="devDeletedLogsPanel" class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-trash-arrow-up text-rose-600"></i> Restore Deleted Customer Logs
+              </h3>
+              <span class="text-[10px] font-bold text-rose-600 uppercase bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200">Dev Recovery Bin</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Recover customer jobs accidentally deleted by front desk or admin.</p>
+            <div id="devDeletedLogsContainer" class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+              <p class="text-xs text-slate-400 italic text-center py-4">No deleted records in recovery bin.</p>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -645,6 +659,7 @@
     const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
+    const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
 
     const TUCSON_10_PART_PHOTOS = [
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
@@ -718,6 +733,8 @@
 
     let cachedCloudPresence = {};
     let cachedCloudAvatars = {};
+    let cachedDeletedLogs = []; // Cloud recycle bin for developer recovery
+
     let lastSeenChatCounts = JSON.parse(localStorage.getItem('cartech_last_seen_chats') || '{}');
 
     function saveLastSeenChats() {
@@ -764,6 +781,9 @@
               }
               if (rec.id === AVATARS_RECORD_ID && rec.details) {
                 try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
+              }
+              if (rec.id === DELETED_LOGS_RECORD_ID && rec.details) {
+                try { cachedDeletedLogs = JSON.parse(rec.details); } catch(e){}
               }
             });
           }
@@ -1201,7 +1221,7 @@
             }
             previousWaitingJobCount = currentWaitingCount;
 
-            // 2. JOB COMPLETED NOTIFICATION (OFFICE / ADMIN)
+            // 2. JOB COMPLETED NOTIFICATION (OFFICE / ADMIN / DEV)
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1382,13 +1402,96 @@
       document.getElementById('photoViewerModal').classList.add('hidden');
     }
 
+    // ARCHIVE LOGS TO CLOUD RECYCLE BIN WHEN DELETED
     async function deleteSingleRecord(id) {
-      if (!confirm("Delete record?")) return;
+      if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
+      const targetJob = state.find(j => j.id === id);
+
+      if (targetJob) {
+        cachedDeletedLogs.unshift({
+          ...targetJob,
+          deletedAt: new Date().toLocaleString(),
+          deletedBy: currentUser || 'staff'
+        });
+
+        // Sync deleted log to cloud recycle bin
+        const payload = {
+          id: DELETED_LOGS_RECORD_ID,
+          customer: "SYSTEM",
+          phone: "N/A",
+          vehicle: "CLOUD_DELETED_LOGS_RECORD",
+          plate: "N/A",
+          service: "Deleted Logs Bin",
+          est_time: 0,
+          priority: "Normal",
+          details: JSON.stringify(cachedDeletedLogs.slice(0, 30)), // Keep last 30 deleted records
+          status: "system_record",
+          time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          auto_schedule_slot: null
+        };
+
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+            body: JSON.stringify(payload)
+          });
+        } catch (e){}
+      }
+
       state = state.filter(j => j.id !== id);
       render();
       try {
         await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
       } catch (err) {}
+      pullData();
+    }
+
+    // DEVELOPER ACCESS: RESTORE ACCIDENTALLY DELETED LOGS
+    async function devRestoreCustomerLog(jobId) {
+      if (currentRole !== 'developer') {
+        alert("Permission denied. Only Developer can recover deleted customer logs.");
+        return;
+      }
+      const jobToRestore = cachedDeletedLogs.find(j => j.id === jobId);
+      if (!jobToRestore) return;
+
+      const restoredJob = { ...jobToRestore };
+      delete restoredJob.deletedAt;
+      delete restoredJob.deletedBy;
+
+      cachedDeletedLogs = cachedDeletedLogs.filter(j => j.id !== jobId);
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(restoredJob)
+        });
+
+        const binPayload = {
+          id: DELETED_LOGS_RECORD_ID,
+          customer: "SYSTEM",
+          phone: "N/A",
+          vehicle: "CLOUD_DELETED_LOGS_RECORD",
+          plate: "N/A",
+          service: "Deleted Logs Bin",
+          est_time: 0,
+          priority: "Normal",
+          details: JSON.stringify(cachedDeletedLogs),
+          status: "system_record",
+          time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          auto_schedule_slot: null
+        };
+
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(binPayload)
+        });
+
+        alert(`✅ Customer job [${restoredJob.vehicle} (${restoredJob.customer})] restored back to live queue!`);
+      } catch(e){}
       pullData();
     }
 
@@ -1603,9 +1706,11 @@
       const isDev = currentRole === 'developer';
       const accountsWrapper = document.getElementById('developerAccountsWrapper');
       const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
+      const deletedLogsPanel = document.getElementById('devDeletedLogsPanel');
 
       if (accountsWrapper) accountsWrapper.classList.toggle('hidden', !isDev);
       if (restrictedNotice) restrictedNotice.classList.toggle('hidden', isDev);
+      if (deletedLogsPanel) deletedLogsPanel.classList.toggle('hidden', !isDev);
 
       const accountsList = Object.keys(cachedCloudAccounts);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
@@ -1668,6 +1773,7 @@
 
       if (!isDev) return;
 
+      // Render Accounts
       const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
       if (elAccContainer) {
         let accHTML = "";
@@ -1718,6 +1824,29 @@
           `;
         });
         elAccContainer.innerHTML = accHTML;
+      }
+
+      // Render Deleted Customer Logs for Recovery
+      const elDeletedBin = document.getElementById('devDeletedLogsContainer');
+      if (elDeletedBin) {
+        if (!cachedDeletedLogs || cachedDeletedLogs.length === 0) {
+          elDeletedBin.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No deleted customer logs in recovery bin.</p>`;
+        } else {
+          elDeletedBin.innerHTML = cachedDeletedLogs.map(delJob => `
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">${delJob.id}</span>
+                  <strong class="text-slate-900 font-black">${delJob.vehicle}</strong>
+                </div>
+                <p class="text-slate-500 text-[11px] mt-0.5">Customer: <span class="text-slate-800 font-bold">${delJob.customer}</span> • Deleted: ${delJob.deletedAt || 'Recently'}</p>
+              </div>
+              <button onclick="devRestoreCustomerLog('${delJob.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition whitespace-nowrap">
+                <i class="fa-solid fa-rotate-left"></i> Restore
+              </button>
+            </div>
+          `).join('');
+        }
       }
     }
 
@@ -1853,8 +1982,17 @@
             let deleteBtn = "";
             if (j.status === 'completed') {
               deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record (Can be recovered by Dev)">
                   <i class="fa-solid fa-trash-can"></i>
+                </button>`;
+            }
+
+            // DEVELOPER OVERRIDE: Allow Developer to Mark Done on Working Bay if mechanic forgot
+            let devMarkDoneBtn = "";
+            if (currentRole === 'developer' && j.status === 'inprogress') {
+              devMarkDoneBtn = `
+                <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-1.5 px-3 rounded-xl text-xs flex items-center gap-1 shadow-sm transition">
+                  <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done (Dev Override)
                 </button>`;
             }
 
@@ -1928,6 +2066,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     ${badge}
+                    ${devMarkDoneBtn}
                     ${deleteBtn}
                   </div>
                 </div>
@@ -1996,7 +2135,7 @@
                     ${hasPartOrder ? `
                       <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
+                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                       </button>
                     ` : ''}
 
@@ -2049,7 +2188,7 @@
                     ${(isMyJob || isManagement) ? `
                       <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
+                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                       </button>
                     ` : `
                       <div class="text-[11px] text-slate-400 italic text-center py-1 bg-white/70 rounded-xl border border-purple-100">
