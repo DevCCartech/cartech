@@ -334,10 +334,10 @@
               <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
                 <p class="font-bold text-slate-900">Data Management & Recovery Flow:</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm">
+                  <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm">
                     <i class="fa-solid fa-rotate-left"></i> Restore Shop Data
                   </button>
-                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm">
+                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm">
                     <i class="fa-solid fa-plus"></i> Inject Test Job
                   </button>
                 </div>
@@ -440,7 +440,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -452,7 +452,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <!-- MESSENGER CIRCLE AVATAR SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -991,20 +991,36 @@
       } catch (err) {}
     }
 
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
-        navigator.vibrate([600, 150, 600]);
+        navigator.vibrate([600, 150, 600, 150, 600]);
       }
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        [0, 0.40].forEach((burstOffset) => {
-          [440, 330].forEach((freq) => {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        [0, 0.40, 0.80].forEach((burstOffset) => {
+          [440, 330, 550].forEach((freq) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
             gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
+            gain.gain.setValueAtTime(0.85, ctx.currentTime + burstOffset + 0.22);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -1012,6 +1028,32 @@
             osc.stop(ctx.currentTime + burstOffset + 0.28);
           });
         });
+      } catch (e) {}
+    }
+
+    function playMessengerBeep() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.08);
+
+        gain.gain.setValueAtTime(0.01, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.4, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.25);
+
+        if ("vibrate" in navigator) {
+          navigator.vibrate(200);
+        }
       } catch (e) {}
     }
 
@@ -1039,6 +1081,7 @@
       localStorage.setItem('cartech_auth_role', currentRole);
 
       await sendPresenceHeartbeat(true);
+      getAudioContext();
       bootApp();
     }
 
@@ -1137,6 +1180,8 @@
       render();
     }
 
+    let previousChatCounts = {};
+
     async function pullData() {
       await syncSystemCloudRecords();
       try {
@@ -1146,6 +1191,33 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
+            
+            // CHECK FOR COMPLETED JOBS (HORN & NOTIFICATION FOR OFFICE/ADMIN)
+            const currentDoneCount = data.filter(j => j.status === 'completed').length;
+            if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
+              if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
+                playLoudVehicleHorn();
+              }
+            }
+            previousCompletedJobCount = currentDoneCount;
+
+            // CHECK FOR NEW CHAT MESSAGES (BEEP & NOTIFICATION)
+            data.forEach(job => {
+              const info = parsePartsInfo(job.auto_schedule_slot);
+              const currentCount = info.chatList ? info.chatList.length : 0;
+              const prevCount = previousChatCounts[job.id] || 0;
+
+              if (currentCount > prevCount) {
+                const lastMsg = info.chatList[currentCount - 1];
+                const isMyOwnMessage = lastMsg && lastMsg.sender.toUpperCase() === (currentUser || "").toUpperCase();
+
+                if (!isMyOwnMessage) {
+                  playMessengerBeep();
+                }
+              }
+              previousChatCounts[job.id] = currentCount;
+            });
+
             state = data;
           } else if (state.length === 0) {
             state = [...CORE_INITIAL_JOBS];
@@ -1239,9 +1311,43 @@
           return;
         }
 
-        slot = `Bay #1 [MECH:${currentUser}]`;
+        let preservedHistory = "";
+        if (currentItem && currentItem.auto_schedule_slot) {
+          const raw = String(currentItem.auto_schedule_slot);
+          if (raw.includes('[PARTS_LOGGED]')) {
+            const m = raw.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+            if (m) preservedHistory += ` [PARTS_LOGGED]${m[1]}[/PARTS_LOGGED]`;
+          }
+          if (raw.includes('[CHAT]')) {
+            const cm = raw.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
+            if (cm) preservedHistory += ` [CHAT]${cm[1]}[/CHAT]`;
+          }
+          if (raw.includes('[IMGS]')) {
+            const im = raw.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
+            if (im) preservedHistory += ` [IMGS]${im[1]}[/IMGS]`;
+          }
+        }
+
+        slot = `Bay #1 [MECH:${currentUser}]` + preservedHistory;
       } else if (newStatus === 'completed') {
-        slot = "Completed Service";
+        let historicalParts = "";
+        if (currentItem && currentItem.auto_schedule_slot) {
+          const raw = String(currentItem.auto_schedule_slot);
+          if (raw.includes('[PARTS_LOGGED]')) {
+            const match = raw.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+            if (match) historicalParts = ` [PARTS_LOGGED]${match[1]}[/PARTS_LOGGED]`;
+          } else if (raw.includes('Waiting for Car Parts:')) {
+            historicalParts = ` [PARTS_LOGGED]${raw}[/PARTS_LOGGED]`;
+          }
+        }
+
+        let mechTag = "";
+        const resolved = resolveMechanicName(currentItem);
+        if (resolved) {
+          mechTag = ` [MECH:${resolved.toLowerCase()}]`;
+        }
+
+        slot = "Completed Service" + mechTag + historicalParts;
         playLoudVehicleHorn();
       }
 
@@ -1361,7 +1467,7 @@
       }, 100);
     }
 
-    // UPDATED CHAT STREAM WITH MESSENGER APP BUBBLES & COPY BUTTON
+    // CHAT STREAM WITH COPY BUTTON AND PROPER SENDER BUBBLES
     function updateModalChatStream(jobId) {
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
@@ -1674,10 +1780,10 @@
                  class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
               <div class="relative">
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
-                  ${m.charAt(0)}
+                  ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
                 </div>
                 ${msgCount > 0 ? `
-                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
                     ${msgCount}
                   </span>
                 ` : ''}
