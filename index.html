@@ -440,7 +440,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -542,7 +542,7 @@
 
   <!-- 3. EXPANDED FULL-SIZED MESSENGER MODAL -->
   <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeMessengerModal()">
-    <div class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+    <div id="messengerModalBox" class="w-full max-w-4xl h-full md:h-[86vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300" onclick="event.stopPropagation()">
       <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-3">
           <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
@@ -553,9 +553,18 @@
             <p id="modalChatSub" class="text-xs text-slate-400 mt-0.5">Parts Request & Price Discussion</p>
           </div>
         </div>
-        <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        
+        <div class="flex items-center gap-2">
+          <!-- Developer Full Screen Customizer Button -->
+          <button id="devFullScreenChatBtn" onclick="toggleChatFullScreen()" class="hidden px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition items-center gap-1.5 shadow" title="Toggle Full Screen (Developer Customizer)">
+            <i class="fa-solid fa-expand" id="devFullScreenIcon"></i>
+            <span class="hidden sm:inline">Full Screen</span>
+          </button>
+
+          <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       </div>
 
       <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
@@ -724,6 +733,7 @@
 
     let cachedCloudPresence = {};
     let cachedCloudAvatars = {};
+    let lastSeenChatCounts = {};
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -1004,28 +1014,29 @@
       return audioCtx;
     }
 
+    // RESTORED LOUD HORN & VIBRATION FOR COMPLETED JOBS & ARRIVALS
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
-        navigator.vibrate([600, 150, 600, 150, 600]);
+        navigator.vibrate([600, 150, 600, 150, 800, 200, 1000]);
       }
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
 
-        [0, 0.40, 0.80].forEach((burstOffset) => {
+        [0, 0.45, 0.90].forEach((burstOffset) => {
           [440, 330, 550].forEach((freq) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
-            gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + burstOffset + 0.03);
-            gain.gain.setValueAtTime(0.85, ctx.currentTime + burstOffset + 0.22);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.28);
+            gain.gain.exponentialRampToValueAtTime(0.9, ctx.currentTime + burstOffset + 0.04);
+            gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.35);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(ctx.currentTime + burstOffset);
-            osc.stop(ctx.currentTime + burstOffset + 0.28);
+            osc.stop(ctx.currentTime + burstOffset + 0.35);
           });
         });
       } catch (e) {}
@@ -1123,10 +1134,21 @@
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
       const terminalRoleHeader = document.getElementById('terminalRoleHeader');
+      const devChatToggleBtn = document.getElementById('devFullScreenChatBtn');
 
       devView.classList.add('hidden');
       officeView.classList.add('hidden');
       workshopView.classList.add('hidden');
+
+      if (devChatToggleBtn) {
+        if (currentRole === 'developer') {
+          devChatToggleBtn.classList.remove('hidden');
+          devChatToggleBtn.classList.add('flex');
+        } else {
+          devChatToggleBtn.classList.add('hidden');
+          devChatToggleBtn.classList.remove('flex');
+        }
+      }
 
       if (currentRole === 'developer' || currentRole === 'admin') {
         devView.classList.remove('hidden');
@@ -1149,6 +1171,23 @@
 
       setFilter('waiting_parts');
       pullData();
+    }
+
+    function toggleChatFullScreen() {
+      if (currentRole !== 'developer') return;
+      const modalBox = document.getElementById('messengerModalBox');
+      const icon = document.getElementById('devFullScreenIcon');
+      if (!modalBox) return;
+
+      if (modalBox.classList.contains('max-w-4xl')) {
+        modalBox.classList.remove('max-w-4xl', 'md:h-[86vh]', 'rounded-3xl');
+        modalBox.classList.add('max-w-full', 'h-full', 'rounded-none');
+        if (icon) icon.className = "fa-solid fa-compress";
+      } else {
+        modalBox.classList.add('max-w-4xl', 'md:h-[86vh]', 'rounded-3xl');
+        modalBox.classList.remove('max-w-full', 'h-full', 'rounded-none');
+        if (icon) icon.className = "fa-solid fa-expand";
+      }
     }
 
     function switchDevToOfficeSim() {
@@ -1180,8 +1219,6 @@
       render();
     }
 
-    let previousChatCounts = {};
-
     async function pullData() {
       await syncSystemCloudRecords();
       try {
@@ -1192,7 +1229,7 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             
-            // CHECK FOR COMPLETED JOBS (HORN & NOTIFICATION FOR OFFICE/ADMIN)
+            // CHECK COMPLETED JOBS HORN & NOTIFICATION FOR OFFICE / ADMIN / DEV
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1201,21 +1238,20 @@
             }
             previousCompletedJobCount = currentDoneCount;
 
-            // CHECK FOR NEW CHAT MESSAGES (BEEP & NOTIFICATION)
+            // CHECK NEW CHAT MESSAGES BEEP
             data.forEach(job => {
               const info = parsePartsInfo(job.auto_schedule_slot);
-              const currentCount = info.chatList ? info.chatList.length : 0;
-              const prevCount = previousChatCounts[job.id] || 0;
+              const totalMsgCount = info.chatList ? info.chatList.length : 0;
+              const lastSeenCount = lastSeenChatCounts[job.id] || 0;
 
-              if (currentCount > prevCount) {
-                const lastMsg = info.chatList[currentCount - 1];
+              if (totalMsgCount > lastSeenCount) {
+                const lastMsg = info.chatList[totalMsgCount - 1];
                 const isMyOwnMessage = lastMsg && lastMsg.sender.toUpperCase() === (currentUser || "").toUpperCase();
 
-                if (!isMyOwnMessage) {
+                if (!isMyOwnMessage && activeModalChatJobId !== job.id) {
                   playMessengerBeep();
                 }
               }
-              previousChatCounts[job.id] = currentCount;
             });
 
             state = data;
@@ -1426,7 +1462,7 @@
       return { text, images, chatList };
     }
 
-    // OPEN MESSENGER CHAT DIALOGUE MODAL (RESTRICTED TO ASSIGNED MECHANIC & MANAGEMENT)
+    // OPEN MESSENGER CHAT & CLEAR UNREAD BADGE COUNTER TO 0
     function openMessengerChatForJob(jobId, mechName) {
       const job = state.find(j => j.id === jobId);
       const assignedMech = resolveMechanicName(job);
@@ -1441,6 +1477,10 @@
 
       activeModalChatJobId = jobId;
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
+      
+      // MARK MESSAGES AS READ (RESET BADGE COUNT TO 0)
+      lastSeenChatCounts[jobId] = info.chatList ? info.chatList.length : 0;
+      render();
 
       document.getElementById('modalAvatarCircle').innerText = (assignedMech || mechName).charAt(0).toUpperCase();
       document.getElementById('modalChatTitle').innerText = `${(assignedMech || mechName).toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
@@ -1467,7 +1507,6 @@
       }, 100);
     }
 
-    // CHAT STREAM WITH COPY BUTTON AND PROPER SENDER BUBBLES
     function updateModalChatStream(jobId) {
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
@@ -1520,6 +1559,7 @@
     function closeMessengerModal() {
       activeModalChatJobId = null;
       document.getElementById('messengerModal').classList.add('hidden');
+      pullData();
     }
 
     async function handleModalChatSubmit(event) {
@@ -1556,6 +1596,7 @@
       };
 
       const updatedChatList = [...info.chatList, newChatEntry];
+      lastSeenChatCounts[activeModalChatJobId] = updatedChatList.length;
 
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
@@ -1757,7 +1798,7 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLE AVATARS (BERT, CHARL, MARK, NEL, ROCKY)
+      // RENDER MESSENGER CIRCLE AVATARS WITH UNREAD COUNTS
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
@@ -1768,7 +1809,10 @@
           });
 
           const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
-          const msgCount = info.chatList ? info.chatList.length : 0;
+          const totalMsgCount = info.chatList ? info.chatList.length : 0;
+          const seenCount = activeMechJob ? (lastSeenChatCounts[activeMechJob.id] || 0) : 0;
+          const unreadCount = Math.max(0, totalMsgCount - seenCount);
+
           const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
 
           let ringColor = "ring-2 ring-slate-200";
@@ -1782,9 +1826,9 @@
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
                   ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
                 </div>
-                ${msgCount > 0 ? `
+                ${unreadCount > 0 ? `
                   <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
-                    ${msgCount}
+                    ${unreadCount}
                   </span>
                 ` : ''}
               </div>
@@ -1848,6 +1892,8 @@
                 <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
 
+              const unreadC = Math.max(0, chatList.length - (lastSeenChatCounts[j.id] || 0));
+
               partsSection = `
                 <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
                   <div class="flex items-center justify-between">
@@ -1860,8 +1906,9 @@
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
                   <div class="flex items-center gap-2 pt-1">
-                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative">
                       <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length})
+                      ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                     </button>
                     <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
@@ -1914,7 +1961,7 @@
         }
       }
 
-      // Workshop Feed Renderer (PRIVATE CHAT VISIBILITY)
+      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -1948,6 +1995,7 @@
                 </div>`;
             } else if (j.status === 'inprogress') {
               if (isMyJob || isManagement) {
+                const unreadC = Math.max(0, chatList.length - (lastSeenChatCounts[j.id] || 0));
                 actionArea = `
                   <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
                     <div class="flex items-center justify-between">
@@ -1961,8 +2009,9 @@
                     </div>
 
                     ${hasPartOrder ? `
-                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${chatList.length} msgs)
+                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                       </button>
                     ` : ''}
 
@@ -1998,6 +2047,8 @@
                   </button>`;
               }
 
+              const unreadC = Math.max(0, chatList.length - (lastSeenChatCounts[j.id] || 0));
+
               actionArea = `
                 <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
                   <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
@@ -2009,8 +2060,9 @@
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
                     ${(isMyJob || isManagement) ? `
-                      <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
+                      <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
+                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                       </button>
                     ` : `
                       <div class="text-[11px] text-slate-400 italic text-center py-1 bg-white/70 rounded-xl border border-purple-100">
