@@ -233,6 +233,7 @@
         </div>
       </div>
 
+      <!-- KPI Metrics -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
@@ -262,6 +263,23 @@
             <div class="text-[11px] font-semibold text-slate-400">Temporary Sub-Mechanics</div>
           </div>
         </div>
+      </div>
+
+      <!-- SEARCH LOGS BY DIAGNOSTIC NUMBER COMPONENT -->
+      <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+          <h3 class="font-black text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> Find Customer Log by Diagnostic Number
+          </h3>
+          <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Lookup</span>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="diagSearchInput" oninput="handleDiagnosticSearch()" placeholder="Enter diagnostic number (e.g. B1145, DIAG-001)..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+          <button onclick="document.getElementById('diagSearchInput').value=''; handleDiagnosticSearch();" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition">
+            Clear
+          </button>
+        </div>
+        <div id="diagSearchResults" class="space-y-2 max-h-[220px] overflow-y-auto"></div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -401,7 +419,7 @@
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Diagnostic Number *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-hashtag text-xs"></i></span>
-              <input id="inDiag" required placeholder="e.g. DIAG-001, #1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <input id="inDiag" required placeholder="e.g. B1145, DIAG-001" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
             </div>
           </div>
 
@@ -706,13 +724,13 @@
       {
         id: "JB-408",
         customer: "Arian Lumanta",
-        phone: "0909-323-93-93",
+        phone: "B1145",
         vehicle: "Hyundai Tucson",
         plate: "CAR-408",
         service: "Major Overhaul & Bushing",
         est_time: 120,
         priority: "Normal",
-        details: "Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
+        details: "[DIAG: B1145] Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
         status: "waiting_parts",
         auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
         time_created: "11:14 PM"
@@ -720,13 +738,13 @@
       {
         id: "JB-613",
         customer: "Rey Buscabus",
-        phone: "0921-987-65-43",
+        phone: "B1146",
         vehicle: "Traviz",
         plate: "TRV-613",
         service: "Oil & Brake Cleaning",
         est_time: 45,
         priority: "Normal",
-        details: "Change Engine Oil (5L), Brake Cleaning, Safety Check.",
+        details: "[DIAG: B1146] Change Engine Oil (5L), Brake Cleaning, Safety Check.",
         status: "completed",
         auto_schedule_slot: "Completed Service [MECH:rocky]",
         time_created: "09:45 AM"
@@ -1423,13 +1441,13 @@
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: "Test Customer",
-        phone: "DIAG-" + Math.floor(100 + Math.random() * 900),
+        phone: "B1145",
         vehicle: "Toyota Fortuner",
         plate: "DEV-TEST",
         service: "Diagnostic Flow",
         est_time: 30,
         priority: "High",
-        details: "[DIAG: TEST-100] Automated test dispatch.",
+        details: "[DIAG: B1145] Automated test dispatch.",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1442,6 +1460,56 @@
         await fetch(API_URL, { method: "POST", headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify(newCar) });
       } catch (e){}
       pullData();
+    }
+
+    // DIAGNOSTIC NUMBER CUSTOMER LOG SEARCH ENGINE
+    function handleDiagnosticSearch() {
+      const query = (document.getElementById('diagSearchInput').value || '').trim().toLowerCase();
+      const resultsContainer = document.getElementById('diagSearchResults');
+      if (!resultsContainer) return;
+
+      if (!query) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const matchingJobs = state.filter(j => {
+        const pMatch = String(j.phone || '').toLowerCase().includes(query);
+        const dMatch = String(j.details || '').toLowerCase().includes(query);
+        const cMatch = String(j.customer || '').toLowerCase().includes(query);
+        const vMatch = String(j.vehicle || '').toLowerCase().includes(query);
+        return pMatch || dMatch || cMatch || vMatch;
+      });
+
+      if (matchingJobs.length === 0) {
+        resultsContainer.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-2">No matching diagnostic records found for "${query}".</p>`;
+        return;
+      }
+
+      resultsContainer.innerHTML = matchingJobs.map(job => {
+        const diagNumber = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'No Diag #');
+        const assignedMech = resolveMechanicName(job) || 'Unassigned';
+
+        return `
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-black text-[10px] border border-indigo-200">${diagNumber}</span>
+                <span class="font-mono text-slate-400 text-[10px]">${job.id}</span>
+                <strong class="text-slate-900 font-black">${job.vehicle}</strong>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${job.status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${job.status.toUpperCase()}</span>
+              </div>
+              <p class="text-slate-600 mt-1"><strong>Customer:</strong> ${job.customer} • <strong>Mechanic:</strong> ${assignedMech} • <strong>Dispatched:</strong> ${job.time_created || 'Today'}</p>
+              <p class="text-slate-500 text-[11px] mt-0.5"><strong>Instructions:</strong> ${job.details}</p>
+            </div>
+            <div class="flex items-center gap-1.5 self-end sm:self-center">
+              <button onclick="navigator.clipboard.writeText(\`${job.customer} - ${job.vehicle} [${diagNumber}]\`); alert('📋 Customer record copied!');" class="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold transition">
+                <i class="fa-solid fa-copy mr-1"></i> Copy
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function getMechanicActiveCount(mechanicName) {
@@ -1885,6 +1953,7 @@
       pullData();
     }
 
+    // INSTANT CHAT SUBMISSION (ZERO DELAY)
     async function handleModalChatSubmit(event) {
       event.preventDefault();
       if (!activeModalChatJobId) return;
@@ -1943,525 +2012,6 @@
       } catch (e){}
     }
 
-    function renderDeveloperAnalytics() {
-      const isDev = currentRole === 'developer';
-      const accountsWrapper = document.getElementById('developerAccountsWrapper');
-      const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
-      const deletedLogsPanel = document.getElementById('devDeletedLogsPanel');
-
-      if (accountsWrapper) accountsWrapper.classList.toggle('hidden', !isDev);
-      if (restrictedNotice) restrictedNotice.classList.toggle('hidden', isDev);
-      if (deletedLogsPanel) deletedLogsPanel.classList.toggle('hidden', !isDev);
-
-      const accountsList = Object.keys(cachedCloudAccounts);
-      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
-      const now = Date.now();
-
-      let subCount = 0;
-      accountsList.forEach(u => {
-        const acc = cachedCloudAccounts[u];
-        if (acc && acc.expiresAt && acc.expiresAt > 0 && acc.expiresAt > now) {
-          subCount++;
-        }
-      });
-
-      const elReg = document.getElementById('devTotalRegistered');
-      const elJobs = document.getElementById('devTotalQueueJobs');
-      const elParts = document.getElementById('devTotalPartsReq');
-      const elSub = document.getElementById('devActiveSubCount');
-
-      if (elReg) elReg.innerText = accountsList.length;
-      if (elJobs) elJobs.innerText = state.length;
-      if (elParts) elParts.innerText = partsCount;
-      if (elSub) elSub.innerText = subCount;
-
-      let onlineCount = 0;
-      let presenceHTML = "";
-
-      const allDisplayUsers = Array.from(new Set([...Object.keys(AUTHORIZED_ROSTER), ...accountsList]));
-
-      allDisplayUsers.forEach(user => {
-        const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
-        const record = cachedCloudPresence[user];
-        const lastSeen = record ? record.lastSeen : 0;
-        const isOnline = (now - lastSeen) < 25000 && lastSeen > 0;
-        if (isOnline) onlineCount++;
-
-        const isRegistered = !!cachedCloudAccounts[user];
-        const roleBadgeColor = userRole === 'developer' ? 'bg-indigo-100 text-indigo-800' : (userRole === 'admin' ? 'bg-purple-100 text-purple-800' : (userRole === 'office' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'));
-
-        presenceHTML += `
-          <div class="flex items-center justify-between p-2.5 rounded-2xl border ${isOnline ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
-              <div>
-                <span class="font-black text-slate-900 uppercase text-xs">${user}</span>
-                <span class="ml-1.5 px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${roleBadgeColor}">${userRole}</span>
-                <span class="ml-1 text-[9px] font-bold ${isRegistered ? 'text-emerald-600' : 'text-slate-400'}">${isRegistered ? '(Registered)' : '(Not Created)'}</span>
-              </div>
-            </div>
-            <div class="text-right">
-              <span class="text-[10px] font-bold ${isOnline ? 'text-emerald-700' : 'text-slate-400'}">${isOnline ? 'Active Online (Live)' : 'Offline'}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      const elOnline = document.getElementById('devOnlineStaffCount');
-      const elStaffList = document.getElementById('devStaffPresenceList');
-      if (elOnline) elOnline.innerText = onlineCount;
-      if (elStaffList) elStaffList.innerHTML = presenceHTML;
-
-      if (!isDev) return;
-
-      const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
-      if (elAccContainer) {
-        let accHTML = "";
-        accountsList.forEach(u => {
-          const acc = cachedCloudAccounts[u];
-          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
-
-          if (acc && acc.expiresAt && acc.expiresAt > 0) {
-            const timeLeftMs = acc.expiresAt - now;
-            if (timeLeftMs > 0) {
-              const hoursLeft = Math.floor(timeLeftMs / (3600000));
-              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
-              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
-            } else {
-              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
-            }
-          }
-
-          const isPermanentAdmin = u === 'dev' || u === 'admin';
-
-          accHTML += `
-            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
-                  <i class="fa-solid fa-user"></i>
-                </div>
-                <div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
-                    <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
-                  </div>
-                  <div class="mt-0.5">${timerBadge}</div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-1.5 self-end sm:self-center">
-                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${acc.pass}</span>
-                <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                ${!isPermanentAdmin ? `
-                  <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
-                    <i class="fa-solid fa-user-xmark"></i>
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-          `;
-        });
-        elAccContainer.innerHTML = accHTML;
-      }
-
-      const elDeletedBin = document.getElementById('devDeletedLogsContainer');
-      if (elDeletedBin) {
-        if (!cachedDeletedLogs || cachedDeletedLogs.length === 0) {
-          elDeletedBin.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No deleted customer logs in recovery bin.</p>`;
-        } else {
-          elDeletedBin.innerHTML = cachedDeletedLogs.map(delJob => `
-            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="font-mono font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">${delJob.id}</span>
-                  <strong class="text-slate-900 font-black">${delJob.vehicle}</strong>
-                </div>
-                <p class="text-slate-500 text-[11px] mt-0.5">Customer: <span class="text-slate-800 font-bold">${delJob.customer}</span> • Deleted: ${delJob.deletedAt || 'Recently'}</p>
-              </div>
-              <button onclick="devRestoreCustomerLog('${delJob.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition whitespace-nowrap">
-                <i class="fa-solid fa-rotate-left"></i> Restore
-              </button>
-            </div>
-          `).join('');
-        }
-      }
-    }
-
-    function render() {
-      const waiting = state.filter(j => j.status === 'waiting').length;
-      const inProg = state.filter(j => j.status === 'inprogress').length;
-      const parts = state.filter(j => j.status === 'waiting_parts').length;
-      const done = state.filter(j => j.status === 'completed').length;
-
-      const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
-
-      if (currentRole === 'developer' || currentRole === 'admin') {
-        renderDeveloperAnalytics();
-      }
-
-      const mechanicLoads = {};
-      MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
-
-      state.forEach(j => {
-        if (j.status === 'inprogress' || j.status === 'waiting_parts') {
-          const mechName = resolveMechanicName(j);
-          if (mechName && mechanicLoads[mechName.toLowerCase()] !== undefined) {
-            mechanicLoads[mechName.toLowerCase()]++;
-          }
-        }
-      });
-
-      const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
-      const availableMechanicsCount = availableMechanics.length;
-
-      const wsBell = document.getElementById('wsBellIcon');
-      if (wsBell) {
-        if (hasUnassignedWaiting) {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 alarm-active";
-        } else {
-          wsBell.className = "w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200";
-        }
-      }
-
-      const sWait = document.getElementById('statWaiting');
-      const sAct = document.getElementById('statActive');
-      const sPart = document.getElementById('statParts');
-      const sDone = document.getElementById('statDone');
-
-      if (sWait) sWait.innerText = waiting;
-      if (sAct) sAct.innerText = inProg;
-      if (sPart) sPart.innerText = parts;
-      if (sDone) sDone.innerText = done;
-
-      const officeBadge = document.getElementById('officeRemainingMechanicBadge');
-      if (officeBadge) {
-        if (availableMechanicsCount === 0) {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Full)`;
-        } else {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
-          officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
-        }
-      }
-
-      const sidebarContainer = document.getElementById('messengerSidebarAvatars');
-      if (sidebarContainer) {
-        sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
-          const activeMechJob = state.find(j => {
-            if (j.status === 'completed') return false;
-            const res = resolveMechanicName(j);
-            return res && res.toLowerCase() === m;
-          });
-
-          const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [], hasPartOrder: false };
-          const totalMsgCount = info.chatList ? info.chatList.length : 0;
-          const seenCount = activeMechJob ? (lastSeenChatCounts[activeMechJob.id] || 0) : 0;
-          const unreadCount = Math.max(0, totalMsgCount - seenCount);
-
-          const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
-
-          let ringColor = "ring-2 ring-slate-200";
-          if (hasWaitingParts) ringColor = "ring-4 ring-rose-500 animate-pulse";
-          else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
-
-          return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
-                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
-              <div class="relative">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
-                  ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
-                </div>
-                ${unreadCount > 0 ? `
-                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
-                    ${unreadCount}
-                  </span>
-                ` : ''}
-              </div>
-              <div class="text-center xl:text-left mt-1 xl:mt-0">
-                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
-                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
-                  ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      // Office Queue List Renderer
-      const officeContainer = document.getElementById('officeQueueList');
-      if (officeContainer) {
-        const officeList = state.filter(j => j.status === currentFilter);
-
-        if (officeList.length === 0) {
-          officeContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
-              <p class="font-bold text-slate-600 text-sm">No vehicles in this section</p>
-              <p class="text-xs text-slate-400 mt-0.5">Tap on any metric card above to view respective records.</p>
-            </div>`;
-        } else {
-          officeContainer.innerHTML = officeList.map(j => {
-            const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
-
-            let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
-            if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
-            }
-            if (j.status === 'inprogress') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on Bay</span>`;
-            }
-            if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
-            if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
-
-            let deleteBtn = "";
-            if (j.status === 'completed') {
-              deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record (Can be recovered by Dev)">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>`;
-            }
-
-            let devMarkDoneBtn = "";
-            if (currentRole === 'developer' && j.status === 'inprogress') {
-              devMarkDoneBtn = `
-                <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-1.5 px-3 rounded-xl text-xs flex items-center gap-1 shadow-sm transition">
-                  <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done (Dev Override)
-                </button>`;
-            }
-
-            let mechanicHighlightTag = "";
-            if (assignedMechanic) {
-              mechanicHighlightTag = `
-                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
-                </span>`;
-            }
-
-            let partsSection = "";
-            if (j.status === 'waiting_parts') {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              const totalMsgCount = chatList.length;
-              const seenCount = lastSeenChatCounts[j.id] || 0;
-              const unreadC = Math.max(0, totalMsgCount - seenCount);
-
-              partsSection = `
-                <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black text-purple-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-triangle-exclamation text-purple-600"></i> Parts Requested by Workshop:
-                    </span>
-                    <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
-                  </div>
-                  <p class="text-xs font-bold text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100">${partText || 'Replacement parts required'}</p>
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
-                  
-                  <div class="flex items-center gap-2 pt-1">
-                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative">
-                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
-                      ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
-                    </button>
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
-                      <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
-                    </button>
-                  </div>
-                </div>`;
-            } else if (j.status === 'completed' && (partText || (partImages && partImages.length > 0))) {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              partsSection = `
-                <div class="mt-2.5 bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
-                    </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
-                  </div>
-                  ${partText ? `<p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>` : ''}
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
-                </div>`;
-            }
-
-            return `
-              <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="flex items-center space-x-2">
-                      <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                      <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
-                      ${mechanicHighlightTag}
-                    </div>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    ${badge}
-                    ${devMarkDoneBtn}
-                    ${deleteBtn}
-                  </div>
-                </div>
-
-                <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
-                </div>
-                ${partsSection}
-              </div>`;
-          }).join('');
-        }
-      }
-
-      // Workshop Feed Renderer
-      const wsContainer = document.getElementById('workshopFeedList');
-      if (wsContainer) {
-        const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
-        const myActiveCount = getMechanicActiveCount(currentUser);
-        const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
-
-        if (activeWorkshopJobs.length === 0) {
-          wsContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-circle-check text-3xl text-emerald-400 mb-2"></i>
-              <p class="font-bold text-slate-700 text-sm md:text-base">Workshop Floor Clear</p>
-              <p class="text-xs text-slate-400 mt-0.5">No pending vehicles on the floor.</p>
-            </div>`;
-        } else {
-          wsContainer.innerHTML = activeWorkshopJobs.map(j => {
-            const assignedMechanic = resolveMechanicName(j);
-            const isMyJob = assignedMechanic && currentUser && (assignedMechanic.toLowerCase() === currentUser.toLowerCase());
-            const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
-            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
-
-            let actionArea = "";
-            if (j.status === 'waiting') {
-              actionArea = `
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button type="button" onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="flex-1 ${isMyCapacityFull ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 active:scale-95'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition cursor-pointer">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${isMyCapacityFull ? `Capacity Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept into Bay (${currentUser.toUpperCase()}: ${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}
-                  </button>
-                  <button type="button" onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer">
-                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
-                  </button>
-                </div>`;
-            } else if (j.status === 'inprogress') {
-              if (isMyJob || isManagement) {
-                const totalMsgCount = chatList.length;
-                const seenCount = lastSeenChatCounts[j.id] || 0;
-                const unreadC = Math.max(0, totalMsgCount - seenCount);
-
-                actionArea = `
-                  <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        Bay Floor • <strong>You are handling this car</strong>
-                      </span>
-                      <button type="button" onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
-                      </button>
-                    </div>
-
-                    ${(partText || chatList.length > 0) ? `
-                      <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
-                        <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
-                      </button>
-                    ` : ''}
-
-                    <div class="flex items-center gap-2">
-                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
-                      </a>
-                      <button type="button" onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
-                      </button>
-                    </div>
-                  </div>`;
-              } else {
-                const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
-                actionArea = `
-                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>Working in Bay</span>
-                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
-                      <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
-                    </span>
-                  </div>`;
-              }
-            } else if (j.status === 'waiting_parts') {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              let resumeBtn = "";
-              if (isMyJob || isManagement) {
-                resumeBtn = `
-                  <button type="button" onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
-                  </button>`;
-              }
-
-              const totalMsgCount = chatList.length;
-              const seenCount = lastSeenChatCounts[j.id] || 0;
-              const unreadC = Math.max(0, totalMsgCount - seenCount);
-
-              actionArea = `
-                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
-                  <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
-                    </div>
-                    <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
-                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
-
-                    ${(isMyJob || isManagement) ? `
-                      <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative active:scale-95 cursor-pointer">
-                        <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
-                      </button>
-                    ` : `
-                      <div class="text-[11px] text-slate-400 italic text-center py-1 bg-white/70 rounded-xl border border-purple-100">
-                        <i class="fa-solid fa-lock text-[10px] mr-1"></i> Private chat between ${assignedMechanic || 'assigned mechanic'} and office
-                      </div>
-                    `}
-                  </div>
-                  ${resumeBtn}
-                </div>`;
-            }
-
-            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-
-            return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
-                  </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
-                  }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : 'Bay Floor')}
-                  </span>
-                </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                </div>
-                ${actionArea}
-              </div>`;
-          }).join('');
-        }
-      }
-    }
-
     syncSystemCloudRecords();
 
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
@@ -2473,6 +2023,7 @@
       bootApp();
     }
 
+    // STEADY REALTIME POLLING INTERVAL (AVOIDS 429 LOCKOUT)
     setInterval(() => pullData(false), 2000);
   </script>
 </body>
