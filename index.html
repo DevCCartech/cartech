@@ -777,7 +777,7 @@
       });
     }
 
-    // LIGHTWEIGHT REAL-TIME TELEMETRY & SYSTEM SYNC
+    // ACCURATE SYSTEM & STAFF PRESENCE SYNC
     async function syncSystemCloudRecords() {
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
@@ -1300,15 +1300,13 @@
 
     let previousChatCounts = {};
     let heartbeatTick = 0;
+    let pendingPatchTimeouts = {};
 
-    // HIGH SPEED REAL-TIME PULL POLLING (FAST SYNC)
+    // REAL-TIME INSTANT PULL POLLING WITH PROTECTION AGAINST STALE OVERWRITES
     async function pullData(forceTelemetry = false) {
       heartbeatTick++;
       if (forceTelemetry || heartbeatTick % 4 === 0) {
         syncSystemCloudRecords();
-        if (currentUser && currentRole) {
-          sendPresenceHeartbeat(true);
-        }
       }
 
       try {
@@ -1318,6 +1316,7 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
+            
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1342,7 +1341,17 @@
               previousChatCounts[job.id] = totalMsgCount;
             });
 
-            state = data;
+            // Prevent overwriting any job currently being clicked/modified
+            const now = Date.now();
+            const merged = data.map(remoteJob => {
+              if (pendingPatchTimeouts[remoteJob.id] && (now - pendingPatchTimeouts[remoteJob.id] < 2000)) {
+                const localJob = state.find(j => j.id === remoteJob.id);
+                return localJob || remoteJob;
+              }
+              return remoteJob;
+            });
+
+            state = merged;
           }
           render();
           updateAlarmState();
@@ -1420,7 +1429,7 @@
       }).length;
     }
 
-    // INSTANT LOCAL UPDATE + NON-BLOCKING CLOUD DISPATCH
+    // INSTANT LOCAL RESPONSE WITH PROTECTION AGAINST RETRY FLICKERS
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
@@ -1449,6 +1458,9 @@
         playLoudVehicleHorn();
       }
 
+      // Mark timestamp to protect from stale background polling overwrites
+      pendingPatchTimeouts[id] = Date.now();
+
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
       updateAlarmState();
@@ -1460,7 +1472,6 @@
           body: JSON.stringify({ status: newStatus, auto_schedule_slot: slot })
         });
       } catch (err) {}
-      pullData();
     }
 
     function openPartsModal(jobId) {
@@ -1571,6 +1582,7 @@
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
 
+      pendingPatchTimeouts[jobId] = Date.now();
       state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
       render();
       closePartsModal();
@@ -1851,7 +1863,7 @@
       pullData();
     }
 
-    // ZERO-DELAY CHAT POSTING & ACCELERATED SYNC
+    // INSTANT CHAT SUBMISSION (ZERO DELAY)
     async function handleModalChatSubmit(event) {
       event.preventDefault();
       if (!activeModalChatJobId) return;
@@ -1896,7 +1908,7 @@
 
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
-      // Instant local UI render
+      pendingPatchTimeouts[activeModalChatJobId] = Date.now();
       state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       updateModalChatStream(activeModalChatJobId);
       render();
@@ -1908,7 +1920,6 @@
           body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch (e){}
-      pullData();
     }
 
     function renderDeveloperAnalytics() {
@@ -2441,7 +2452,7 @@
       bootApp();
     }
 
-    setInterval(pullData, 1000);
+    setInterval(() => pullData(false), 1500);
   </script>
 </body>
 </html>
