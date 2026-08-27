@@ -224,7 +224,7 @@
             <i class="fa-solid fa-file-excel text-teal-600"></i> Suspension EXEL
           </a>
 
-          <button onclick="pullData()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
+          <button onclick="pullData(true)" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition">
             <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
           </button>
           <button onclick="switchDevToOfficeSim()" class="bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition">
@@ -777,8 +777,15 @@
       });
     }
 
-    // LIGHTWEIGHT SYNC FOR ACCOUNTS & AVATARS
+    // LIGHTWEIGHT REAL-TIME TELEMETRY & SYSTEM SYNC
     async function syncSystemCloudRecords() {
+      if (currentUser && currentRole) {
+        cachedCloudPresence[currentUser] = {
+          role: currentRole,
+          lastSeen: Date.now()
+        };
+      }
+
       try {
         const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${AVATARS_RECORD_ID},${DELETED_LOGS_RECORD_ID})`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -799,7 +806,10 @@
                 } catch(e){}
               }
               if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-                try { cachedCloudPresence = JSON.parse(rec.details); } catch(e){}
+                try { 
+                  const pParsed = JSON.parse(rec.details);
+                  cachedCloudPresence = { ...cachedCloudPresence, ...pParsed };
+                } catch(e){}
               }
               if (rec.id === AVATARS_RECORD_ID && rec.details) {
                 try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
@@ -996,7 +1006,7 @@
         } catch(e){}
       }
 
-      setTimeout(pullData, 500);
+      setTimeout(pullData, 300);
       alert("✅ All shop records restored!");
     }
 
@@ -1255,7 +1265,7 @@
       }
 
       setFilter('waiting_parts');
-      pullData();
+      pullData(true);
     }
 
     function switchDevToOfficeSim() {
@@ -1289,8 +1299,18 @@
     }
 
     let previousChatCounts = {};
+    let heartbeatTick = 0;
 
-    async function pullData() {
+    // HIGH SPEED REAL-TIME PULL POLLING (FAST SYNC)
+    async function pullData(forceTelemetry = false) {
+      heartbeatTick++;
+      if (forceTelemetry || heartbeatTick % 4 === 0) {
+        syncSystemCloudRecords();
+        if (currentUser && currentRole) {
+          sendPresenceHeartbeat(true);
+        }
+      }
+
       try {
         const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
@@ -1298,7 +1318,6 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1401,7 +1420,7 @@
       }).length;
     }
 
-    // SANITIZED STATE & PAYLOAD SAVER TO PREVENT NESTED DUPLICATIONS
+    // INSTANT LOCAL UPDATE + NON-BLOCKING CLOUD DISPATCH
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
@@ -1673,7 +1692,6 @@
       return mMatch ? mMatch[1].toUpperCase() : null;
     }
 
-    // ACCURATE ROBUST PARTS & PHOTO PARSER
     function parsePartsInfo(rawStr) {
       if (!rawStr) return { text: '', images: [], chatList: [] };
       let images = [];
@@ -1833,6 +1851,7 @@
       pullData();
     }
 
+    // ZERO-DELAY CHAT POSTING & ACCELERATED SYNC
     async function handleModalChatSubmit(event) {
       event.preventDefault();
       if (!activeModalChatJobId) return;
@@ -1877,6 +1896,7 @@
 
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
+      // Instant local UI render
       state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       updateModalChatStream(activeModalChatJobId);
       render();
@@ -1932,7 +1952,7 @@
         const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
         const record = cachedCloudPresence[user];
         const lastSeen = record ? record.lastSeen : 0;
-        const isOnline = (now - lastSeen) < 15000 && lastSeen > 0;
+        const isOnline = (now - lastSeen) < 18000 && lastSeen > 0;
         if (isOnline) onlineCount++;
 
         const isRegistered = !!cachedCloudAccounts[user];
@@ -2421,7 +2441,7 @@
       bootApp();
     }
 
-    setInterval(pullData, 2000);
+    setInterval(pullData, 1000);
   </script>
 </body>
 </html>
