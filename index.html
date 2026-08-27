@@ -238,7 +238,7 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
-            <div id="devTotalRegistered" class="text-xl font-black text-slate-900">10</div>
+            <div id="devTotalRegistered" class="text-xl font-black text-slate-900">0</div>
             <div class="text-[11px] font-semibold text-slate-400">Registered Accounts</div>
           </div>
         </div>
@@ -476,7 +476,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -753,8 +753,8 @@
 
     let state = [...CORE_INITIAL_JOBS];
     let currentFilter = 'waiting_parts';
-    let currentUser = null;
-    let currentRole = null;
+    let currentUser = localStorage.getItem('cartech_auth_user') || null;
+    let currentRole = localStorage.getItem('cartech_auth_role') || null;
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
@@ -792,7 +792,7 @@
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.navigator.standalone === true || 
              document.referrer.includes('android-app://') ||
-             localStorage.getItem('cartech_app_installed') === 'true';
+             localStorage.getItem('cartech_app_installed'] === 'true';
     }
 
     if ('serviceWorker' in navigator) {
@@ -803,7 +803,7 @@
       });
     }
 
-    // ACCURATE SYSTEM & STAFF PRESENCE SYNC
+    // ROBUST CLOUD TELEMETRY & PRESENCE SYNC
     async function syncSystemCloudRecords() {
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
@@ -813,7 +813,7 @@
       }
 
       try {
-        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${AVATARS_RECORD_ID},${DELETED_LOGS_RECORD_ID})`, {
+        const res = await fetch(`${API_URL}?select=*`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
@@ -842,6 +842,18 @@
               }
               if (rec.id === DELETED_LOGS_RECORD_ID && rec.details) {
                 try { cachedDeletedLogs = JSON.parse(rec.details); } catch(e){}
+              }
+            });
+
+            // Populate AUTHORIZED_ROSTER and MECHANIC_LIST from cloud accounts
+            AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
+            MECHANIC_LIST = [...MECHANIC_ORDER];
+            Object.keys(cachedCloudAccounts).forEach(u => {
+              const acc = cachedCloudAccounts[u];
+              const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
+              AUTHORIZED_ROSTER[u] = role;
+              if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
+                MECHANIC_LIST.push(u);
               }
             });
           }
@@ -1036,7 +1048,6 @@
       alert("✅ All shop records restored!");
     }
 
-    // RELIABLE TELEMETRY PERSISTENCE
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
       if (!currentUser || !currentRole) return;
 
@@ -1140,6 +1151,7 @@
       }
     }
 
+    // LOUD HORN & VIBRATE FOR COMPLETED JOBS (RESTORED FULLY)
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
         navigator.vibrate([600, 150, 600, 150, 800, 200, 1000]);
@@ -1330,14 +1342,14 @@
     let pendingPatchTimeouts = {};
     let isFetchingNetwork = false;
 
-    // HIGH SPEED REAL-TIME POLLING ENGINE
+    // HIGH SPEED REAL-TIME POLLING ENGINE (MAINTAINS 2s CADENCE)
     async function pullData(forceTelemetry = false) {
       if (isFetchingNetwork) return;
       isFetchingNetwork = true;
 
       heartbeatTick++;
-      if (forceTelemetry || heartbeatTick % 5 === 0) {
-        syncSystemCloudRecords();
+      if (forceTelemetry || heartbeatTick % 3 === 0) {
+        await syncSystemCloudRecords();
       }
 
       try {
@@ -1954,7 +1966,6 @@
       pullData();
     }
 
-    // INSTANT CHAT SUBMISSION (ZERO DELAY)
     async function handleModalChatSubmit(event) {
       event.preventDefault();
       if (!activeModalChatJobId) return;
@@ -2054,7 +2065,7 @@
         const userRole = AUTHORIZED_ROSTER[user] || (cachedCloudAccounts[user] ? cachedCloudAccounts[user].role : 'workshop');
         const record = cachedCloudPresence[user];
         const lastSeen = record ? record.lastSeen : 0;
-        const isOnline = (now - lastSeen) < 25000 && lastSeen > 0;
+        const isOnline = (now - lastSeen) < 35000 && lastSeen > 0;
         if (isOnline) onlineCount++;
 
         const isRegistered = !!cachedCloudAccounts[user];
