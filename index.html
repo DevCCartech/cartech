@@ -398,6 +398,14 @@
           </div>
 
           <div>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Diagnostic Number *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-hashtag text-xs"></i></span>
+              <input id="inDiag" required placeholder="e.g. DIAG-001, #1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+            </div>
+          </div>
+
+          <div>
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Vehicle Model / Unit *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-car-side text-xs"></i></span>
@@ -1370,16 +1378,27 @@
 
     async function handleDispatch(e) {
       e.preventDefault();
+      const custVal = document.getElementById('inCust').value.trim();
+      const diagVal = document.getElementById('inDiag').value.trim();
+      const vehVal = document.getElementById('inVeh').value.trim();
+      const detailsVal = document.getElementById('inDetails').value.trim();
+
+      if (!diagVal) {
+        alert("Please enter Diagnostic Number before dispatching.");
+        document.getElementById('inDiag').focus();
+        return;
+      }
+
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
-        customer: document.getElementById('inCust').value,
-        phone: "N/A",
-        vehicle: document.getElementById('inVeh').value,
+        customer: custVal,
+        phone: diagVal,
+        vehicle: vehVal,
         plate: "N/A",
         service: "General Service",
         est_time: 45,
         priority: "Normal",
-        details: document.getElementById('inDetails').value,
+        details: `[DIAG: ${diagVal}] ${detailsVal}`,
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1404,13 +1423,13 @@
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: "Test Customer",
-        phone: "N/A",
+        phone: "DIAG-" + Math.floor(100 + Math.random() * 900),
         vehicle: "Toyota Fortuner",
         plate: "DEV-TEST",
         service: "Diagnostic Flow",
         est_time: 30,
         priority: "High",
-        details: "Automated test dispatch.",
+        details: "[DIAG: TEST-100] Automated test dispatch.",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
