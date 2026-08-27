@@ -452,7 +452,7 @@
             <div id="officeQueueList" class="space-y-3 min-h-[300px]"></div>
           </div>
 
-          <!-- MESSENGER CIRCLES SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
+          <!-- MESSENGER CIRCLE AVATAR SIDEBAR (BERT, CHARL, MARK, NEL, ROCKY) -->
           <div class="xl:col-span-3 bg-white p-3.5 rounded-3xl border border-slate-200/80 shadow-sm h-fit space-y-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
               <span class="text-[10px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -461,6 +461,7 @@
               <span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200">Floor</span>
             </div>
 
+            <!-- Vertical Circles Container -->
             <div id="messengerSidebarAvatars" class="flex flex-row xl:flex-col gap-2.5 overflow-x-auto xl:overflow-visible pb-1 xl:pb-0"></div>
           </div>
         </div>
@@ -858,7 +859,7 @@
         alert("Permission denied. Only Developer can manage accounts.");
         return;
       }
-      if (!confirm(`Revoke access and kick out staff [${username.toUpperCase()}]?`)) return;
+      if (!confirm(`Revoke access and delete staff member [${username.toUpperCase()}]?`)) return;
 
       delete cachedCloudAccounts[username];
       delete AUTHORIZED_ROSTER[username];
@@ -1814,14 +1815,25 @@
       return { text, images, mech, chatList, cleanBay, hasPartOrder };
     }
 
-    // OPEN MESSENGER CHAT DIALOGUE MODAL FOR SPECIFIC MECHANIC / JOB
+    // OPEN MESSENGER CHAT DIALOGUE MODAL (RESTRICTED TO ASSIGNED MECHANIC & MANAGEMENT)
     function openMessengerChatForJob(jobId, mechName) {
-      activeModalChatJobId = jobId;
       const job = state.find(j => j.id === jobId);
+      const assignedMech = resolveMechanicName(job);
+
+      // Strict Privacy Guard
+      const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
+      const isAssignedMechanic = currentUser && assignedMech && (currentUser.toLowerCase() === assignedMech.toLowerCase());
+
+      if (!isManagement && !isAssignedMechanic) {
+        alert("🔒 Private Conversation: Only the assigned mechanic handling this car and the front desk/admin can view this chat.");
+        return;
+      }
+
+      activeModalChatJobId = jobId;
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
 
-      document.getElementById('modalAvatarCircle').innerText = mechName.charAt(0).toUpperCase();
-      document.getElementById('modalChatTitle').innerText = `${mechName.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
+      document.getElementById('modalAvatarCircle').innerText = (assignedMech || mechName).charAt(0).toUpperCase();
+      document.getElementById('modalChatTitle').innerText = `${(assignedMech || mechName).toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
       document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
 
       // Parts Overview & Photos
@@ -1887,13 +1899,23 @@
       event.preventDefault();
       if (!activeModalChatJobId) return;
 
+      const currentItem = state.find(j => j.id === activeModalChatJobId);
+      if (!currentItem) return;
+
+      const assignedMech = resolveMechanicName(currentItem);
+      const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
+      const isAssignedMechanic = currentUser && assignedMech && (currentUser.toLowerCase() === assignedMech.toLowerCase());
+
+      if (!isManagement && !isAssignedMechanic) {
+        alert("🔒 Unauthorized: You cannot post in this chat.");
+        return;
+      }
+
       const input = document.getElementById('modalChatInput');
       const text = input.value.trim();
       if (!text) return;
 
       input.value = "";
-      const currentItem = state.find(j => j.id === activeModalChatJobId);
-      if (!currentItem) return;
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
       const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
@@ -2357,7 +2379,7 @@
         }
       }
 
-      // Workshop Feed Renderer
+      // Workshop Feed Renderer (PRIVATE CHAT VISIBILITY)
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -2374,7 +2396,8 @@
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const isMyJob = assignedMechanic && assignedMechanic.toLowerCase() === currentUser.toLowerCase();
+            const isMyJob = assignedMechanic && currentUser && (assignedMechanic.toLowerCase() === currentUser.toLowerCase());
+            const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
             const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
@@ -2389,7 +2412,7 @@
                   </button>
                 </div>`;
             } else if (j.status === 'inprogress') {
-              if (isMyJob) {
+              if (isMyJob || isManagement) {
                 actionArea = `
                   <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
                     <div class="flex items-center justify-between">
@@ -2403,7 +2426,7 @@
                     </div>
 
                     ${hasPartOrder ? `
-                      <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                      <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${chatList.length} msgs)
                       </button>
                     ` : ''}
@@ -2433,7 +2456,7 @@
               `).join('');
 
               let resumeBtn = "";
-              if (isMyJob) {
+              if (isMyJob || isManagement) {
                 resumeBtn = `
                   <button onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
@@ -2450,9 +2473,15 @@
                     <p class="text-xs font-bold text-purple-800">${partText}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    <button onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
-                      <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
-                    </button>
+                    ${(isMyJob || isManagement) ? `
+                      <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1">
+                        <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${chatList.length} msgs)
+                      </button>
+                    ` : `
+                      <div class="text-[11px] text-slate-400 italic text-center py-1 bg-white/70 rounded-xl border border-purple-100">
+                        <i class="fa-solid fa-lock text-[10px] mr-1"></i> Private chat between ${assignedMechanic || 'assigned mechanic'} and office
+                      </div>
+                    `}
                   </div>
                   ${resumeBtn}
                 </div>`;
