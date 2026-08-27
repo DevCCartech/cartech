@@ -34,6 +34,13 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
+    /* Facebook-Style Floating Messenger Tab Docking */
+    .fb-chat-head {
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .fb-chat-head:hover {
+      transform: scale(1.08);
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -447,7 +454,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -547,39 +554,68 @@
     </main>
   </div>
 
-  <!-- 3. FULL-SCREEN MESSENGER MODAL -->
-  <div id="messengerModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center" onclick="closeMessengerModal()">
-    <div id="messengerModalBox" class="w-full h-full bg-white shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between shadow-md">
-        <div class="flex items-center space-x-3">
-          <div id="modalAvatarCircle" class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base uppercase shadow-md border-2 border-indigo-400">
-            M
-          </div>
-          <div>
-            <h3 id="modalChatTitle" class="font-black text-base md:text-lg leading-tight">Mechanic Chat</h3>
-            <p id="modalChatSub" class="text-xs text-slate-400 mt-0.5">Parts Request & Price Discussion</p>
-          </div>
+  <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW (BOTTOM-RIGHT FLOAT & MINIMIZE BUBBLE) -->
+  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
+    <!-- Facebook Style Header -->
+    <div class="p-3 bg-slate-900 text-white flex items-center justify-between shadow select-none cursor-pointer" onclick="minimizeMessengerChat()">
+      <div class="flex items-center space-x-2.5">
+        <div id="modalAvatarCircle" class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs uppercase border border-indigo-300">
+          M
         </div>
-        
-        <button onclick="closeMessengerModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
+        <div class="leading-tight">
+          <h3 id="modalChatTitle" class="font-black text-xs sm:text-sm text-white truncate max-w-[170px]">Mechanic Chat</h3>
+          <p id="modalChatSub" class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active now
+          </p>
+        </div>
+      </div>
+      
+      <!-- Facebook Chat Header Controls -->
+      <div class="flex items-center space-x-1" onclick="event.stopPropagation()">
+        <!-- Minimize to Bubble Button -->
+        <button onclick="minimizeMessengerChat()" class="w-7 h-7 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs transition" title="Minimize to Chat Head">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+        <!-- Close Chat Button -->
+        <button onclick="closeMessengerModal()" class="w-7 h-7 rounded-full hover:bg-slate-800 text-slate-300 hover:text-rose-400 flex items-center justify-center text-xs transition" title="Close Chat">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-
-      <div id="modalPartsOverview" class="p-3.5 bg-purple-50 border-b border-purple-100 text-xs font-semibold text-purple-950 flex flex-col gap-2"></div>
-      <div id="modalChatStream" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-3 bg-slate-50 flex flex-col-reverse"></div>
-
-      <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-3.5 md:p-4 bg-white border-t border-slate-200 flex items-center gap-2">
-        <input id="modalChatInput" type="text" placeholder="Type message or part price..." class="flex-1 bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs md:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-xs md:text-sm shadow-md transition flex items-center justify-center gap-1.5">
-          <span>Send</span>
-          <i class="fa-solid fa-paper-plane text-xs"></i>
-        </button>
-      </form>
     </div>
+
+    <!-- Parts Strip in Chat Header -->
+    <div id="modalPartsOverview" class="p-2.5 bg-purple-50/90 border-b border-purple-100 text-[11px] font-semibold text-purple-950 flex flex-col gap-1.5"></div>
+    
+    <!-- Chat Messages Stream -->
+    <div id="modalChatStream" class="flex-1 p-3 overflow-y-auto space-y-2 bg-slate-50 flex flex-col-reverse text-xs"></div>
+
+    <!-- Facebook-Style Chat Input Bar -->
+    <form id="modalChatForm" onsubmit="handleModalChatSubmit(event)" class="p-2.5 bg-white border-t border-slate-200 flex items-center gap-2">
+      <input id="modalChatInput" type="text" placeholder="Aa" class="flex-1 bg-slate-100 border-0 rounded-full px-3.5 py-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:bg-white">
+      <button type="submit" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center text-xs transition shadow-sm" title="Send">
+        <i class="fa-solid fa-paper-plane text-[10px]"></i>
+      </button>
+    </form>
   </div>
 
-  <!-- 4. MODAL: PARTS REQUEST -->
+  <!-- 4. FLOATING FACEBOOK CHAT HEAD (MINIMIZED BUBBLE ON SCREEN EDGE) -->
+  <div id="fbFloatingBubble" class="hidden fixed bottom-6 right-5 z-50 flex items-center gap-2 cursor-pointer fb-chat-head" onclick="restoreMessengerChat()">
+    <div class="relative">
+      <div id="fbBubbleAvatar" class="w-14 h-14 rounded-full bg-gradient-to-tr from-slate-900 to-indigo-900 text-white font-black text-base flex items-center justify-center uppercase shadow-2xl border-2 border-white ring-4 ring-indigo-600/30">
+        M
+      </div>
+      <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white shadow"></span>
+      <span id="fbBubbleUnreadBadge" class="hidden absolute -top-1 -left-1 px-1.5 py-0.5 bg-rose-600 text-white text-[10px] font-black rounded-full border-2 border-white shadow animate-bounce">
+        1
+      </span>
+    </div>
+    <!-- Dismiss bubble button -->
+    <button onclick="event.stopPropagation(); closeMessengerModal();" class="w-6 h-6 rounded-full bg-slate-900/80 text-white hover:bg-slate-900 flex items-center justify-center text-[10px] shadow" title="Dismiss Chat Head">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- 5. MODAL: PARTS REQUEST -->
   <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -614,7 +650,7 @@
     </div>
   </div>
 
-  <!-- 5. LIGHTBOX -->
+  <!-- 6. LIGHTBOX -->
   <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
@@ -717,6 +753,7 @@
     let swRegistration = null;
     let previousCompletedJobCount = null;
     let activeModalChatJobId = null;
+    let isChatMinimizedToBubble = false;
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
@@ -733,7 +770,7 @@
 
     let cachedCloudPresence = {};
     let cachedCloudAvatars = {};
-    let cachedDeletedLogs = []; // Cloud recycle bin for developer recovery
+    let cachedDeletedLogs = [];
 
     let lastSeenChatCounts = JSON.parse(localStorage.getItem('cartech_last_seen_chats') || '{}');
 
@@ -1212,7 +1249,6 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             
-            // 1. ARRIVAL NOTIFICATION (MECHANIC FLOOR)
             const currentWaitingCount = data.filter(j => j.status === 'waiting').length;
             if (previousWaitingJobCount !== null && currentWaitingCount > previousWaitingJobCount) {
               if (currentRole === 'workshop') {
@@ -1221,7 +1257,6 @@
             }
             previousWaitingJobCount = currentWaitingCount;
 
-            // 2. JOB COMPLETED NOTIFICATION (OFFICE / ADMIN / DEV)
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1230,7 +1265,6 @@
             }
             previousCompletedJobCount = currentDoneCount;
 
-            // 3. CHAT BEEP: BEEP ONLY ON NEW INCOMING MESSAGE
             data.forEach(job => {
               const info = parsePartsInfo(job.auto_schedule_slot);
               const totalMsgCount = info.chatList ? info.chatList.length : 0;
@@ -1402,7 +1436,6 @@
       document.getElementById('photoViewerModal').classList.add('hidden');
     }
 
-    // ARCHIVE LOGS TO CLOUD RECYCLE BIN WHEN DELETED
     async function deleteSingleRecord(id) {
       if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
       const targetJob = state.find(j => j.id === id);
@@ -1414,7 +1447,6 @@
           deletedBy: currentUser || 'staff'
         });
 
-        // Sync deleted log to cloud recycle bin
         const payload = {
           id: DELETED_LOGS_RECORD_ID,
           customer: "SYSTEM",
@@ -1424,7 +1456,7 @@
           service: "Deleted Logs Bin",
           est_time: 0,
           priority: "Normal",
-          details: JSON.stringify(cachedDeletedLogs.slice(0, 30)), // Keep last 30 deleted records
+          details: JSON.stringify(cachedDeletedLogs.slice(0, 30)),
           status: "system_record",
           time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           auto_schedule_slot: null
@@ -1447,7 +1479,6 @@
       pullData();
     }
 
-    // DEVELOPER ACCESS: RESTORE ACCIDENTALLY DELETED LOGS
     async function devRestoreCustomerLog(jobId) {
       if (currentRole !== 'developer') {
         alert("Permission denied. Only Developer can recover deleted customer logs.");
@@ -1538,7 +1569,7 @@
       return { text, images, chatList };
     }
 
-    // OPEN MESSENGER CHAT & PERMANENTLY CLEAR UNREAD COUNTER
+    // OPEN MESSENGER CHAT (FACEBOOK FLOATING DOCK STYLE)
     function openMessengerChatForJob(jobId, mechName) {
       const job = state.find(j => j.id === jobId);
       const assignedMech = resolveMechanicName(job);
@@ -1552,36 +1583,57 @@
       }
 
       activeModalChatJobId = jobId;
+      isChatMinimizedToBubble = false;
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
       
-      // Mark as seen persistently in localStorage
       lastSeenChatCounts[jobId] = info.chatList ? info.chatList.length : 0;
       saveLastSeenChats();
       render();
 
-      document.getElementById('modalAvatarCircle').innerText = (assignedMech || mechName).charAt(0).toUpperCase();
+      const displayInitial = (assignedMech || mechName).charAt(0).toUpperCase();
+      document.getElementById('modalAvatarCircle').innerText = displayInitial;
+      document.getElementById('fbBubbleAvatar').innerText = displayInitial;
       document.getElementById('modalChatTitle').innerText = `${(assignedMech || mechName).toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
-      document.getElementById('modalChatSub').innerText = job ? `Customer: ${job.customer} (${job.id})` : 'No Active Job';
+      document.getElementById('modalChatSub').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ${job ? job.customer : 'Active now'}`;
 
       const photosHTML = info.images.map(img => `
-        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-10 h-10 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
+        <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-8 h-8 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
       `).join('');
 
       document.getElementById('modalPartsOverview').innerHTML = `
-        <div class="flex justify-between items-center">
-          <span class="font-bold text-[11px] text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
-          <span class="text-[10px] text-purple-600 font-bold">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
+        <div class="flex justify-between items-center text-[10px]">
+          <span class="font-bold text-purple-900 truncate max-w-[230px]"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
+          <span class="text-purple-600 font-bold">${info.images.length} Photo${info.images.length !== 1 ? 's' : ''}</span>
         </div>
-        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${photosHTML}</div>` : ''}
+        ${info.images.length > 0 ? `<div class="flex flex-wrap gap-1 pt-0.5">${photosHTML}</div>` : ''}
       `;
 
       updateModalChatStream(jobId);
-      document.getElementById('messengerModal').classList.remove('hidden');
+      
+      // SHOW FLOATING DOCKED WINDOW & HIDE BUBBLE
+      document.getElementById('fbFloatingChatWindow').classList.remove('hidden');
+      document.getElementById('fbFloatingBubble').classList.add('hidden');
       
       setTimeout(() => {
         const inp = document.getElementById('modalChatInput');
         if (inp) inp.focus();
       }, 100);
+    }
+
+    // FACEBOOK FEATURE: MINIMIZE WINDOW INTO FLOATING CHAT HEAD BUBBLE
+    function minimizeMessengerChat() {
+      isChatMinimizedToBubble = true;
+      document.getElementById('fbFloatingChatWindow').classList.add('hidden');
+      document.getElementById('fbFloatingBubble').classList.remove('hidden');
+    }
+
+    // RESTORE FROM FLOATING CHAT HEAD BUBBLE BACK TO WINDOW
+    function restoreMessengerChat() {
+      if (!activeModalChatJobId) return;
+      isChatMinimizedToBubble = false;
+      document.getElementById('fbFloatingBubble').classList.add('hidden');
+      document.getElementById('fbFloatingChatWindow').classList.remove('hidden');
+      updateModalChatStream(activeModalChatJobId);
     }
 
     // MESSENGER-STYLE POV: MY MESSAGES RIGHT (BLUE), OTHER MESSAGES LEFT (WHITE) + COPY BUTTON ON ALL MESSAGES
@@ -1610,12 +1662,12 @@
         }
 
         return `
-          <div class="flex flex-col ${isMyMessage ? 'items-end' : 'items-start'} text-xs my-1">
-            <div class="flex items-center gap-1 text-[9px] text-slate-400 font-bold mb-0.5">
+          <div class="flex flex-col ${isMyMessage ? 'items-end' : 'items-start'} text-xs my-0.5">
+            <div class="flex items-center gap-1 text-[8px] text-slate-400 font-bold mb-0.5">
               <span>${msg.sender}</span> • <span>${msg.time}</span>
             </div>
-            <div class="flex items-center gap-2 max-w-[85%] ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}">
-              <div class="px-4 py-2.5 rounded-2xl font-medium leading-relaxed ${
+            <div class="flex items-center gap-1.5 max-w-[85%] ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}">
+              <div class="px-3.5 py-2 rounded-2xl font-medium leading-relaxed ${
                 isMyMessage 
                   ? 'bg-indigo-600 text-white shadow-sm rounded-tr-sm' 
                   : 'bg-white text-slate-900 border border-slate-200 shadow-sm rounded-tl-sm'
@@ -1623,7 +1675,7 @@
                 ${msg.text}
               </div>
               <button onclick="navigator.clipboard.writeText(\`${msg.text.replace(/`/g, '\\`')}\`); alert('📋 Message copied to clipboard!');" 
-                      class="p-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[10px] transition shadow-sm flex items-center justify-center" title="Copy message">
+                      class="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center" title="Copy message">
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
@@ -1640,7 +1692,9 @@
         saveLastSeenChats();
       }
       activeModalChatJobId = null;
-      document.getElementById('messengerModal').classList.add('hidden');
+      isChatMinimizedToBubble = false;
+      document.getElementById('fbFloatingChatWindow').classList.add('hidden');
+      document.getElementById('fbFloatingBubble').classList.add('hidden');
       pullData();
     }
 
@@ -1773,7 +1827,6 @@
 
       if (!isDev) return;
 
-      // Render Accounts
       const elAccContainer = document.getElementById('devRegisteredAccountsContainer');
       if (elAccContainer) {
         let accHTML = "";
@@ -1826,7 +1879,6 @@
         elAccContainer.innerHTML = accHTML;
       }
 
-      // Render Deleted Customer Logs for Recovery
       const elDeletedBin = document.getElementById('devDeletedLogsContainer');
       if (elDeletedBin) {
         if (!cachedDeletedLogs || cachedDeletedLogs.length === 0) {
@@ -1987,7 +2039,6 @@
                 </button>`;
             }
 
-            // DEVELOPER OVERRIDE: Allow Developer to Mark Done on Working Bay if mechanic forgot
             let devMarkDoneBtn = "";
             if (currentRole === 'developer' && j.status === 'inprogress') {
               devMarkDoneBtn = `
