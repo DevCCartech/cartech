@@ -733,7 +733,13 @@
 
     let cachedCloudPresence = {};
     let cachedCloudAvatars = {};
-    let lastSeenChatCounts = {};
+
+    // PERSISTENT UNREAD CHAT TRACKING IN LOCALSTORAGE
+    let lastSeenChatCounts = JSON.parse(localStorage.getItem('cartech_last_seen_chats') || '{}');
+
+    function saveLastSeenChats() {
+      localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
+    }
 
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
@@ -1014,7 +1020,7 @@
       return audioCtx;
     }
 
-    // RESTORED LOUD HORN & VIBRATION FOR COMPLETED JOBS & ARRIVALS
+    // LOUD VEHICLE HORN & VIBRATE FOR COMPLETED JOBS & NEW WAITING CARS
     function playLoudVehicleHorn() {
       if ("vibrate" in navigator) {
         navigator.vibrate([600, 150, 600, 150, 800, 200, 1000]);
@@ -1219,6 +1225,8 @@
       render();
     }
 
+    let previousWaitingJobCount = null;
+
     async function pullData() {
       await syncSystemCloudRecords();
       try {
@@ -1229,7 +1237,16 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             
-            // CHECK COMPLETED JOBS HORN & NOTIFICATION FOR OFFICE / ADMIN / DEV
+            // 1. CHECK NEW CAR ARRIVING (HORN/VIBRATE FOR MECHANIC)
+            const currentWaitingCount = data.filter(j => j.status === 'waiting').length;
+            if (previousWaitingJobCount !== null && currentWaitingCount > previousWaitingJobCount) {
+              if (currentRole === 'workshop') {
+                playLoudVehicleHorn();
+              }
+            }
+            previousWaitingJobCount = currentWaitingCount;
+
+            // 2. CHECK COMPLETED JOBS HORN (FOR OFFICE / ADMIN / DEV)
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -1238,7 +1255,7 @@
             }
             previousCompletedJobCount = currentDoneCount;
 
-            // CHECK NEW CHAT MESSAGES BEEP
+            // 3. CHECK NEW CHAT MESSAGES BEEP (ONLY WHEN NEW INCOMING MESSAGE ARRIVES)
             data.forEach(job => {
               const info = parsePartsInfo(job.auto_schedule_slot);
               const totalMsgCount = info.chatList ? info.chatList.length : 0;
@@ -1462,7 +1479,7 @@
       return { text, images, chatList };
     }
 
-    // OPEN MESSENGER CHAT & CLEAR UNREAD BADGE COUNTER TO 0
+    // OPEN MESSENGER CHAT & PERMANENTLY SAVE SEEN STATUS TO LOCALSTORAGE
     function openMessengerChatForJob(jobId, mechName) {
       const job = state.find(j => j.id === jobId);
       const assignedMech = resolveMechanicName(job);
@@ -1478,8 +1495,9 @@
       activeModalChatJobId = jobId;
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { text: '', images: [], chatList: [] };
       
-      // MARK MESSAGES AS READ (RESET BADGE COUNT TO 0)
+      // PERSISTENT SEEN STATE
       lastSeenChatCounts[jobId] = info.chatList ? info.chatList.length : 0;
+      saveLastSeenChats();
       render();
 
       document.getElementById('modalAvatarCircle').innerText = (assignedMech || mechName).charAt(0).toUpperCase();
@@ -1557,6 +1575,12 @@
     }
 
     function closeMessengerModal() {
+      if (activeModalChatJobId) {
+        const job = state.find(j => j.id === activeModalChatJobId);
+        const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
+        lastSeenChatCounts[activeModalChatJobId] = info.chatList ? info.chatList.length : 0;
+        saveLastSeenChats();
+      }
       activeModalChatJobId = null;
       document.getElementById('messengerModal').classList.add('hidden');
       pullData();
@@ -1597,6 +1621,7 @@
 
       const updatedChatList = [...info.chatList, newChatEntry];
       lastSeenChatCounts[activeModalChatJobId] = updatedChatList.length;
+      saveLastSeenChats();
 
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
@@ -1798,7 +1823,7 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLE AVATARS WITH UNREAD COUNTS
+      // RENDER MESSENGER CIRCLE AVATARS WITH PERSISTENT UNREAD COUNTS
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
@@ -2085,7 +2110,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
                   </div>
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
+                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))
                   }">
                     ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))}
                   </span>
