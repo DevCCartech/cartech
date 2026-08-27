@@ -346,13 +346,11 @@
                 </div>
               </div>
 
-              <!-- DEVELOPER-ONLY ACCOUNTS & PASSWORDS SECTION -->
               <div id="developerAccountsWrapper">
                 <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Account Registry & Timer Status:</p>
                 <div id="devRegisteredAccountsContainer" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
               </div>
 
-              <!-- ADMIN RESTRICTED NOTICE -->
               <div id="adminRestrictedAccountsNotice" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-center space-y-1">
                 <i class="fa-solid fa-lock text-xl text-amber-600 mb-1"></i>
                 <p class="font-bold">Staff Credentials Protected</p>
@@ -361,7 +359,6 @@
             </div>
           </div>
 
-          <!-- DEVELOPER EXCLUSIVE: DELETED CUSTOMER LOG RECOVERY -->
           <div id="devDeletedLogsPanel" class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
               <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -553,7 +550,7 @@
     </main>
   </div>
 
-  <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW (BOTTOM-RIGHT FLOAT & MINIMIZE BUBBLE) -->
+  <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW -->
   <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
     <div class="p-3 bg-slate-900 text-white flex items-center justify-between shadow select-none cursor-pointer" onclick="minimizeMessengerChat()">
       <div class="flex items-center space-x-2.5">
@@ -780,9 +777,10 @@
       });
     }
 
+    // LIGHTWEIGHT SYNC FOR ACCOUNTS & AVATARS
     async function syncSystemCloudRecords() {
       try {
-        const res = await fetch(`${API_URL}?select=*`, {
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${AVATARS_RECORD_ID},${DELETED_LOGS_RECORD_ID})`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
@@ -1079,7 +1077,6 @@
       } catch (e) {}
     }
 
-    // MULTIPLE CONTINUOUS BEEPING & VIBRATION UNTIL MECHANIC ACCEPTS (HANDLES) CAR
     function triggerContinuousAlarm() {
       if ("vibrate" in navigator) {
         navigator.vibrate([500, 150, 500, 150, 500]);
@@ -1294,14 +1291,13 @@
     let previousChatCounts = {};
 
     async function pullData() {
-      await syncSystemCloudRecords();
       try {
         const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
@@ -1328,8 +1324,6 @@
             });
 
             state = data;
-          } else if (state.length === 0) {
-            state = [...CORE_INITIAL_JOBS];
           }
           render();
           updateAlarmState();
@@ -1337,12 +1331,7 @@
             updateModalChatStream(activeModalChatJobId);
           }
         }
-      } catch (e) {
-        if (state.length === 0) {
-          state = [...CORE_INITIAL_JOBS];
-          render();
-        }
-      }
+      } catch (e) {}
     }
 
     async function handleDispatch(e) {
@@ -1412,10 +1401,13 @@
       }).length;
     }
 
-    // ACCEPTS / HANDLES CAR AND IMMEDIATELY STOPS ALARM
+    // SANITIZED STATE & PAYLOAD SAVER TO PREVENT NESTED DUPLICATIONS
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id);
       let slot = customSlot;
+
+      const info = parsePartsInfo(currentItem ? currentItem.auto_schedule_slot : '');
+      const mech = resolveMechanicName(currentItem) || currentUser || 'MECHANIC';
 
       if (newStatus === 'inprogress' && !slot) {
         const myActiveJobCount = getMechanicActiveCount(currentUser);
@@ -1424,49 +1416,23 @@
           return;
         }
 
-        let preservedHistory = "";
-        if (currentItem && currentItem.auto_schedule_slot) {
-          const raw = String(currentItem.auto_schedule_slot);
-          if (raw.includes('[PARTS_LOGGED]')) {
-            const m = raw.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-            if (m) preservedHistory += ` [PARTS_LOGGED]${m[1]}[/PARTS_LOGGED]`;
-          }
-          if (raw.includes('[CHAT]')) {
-            const cm = raw.match(/\[CHAT\]([\s\S]*?)\[\/CHAT\]/);
-            if (cm) preservedHistory += ` [CHAT]${cm[1]}[/CHAT]`;
-          }
-          if (raw.includes('[IMGS]')) {
-            const im = raw.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
-            if (im) preservedHistory += ` [IMGS]${im[1]}[/IMGS]`;
-          }
-        }
-
-        slot = `Bay #1 [MECH:${currentUser}]` + preservedHistory;
+        let tags = `Bay #1 [MECH:${mech.toLowerCase()}]`;
+        if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
+        if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
+        if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
+        slot = tags;
       } else if (newStatus === 'completed') {
-        let historicalParts = "";
-        if (currentItem && currentItem.auto_schedule_slot) {
-          const raw = String(currentItem.auto_schedule_slot);
-          if (raw.includes('[PARTS_LOGGED]')) {
-            const match = raw.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-            if (match) historicalParts = ` [PARTS_LOGGED]${match[1]}[/PARTS_LOGGED]`;
-          } else if (raw.includes('Waiting for Car Parts:')) {
-            historicalParts = ` [PARTS_LOGGED]${raw}[/PARTS_LOGGED]`;
-          }
-        }
-
-        let mechTag = "";
-        const resolved = resolveMechanicName(currentItem);
-        if (resolved) {
-          mechTag = ` [MECH:${resolved.toLowerCase()}]`;
-        }
-
-        slot = "Completed Service" + mechTag + historicalParts;
+        let tags = `Completed Service [MECH:${mech.toLowerCase()}]`;
+        if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
+        if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
+        if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
+        slot = tags;
         playLoudVehicleHorn();
       }
 
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
-      updateAlarmState(); // Immediately stops ringing/vibrating once handled
+      updateAlarmState();
 
       try {
         await fetch(`${API_URL}?id=eq.${id}`, {
@@ -1478,7 +1444,6 @@
       pullData();
     }
 
-    // 100% WORKING OPEN PARTS MODAL FEATURE
     function openPartsModal(jobId) {
       const modal = document.getElementById('partsModal');
       const inputId = document.getElementById('partJobId');
@@ -1517,7 +1482,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 400;
+            const maxDim = 320;
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -1530,7 +1495,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.55);
+            const base64 = canvas.toDataURL('image/jpeg', 0.5);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
@@ -1572,22 +1537,17 @@
       const btn = document.getElementById('btnSubmitPart');
       if (btn) { btn.disabled = true; btn.innerText = "Submitting..."; }
 
-      let mechTag = "";
-      const resolved = resolveMechanicName(currentItem);
-      if (resolved) {
-        mechTag = ` [MECH:${resolved.toLowerCase()}]`;
-      }
-
+      const resolved = resolveMechanicName(currentItem) || currentUser || 'MECHANIC';
       const initialChat = [
         {
-          sender: (currentUser || "MECHANIC").toUpperCase(),
+          sender: resolved.toUpperCase(),
           role: "workshop",
           text: `Requested Parts: ${partDesc}`,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ];
 
-      let slotPayload = `Waiting for Car Parts: ${partDesc}${mechTag} [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
+      let slotPayload = `Waiting for Car Parts: ${partDesc} [MECH:${resolved.toLowerCase()}] [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
@@ -1713,16 +1673,12 @@
       return mMatch ? mMatch[1].toUpperCase() : null;
     }
 
+    // ACCURATE ROBUST PARTS & PHOTO PARSER
     function parsePartsInfo(rawStr) {
       if (!rawStr) return { text: '', images: [], chatList: [] };
       let images = [];
       let chatList = [];
       let targetStr = String(rawStr);
-
-      if (targetStr.includes('[PARTS_LOGGED]')) {
-        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-        if (pMatch) targetStr = pMatch[1];
-      }
 
       const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
       if (multiMatch) {
@@ -1734,9 +1690,9 @@
         try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
       }
 
-      const offMsgMatch = targetStr.match(/\[OFFICE_MSG:(.*?)\]/i);
-      if (offMsgMatch && chatList.length === 0) {
-        chatList.push({ sender: "OFFICE", role: "office", text: offMsgMatch[1], time: "Just now" });
+      if (targetStr.includes('[PARTS_LOGGED]')) {
+        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
+        if (pMatch) targetStr = pMatch[1];
       }
 
       const text = targetStr
@@ -1744,7 +1700,10 @@
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
         .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .replace('Waiting for Car Parts:', '')
+        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
+        .replace(/Waiting for Car Parts:/gi, '')
+        .replace(/Bay #\d+/gi, '')
+        .replace(/Completed Service/gi, '')
         .trim();
 
       return { text, images, chatList };
@@ -2135,7 +2094,6 @@
         }
       }
 
-      // RENDER MESSENGER CIRCLE AVATARS (CORRECT UNREAD BADGES)
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
         sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
@@ -2195,14 +2153,14 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
               badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1"><i class="fa-solid fa-hourglass-half mr-1"></i> Waiting List</span>`;
             }
             if (j.status === 'inprogress') {
-              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on ${cleanBay || 'Bay'}</span>`;
+              badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center"><i class="fa-solid fa-wrench mr-1 animate-spin"></i> Active on Bay</span>`;
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
@@ -2262,7 +2220,7 @@
                     </button>
                   </div>
                 </div>`;
-            } else if (j.status === 'completed' && partText) {
+            } else if (j.status === 'completed' && (partText || (partImages && partImages.length > 0))) {
               const photosThumbnails = partImages.map(img => `
                 <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
               `).join('');
@@ -2275,7 +2233,7 @@
                     </span>
                     ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
                   </div>
-                  <p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>
+                  ${partText ? `<p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>` : ''}
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                 </div>`;
             }
@@ -2300,7 +2258,6 @@
 
                 <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                  ${cleanBay ? `<p class="text-blue-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-warehouse mr-1 text-orange-500"></i> ${cleanBay}</p>` : ''}
                   ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
                 ${partsSection}
@@ -2328,7 +2285,7 @@
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && currentUser && (assignedMechanic.toLowerCase() === currentUser.toLowerCase());
             const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
-            const { text: partText, images: partImages, chatList, cleanBay, hasPartOrder } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
 
             let actionArea = "";
             if (j.status === 'waiting') {
@@ -2352,14 +2309,14 @@
                     <div class="flex items-center justify-between">
                       <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        ${cleanBay || 'Bay'} • <strong>You are handling this car</strong>
+                        Bay Floor • <strong>You are handling this car</strong>
                       </span>
                       <button type="button" onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
                         <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
                       </button>
                     </div>
 
-                    ${hasPartOrder ? `
+                    ${(partText || chatList.length > 0) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
                         ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
@@ -2379,7 +2336,7 @@
                 const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>${cleanBay || 'Working in Bay'}</span>
+                    <span>Working in Bay</span>
                     <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
                       <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
                     </span>
@@ -2409,7 +2366,7 @@
                       <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
                       <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
                     </div>
-                    <p class="text-xs font-bold text-purple-800">${partText}</p>
+                    <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
                     ${(isMyJob || isManagement) ? `
@@ -2440,7 +2397,7 @@
                   <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
                     isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
                   }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : (cleanBay || 'Bay Floor'))}
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : 'Bay Floor')}
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
