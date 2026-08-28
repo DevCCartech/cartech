@@ -251,6 +251,35 @@
         </div>
       </div>
 
+      <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
+      <div id="devFeatureFlagCard" class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-5 rounded-3xl border border-indigo-500/30 shadow-lg space-y-3">
+        <div class="flex justify-between items-center border-b border-indigo-800/60 pb-2.5">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-flask-vial"></i>
+            </div>
+            <div>
+              <h3 class="font-black text-sm text-white">Interactive Diagnostic Inspection Sheet Feature Toggle</h3>
+              <p class="text-[11px] text-indigo-200">Test the digital CarTech inspection form before rolling out shop-wide.</p>
+            </div>
+          </div>
+          <span id="featureStatusBadge" class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
+            Dev Test Only
+          </span>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white/5 rounded-2xl border border-white/10">
+          <div>
+            <span class="font-bold text-xs text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-clipboard-list text-orange-400"></i> Full Digital Inspection Checklist Form
+            </span>
+            <p class="text-[11px] text-slate-300">Basic Diagnostics, Lighting, Fluids, Leaks, Belts, Tires %, and Brake System.</p>
+          </div>
+          <button onclick="toggleMechanicDiagnosticFeature()" id="btnToggleDiagnosticFeature" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer">
+            🚀 Enable for All Mechanics
+          </button>
+        </div>
+      </div>
+
       <!-- KPI Metrics -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
@@ -678,7 +707,216 @@
     </div>
   </div>
 
-  <!-- 6. LIGHTBOX -->
+  <!-- 6. NEW DIGITAL DIAGNOSTIC INSPECTION SHEET MODAL -->
+  <div id="diagnosticSheetModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 overflow-y-auto">
+    <div class="w-full max-w-4xl bg-white rounded-3xl p-5 md:p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto border border-slate-200" onclick="event.stopPropagation()">
+      
+      <!-- Sheet Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-200 gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-white text-lg font-bold shadow-md">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <div>
+            <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight">CarTech Diagnostics Inspection List</h2>
+            <p class="text-[11px] text-slate-500">Interactive workshop floor vehicle health check</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 self-end md:self-center">
+          <span class="text-xs font-mono font-black bg-indigo-50 text-indigo-700 px-3 py-1 rounded-xl border border-indigo-200" id="diagSheetJobId">JB-000</span>
+          <button onclick="closeDiagnosticSheetModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Vehicle & Client Info Header -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+        <div><strong class="text-slate-400 uppercase text-[10px] block">Client Name:</strong> <span id="diagClientName" class="font-black text-slate-900">-</span></div>
+        <div><strong class="text-slate-400 uppercase text-[10px] block">Vehicle Model / Unit:</strong> <span id="diagVehicleName" class="font-black text-slate-900">-</span></div>
+        <div><strong class="text-slate-400 uppercase text-[10px] block">Diagnostic # / Phone:</strong> <span id="diagNumberBadge" class="font-black text-indigo-600">-</span></div>
+      </div>
+
+      <!-- Inspection Sections Grid -->
+      <form id="diagnosticFormElement" onsubmit="saveDiagnosticSheet(event); return false;" class="space-y-6">
+        <input type="hidden" id="diagFormTargetJobId">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- 1. BASIC DIAGNOSTICS -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
+            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+              <i class="fa-solid fa-car-burst text-orange-500"></i> Basic Diagnostics
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Wipers (Front)</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_wiper_front" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_wiper_front" value="not"> Bad</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Wipers (Rear)</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_wiper_rear" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_wiper_rear" value="not"> Bad</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Check Engine Light</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_check_engine" value="off" checked> Off</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_check_engine" value="on"> ON</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">ABS Indicator</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_abs" value="off" checked> Off</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_abs" value="on"> ON</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. LIGHTING FIXTURES -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
+            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+              <i class="fa-solid fa-lightbulb text-amber-500"></i> Lighting Fixtures
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Headlights & High Beams</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_headlights" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_headlights" value="not"> Bad</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Signal Lights (Front/Rear)</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_signals" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_signals" value="not"> Bad</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Brake & Stop Lights</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_brakelights" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_brakelights" value="not"> Bad</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Reverse & Plate Lights</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_reverselights" value="good" checked> Good</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_reverselights" value="not"> Bad</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. FLUIDS & FILTERS -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
+            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+              <i class="fa-solid fa-oil-can text-indigo-500"></i> Fluids & Filters
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Engine Oil Level / Condition</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_engine_oil" value="good" checked> OK</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_engine_oil" value="replace"> Replace</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Cooling System Fluid / Reservoir</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_coolant" value="good" checked> OK</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_coolant" value="low"> Low/Leak</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Air Filter & Cabin Filter</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_filters" value="clean" checked> Clean</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_filters" value="dirty"> Dirty</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. LEAKING FLUIDS & OIL (FROM PAPER) -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
+            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+              <i class="fa-solid fa-droplet text-rose-500"></i> Leaking Fluids / Oil
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Engine Oil Leak</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_leak_engine" value="none" checked> None</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_leak_engine" value="detected"> Leaking</label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Transmission / Differential</span>
+                <div class="flex gap-2">
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_leak_trans" value="none" checked> None</label>
+                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_leak_trans" value="detected"> Leaking</label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Leak Origin / Where Found:</label>
+                <input id="diagLeakWhere" placeholder="e.g. Valve cover gasket, Oil pan, Hose..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. TIRES & BRAKES (%) -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5 md:col-span-2">
+            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+              <i class="fa-solid fa-circle-dot text-slate-700"></i> Tires & Brake System Percentage
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Front Tires (%)</label>
+                <input id="diagTireFront" type="number" min="0" max="100" placeholder="e.g. 80" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Rear Tires (%)</label>
+                <input id="diagTireRear" type="number" min="0" max="100" placeholder="e.g. 75" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Front Brake Pads (%)</label>
+                <input id="diagBrakePads" type="number" min="0" max="100" placeholder="e.g. 60" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Rear Brake Pads/Shoe (%)</label>
+                <input id="diagBrakeShoe" type="number" min="0" max="100" placeholder="e.g. 85" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. MECHANIC FINDINGS & COMMENTS -->
+          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2 md:col-span-2">
+            <label class="block text-[11px] font-bold uppercase text-slate-800">Mechanic Notes & Recommended Replacements *</label>
+            <textarea id="diagMechanicNotes" rows="3" placeholder="Enter findings, belt condition, suspension bushing details..." class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="closeDiagnosticSheetModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-2xl text-xs hover:bg-slate-200 cursor-pointer">Cancel</button>
+          <button type="submit" id="btnSaveDiagnostic" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md shadow-indigo-600/20 cursor-pointer">
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Save Inspection Sheet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. LIGHTBOX -->
   <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
@@ -724,6 +962,12 @@
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
     const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
+    const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
+
+    // FEATURE FLAGS: Default false (Developer Only)
+    let featureFlags = {
+      diagnosticV2Enabled: false
+    };
 
     const TUCSON_10_PART_PHOTOS = [
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
@@ -861,6 +1105,9 @@
               if (rec.id === DELETED_LOGS_RECORD_ID && rec.details) {
                 try { cachedDeletedLogs = JSON.parse(rec.details); } catch(e){}
               }
+              if (rec.id === CONFIG_RECORD_ID && rec.details) {
+                try { featureFlags = { ...featureFlags, ...JSON.parse(rec.details) }; } catch(e){}
+              }
             });
 
             AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
@@ -876,6 +1123,40 @@
           }
         }
       } catch (e) {}
+    }
+
+    // DEVELOPER TOGGLE FOR DIAGNOSTIC FEATURE
+    async function toggleMechanicDiagnosticFeature() {
+      if (currentRole !== 'developer') return;
+
+      featureFlags.diagnosticV2Enabled = !featureFlags.diagnosticV2Enabled;
+      render();
+
+      const payload = {
+        id: CONFIG_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_CONFIG_RECORD",
+        plate: "N/A",
+        service: "Feature Flags",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(featureFlags),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics can now see the Digital Inspection Checklist." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
+      } catch(err) {
+        alert("Error syncing feature state to cloud.");
+      }
     }
 
     function handleProfilePhotoUpload(event) {
@@ -1234,7 +1515,7 @@
       const card = document.getElementById('loginCardWrapper');
       if (card) {
         card.classList.remove('shake-denied');
-        void card.offsetWidth; // Force CSS reflow to retrigger animation
+        void card.offsetWidth;
         card.classList.add('shake-denied');
       }
       if ("vibrate" in navigator) {
@@ -1276,7 +1557,6 @@
       const currentHour = new Date().getHours();
 
       // Operating Hours Lock: 8:00 AM (8) to 5:00 PM (17)
-      // Developer and admin can bypass this restriction
       if (role !== 'developer' && role !== 'admin') {
         if (currentHour < 8 || currentHour >= 17) {
           if (errorTitle) errorTitle.innerText = "SHOP IS CLOSED (8:00 AM - 5:00 PM)";
@@ -1692,6 +1972,60 @@
     function closePartsModal() {
       const modal = document.getElementById('partsModal');
       if (modal) modal.classList.add('hidden');
+    }
+
+    // 6. DIGITAL DIAGNOSTIC INSPECTION SHEET CONTROLLERS
+    function openDiagnosticSheetModal(jobId) {
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      document.getElementById('diagFormTargetJobId').value = jobId;
+      document.getElementById('diagSheetJobId').innerText = job.id;
+      document.getElementById('diagClientName').innerText = job.customer || 'Customer';
+      document.getElementById('diagVehicleName').innerText = job.vehicle || 'Vehicle';
+      document.getElementById('diagNumberBadge').innerText = job.phone || 'DIAG';
+
+      // Parse existing inspection notes if already logged
+      const currentNotes = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '';
+      document.getElementById('diagMechanicNotes').value = currentNotes;
+
+      document.getElementById('diagnosticSheetModal').classList.remove('hidden');
+    }
+
+    function closeDiagnosticSheetModal() {
+      document.getElementById('diagnosticSheetModal').classList.add('hidden');
+    }
+
+    async function saveDiagnosticSheet(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const jobId = document.getElementById('diagFormTargetJobId').value;
+      const currentItem = state.find(j => j.id === jobId);
+      if (!currentItem) return;
+
+      const leakWhere = document.getElementById('diagLeakWhere').value.trim();
+      const tFront = document.getElementById('diagTireFront').value || '80';
+      const tRear = document.getElementById('diagTireRear').value || '80';
+      const bPads = document.getElementById('diagBrakePads').value || '70';
+      const bShoe = document.getElementById('diagBrakeShoe').value || '70';
+      const notes = document.getElementById('diagMechanicNotes').value.trim();
+
+      const diagNum = currentItem.phone || 'DIAG';
+      const compiledDetails = `[DIAG: ${diagNum}] Tires: F(${tFront}%) R(${tRear}%) | Brakes: Pads(${bPads}%) Shoe(${bShoe}%) | Leaks: ${leakWhere || 'None'} | Notes: ${notes || 'Standard Inspection OK'}`;
+
+      pendingPatchTimeouts[jobId] = Date.now();
+      state = state.map(j => (j.id === jobId ? { ...j, details: compiledDetails } : j));
+      render();
+      closeDiagnosticSheetModal();
+      alert("✅ Diagnostic Inspection Sheet saved & synced to office log!");
+
+      try {
+        await fetch(`${API_URL}?id=eq.${jobId}`, {
+          method: "PATCH",
+          headers: HEADERS,
+          body: JSON.stringify({ details: compiledDetails })
+        });
+      } catch(err){}
+      pullData();
     }
 
     function handleMultiplePartImages(event) {
@@ -2125,10 +2459,29 @@
       const accountsWrapper = document.getElementById('developerAccountsWrapper');
       const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
       const deletedLogsPanel = document.getElementById('devDeletedLogsPanel');
+      const devFeatureCard = document.getElementById('devFeatureFlagCard');
 
       if (accountsWrapper) accountsWrapper.classList.toggle('hidden', !isDev);
       if (restrictedNotice) restrictedNotice.classList.toggle('hidden', isDev);
       if (deletedLogsPanel) deletedLogsPanel.classList.toggle('hidden', !isDev);
+      if (devFeatureCard) devFeatureCard.classList.toggle('hidden', !isDev);
+
+      const statusBadge = document.getElementById('featureStatusBadge');
+      const toggleBtn = document.getElementById('btnToggleDiagnosticFeature');
+
+      if (statusBadge && toggleBtn) {
+        if (featureFlags.diagnosticV2Enabled) {
+          statusBadge.className = "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+          statusBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Live for All Mechanics`;
+          toggleBtn.className = "bg-rose-500 hover:bg-rose-400 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer";
+          toggleBtn.innerText = "🔒 Restrict to Developer Test Only";
+        } else {
+          statusBadge.className = "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40";
+          statusBadge.innerHTML = `<i class="fa-solid fa-flask mr-1"></i> Developer Test Only`;
+          toggleBtn.className = "bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer";
+          toggleBtn.innerText = "🚀 Enable for All Mechanics";
+        }
+      }
 
       const accountsList = Object.keys(cachedCloudAccounts);
       const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
@@ -2486,7 +2839,7 @@
                 </div>
 
                 <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  <p><strong>Instructions / Inspection:</strong> ${j.details || 'Standard intake'}</p>
                   ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
                 </div>
                 ${partsSection}
@@ -2501,6 +2854,9 @@
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
         const myActiveCount = getMechanicActiveCount(currentUser);
         const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
+
+        // FEATURE FLAG PERMISSION CHECK
+        const canViewDigitalDiagnostic = featureFlags.diagnosticV2Enabled || currentRole === 'developer';
 
         if (activeWorkshopJobs.length === 0) {
           wsContainer.innerHTML = `
@@ -2545,6 +2901,12 @@
                       </button>
                     </div>
 
+                    ${canViewDigitalDiagnostic ? `
+                      <button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-clipboard-check text-amber-300"></i> Open Digital Inspection Sheet ${!featureFlags.diagnosticV2Enabled ? '<span class="ml-1 text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black">DEV TEST</span>' : ''}
+                      </button>
+                    ` : ''}
+
                     ${(partText || chatList.length > 0) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
@@ -2554,7 +2916,7 @@
 
                     <div class="flex items-center gap-2">
                       <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form
+                        <i class="fa-solid fa-file-excel"></i> Excel Form
                       </a>
                       <button type="button" onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
                         <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
@@ -2630,7 +2992,7 @@
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                  <p><strong>Instructions / Inspection:</strong> ${j.details || 'Standard intake'}</p>
                 </div>
                 ${actionArea}
               </div>`;
