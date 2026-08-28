@@ -48,28 +48,6 @@
     .shake-denied {
       animation: shake-box 0.45s cubic-bezier(.36,.07,.19,.97) both;
     }
-
-    /* PRINT LAYOUT FOR EXACT PAPER REPLICA */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printableDiagnosticArea, #printableDiagnosticArea * {
-        visibility: visible;
-      }
-      #printableDiagnosticArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        background: white;
-      }
-      .no-print {
-        display: none !important;
-      }
-    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -215,7 +193,7 @@
 
   <!-- 2. MAIN APPLICATION -->
   <div id="appShell" class="hidden min-h-screen flex flex-col">
-    <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg no-print">
+    <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg">
       <div class="flex items-center space-x-3">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-base font-bold shadow-md shadow-orange-500/20">
           <i class="fa-solid fa-wrench"></i>
@@ -240,7 +218,7 @@
     </header>
 
     <!-- DEVELOPER & ADMIN VIEW -->
-    <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full no-print">
+    <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
@@ -270,8 +248,8 @@
               <i class="fa-solid fa-flask-vial"></i>
             </div>
             <div>
-              <h3 class="font-black text-sm text-white">Paper-Replica Diagnostic Form & Office Print Module</h3>
-              <p class="text-[11px] text-indigo-200">Control release across Mechanic Bay tablets and Office Terminal.</p>
+              <h3 class="font-black text-sm text-white">CarTech Official Diagnostics List & Print System</h3>
+              <p class="text-[11px] text-indigo-200">Switch availability between developer testing and shop-wide release.</p>
             </div>
           </div>
           <span id="featureStatusBadge" class="text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
@@ -281,9 +259,9 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
           <div>
             <span class="font-bold text-xs text-white flex items-center gap-1.5">
-              <i class="fa-solid fa-clipboard-check text-orange-400"></i> CarTech Official Paper-Look Inspection Form + 1-Click Office Print
+              <i class="fa-solid fa-clipboard-check text-orange-400"></i> Paper-Look Inspection Sheet + 1-Click Office Print
             </span>
-            <p class="text-[11px] text-slate-300">Saves directly into job queue records and allows instant printouts for customers.</p>
+            <p class="text-[11px] text-slate-300">Stores directly inside job logs and allows office printouts with clear checkmarks.</p>
           </div>
           <button onclick="toggleMechanicDiagnosticFeature()" id="btnToggleDiagnosticFeature" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs transition shadow-lg whitespace-nowrap cursor-pointer">
             🚀 Apply Feature to All Mechanics & Office
@@ -323,21 +301,22 @@
         </div>
       </div>
 
-      <!-- SEARCH LOGS BY DIAGNOSTIC NUMBER -->
+      <!-- DIAGNOSTIC LOG ARCHIVE HUB -->
       <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
           <h3 class="font-black text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> Find Customer Log by Diagnostic Number
+            <i class="fa-solid fa-folder-open text-indigo-600"></i> Diagnostic Log Archive & Print Hub
           </h3>
-          <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Lookup</span>
+          <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Archive</span>
         </div>
+        <p class="text-xs text-slate-500">Search customer inspection records by Diagnostic Number (e.g. B786, B1145) to view or print.</p>
         <div class="flex flex-col sm:flex-row gap-2">
-          <input id="diagSearchInput" oninput="handleDiagnosticSearch()" placeholder="Enter diagnostic number (e.g. B1145, DIAG-001)..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+          <input id="diagSearchInput" oninput="handleDiagnosticSearch()" placeholder="Type diagnostic number or vehicle name..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
           <button onclick="document.getElementById('diagSearchInput').value=''; handleDiagnosticSearch();" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">
             Clear
           </button>
         </div>
-        <div id="diagSearchResults" class="space-y-2 max-h-[220px] overflow-y-auto"></div>
+        <div id="diagSearchResults" class="space-y-2 max-h-[260px] overflow-y-auto"></div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -452,7 +431,7 @@
     </main>
 
     <!-- OFFICE VIEW -->
-    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full no-print">
+    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
       <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
@@ -499,6 +478,19 @@
             <span id="btnText">Dispatch to floor</span>
           </button>
         </form>
+
+        <!-- QUICK DIAGNOSTIC LOOKUP IN OFFICE -->
+        <div class="pt-3 border-t border-slate-200 space-y-2">
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <i class="fa-solid fa-folder-open text-indigo-600"></i> Office Diagnostic Archive
+          </span>
+          <div class="flex gap-1.5">
+            <input id="officeQuickDiagInput" placeholder="Enter Diag # (e.g. B786)..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+            <button onclick="handleOfficeQuickDiagLookup()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
+              Find
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="lg:col-span-8 space-y-4">
@@ -562,7 +554,7 @@
     </main>
 
     <!-- MECHANIC WORKSHOP -->
-    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full no-print">
+    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
       <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
@@ -615,7 +607,7 @@
   </div>
 
   <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW -->
-  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300 no-print">
+  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
     <div class="p-3 bg-slate-900 text-white flex items-center justify-between shadow select-none cursor-pointer" onclick="minimizeMessengerChat()">
       <div class="flex items-center space-x-2.5">
         <div id="modalAvatarCircle" class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs uppercase border border-indigo-300">
@@ -651,7 +643,7 @@
   </div>
 
   <!-- 4. FLOATING FACEBOOK CHAT HEAD -->
-  <div id="fbFloatingBubble" class="hidden fixed bottom-6 right-5 z-50 flex items-center gap-2 cursor-pointer fb-chat-head no-print" onclick="restoreMessengerChat()">
+  <div id="fbFloatingBubble" class="hidden fixed bottom-6 right-5 z-50 flex items-center gap-2 cursor-pointer fb-chat-head" onclick="restoreMessengerChat()">
     <div class="relative">
       <div id="fbBubbleAvatar" class="w-14 h-14 rounded-full bg-gradient-to-tr from-slate-900 to-indigo-900 text-white font-black text-base flex items-center justify-center uppercase shadow-2xl border-2 border-white ring-4 ring-indigo-600/30">
         M
@@ -664,7 +656,7 @@
   </div>
 
   <!-- 5. MODAL: PARTS REQUEST -->
-  <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
+  <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div>
@@ -697,20 +689,20 @@
     </div>
   </div>
 
-  <!-- 6. EXACT REPLICA: CARTECH DIAGNOSTICS LIST PAPER MODAL & PRINT CONTAINER -->
-  <div id="diagnosticSheetModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-6 overflow-y-auto no-print">
+  <!-- 6. EXACT REPLICA: CARTECH DIAGNOSTICS LIST PAPER MODAL -->
+  <div id="diagnosticSheetModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-6 overflow-y-auto">
     <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-4 md:p-6 space-y-4 max-h-[94vh] overflow-y-auto border border-slate-300" onclick="event.stopPropagation()">
       
       <!-- Top Actions -->
-      <div class="flex justify-between items-center border-b border-slate-200 pb-3 no-print">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <div class="flex items-center gap-2">
           <span class="text-xs font-black uppercase text-orange-600 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200">
-            <i class="fa-solid fa-clipboard-check mr-1"></i> Official CarTech Inspection Form
+            <i class="fa-solid fa-clipboard-check mr-1"></i> CarTech Official Paper Inspection Form
           </span>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="printDiagnosticReport()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition cursor-pointer">
-            <i class="fa-solid fa-print text-orange-400"></i> Print Document
+            <i class="fa-solid fa-print text-orange-400"></i> Print Official Document
           </button>
           <button type="button" onclick="closeDiagnosticSheetModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold cursor-pointer">
             <i class="fa-solid fa-xmark"></i>
@@ -718,8 +710,8 @@
         </div>
       </div>
 
-      <!-- Printable Exact Paper Document Form -->
-      <div id="printableDiagnosticArea" class="bg-white text-slate-900 p-2 md:p-4 text-xs font-sans border-2 border-slate-900 rounded-lg space-y-3">
+      <!-- Printable Paper Document Form -->
+      <div id="diagnosticPaperLayout" class="bg-white text-slate-900 p-2 md:p-4 text-xs font-sans border-2 border-slate-900 rounded-lg space-y-3">
         
         <!-- Document Header Replica -->
         <div class="text-center space-y-0.5 border-b-2 border-slate-900 pb-2.5">
@@ -738,11 +730,11 @@
           <div class="divide-y divide-slate-900">
             <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Client Name:</strong> <span id="paperClientName" class="font-bold text-slate-900">-</span></div>
             <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Vehicle:</strong> <span id="paperVehicleName" class="font-bold text-slate-900">-</span></div>
-            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">VIN / Chassis Number:</strong> <span id="paperVinNumber" class="font-mono text-slate-800">N/A</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">VIN / Chassis Number:</strong> <span id="paperVinNumber" class="font-mono text-slate-800">MRHDD4710GP020925</span></div>
           </div>
           <div class="divide-y divide-slate-900">
             <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Phone Number:</strong> <span id="paperPhoneNumber" class="font-bold text-slate-900">-</span></div>
-            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Number Plate:</strong> <span id="paperPlateNumber" class="font-bold text-slate-900">N/A</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Number Plate:</strong> <span id="paperPlateNumber" class="font-bold text-slate-900">GAA 2776</span></div>
             <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Mileage:</strong> <span id="paperMileage" class="text-slate-800">-</span></div>
           </div>
         </div>
@@ -954,7 +946,7 @@
           </div>
 
           <!-- Bottom Action Buttons inside Form -->
-          <div class="flex gap-2 pt-3 border-t border-slate-200 no-print">
+          <div class="flex gap-2 pt-3 border-t border-slate-200">
             <button type="button" onclick="closeDiagnosticSheetModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-200 cursor-pointer">Cancel</button>
             <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md shadow-indigo-600/20 cursor-pointer">
               <i class="fa-solid fa-floppy-disk mr-1"></i> Save Checklist to Database
@@ -966,7 +958,7 @@
   </div>
 
   <!-- 7. LIGHTBOX -->
-  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 no-print" onclick="closePhotoViewer()">
+  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
       <button onclick="closePhotoViewer()" class="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-white text-slate-900 rounded-full w-9 h-9 md:w-11 md:h-11 flex items-center justify-center font-black shadow-2xl text-base md:text-lg border-2 border-slate-900 hover:bg-slate-200 transition cursor-pointer">
@@ -1011,7 +1003,6 @@
     const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
     const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
 
-    // FEATURE FLAGS: Default false (Developer Only)
     let featureFlags = {
       diagnosticV2Enabled: false
     };
@@ -1020,7 +1011,7 @@
       {
         id: "JB-408",
         customer: "Ariel Selman",
-        phone: "+63 950 386 1681",
+        phone: "B786",
         vehicle: "Car Honda Mobilio",
         plate: "GAA 2776",
         service: "Major Service & Diagnostics",
@@ -1152,15 +1143,194 @@
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(payload)
         });
-        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics & office can now view/print the official Diagnostic Paper Form." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
+        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics & office can now view and print the Diagnostics List." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
       } catch(err) {
         alert("Error syncing feature state to cloud.");
       }
     }
 
-    // PRINT DIAGNOSTIC REPORT REPLICA
+    // DIRECT HIGH-FIDELITY PRINT ENGINE
     function printDiagnosticReport() {
-      window.print();
+      const jobId = document.getElementById('diagFormTargetJobId').value;
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      const info = parsePartsInfo(job.auto_schedule_slot);
+      const diagNumber = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'B786');
+      const assignedMech = resolveMechanicName(job) || currentUser || '-';
+      const comment = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
+
+      const d = info.diagData || {};
+      const chk = (val, target) => (val === target ? '✓' : '');
+      const box = (b) => (b ? '✓' : '');
+
+      const printWindow = window.open('', '_blank', 'width=850,height=1000');
+      if (!printWindow) {
+        alert("Pop-up blocked! Please allow pop-ups for CarTech to print.");
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>CarTech Diagnostics List #${diagNumber}</title>
+          <style>
+            @page { size: A4 portrait; margin: 12mm; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #000; margin: 0; padding: 0; }
+            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
+            .logo { font-size: 24px; font-weight: 900; }
+            .logo span { color: #ea580c; }
+            .title { font-size: 13px; font-weight: 900; margin: 2px 0; text-transform: uppercase; }
+            .meta-table, .data-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-bottom: 8px; }
+            .meta-table td, .data-table td, .data-table th { border: 1px solid #000; padding: 4px 6px; font-size: 10.5px; }
+            .data-table th { background-color: #f1f5f9; text-transform: uppercase; font-size: 9.5px; }
+            .center { text-align: center; }
+            .good-col { width: 45px; text-align: center; font-weight: bold; }
+            .grid { display: flex; gap: 10px; }
+            .col { flex: 1; }
+            .box { border: 1.5px solid #000; padding: 6px; margin-bottom: 8px; font-size: 10.5px; }
+            .mark { font-weight: 900; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">Car<span>Tech</span></div>
+            <div class="title">DIAGNOSTICS LIST #${diagNumber}</div>
+            <div>${new Date().toLocaleDateString('en-GB').replace(/\//g, '.')}</div>
+          </div>
+
+          <table class="meta-table">
+            <tr>
+              <td width="50%"><strong>CLIENT NAME:</strong> ${job.customer || '-'}</td>
+              <td width="50%"><strong>PHONE NUMBER:</strong> ${job.phone || '-'}</td>
+            </tr>
+            <tr>
+              <td><strong>VEHICLE:</strong> ${job.vehicle || '-'}</td>
+              <td><strong>NUMBER PLATE:</strong> ${job.plate || 'GAA 2776'}</td>
+            </tr>
+            <tr>
+              <td><strong>VIN/CHASSIS NUMBER:</strong> ${job.vin || 'MRHDD4710GP020925'}</td>
+              <td><strong>MILEAGE:</strong> -</td>
+            </tr>
+          </table>
+
+          <div class="box">
+            <div style="display: flex; justify-content: space-between;">
+              <div><strong>COMMENT FROM CLIENT (PROBLEMS):</strong> ${comment}</div>
+              <div style="min-width: 140px; text-align: right;"><strong>Mechanic:</strong> ${assignedMech}</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="col">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>BASIC DIAGNOSTICS</th>
+                    <th class="good-col">GOOD</th>
+                    <th class="good-col">NOT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Wipers (Front)</td><td class="center mark">${chk(d.chk_wiper_f, 'good')}</td><td class="center mark">${chk(d.chk_wiper_f, 'not')}</td></tr>
+                  <tr><td>Wipers (Rear)</td><td class="center mark">${chk(d.chk_wiper_r, 'good')}</td><td class="center mark">${chk(d.chk_wiper_r, 'not')}</td></tr>
+                  <tr><td>CHECK ENGINE</td><td class="center mark">${chk(d.chk_engine, 'good')}</td><td class="center mark">${chk(d.chk_engine, 'not')}</td></tr>
+                  <tr><td>ABS</td><td class="center mark">${chk(d.chk_abs, 'good')}</td><td class="center mark">${chk(d.chk_abs, 'not')}</td></tr>
+                  <tr><td colspan="3"><strong>Other Errors:</strong> ${d.other_errors || '-'}</td></tr>
+                </tbody>
+              </table>
+
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>LIGHTING FIXTURES</th>
+                    <th class="good-col">LEFT</th>
+                    <th class="good-col">RIGHT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Front Lights</td><td class="center mark">${box(d.lights?.front_l)}</td><td class="center mark">${box(d.lights?.front_r)}</td></tr>
+                  <tr><td>Front Signal Lights</td><td class="center mark">${box(d.lights?.sig_f_l)}</td><td class="center mark">${box(d.lights?.sig_f_r)}</td></tr>
+                  <tr><td>Front Fog Lights</td><td class="center mark">${box(d.lights?.fog_f_l)}</td><td class="center mark">${box(d.lights?.fog_f_r)}</td></tr>
+                  <tr><td>Rear Signal Lights</td><td class="center mark">${box(d.lights?.sig_r_l)}</td><td class="center mark">${box(d.lights?.sig_r_r)}</td></tr>
+                  <tr><td>Rear Stop Signal</td><td class="center mark">${box(d.lights?.stop_l)}</td><td class="center mark">${box(d.lights?.stop_r)}</td></tr>
+                  <tr><td>Reverse & Plate Lights</td><td class="center mark">${box(d.lights?.rev_l)}</td><td class="center mark">${box(d.lights?.rev_r)}</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>FILTERS & SPARK PLUGS</th>
+                    <th class="good-col">GOOD</th>
+                    <th class="good-col">NOT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Air Filter</td><td class="center mark">${chk(d.chk_air_filter, 'good')}</td><td class="center mark">${chk(d.chk_air_filter, 'not')}</td></tr>
+                  <tr><td>Cabin Filter</td><td class="center mark">${chk(d.chk_cabin_filter, 'good')}</td><td class="center mark">${chk(d.chk_cabin_filter, 'not')}</td></tr>
+                  <tr><td>Fuel Filter</td><td class="center mark">${chk(d.chk_fuel_filter, 'good')}</td><td class="center mark">${chk(d.chk_fuel_filter, 'not')}</td></tr>
+                  <tr><td>Spark Plugs</td><td class="center mark">${chk(d.chk_spark_plugs, 'good')}</td><td class="center mark">${chk(d.chk_spark_plugs, 'not')}</td></tr>
+                </tbody>
+              </table>
+
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>FLUIDS</th>
+                    <th class="good-col">GOOD</th>
+                    <th class="good-col">NOT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Engine Oil</td><td class="center mark">${chk(d.chk_fluid_engine, 'good')}</td><td class="center mark">${chk(d.chk_fluid_engine, 'not')}</td></tr>
+                  <tr><td>Transmission Oil</td><td class="center mark">${chk(d.chk_fluid_trans, 'good')}</td><td class="center mark">${chk(d.chk_fluid_trans, 'not')}</td></tr>
+                  <tr><td>Cooling System Fluid</td><td class="center mark">${chk(d.chk_fluid_coolant, 'good')}</td><td class="center mark">${chk(d.chk_fluid_coolant, 'not')}</td></tr>
+                  <tr><td>Power Steering Fluid</td><td class="center mark">${chk(d.chk_fluid_steering, 'good')}</td><td class="center mark">${chk(d.chk_fluid_steering, 'not')}</td></tr>
+                  <tr><td>Brake Fluid</td><td class="center mark">${chk(d.chk_fluid_brake, 'good')}</td><td class="center mark">${chk(d.chk_fluid_brake, 'not')}</td></tr>
+                </tbody>
+              </table>
+
+              <div class="box">
+                <strong>LEAKING FLUIDS/OIL:</strong> 
+                ${d.leaks?.engine ? '[ Engine Oil ] ' : ''} 
+                ${d.leaks?.trans ? '[ Transmission ] ' : ''} 
+                ${d.leaks?.diff ? '[ Differential ] ' : ''}
+                <div style="margin-top: 4px;"><strong>FROM WHERE:</strong> ${d.leaks?.origin || 'None detected'}</div>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <div class="box" style="flex: 1;">
+                  <strong>TIRES %:</strong><br>
+                  Front: <strong>${d.tires?.front || '80'}%</strong><br>
+                  Rear: <strong>${d.tires?.rear || '80'}%</strong>
+                </div>
+                <div class="box" style="flex: 1;">
+                  <strong>BRAKE SYSTEM %:</strong><br>
+                  Front Pads: <strong>${d.brakes?.front || '70'}%</strong><br>
+                  Rear Shoe: <strong>${d.brakes?.rear || '70'}%</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 6px; font-size: 10px;">
+            <div>Customer Signature: _______________________</div>
+            <div>Inspector / Mechanic Signature: _______________________</div>
+          </div>
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      }, 250);
     }
 
     function handleProfilePhotoUpload(event) {
@@ -1555,7 +1725,6 @@
       const role = acc.role || AUTHORIZED_ROSTER[user] || 'workshop';
       const currentHour = new Date().getHours();
 
-      // Operating Hours Lock: 8:00 AM (8) to 5:00 PM (17)
       if (role !== 'developer' && role !== 'admin') {
         if (currentHour < 8 || currentHour >= 17) {
           if (errorTitle) errorTitle.innerText = "SHOP IS CLOSED (8:00 AM - 5:00 PM)";
@@ -1848,8 +2017,9 @@
       pullData();
     }
 
+    // DIAGNOSTIC ARCHIVE & SEARCH
     function handleDiagnosticSearch() {
-      const query = (document.getElementById('diagSearchInput').value || '').trim().toLowerCase();
+      const query = (document.getElementById('diagSearchInput')?.value || '').trim().toLowerCase();
       const resultsContainer = document.getElementById('diagSearchResults');
       if (!resultsContainer) return;
 
@@ -1879,22 +2049,39 @@
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
             <div>
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-black text-[10px] border border-indigo-200">${diagNumber}</span>
+                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-black text-[10px] border border-indigo-200">#${diagNumber}</span>
                 <span class="font-mono text-slate-400 text-[10px]">${job.id}</span>
                 <strong class="text-slate-900 font-black">${job.vehicle}</strong>
                 <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${job.status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${job.status.toUpperCase()}</span>
               </div>
-              <p class="text-slate-600 mt-1"><strong>Customer:</strong> ${job.customer} • <strong>Mechanic:</strong> ${assignedMech} • <strong>Dispatched:</strong> ${job.time_created || 'Today'}</p>
-              <p class="text-slate-500 text-[11px] mt-0.5"><strong>Instructions:</strong> ${job.details}</p>
+              <p class="text-slate-600 mt-1"><strong>Client:</strong> ${job.customer} • <strong>Mechanic:</strong> ${assignedMech} • <strong>Date:</strong> ${job.time_created || 'Today'}</p>
+              <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
-              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow">
-                <i class="fa-solid fa-file-lines mr-1"></i> View / Print Sheet
+              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1">
+                <i class="fa-solid fa-file-invoice"></i> View / Print Sheet
               </button>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    function handleOfficeQuickDiagLookup() {
+      const q = (document.getElementById('officeQuickDiagInput')?.value || '').trim().toLowerCase();
+      if (!q) return;
+
+      const target = state.find(j => {
+        const pMatch = String(j.phone || '').toLowerCase().includes(q);
+        const dMatch = String(j.details || '').toLowerCase().includes(q);
+        return pMatch || dMatch;
+      });
+
+      if (target) {
+        openDiagnosticSheetModal(target.id);
+      } else {
+        alert(`No diagnostic record found for "#${q}".`);
+      }
     }
 
     function getMechanicActiveCount(mechanicName) {
@@ -1972,7 +2159,7 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // 6. EXACT REPLICA DIAGNOSTIC CONTROLLER
+    // EXACT REPLICA DIAGNOSTIC CONTROLLER
     function openDiagnosticSheetModal(jobId) {
       const job = state.find(j => j.id === jobId);
       if (!job) return;
@@ -2115,7 +2302,6 @@
         savedBy: currentUser || 'mechanic'
       };
 
-      // WHERE IT SAVES: Attached as JSON string directly inside auto_schedule_slot tags
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[DIAG_DATA\][\s\S]*?\[\/DIAG_DATA\]/gi, '')
         .trim();
@@ -2603,28 +2789,6 @@
         });
         elAccContainer.innerHTML = accHTML;
       }
-
-      const elDeletedBin = document.getElementById('devDeletedLogsContainer');
-      if (elDeletedBin) {
-        if (!cachedDeletedLogs || cachedDeletedLogs.length === 0) {
-          elDeletedBin.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No deleted customer logs in recovery bin.</p>`;
-        } else {
-          elDeletedBin.innerHTML = cachedDeletedLogs.map(delJob => `
-            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="font-mono font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">${delJob.id}</span>
-                  <strong class="text-slate-900 font-black">${delJob.vehicle}</strong>
-                </div>
-                <p class="text-slate-500 text-[11px] mt-0.5">Customer: <span class="text-slate-800 font-bold">${delJob.customer}</span> • Deleted: ${delJob.deletedAt || 'Recently'}</p>
-              </div>
-              <button onclick="devRestoreCustomerLog('${delJob.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition whitespace-nowrap">
-                <i class="fa-solid fa-rotate-left"></i> Restore
-              </button>
-            </div>
-          `).join('');
-        }
-      }
     }
 
     function render() {
@@ -2728,7 +2892,6 @@
         }).join('');
       }
 
-      // FEATURE FLAG PERMISSION CHECK
       const canViewDigitalDiagnostic = featureFlags.diagnosticV2Enabled || currentRole === 'developer';
 
       // Office Queue List Renderer
@@ -2746,7 +2909,7 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList, diagData } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
@@ -2757,14 +2920,6 @@
             }
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
-
-            let deleteBtn = "";
-            if (j.status === 'completed') {
-              deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>`;
-            }
 
             let printDiagBtn = "";
             if (canViewDigitalDiagnostic) {
@@ -2821,7 +2976,6 @@
                   <div class="flex items-center gap-1.5">
                     ${badge}
                     ${printDiagBtn}
-                    ${deleteBtn}
                   </div>
                 </div>
 
@@ -3019,7 +3173,6 @@
       const now = Date.now();
       const currentHour = new Date().getHours();
 
-      // 5:00 PM (17:00) to 8:00 AM (08:00) automatic logout
       if (currentRole !== 'developer' && currentRole !== 'admin') {
         if (currentHour >= 17 || currentHour < 8) {
           alert("Have a nice Day, come back tomorrow!");
