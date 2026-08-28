@@ -40,8 +40,6 @@
     .fb-chat-head:hover {
       transform: scale(1.08);
     }
-
-    /* SHAKE ANIMATION FOR LOGIN ATTEMPT WHEN CLOSED */
     @keyframes shake-box {
       0%, 100% { transform: translateX(0); }
       15%, 45%, 75% { transform: translateX(-9px); }
@@ -49,6 +47,28 @@
     }
     .shake-denied {
       animation: shake-box 0.45s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    /* PRINT LAYOUT FOR EXACT PAPER REPLICA */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printableDiagnosticArea, #printableDiagnosticArea * {
+        visibility: visible;
+      }
+      #printableDiagnosticArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: white;
+      }
+      .no-print {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -98,7 +118,6 @@
             </div>
           </div>
 
-          <!-- PROMINENT HIGH-VISIBILITY ERROR & CLOSED BANNER -->
           <div id="loginAuthError" class="hidden p-3.5 bg-rose-50 border-2 border-rose-400 rounded-2xl text-rose-800 space-y-1 shadow-sm transition">
             <div class="flex items-center gap-2 font-black text-xs text-rose-600">
               <i id="loginAuthErrorIcon" class="fa-solid fa-door-closed text-sm animate-bounce"></i>
@@ -196,7 +215,7 @@
 
   <!-- 2. MAIN APPLICATION -->
   <div id="appShell" class="hidden min-h-screen flex flex-col">
-    <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg">
+    <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg no-print">
       <div class="flex items-center space-x-3">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-base font-bold shadow-md shadow-orange-500/20">
           <i class="fa-solid fa-wrench"></i>
@@ -221,7 +240,7 @@
     </header>
 
     <!-- DEVELOPER & ADMIN VIEW -->
-    <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
+    <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full no-print">
       <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
@@ -231,14 +250,6 @@
           <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <a id="btnExcelDiagnostic" href="https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl" target="_blank" rel="noopener noreferrer" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-emerald-200 transition shadow-sm">
-            <i class="fa-solid fa-file-excel text-emerald-600"></i> Excel Diagnostic Form
-          </a>
-
-          <a id="btnExcelSuspension" href="https://forms.cloud.microsoft/?redirecturl=https%3a%2f%2fforms.cloud.microsoft%2fPages%2fDesignPageV2.aspx%3fsubpage%3ddesign%26token%3dd682286b8404499d95270892a7a77976%26id%3dDQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixURDdGQlVVVUZFQTlVQTM2NzZJSUM2SlBPTi4u%26analysis%3dfalse&auth_pvr=WindowsLiveId" target="_blank" rel="noopener noreferrer" class="bg-teal-50 text-teal-700 hover:bg-teal-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-teal-200 transition shadow-sm">
-            <i class="fa-solid fa-file-excel text-teal-600"></i> Suspension EXEL
-          </a>
-
           <button onclick="pullData(true)" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition cursor-pointer">
             <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
           </button>
@@ -251,31 +262,31 @@
         </div>
       </div>
 
-      <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
-      <div id="devFeatureFlagCard" class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-5 rounded-3xl border border-indigo-500/30 shadow-lg space-y-3">
-        <div class="flex justify-between items-center border-b border-indigo-800/60 pb-2.5">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+      <!-- DEVELOPER FEATURE FLAG MANAGEMENT (ROLLOUT TOGGLE) -->
+      <div id="devFeatureFlagCard" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl border border-indigo-500/30 shadow-xl space-y-4">
+        <div class="flex justify-between items-center border-b border-indigo-800/60 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-indigo-500/30 text-indigo-300 flex items-center justify-center text-sm">
               <i class="fa-solid fa-flask-vial"></i>
             </div>
             <div>
-              <h3 class="font-black text-sm text-white">Interactive Diagnostic Inspection Sheet Feature Toggle</h3>
-              <p class="text-[11px] text-indigo-200">Test the digital CarTech inspection form before rolling out shop-wide.</p>
+              <h3 class="font-black text-sm text-white">Paper-Replica Diagnostic Form & Office Print Module</h3>
+              <p class="text-[11px] text-indigo-200">Control release across Mechanic Bay tablets and Office Terminal.</p>
             </div>
           </div>
-          <span id="featureStatusBadge" class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
+          <span id="featureStatusBadge" class="text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
             Dev Test Only
           </span>
         </div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white/5 rounded-2xl border border-white/10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
           <div>
             <span class="font-bold text-xs text-white flex items-center gap-1.5">
-              <i class="fa-solid fa-clipboard-list text-orange-400"></i> Full Digital Inspection Checklist Form
+              <i class="fa-solid fa-clipboard-check text-orange-400"></i> CarTech Official Paper-Look Inspection Form + 1-Click Office Print
             </span>
-            <p class="text-[11px] text-slate-300">Basic Diagnostics, Lighting, Fluids, Leaks, Belts, Tires %, and Brake System.</p>
+            <p class="text-[11px] text-slate-300">Saves directly into job queue records and allows instant printouts for customers.</p>
           </div>
-          <button onclick="toggleMechanicDiagnosticFeature()" id="btnToggleDiagnosticFeature" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer">
-            🚀 Enable for All Mechanics
+          <button onclick="toggleMechanicDiagnosticFeature()" id="btnToggleDiagnosticFeature" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs transition shadow-lg whitespace-nowrap cursor-pointer">
+            🚀 Apply Feature to All Mechanics & Office
           </button>
         </div>
       </div>
@@ -441,7 +452,7 @@
     </main>
 
     <!-- OFFICE VIEW -->
-    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
+    <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full no-print">
       <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
@@ -458,7 +469,7 @@
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Customer name *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-regular fa-user text-xs"></i></span>
-              <input id="inCust" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <input id="inCust" required placeholder="e.g. Ariel Selman" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
             </div>
           </div>
 
@@ -466,7 +477,7 @@
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Diagnostic Number *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-hashtag text-xs"></i></span>
-              <input id="inDiag" required placeholder="e.g. B1145, DIAG-001" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <input id="inDiag" required placeholder="e.g. B786, B1145" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
             </div>
           </div>
 
@@ -474,13 +485,13 @@
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Vehicle Model / Unit *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-car-side text-xs"></i></span>
-              <input id="inVeh" required placeholder="e.g. Toyota Vios, Ranger Raptor" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <input id="inVeh" required placeholder="e.g. Car Honda Mobilio" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
             </div>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Job Instructions / Complaints *</label>
-            <textarea id="inDetails" rows="3" required placeholder="Enter repair instructions, service requests, or complaints..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800"></textarea>
+            <textarea id="inDetails" rows="3" required placeholder="e.g. Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800"></textarea>
           </div>
 
           <button id="btnDispatch" type="submit" class="w-full bg-[#0b1329] hover:bg-[#15234d] text-white font-bold py-3 rounded-2xl transition duration-150 flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/10 text-xs md:text-sm cursor-pointer">
@@ -551,7 +562,7 @@
     </main>
 
     <!-- MECHANIC WORKSHOP -->
-    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
+    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full no-print">
       <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
@@ -588,31 +599,11 @@
         </button>
       </div>
 
-      <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
-            <i class="fa-solid fa-mobile-screen-button text-white"></i>
-          </div>
-          <div>
-            <h3 class="font-black text-sm leading-tight">Install CARTECH App</h3>
-            <p class="text-[11px] text-orange-100 mt-0.5">Tap install to download Android application.</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button onclick="triggerPwaInstallPrompt()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-3.5 py-2 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-download text-orange-600"></i> Install
-          </button>
-          <button onclick="dismissInstallBannerManually()" class="w-8 h-8 rounded-full bg-black/20 text-white hover:bg-black/30 flex items-center justify-center text-xs font-bold cursor-pointer" title="Hide">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-
       <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), request parts, or mark completed.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), record diagnostics, or mark completed.</p>
         </div>
         <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
@@ -624,7 +615,7 @@
   </div>
 
   <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW -->
-  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
+  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300 no-print">
     <div class="p-3 bg-slate-900 text-white flex items-center justify-between shadow select-none cursor-pointer" onclick="minimizeMessengerChat()">
       <div class="flex items-center space-x-2.5">
         <div id="modalAvatarCircle" class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs uppercase border border-indigo-300">
@@ -660,7 +651,7 @@
   </div>
 
   <!-- 4. FLOATING FACEBOOK CHAT HEAD -->
-  <div id="fbFloatingBubble" class="hidden fixed bottom-6 right-5 z-50 flex items-center gap-2 cursor-pointer fb-chat-head" onclick="restoreMessengerChat()">
+  <div id="fbFloatingBubble" class="hidden fixed bottom-6 right-5 z-50 flex items-center gap-2 cursor-pointer fb-chat-head no-print" onclick="restoreMessengerChat()">
     <div class="relative">
       <div id="fbBubbleAvatar" class="w-14 h-14 rounded-full bg-gradient-to-tr from-slate-900 to-indigo-900 text-white font-black text-base flex items-center justify-center uppercase shadow-2xl border-2 border-white ring-4 ring-indigo-600/30">
         M
@@ -673,7 +664,7 @@
   </div>
 
   <!-- 5. MODAL: PARTS REQUEST -->
-  <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div>
@@ -695,7 +686,6 @@
         <div>
           <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Max 10 Photos - Auto Compressed)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
-          
           <div id="partPhotosGrid" class="grid grid-cols-4 gap-2 mt-2.5"></div>
         </div>
       </div>
@@ -707,217 +697,276 @@
     </div>
   </div>
 
-  <!-- 6. NEW DIGITAL DIAGNOSTIC INSPECTION SHEET MODAL -->
-  <div id="diagnosticSheetModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 overflow-y-auto">
-    <div class="w-full max-w-4xl bg-white rounded-3xl p-5 md:p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto border border-slate-200" onclick="event.stopPropagation()">
+  <!-- 6. EXACT REPLICA: CARTECH DIAGNOSTICS LIST PAPER MODAL & PRINT CONTAINER -->
+  <div id="diagnosticSheetModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-6 overflow-y-auto no-print">
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-4 md:p-6 space-y-4 max-h-[94vh] overflow-y-auto border border-slate-300" onclick="event.stopPropagation()">
       
-      <!-- Sheet Header -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-200 gap-3">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-white text-lg font-bold shadow-md">
-            <i class="fa-solid fa-clipboard-check"></i>
-          </div>
-          <div>
-            <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight">CarTech Diagnostics Inspection List</h2>
-            <p class="text-[11px] text-slate-500">Interactive workshop floor vehicle health check</p>
-          </div>
+      <!-- Top Actions -->
+      <div class="flex justify-between items-center border-b border-slate-200 pb-3 no-print">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-black uppercase text-orange-600 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200">
+            <i class="fa-solid fa-clipboard-check mr-1"></i> Official CarTech Inspection Form
+          </span>
         </div>
-        <div class="flex items-center gap-2 self-end md:self-center">
-          <span class="text-xs font-mono font-black bg-indigo-50 text-indigo-700 px-3 py-1 rounded-xl border border-indigo-200" id="diagSheetJobId">JB-000</span>
-          <button onclick="closeDiagnosticSheetModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold cursor-pointer">
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="printDiagnosticReport()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition cursor-pointer">
+            <i class="fa-solid fa-print text-orange-400"></i> Print Document
+          </button>
+          <button type="button" onclick="closeDiagnosticSheetModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold cursor-pointer">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
       </div>
 
-      <!-- Vehicle & Client Info Header -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
-        <div><strong class="text-slate-400 uppercase text-[10px] block">Client Name:</strong> <span id="diagClientName" class="font-black text-slate-900">-</span></div>
-        <div><strong class="text-slate-400 uppercase text-[10px] block">Vehicle Model / Unit:</strong> <span id="diagVehicleName" class="font-black text-slate-900">-</span></div>
-        <div><strong class="text-slate-400 uppercase text-[10px] block">Diagnostic # / Phone:</strong> <span id="diagNumberBadge" class="font-black text-indigo-600">-</span></div>
-      </div>
+      <!-- Printable Exact Paper Document Form -->
+      <div id="printableDiagnosticArea" class="bg-white text-slate-900 p-2 md:p-4 text-xs font-sans border-2 border-slate-900 rounded-lg space-y-3">
+        
+        <!-- Document Header Replica -->
+        <div class="text-center space-y-0.5 border-b-2 border-slate-900 pb-2.5">
+          <div class="flex items-center justify-center space-x-2">
+            <div class="w-7 h-7 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white text-xs font-black shadow">
+              <i class="fa-solid fa-wrench"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight"><span class="text-slate-900">Car</span><span class="text-orange-600">Tech</span></h1>
+          </div>
+          <h2 class="text-sm font-black uppercase tracking-wider text-slate-900" id="paperDiagListHeader">DIAGNOSTICS LIST #B786</h2>
+          <p class="text-[10px] font-bold text-slate-600" id="paperDiagDate">06.06.2026</p>
+        </div>
 
-      <!-- Inspection Sections Grid -->
-      <form id="diagnosticFormElement" onsubmit="saveDiagnosticSheet(event); return false;" class="space-y-6">
-        <input type="hidden" id="diagFormTargetJobId">
+        <!-- Metadata Table Replica -->
+        <div class="grid grid-cols-2 border border-slate-900 text-[11px] font-semibold divide-x divide-slate-900">
+          <div class="divide-y divide-slate-900">
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Client Name:</strong> <span id="paperClientName" class="font-bold text-slate-900">-</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Vehicle:</strong> <span id="paperVehicleName" class="font-bold text-slate-900">-</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">VIN / Chassis Number:</strong> <span id="paperVinNumber" class="font-mono text-slate-800">N/A</span></div>
+          </div>
+          <div class="divide-y divide-slate-900">
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Phone Number:</strong> <span id="paperPhoneNumber" class="font-bold text-slate-900">-</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Number Plate:</strong> <span id="paperPlateNumber" class="font-bold text-slate-900">N/A</span></div>
+            <div class="p-1.5 flex justify-between"><strong class="uppercase text-slate-600">Mileage:</strong> <span id="paperMileage" class="text-slate-800">-</span></div>
+          </div>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Problem / Client Comment & Mechanic -->
+        <div class="border border-slate-900 p-2 text-[11px] flex flex-col md:flex-row justify-between gap-2 bg-slate-50/50">
+          <div>
+            <strong class="uppercase text-slate-900">Comment from Client (Problems):</strong>
+            <p id="paperClientComment" class="font-medium text-slate-800 mt-0.5">-</p>
+          </div>
+          <div class="md:text-right whitespace-nowrap">
+            <strong class="uppercase text-slate-900">Mechanic:</strong>
+            <span id="paperMechanicName" class="font-black text-indigo-900 uppercase ml-1">-</span>
+          </div>
+        </div>
+
+        <!-- Two Column Main Checklist Tables -->
+        <form id="diagnosticPaperForm" onsubmit="saveDiagnosticSheet(event); return false;">
+          <input type="hidden" id="diagFormTargetJobId">
           
-          <!-- 1. BASIC DIAGNOSTICS -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
-            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-              <i class="fa-solid fa-car-burst text-orange-500"></i> Basic Diagnostics
-            </h4>
-            <div class="space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Wipers (Front)</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_wiper_front" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_wiper_front" value="not"> Bad</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            
+            <!-- LEFT COLUMN: BASIC DIAGNOSTICS & LIGHTING -->
+            <div class="space-y-3">
+              <!-- Basic Diagnostics -->
+              <table class="w-full border border-slate-900 text-[11px]">
+                <thead class="bg-slate-100 border-b border-slate-900 text-[10px] font-black uppercase">
+                  <tr>
+                    <th class="p-1.5 text-left border-r border-slate-900">Basic Diagnostics</th>
+                    <th class="p-1.5 text-center w-14 border-r border-slate-900 text-emerald-700">Good</th>
+                    <th class="p-1.5 text-center w-14 text-rose-700">Not</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-900">
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Wipers (Front)</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_wiper_f" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_wiper_f" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Wipers (Rear)</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_wiper_r" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_wiper_r" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Check Engine</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_engine" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_engine" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">ABS</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_abs" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_abs" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="p-1.5">
+                      <input id="chk_other_errors" placeholder="Other Errors..." class="w-full bg-transparent border-0 p-0 text-[11px] focus:outline-none font-semibold">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Lighting Fixtures -->
+              <table class="w-full border border-slate-900 text-[11px]">
+                <thead class="bg-slate-100 border-b border-slate-900 text-[10px] font-black uppercase">
+                  <tr>
+                    <th class="p-1.5 text-left border-r border-slate-900">Lighting Fixtures</th>
+                    <th class="p-1.5 text-center w-14 border-r border-slate-900">Left</th>
+                    <th class="p-1.5 text-center w-14">Right</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-900">
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Front Lights</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_front_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_front_r" checked></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Front Signal Lights</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_sig_f_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_sig_f_r" checked></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Front Fog Lights</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_fog_f_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_fog_f_r" checked></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Rear Signal Lights</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_sig_r_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_sig_r_r" checked></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Rear Stop / Brake Signal</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_stop_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_stop_r" checked></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Reverse & Plate Lights</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="checkbox" id="light_rev_l" checked></td>
+                    <td class="p-1 text-center"><input type="checkbox" id="light_rev_r" checked></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- RIGHT COLUMN: FILTERS, FLUIDS, LEAKS, TIRES & BRAKES -->
+            <div class="space-y-3">
+              <!-- Filters & Spark Plugs -->
+              <table class="w-full border border-slate-900 text-[11px]">
+                <thead class="bg-slate-100 border-b border-slate-900 text-[10px] font-black uppercase">
+                  <tr>
+                    <th class="p-1.5 text-left border-r border-slate-900">Filters & Spark Plugs</th>
+                    <th class="p-1.5 text-center w-14 border-r border-slate-900 text-emerald-700">Good</th>
+                    <th class="p-1.5 text-center w-14 text-rose-700">Not</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-900">
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Air Filter</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_air_filter" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_air_filter" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Cabin Filter</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_cabin_filter" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_cabin_filter" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Fuel Filter</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fuel_filter" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fuel_filter" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Spark Plugs</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_spark_plugs" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_spark_plugs" value="not"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Fluids -->
+              <table class="w-full border border-slate-900 text-[11px]">
+                <thead class="bg-slate-100 border-b border-slate-900 text-[10px] font-black uppercase">
+                  <tr>
+                    <th class="p-1.5 text-left border-r border-slate-900">Fluids</th>
+                    <th class="p-1.5 text-center w-14 border-r border-slate-900 text-emerald-700">Good</th>
+                    <th class="p-1.5 text-center w-14 text-rose-700">Not</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-900">
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Engine Oil</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_engine" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_engine" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Transmission Oil</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_trans" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_trans" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Cooling System Fluid</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_coolant" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_coolant" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Power Steering Fluid</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_steering" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_steering" value="not"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-1.5 font-medium border-r border-slate-900">Brake Fluid</td>
+                    <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_brake" value="good" checked></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_brake" value="not"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Leaking Fluids / Oil -->
+              <div class="border border-slate-900 p-2 text-[11px] space-y-1">
+                <strong class="uppercase text-slate-900 block text-[10px]">Leaking Fluids / Oil & Origin:</strong>
+                <div class="flex gap-4">
+                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_engine_oil"> Engine Oil</label>
+                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_trans_oil"> Transmission</label>
+                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_diff_oil"> Differential</label>
                 </div>
+                <input id="paperLeakOrigin" placeholder="From Where: e.g. Valve cover gasket, Oil Pan..." class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-[11px] font-semibold mt-1">
               </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Wipers (Rear)</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_wiper_rear" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_wiper_rear" value="not"> Bad</label>
+
+              <!-- Tires & Brakes (%) -->
+              <div class="grid grid-cols-2 gap-2 border border-slate-900 p-2 text-[11px]">
+                <div>
+                  <strong class="uppercase text-slate-900 block text-[10px]">Tires %</strong>
+                  <div class="space-y-1 mt-1">
+                    <div class="flex items-center justify-between"><span>Front:</span> <input id="paperTiresFront" type="number" min="0" max="100" value="80" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
+                    <div class="flex items-center justify-between"><span>Rear:</span> <input id="paperTiresRear" type="number" min="0" max="100" value="80" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
+                  </div>
                 </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Check Engine Light</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_check_engine" value="off" checked> Off</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_check_engine" value="on"> ON</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">ABS Indicator</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_abs" value="off" checked> Off</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_abs" value="on"> ON</label>
+                <div>
+                  <strong class="uppercase text-slate-900 block text-[10px]">Brake System %</strong>
+                  <div class="space-y-1 mt-1">
+                    <div class="flex items-center justify-between"><span>Front Pads:</span> <input id="paperBrakesFront" type="number" min="0" max="100" value="70" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
+                    <div class="flex items-center justify-between"><span>Rear Shoe:</span> <input id="paperBrakesRear" type="number" min="0" max="100" value="70" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 2. LIGHTING FIXTURES -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
-            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-              <i class="fa-solid fa-lightbulb text-amber-500"></i> Lighting Fixtures
-            </h4>
-            <div class="space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Headlights & High Beams</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_headlights" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_headlights" value="not"> Bad</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Signal Lights (Front/Rear)</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_signals" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_signals" value="not"> Bad</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Brake & Stop Lights</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_brakelights" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_brakelights" value="not"> Bad</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Reverse & Plate Lights</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_reverselights" value="good" checked> Good</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_reverselights" value="not"> Bad</label>
-                </div>
-              </div>
-            </div>
+          <!-- Bottom Action Buttons inside Form -->
+          <div class="flex gap-2 pt-3 border-t border-slate-200 no-print">
+            <button type="button" onclick="closeDiagnosticSheetModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-200 cursor-pointer">Cancel</button>
+            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md shadow-indigo-600/20 cursor-pointer">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Save Checklist to Database
+            </button>
           </div>
-
-          <!-- 3. FLUIDS & FILTERS -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
-            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-              <i class="fa-solid fa-oil-can text-indigo-500"></i> Fluids & Filters
-            </h4>
-            <div class="space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Engine Oil Level / Condition</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_engine_oil" value="good" checked> OK</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_engine_oil" value="replace"> Replace</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Cooling System Fluid / Reservoir</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_coolant" value="good" checked> OK</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_coolant" value="low"> Low/Leak</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Air Filter & Cabin Filter</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_filters" value="clean" checked> Clean</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_filters" value="dirty"> Dirty</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. LEAKING FLUIDS & OIL (FROM PAPER) -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5">
-            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-              <i class="fa-solid fa-droplet text-rose-500"></i> Leaking Fluids / Oil
-            </h4>
-            <div class="space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Engine Oil Leak</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_leak_engine" value="none" checked> None</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_leak_engine" value="detected"> Leaking</label>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">Transmission / Differential</span>
-                <div class="flex gap-2">
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-emerald-700"><input type="radio" name="diag_leak_trans" value="none" checked> None</label>
-                  <label class="flex items-center gap-1 cursor-pointer font-bold text-[11px] text-rose-600"><input type="radio" name="diag_leak_trans" value="detected"> Leaking</label>
-                </div>
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Leak Origin / Where Found:</label>
-                <input id="diagLeakWhere" placeholder="e.g. Valve cover gasket, Oil pan, Hose..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-indigo-500">
-              </div>
-            </div>
-          </div>
-
-          <!-- 5. TIRES & BRAKES (%) -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2.5 md:col-span-2">
-            <h4 class="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-              <i class="fa-solid fa-circle-dot text-slate-700"></i> Tires & Brake System Percentage
-            </h4>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Front Tires (%)</label>
-                <input id="diagTireFront" type="number" min="0" max="100" placeholder="e.g. 80" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Rear Tires (%)</label>
-                <input id="diagTireRear" type="number" min="0" max="100" placeholder="e.g. 75" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Front Brake Pads (%)</label>
-                <input id="diagBrakePads" type="number" min="0" max="100" placeholder="e.g. 60" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Rear Brake Pads/Shoe (%)</label>
-                <input id="diagBrakeShoe" type="number" min="0" max="100" placeholder="e.g. 85" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-500">
-              </div>
-            </div>
-          </div>
-
-          <!-- 6. MECHANIC FINDINGS & COMMENTS -->
-          <div class="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 space-y-2 md:col-span-2">
-            <label class="block text-[11px] font-bold uppercase text-slate-800">Mechanic Notes & Recommended Replacements *</label>
-            <textarea id="diagMechanicNotes" rows="3" placeholder="Enter findings, belt condition, suspension bushing details..." class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"></textarea>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-100">
-          <button type="button" onclick="closeDiagnosticSheetModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-2xl text-xs hover:bg-slate-200 cursor-pointer">Cancel</button>
-          <button type="submit" id="btnSaveDiagnostic" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md shadow-indigo-600/20 cursor-pointer">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Save Inspection Sheet
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- 7. LIGHTBOX -->
-  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
+  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 no-print" onclick="closePhotoViewer()">
     <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
       <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
       <button onclick="closePhotoViewer()" class="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-white text-slate-900 rounded-full w-9 h-9 md:w-11 md:h-11 flex items-center justify-center font-black shadow-2xl text-base md:text-lg border-2 border-slate-900 hover:bg-slate-200 transition cursor-pointer">
@@ -927,8 +976,6 @@
   </div>
 
   <script>
-    const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
-
     const DEFAULT_ROSTER = {
       "dev": "developer",
       "admin": "admin",
@@ -969,47 +1016,20 @@
       diagnosticV2Enabled: false
     };
 
-    const TUCSON_10_PART_PHOTOS = [
-      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=150&q=80"
-    ];
-
     const CORE_INITIAL_JOBS = [
       {
         id: "JB-408",
-        customer: "Arian Lumanta",
-        phone: "B1145",
-        vehicle: "Hyundai Tucson",
-        plate: "CAR-408",
-        service: "Major Overhaul & Bushing",
+        customer: "Ariel Selman",
+        phone: "+63 950 386 1681",
+        vehicle: "Car Honda Mobilio",
+        plate: "GAA 2776",
+        service: "Major Service & Diagnostics",
         est_time: 120,
         priority: "Normal",
-        details: "[DIAG: B1145] Need to Change: -valve cover gasket -replace brake fluids & bleeding -air filter -cab filter -lower arm bushing -coolant recommend replace (no coolant in reservoir as of the moment) -lower hose (pdong sa radiator) -EGR Cleaning (need pani ug confirmation sa owner)",
+        details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Lower Arm Bushing Valve Cover Gasket Intake Gasket steel INJECTOR Oil Seal Thermostat [MECH:charl] [IMGS]${JSON.stringify(TUCSON_10_PART_PHOTOS)}[/IMGS] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
-        time_created: "11:14 PM"
-      },
-      {
-        id: "JB-613",
-        customer: "Rey Buscabus",
-        phone: "B1146",
-        vehicle: "Traviz",
-        plate: "TRV-613",
-        service: "Oil & Brake Cleaning",
-        est_time: 45,
-        priority: "Normal",
-        details: "[DIAG: B1146] Change Engine Oil (5L), Brake Cleaning, Safety Check.",
-        status: "completed",
-        auto_schedule_slot: "Completed Service [MECH:rocky]",
-        time_created: "09:45 AM"
+        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
+        time_created: "02:05 PM"
       }
     ];
 
@@ -1020,9 +1040,6 @@
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
-    let wakeLock = null;
-    let deferredPwaPrompt = null;
-    let swRegistration = null;
     let previousCompletedJobCount = null;
     let activeModalChatJobId = null;
     let isChatMinimizedToBubble = false;
@@ -1048,21 +1065,6 @@
 
     function saveLastSeenChats() {
       localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
-    }
-
-    function isAppAlreadyInstalled() {
-      return window.matchMedia('(display-mode: standalone)').matches || 
-             window.navigator.standalone === true || 
-             window.navigator.standalone ||
-             localStorage.getItem('cartech_app_installed') === 'true';
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then((reg) => {
-          swRegistration = reg;
-        }).catch((err) => {});
-      });
     }
 
     // ROBUST CLOUD TELEMETRY & SYNC ENGINE
@@ -1094,10 +1096,7 @@
                 } catch(e){}
               }
               if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-                try { 
-                  const pParsed = JSON.parse(rec.details);
-                  cachedCloudPresence = { ...cachedCloudPresence, ...pParsed };
-                } catch(e){}
+                try { cachedCloudPresence = { ...cachedCloudPresence, ...JSON.parse(rec.details) }; } catch(e){}
               }
               if (rec.id === AVATARS_RECORD_ID && rec.details) {
                 try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
@@ -1153,10 +1152,15 @@
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(payload)
         });
-        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics can now see the Digital Inspection Checklist." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
+        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics & office can now view/print the official Diagnostic Paper Form." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
       } catch(err) {
         alert("Error syncing feature state to cloud.");
       }
+    }
+
+    // PRINT DIAGNOSTIC REPORT REPLICA
+    function printDiagnosticReport() {
+      window.print();
     }
 
     function handleProfilePhotoUpload(event) {
@@ -1510,7 +1514,6 @@
       triggerFastDoorbellSound();
     }
 
-    // FUNCTION TO TRIGGER VISUAL SHAKE ANIMATION & BUZZ
     function triggerLoginShakeEffect() {
       const card = document.getElementById('loginCardWrapper');
       if (card) {
@@ -1523,12 +1526,8 @@
       }
     }
 
-    // SAFE AUTHENTICATION HANDLERS PREVENTING REFRESH & ENFORCING OPERATING HOURS
     async function handleAuthLogin(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      if (e) { e.preventDefault(); e.stopPropagation(); }
 
       const user = (document.getElementById('loginUsername')?.value || '').trim().toLowerCase();
       const pass = (document.getElementById('loginPassword')?.value || '').trim();
@@ -1585,10 +1584,7 @@
     }
 
     async function handleAuthRegister(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      if (e) { e.preventDefault(); e.stopPropagation(); }
 
       const exactName = (document.getElementById('regName')?.value || '').trim().toLowerCase();
       const pass = (document.getElementById('regPassword')?.value || '').trim();
@@ -1830,14 +1826,14 @@
     async function devQuickDispatchTest() {
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
-        customer: "Test Customer",
-        phone: "B1145",
-        vehicle: "Toyota Fortuner",
-        plate: "DEV-TEST",
-        service: "Diagnostic Flow",
+        customer: "Ariel Selman",
+        phone: "B786",
+        vehicle: "Car Honda Mobilio",
+        plate: "GAA 2776",
+        service: "Diagnostics List",
         est_time: 30,
         priority: "High",
-        details: "[DIAG: B1145] Automated test dispatch.",
+        details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: null
@@ -1892,8 +1888,8 @@
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Instructions:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
-              <button onclick="navigator.clipboard.writeText(\`${job.customer} - ${job.vehicle} [${diagNumber}]\`); alert('📋 Customer record copied!');" class="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold transition">
-                <i class="fa-solid fa-copy mr-1"></i> Copy
+              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow">
+                <i class="fa-solid fa-file-lines mr-1"></i> View / Print Sheet
               </button>
             </div>
           </div>
@@ -1928,12 +1924,14 @@
         let tags = `Bay #1 [MECH:${mech.toLowerCase()}]`;
         if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
         if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
+        if (info.diagData) tags += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
         slot = tags;
       } else if (newStatus === 'completed') {
         let tags = `Completed Service [MECH:${mech.toLowerCase()}]`;
         if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
         if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
+        if (info.diagData) tags += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
         slot = tags;
         playLoudVehicleHorn();
@@ -1974,22 +1972,90 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // 6. DIGITAL DIAGNOSTIC INSPECTION SHEET CONTROLLERS
+    // 6. EXACT REPLICA DIAGNOSTIC CONTROLLER
     function openDiagnosticSheetModal(jobId) {
       const job = state.find(j => j.id === jobId);
       if (!job) return;
 
-      document.getElementById('diagFormTargetJobId').value = jobId;
-      document.getElementById('diagSheetJobId').innerText = job.id;
-      document.getElementById('diagClientName').innerText = job.customer || 'Customer';
-      document.getElementById('diagVehicleName').innerText = job.vehicle || 'Vehicle';
-      document.getElementById('diagNumberBadge').innerText = job.phone || 'DIAG';
+      const info = parsePartsInfo(job.auto_schedule_slot);
+      const diagNumber = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'B786');
+      const assignedMech = resolveMechanicName(job) || currentUser || '-';
 
-      // Parse existing inspection notes if already logged
-      const currentNotes = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '';
-      document.getElementById('diagMechanicNotes').value = currentNotes;
+      document.getElementById('diagFormTargetJobId').value = jobId;
+      document.getElementById('paperDiagListHeader').innerText = `DIAGNOSTICS LIST #${diagNumber}`;
+      document.getElementById('paperDiagDate').innerText = new Date().toLocaleDateString('en-GB').replace(/\//g, '.');
+
+      document.getElementById('paperClientName').innerText = job.customer || 'Ariel Selman';
+      document.getElementById('paperVehicleName').innerText = job.vehicle || 'Car Honda Mobilio';
+      document.getElementById('paperPhoneNumber').innerText = job.phone || '+63 950 386 1681';
+      document.getElementById('paperPlateNumber').innerText = job.plate || 'GAA 2776';
+      document.getElementById('paperVinNumber').innerText = job.vin || 'MRHDD4710GP020925';
+      document.getElementById('paperClientComment').innerText = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : 'Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket';
+      document.getElementById('paperMechanicName').innerText = assignedMech;
+
+      // Hydrate from existing DIAG_DATA if present
+      if (info.diagData) {
+        const d = info.diagData;
+        if (d.chk_wiper_f) setRadioVal('chk_wiper_f', d.chk_wiper_f);
+        if (d.chk_wiper_r) setRadioVal('chk_wiper_r', d.chk_wiper_r);
+        if (d.chk_engine) setRadioVal('chk_engine', d.chk_engine);
+        if (d.chk_abs) setRadioVal('chk_abs', d.chk_abs);
+        if (d.other_errors) document.getElementById('chk_other_errors').value = d.other_errors;
+
+        if (d.lights) {
+          document.getElementById('light_front_l').checked = !!d.lights.front_l;
+          document.getElementById('light_front_r').checked = !!d.lights.front_r;
+          document.getElementById('light_sig_f_l').checked = !!d.lights.sig_f_l;
+          document.getElementById('light_sig_f_r').checked = !!d.lights.sig_f_r;
+          document.getElementById('light_fog_f_l').checked = !!d.lights.fog_f_l;
+          document.getElementById('light_fog_f_r').checked = !!d.lights.fog_f_r;
+          document.getElementById('light_sig_r_l').checked = !!d.lights.sig_r_l;
+          document.getElementById('light_sig_r_r').checked = !!d.lights.sig_r_r;
+          document.getElementById('light_stop_l').checked = !!d.lights.stop_l;
+          document.getElementById('light_stop_r').checked = !!d.lights.stop_r;
+          document.getElementById('light_rev_l').checked = !!d.lights.rev_l;
+          document.getElementById('light_rev_r').checked = !!d.lights.rev_r;
+        }
+
+        if (d.chk_air_filter) setRadioVal('chk_air_filter', d.chk_air_filter);
+        if (d.chk_cabin_filter) setRadioVal('chk_cabin_filter', d.chk_cabin_filter);
+        if (d.chk_fuel_filter) setRadioVal('chk_fuel_filter', d.chk_fuel_filter);
+        if (d.chk_spark_plugs) setRadioVal('chk_spark_plugs', d.chk_spark_plugs);
+
+        if (d.chk_fluid_engine) setRadioVal('chk_fluid_engine', d.chk_fluid_engine);
+        if (d.chk_fluid_trans) setRadioVal('chk_fluid_trans', d.chk_fluid_trans);
+        if (d.chk_fluid_coolant) setRadioVal('chk_fluid_coolant', d.chk_fluid_coolant);
+        if (d.chk_fluid_steering) setRadioVal('chk_fluid_steering', d.chk_fluid_steering);
+        if (d.chk_fluid_brake) setRadioVal('chk_fluid_brake', d.chk_fluid_brake);
+
+        if (d.leaks) {
+          document.getElementById('leak_engine_oil').checked = !!d.leaks.engine;
+          document.getElementById('leak_trans_oil').checked = !!d.leaks.trans;
+          document.getElementById('leak_diff_oil').checked = !!d.leaks.diff;
+          document.getElementById('paperLeakOrigin').value = d.leaks.origin || '';
+        }
+
+        if (d.tires) {
+          document.getElementById('paperTiresFront').value = d.tires.front || '80';
+          document.getElementById('paperTiresRear').value = d.tires.rear || '80';
+        }
+        if (d.brakes) {
+          document.getElementById('paperBrakesFront').value = d.brakes.front || '70';
+          document.getElementById('paperBrakesRear').value = d.brakes.rear || '70';
+        }
+      }
 
       document.getElementById('diagnosticSheetModal').classList.remove('hidden');
+    }
+
+    function setRadioVal(name, val) {
+      const el = document.querySelector(`input[name="${name}"][value="${val}"]`);
+      if (el) el.checked = true;
+    }
+
+    function getRadioVal(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : 'good';
     }
 
     function closeDiagnosticSheetModal() {
@@ -2002,27 +2068,71 @@
       const currentItem = state.find(j => j.id === jobId);
       if (!currentItem) return;
 
-      const leakWhere = document.getElementById('diagLeakWhere').value.trim();
-      const tFront = document.getElementById('diagTireFront').value || '80';
-      const tRear = document.getElementById('diagTireRear').value || '80';
-      const bPads = document.getElementById('diagBrakePads').value || '70';
-      const bShoe = document.getElementById('diagBrakeShoe').value || '70';
-      const notes = document.getElementById('diagMechanicNotes').value.trim();
+      const diagPayload = {
+        chk_wiper_f: getRadioVal('chk_wiper_f'),
+        chk_wiper_r: getRadioVal('chk_wiper_r'),
+        chk_engine: getRadioVal('chk_engine'),
+        chk_abs: getRadioVal('chk_abs'),
+        other_errors: document.getElementById('chk_other_errors').value.trim(),
+        lights: {
+          front_l: document.getElementById('light_front_l').checked,
+          front_r: document.getElementById('light_front_r').checked,
+          sig_f_l: document.getElementById('light_sig_f_l').checked,
+          sig_f_r: document.getElementById('light_sig_f_r').checked,
+          fog_f_l: document.getElementById('light_fog_f_l').checked,
+          fog_f_r: document.getElementById('light_fog_f_r').checked,
+          sig_r_l: document.getElementById('light_sig_r_l').checked,
+          sig_r_r: document.getElementById('light_sig_r_r').checked,
+          stop_l: document.getElementById('light_stop_l').checked,
+          stop_r: document.getElementById('light_stop_r').checked,
+          rev_l: document.getElementById('light_rev_l').checked,
+          rev_r: document.getElementById('light_rev_r').checked
+        },
+        chk_air_filter: getRadioVal('chk_air_filter'),
+        chk_cabin_filter: getRadioVal('chk_cabin_filter'),
+        chk_fuel_filter: getRadioVal('chk_fuel_filter'),
+        chk_spark_plugs: getRadioVal('chk_spark_plugs'),
+        chk_fluid_engine: getRadioVal('chk_fluid_engine'),
+        chk_fluid_trans: getRadioVal('chk_fluid_trans'),
+        chk_fluid_coolant: getRadioVal('chk_fluid_coolant'),
+        chk_fluid_steering: getRadioVal('chk_fluid_steering'),
+        chk_fluid_brake: getRadioVal('chk_fluid_brake'),
+        leaks: {
+          engine: document.getElementById('leak_engine_oil').checked,
+          trans: document.getElementById('leak_trans_oil').checked,
+          diff: document.getElementById('leak_diff_oil').checked,
+          origin: document.getElementById('paperLeakOrigin').value.trim()
+        },
+        tires: {
+          front: document.getElementById('paperTiresFront').value,
+          rear: document.getElementById('paperTiresRear').value
+        },
+        brakes: {
+          front: document.getElementById('paperBrakesFront').value,
+          rear: document.getElementById('paperBrakesRear').value
+        },
+        savedAt: new Date().toLocaleString(),
+        savedBy: currentUser || 'mechanic'
+      };
 
-      const diagNum = currentItem.phone || 'DIAG';
-      const compiledDetails = `[DIAG: ${diagNum}] Tires: F(${tFront}%) R(${tRear}%) | Brakes: Pads(${bPads}%) Shoe(${bShoe}%) | Leaks: ${leakWhere || 'None'} | Notes: ${notes || 'Standard Inspection OK'}`;
+      // WHERE IT SAVES: Attached as JSON string directly inside auto_schedule_slot tags
+      let slotBase = (currentItem.auto_schedule_slot || "")
+        .replace(/\[DIAG_DATA\][\s\S]*?\[\/DIAG_DATA\]/gi, '')
+        .trim();
+
+      const newSlotPayload = `${slotBase} [DIAG_DATA]${JSON.stringify(diagPayload)}[/DIAG_DATA]`;
 
       pendingPatchTimeouts[jobId] = Date.now();
-      state = state.map(j => (j.id === jobId ? { ...j, details: compiledDetails } : j));
+      state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
       render();
       closeDiagnosticSheetModal();
-      alert("✅ Diagnostic Inspection Sheet saved & synced to office log!");
+      alert("✅ CarTech Diagnostics List saved & synced directly to cloud job record!");
 
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
           method: "PATCH",
           headers: HEADERS,
-          body: JSON.stringify({ details: compiledDetails })
+          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch(err){}
       pullData();
@@ -2141,96 +2251,6 @@
       document.getElementById('photoViewerModal').classList.add('hidden');
     }
 
-    async function deleteSingleRecord(id) {
-      if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
-      const targetJob = state.find(j => j.id === id);
-
-      if (targetJob) {
-        cachedDeletedLogs.unshift({
-          ...targetJob,
-          deletedAt: new Date().toLocaleString(),
-          deletedBy: currentUser || 'staff'
-        });
-
-        const payload = {
-          id: DELETED_LOGS_RECORD_ID,
-          customer: "SYSTEM",
-          phone: "N/A",
-          vehicle: "CLOUD_DELETED_LOGS_RECORD",
-          plate: "N/A",
-          service: "Deleted Logs Bin",
-          est_time: 0,
-          priority: "Normal",
-          details: JSON.stringify(cachedDeletedLogs.slice(0, 30)),
-          status: "system_record",
-          time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          auto_schedule_slot: null
-        };
-
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-            body: JSON.stringify(payload)
-          });
-        } catch (e){}
-      }
-
-      state = state.filter(j => j.id !== id);
-      render();
-      try {
-        await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
-      } catch (err) {}
-      pullData();
-    }
-
-    async function devRestoreCustomerLog(jobId) {
-      if (currentRole !== 'developer') {
-        alert("Permission denied. Only Developer can recover deleted customer logs.");
-        return;
-      }
-      const jobToRestore = cachedDeletedLogs.find(j => j.id === jobId);
-      if (!jobToRestore) return;
-
-      const restoredJob = { ...jobToRestore };
-      delete restoredJob.deletedAt;
-      delete restoredJob.deletedBy;
-
-      cachedDeletedLogs = cachedDeletedLogs.filter(j => j.id !== jobId);
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(restoredJob)
-        });
-
-        const binPayload = {
-          id: DELETED_LOGS_RECORD_ID,
-          customer: "SYSTEM",
-          phone: "N/A",
-          vehicle: "CLOUD_DELETED_LOGS_RECORD",
-          plate: "N/A",
-          service: "Deleted Logs Bin",
-          est_time: 0,
-          priority: "Normal",
-          details: JSON.stringify(cachedDeletedLogs),
-          status: "system_record",
-          time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          auto_schedule_slot: null
-        };
-
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(binPayload)
-        });
-
-        alert(`✅ Customer job [${restoredJob.vehicle} (${restoredJob.customer})] restored back to live queue!`);
-      } catch(e){}
-      pullData();
-    }
-
     function resolveMechanicName(job) {
       if (!job) return null;
       const mMatch = String(job.auto_schedule_slot || '').match(/\[MECH:(.*?)\]/i);
@@ -2238,9 +2258,10 @@
     }
 
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], chatList: [] };
+      if (!rawStr) return { text: '', images: [], chatList: [], diagData: null };
       let images = [];
       let chatList = [];
+      let diagData = null;
       let targetStr = String(rawStr);
 
       const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
@@ -2253,23 +2274,22 @@
         try { chatList = JSON.parse(chatMatch[1]); } catch(e){}
       }
 
-      if (targetStr.includes('[PARTS_LOGGED]')) {
-        const pMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/);
-        if (pMatch) targetStr = pMatch[1];
+      const diagMatch = targetStr.match(/\[DIAG_DATA\]([\s\S]*?)\[\/DIAG_DATA\]/);
+      if (diagMatch) {
+        try { diagData = JSON.parse(diagMatch[1]); } catch(e){}
       }
 
       const text = targetStr
         .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+        .replace(/\[DIAG_DATA\][\s\S]*?\[\/DIAG_DATA\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
-        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
         .replace(/Waiting for Car Parts:/gi, '')
         .replace(/Bay #\d+/gi, '')
         .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, chatList };
+      return { text, images, chatList, diagData };
     }
 
     function openMessengerChatForJob(jobId, mechName) {
@@ -2311,7 +2331,6 @@
       `;
 
       updateModalChatStream(jobId);
-      
       document.getElementById('fbFloatingChatWindow').classList.remove('hidden');
       document.getElementById('fbFloatingBubble').classList.add('hidden');
       
@@ -2403,19 +2422,9 @@
       const currentItem = state.find(j => j.id === activeModalChatJobId);
       if (!currentItem) return;
 
-      const assignedMech = resolveMechanicName(currentItem);
-      const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
-      const isAssignedMechanic = currentUser && assignedMech && (currentUser.toLowerCase() === assignedMech.toLowerCase());
-
-      if (!isManagement && !isAssignedMechanic) {
-        alert("🔒 Unauthorized: You cannot post in this chat.");
-        return;
-      }
-
       const input = document.getElementById('modalChatInput');
       const text = input.value.trim();
       if (!text) return;
-
       input.value = "";
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
@@ -2435,7 +2444,6 @@
 
       let slotBase = (currentItem.auto_schedule_slot || "")
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
-        .replace(/\[OFFICE_MSG:.*?\]/gi, '')
         .trim();
 
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
@@ -2471,15 +2479,15 @@
 
       if (statusBadge && toggleBtn) {
         if (featureFlags.diagnosticV2Enabled) {
-          statusBadge.className = "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-          statusBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Live for All Mechanics`;
-          toggleBtn.className = "bg-rose-500 hover:bg-rose-400 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer";
+          statusBadge.className = "text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+          statusBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Live for All Mechanics & Office`;
+          toggleBtn.className = "bg-rose-500 hover:bg-rose-400 text-white font-black px-4 py-2.5 rounded-xl text-xs transition shadow-lg whitespace-nowrap cursor-pointer";
           toggleBtn.innerText = "🔒 Restrict to Developer Test Only";
         } else {
-          statusBadge.className = "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40";
+          statusBadge.className = "text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40";
           statusBadge.innerHTML = `<i class="fa-solid fa-flask mr-1"></i> Developer Test Only`;
-          toggleBtn.className = "bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md whitespace-nowrap cursor-pointer";
-          toggleBtn.innerText = "🚀 Enable for All Mechanics";
+          toggleBtn.className = "bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs transition shadow-lg whitespace-nowrap cursor-pointer";
+          toggleBtn.innerText = "🚀 Apply Feature to All Mechanics & Office";
         }
       }
 
@@ -2720,6 +2728,9 @@
         }).join('');
       }
 
+      // FEATURE FLAG PERMISSION CHECK
+      const canViewDigitalDiagnostic = featureFlags.diagnosticV2Enabled || currentRole === 'developer';
+
       // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
@@ -2735,7 +2746,7 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
+            const { text: partText, images: partImages, chatList, diagData } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
             if (j.status === 'waiting' && j.auto_schedule_slot === 'Waiting in Parking / Queue') {
@@ -2750,25 +2761,17 @@
             let deleteBtn = "";
             if (j.status === 'completed') {
               deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record (Can be recovered by Dev)">
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>`;
             }
 
-            let devMarkDoneBtn = "";
-            if (currentRole === 'developer' && j.status === 'inprogress') {
-              devMarkDoneBtn = `
-                <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-1.5 px-3 rounded-xl text-xs flex items-center gap-1 shadow-sm transition">
-                  <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done (Dev Override)
+            let printDiagBtn = "";
+            if (canViewDigitalDiagnostic) {
+              printDiagBtn = `
+                <button onclick="openDiagnosticSheetModal('${j.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold py-1.5 px-2.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition" title="Print CarTech Diagnostics List">
+                  <i class="fa-solid fa-print"></i> Print Sheet ${!featureFlags.diagnosticV2Enabled ? '<span class="text-[8px] bg-indigo-200 px-1 rounded font-black text-indigo-900">DEV</span>' : ''}
                 </button>`;
-            }
-
-            let mechanicHighlightTag = "";
-            if (assignedMechanic) {
-              mechanicHighlightTag = `
-                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-user-gear text-emerald-600"></i> Handled by: ${assignedMechanic}
-                </span>`;
             }
 
             let partsSection = "";
@@ -2802,22 +2805,6 @@
                     </button>
                   </div>
                 </div>`;
-            } else if (j.status === 'completed' && (partText || (partImages && partImages.length > 0))) {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-emerald-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              partsSection = `
-                <div class="mt-2.5 bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
-                      <i class="fa-solid fa-box-archive text-emerald-600"></i> Installed / Replaced Car Parts:
-                    </span>
-                    ${partImages.length > 0 ? `<span class="text-[10px] font-bold text-emerald-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>` : ''}
-                  </div>
-                  ${partText ? `<p class="text-xs font-semibold text-emerald-900 bg-white/90 p-2 rounded-xl border border-emerald-100">${partText}</p>` : ''}
-                  ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
-                </div>`;
             }
 
             return `
@@ -2827,20 +2814,19 @@
                     <div class="flex items-center space-x-2">
                       <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
                       <h3 class="font-black text-slate-900 text-sm md:text-base">${j.vehicle}</h3>
-                      ${mechanicHighlightTag}
+                      ${assignedMechanic ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg">Handled by: ${assignedMechanic}</span>` : ''}
                     </div>
                     <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-1.5">
                     ${badge}
-                    ${devMarkDoneBtn}
+                    ${printDiagBtn}
                     ${deleteBtn}
                   </div>
                 </div>
 
                 <div class="bg-slate-50/80 p-2.5 rounded-2xl text-xs space-y-1 text-slate-700 border border-slate-100">
-                  <p><strong>Instructions / Inspection:</strong> ${j.details || 'Standard intake'}</p>
-                  ${j.status === 'completed' && !partText ? `<p class="text-emerald-600 font-bold pt-1 border-t border-slate-200/60 mt-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Completed Service</p>` : ''}
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
                 </div>
                 ${partsSection}
               </div>`;
@@ -2854,9 +2840,6 @@
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
         const myActiveCount = getMechanicActiveCount(currentUser);
         const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
-
-        // FEATURE FLAG PERMISSION CHECK
-        const canViewDigitalDiagnostic = featureFlags.diagnosticV2Enabled || currentRole === 'developer';
 
         if (activeWorkshopJobs.length === 0) {
           wsContainer.innerHTML = `
@@ -2902,8 +2885,8 @@
                     </div>
 
                     ${canViewDigitalDiagnostic ? `
-                      <button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-clipboard-check text-amber-300"></i> Open Digital Inspection Sheet ${!featureFlags.diagnosticV2Enabled ? '<span class="ml-1 text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black">DEV TEST</span>' : ''}
+                      <button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-clipboard-list text-orange-400"></i> Fill Official CarTech Diagnostics List ${!featureFlags.diagnosticV2Enabled ? '<span class="ml-1 text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black">DEV TEST</span>' : ''}
                       </button>
                     ` : ''}
 
@@ -2915,11 +2898,8 @@
                     ` : ''}
 
                     <div class="flex items-center gap-2">
-                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-file-excel"></i> Excel Form
-                      </a>
-                      <button type="button" onclick="setStatus('${j.id}', 'completed')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done
+                      <button type="button" onclick="setStatus('${j.id}', 'completed')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-check-double"></i> Mark Done
                       </button>
                     </div>
                   </div>`;
@@ -2992,7 +2972,7 @@
                   </span>
                 </div>
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions / Inspection:</strong> ${j.details || 'Standard intake'}</p>
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
                 </div>
                 ${actionArea}
               </div>`;
@@ -3026,7 +3006,7 @@
 
     // AUTOMATIC LOGOUT / IDLE TIMEOUT & 5:00 PM SHIFT-END PROTECTOR
     let lastActivityTime = Date.now();
-    const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+    const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
     ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
       window.addEventListener(evt, () => {
