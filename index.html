@@ -361,6 +361,117 @@
         </div>
         <div id="diagSearchResults" class="space-y-2 max-h-[260px] overflow-y-auto"></div>
       </div>
+
+      <!-- SUB-ACCOUNT REGISTRATION & PRESENCE GRID -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-6 space-y-6">
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-indigo-600"></i> Register Sub-Mechanic / Staff
+              </h3>
+              <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Timed Access</span>
+            </div>
+
+            <form onsubmit="handleAdminCreateSubAccount(event); return false;" class="space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Username / Name *</label>
+                  <input id="subUsername" required placeholder="e.g. jomar, tony" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Password *</label>
+                  <input id="subPassword" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Assigned Role *</label>
+                  <select id="subRole" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="workshop">Workshop (Sub-Mechanic)</option>
+                    <option value="office">Office (Front Desk / Staff)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-600 mb-1">Access Duration *</label>
+                  <select id="subDuration" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="4">4 Hours (Half Day)</option>
+                    <option value="8">8 Hours (1 Full Shift)</option>
+                    <option value="24" selected>1 Day (24 Hours - Auto Kickout)</option>
+                    <option value="72">3 Days</option>
+                    <option value="168">1 Week</option>
+                    <option value="0">Permanent (No Expiry)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer">
+                <i class="fa-solid fa-user-check text-xs"></i> Create & Sync Account to Cloud
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-indigo-600"></i> Real-time Staff Activity
+              </h3>
+              <span class="text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">Live Sync</span>
+            </div>
+            <div id="devStaffPresenceList" class="space-y-2.5 max-h-[380px] overflow-y-auto"></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 space-y-6">
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-id-card-clip text-indigo-600"></i> Registered Staff & Active Accounts
+              </h3>
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Cloud Sync</span>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+                <p class="font-bold text-slate-900">Data Management & Recovery Flow:</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button onclick="restoreInitialShopRecords()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-rotate-left"></i> Restore Shop Data
+                  </button>
+                  <button onclick="devQuickDispatchTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-plus"></i> Inject Test Job
+                  </button>
+                </div>
+              </div>
+
+              <div id="developerAccountsWrapper">
+                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Account Registry & Timer Status:</p>
+                <div id="devRegisteredAccountsContainer" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
+              </div>
+
+              <div id="adminRestrictedAccountsNotice" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-center space-y-1">
+                <i class="fa-solid fa-lock text-xl text-amber-600 mb-1"></i>
+                <p class="font-bold">Staff Credentials Protected</p>
+                <p class="text-[11px] text-amber-800">Password registry is restricted to Developer access only.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="devDeletedLogsPanel" class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+              <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-trash-arrow-up text-rose-600"></i> Restore Deleted Customer Logs
+              </h3>
+              <span class="text-[10px] font-bold text-rose-600 uppercase bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200">Dev Recovery Bin</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Recover customer jobs accidentally deleted by front desk or admin.</p>
+            <div id="devDeletedLogsContainer" class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+              <p class="text-xs text-slate-400 italic text-center py-4">No deleted records in recovery bin.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- OFFICE VIEW -->
@@ -420,7 +531,6 @@
           </button>
         </form>
 
-        <!-- QUICK DIAGNOSTIC LOOKUP IN OFFICE -->
         <div class="pt-3 border-t border-slate-200 space-y-2">
           <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <i class="fa-solid fa-folder-open text-indigo-600"></i> Office Diagnostic Archive
@@ -536,7 +646,7 @@
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), record diagnostics, or mark completed.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), request parts, or mark completed.</p>
         </div>
         <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
           <i class="fa-solid fa-bell"></i>
@@ -641,7 +751,7 @@
           </span>
         </div>
         <div class="flex items-center gap-2">
-          <!-- PRINT BUTTON HIDDEN ON MECHANIC VIEW (ONLY DEV/MANAGEMENT SEES THIS) -->
+          <!-- PRINT BUTTON HIDDEN FOR MECHANICS UNLESS FEATURE RELEASED OR DEV -->
           <button id="btnDiagModalPrint" type="button" onclick="printDiagnosticReport()" class="hidden bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition cursor-pointer">
             <i class="fa-solid fa-print text-orange-400"></i> Print Official Document
           </button>
@@ -2074,6 +2184,11 @@
               </div>
               <p class="text-slate-600 mt-1"><strong>Client:</strong> ${job.customer} • <strong>Mechanic:</strong> ${assignedMech} • <strong>Date:</strong> ${job.time_created || 'Today'}</p>
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
+            </div>
+            <div class="flex items-center gap-1.5 self-end sm:self-center">
+              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1">
+                <i class="fa-solid fa-file-invoice"></i> View / Print Sheet
+              </button>
             </div>
           </div>
         `;
