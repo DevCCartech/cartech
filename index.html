@@ -311,6 +311,7 @@
           <span id="featureStatusBadge" class="text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
             Dev Test Only
           </span>
+
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
           <div>
@@ -1749,25 +1750,33 @@
       }
     }
 
-    // 1-TAP FAST LOGIN LOGIC (DEVICE PERSISTENCE)
+    // 1-TAP FAST LOGIN LOGIC (HIDES MANUAL SIGN-IN WHEN REMEMBERED)
     function initRememberedDeviceUI() {
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
       const card = document.getElementById('quickLoginCard');
-      if (!card) return;
+      const authBoxLogin = document.getElementById('authBoxLogin');
+      
+      if (!card || !authBoxLogin) return;
 
       if (rememberedUser && rememberedRole) {
         document.getElementById('quickLoginUsername').innerText = rememberedUser;
         document.getElementById('quickLoginBtnName').innerText = rememberedUser.toUpperCase();
         const avatarEl = document.getElementById('quickLoginAvatar');
-        if (cachedCloudAvatars[rememberedUser]) {
+        
+        if (cachedCloudAvatars && cachedCloudAvatars[rememberedUser]) {
           avatarEl.innerHTML = `<img src="${cachedCloudAvatars[rememberedUser]}" class="w-full h-full object-cover rounded-full">`;
         } else {
           avatarEl.innerText = rememberedUser.charAt(0).toUpperCase();
         }
+        
         card.classList.remove('hidden');
+        // Hide manual username/password form when device is remembered
+        authBoxLogin.classList.add('hidden');
       } else {
         card.classList.add('hidden');
+        // Show manual sign in form if no remembered device exists
+        authBoxLogin.classList.remove('hidden');
       }
     }
 
@@ -1775,6 +1784,8 @@
       localStorage.removeItem('cartech_remembered_device_user');
       localStorage.removeItem('cartech_remembered_device_role');
       document.getElementById('quickLoginCard').classList.add('hidden');
+      // Unhide manual login form when user opts to switch accounts
+      document.getElementById('authBoxLogin').classList.remove('hidden');
     }
 
     async function handleQuickOneTapLogin() {
@@ -1972,7 +1983,6 @@
       document.getElementById('regSuccess').classList.add('hidden');
 
       if (type === 'login') {
-        document.getElementById('authBoxLogin').classList.remove('hidden');
         initRememberedDeviceUI();
       } else if (type === 'register') {
         document.getElementById('authBoxRegister').classList.remove('hidden');
@@ -2778,7 +2788,7 @@
                 ${msg.text}
               </div>
               <button onclick="navigator.clipboard.writeText(\`${msg.text.replace(/`/g, '\\`')}\`); alert('📋 Message copied to clipboard!');" 
-                      class="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center" title="Copy message">
+                    class="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center" title="Copy message">
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
@@ -3270,7 +3280,7 @@
 
                     ${diagButtonHTML}
 
-                    ${(partText || chatList.length > 0) ? `
+                    {(partText || chatList.length > 0) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
                         ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
@@ -3320,7 +3330,7 @@
                     <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    ${(isMyJob || isManagement) ? `
+                    {(isMyJob || isManagement) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
                         ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
