@@ -227,6 +227,9 @@
           <button onclick="pullData(true)" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition cursor-pointer">
             <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
           </button>
+          <button onclick="switchDevToWorkshopSim()" class="bg-indigo-600 text-white hover:bg-indigo-500 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer">
+            <i class="fa-solid fa-wrench"></i> Open Mechanic View
+          </button>
           <button onclick="switchDevToOfficeSim()" class="bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer">
             <i class="fa-solid fa-desktop"></i> Open Front Desk View
           </button>
@@ -1211,7 +1214,7 @@
       triggerFastDoorbellSound();
     }
 
-    // SAFE AUTHENTICATION HANDLERS PREVENTING REFRESH
+    // SAFE AUTHENTICATION HANDLERS PREVENTING REFRESH & ENFORCING OPERATING HOURS
     async function handleAuthLogin(e) {
       if (e) {
         e.preventDefault();
@@ -1236,9 +1239,22 @@
         return false;
       }
 
+      const role = acc.role || AUTHORIZED_ROSTER[user] || 'workshop';
+      const currentHour = new Date().getHours();
+
+      // Operating Hours Lock: 8:00 AM (8) to 5:00 PM (17)
+      // Developer and admin can bypass this restriction
+      if (role !== 'developer' && role !== 'admin') {
+        if (currentHour < 8 || currentHour >= 17) {
+          if (errorMsg) errorMsg.innerText = "Please wait for the shop to open at 8:00 AM.";
+          if (errorElem) errorElem.classList.remove('hidden');
+          return false;
+        }
+      }
+
       if (errorElem) errorElem.classList.add('hidden');
       currentUser = user;
-      currentRole = acc.role || AUTHORIZED_ROSTER[user] || 'workshop';
+      currentRole = role;
 
       localStorage.setItem('cartech_auth_user', currentUser);
       localStorage.setItem('cartech_auth_role', currentRole);
@@ -1328,7 +1344,15 @@
 
     function switchDevToOfficeSim() {
       document.getElementById('viewDeveloper').classList.add('hidden');
+      document.getElementById('viewWorkshop').classList.add('hidden');
       document.getElementById('viewOffice').classList.remove('hidden');
+    }
+
+    function switchDevToWorkshopSim() {
+      document.getElementById('viewDeveloper').classList.add('hidden');
+      document.getElementById('viewOffice').classList.add('hidden');
+      document.getElementById('viewWorkshop').classList.remove('hidden');
+      document.getElementById('workshopStaffName').innerText = "DEV (SIMULATION)";
     }
 
     async function handleLogout() {
@@ -2581,13 +2605,22 @@
 
     syncSystemCloudRecords();
 
+    // AUTO SESSION RESTORE WITH OPERATING HOURS CHECK
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
     if (savedAuthUser && savedAuthRole) {
-      currentUser = savedAuthUser;
-      currentRole = savedAuthRole;
-      bootApp();
+      const currentHour = new Date().getHours();
+      const isManagement = savedAuthRole === 'developer' || savedAuthRole === 'admin';
+
+      if (!isManagement && (currentHour < 8 || currentHour >= 17)) {
+        localStorage.removeItem('cartech_auth_user');
+        localStorage.removeItem('cartech_auth_role');
+      } else {
+        currentUser = savedAuthUser;
+        currentRole = savedAuthRole;
+        bootApp();
+      }
     }
 
     // BANDWIDTH PROTECTOR: 15-SECOND POLLING INTERVAL
@@ -2606,14 +2639,15 @@
     setInterval(() => {
       if (!currentUser) return;
       const now = Date.now();
-      
       const currentHour = new Date().getHours();
-      const currentMinute = new Date().getMinutes();
-      
-      if (currentHour === 17 && currentMinute === 0 && currentRole === 'workshop') {
-        alert("⏰ Shift ended at 5:00 PM. Logging out to preserve bandwidth.");
-        handleLogout();
-        return;
+
+      // 5:00 PM (17:00) to 8:00 AM (08:00) automatic logout
+      if (currentRole !== 'developer' && currentRole !== 'admin') {
+        if (currentHour >= 17 || currentHour < 8) {
+          alert("Have a nice Day, come back tomorrow!");
+          handleLogout();
+          return;
+        }
       }
 
       if (now - lastActivityTime > IDLE_TIMEOUT_MS) {
