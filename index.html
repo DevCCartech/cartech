@@ -40,13 +40,23 @@
     .fb-chat-head:hover {
       transform: scale(1.08);
     }
+
+    /* SHAKE ANIMATION FOR LOGIN ATTEMPT WHEN CLOSED */
+    @keyframes shake-box {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-9px); }
+      30%, 60%, 90% { transform: translateX(9px); }
+    }
+    .shake-denied {
+      animation: shake-box 0.45s cubic-bezier(.36,.07,.19,.97) both;
+    }
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
   <!-- 1. AUTH SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto">
+    <div id="loginCardWrapper" class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto transition-transform">
       
       <div class="flex items-center justify-center space-x-2.5 pb-3 border-b border-slate-200/60">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-sm shadow-md shadow-orange-500/30">
@@ -88,8 +98,13 @@
             </div>
           </div>
 
-          <div id="loginAuthError" class="hidden text-[11px] text-rose-600 font-bold flex items-center">
-            <i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="loginAuthErrorMsg">Invalid username or password.</span>
+          <!-- PROMINENT HIGH-VISIBILITY ERROR & CLOSED BANNER -->
+          <div id="loginAuthError" class="hidden p-3.5 bg-rose-50 border-2 border-rose-400 rounded-2xl text-rose-800 space-y-1 shadow-sm transition">
+            <div class="flex items-center gap-2 font-black text-xs text-rose-600">
+              <i id="loginAuthErrorIcon" class="fa-solid fa-door-closed text-sm animate-bounce"></i>
+              <span id="loginAuthErrorTitle">ACCESS RESTRICTED</span>
+            </div>
+            <p id="loginAuthErrorMsg" class="text-[11px] font-bold text-rose-700 leading-snug">Please wait for the shop to open at 8:00 AM.</p>
           </div>
 
           <button id="btnLoginSubmit" type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-slate-900/20 text-sm cursor-pointer">
@@ -1214,6 +1229,19 @@
       triggerFastDoorbellSound();
     }
 
+    // FUNCTION TO TRIGGER VISUAL SHAKE ANIMATION & BUZZ
+    function triggerLoginShakeEffect() {
+      const card = document.getElementById('loginCardWrapper');
+      if (card) {
+        card.classList.remove('shake-denied');
+        void card.offsetWidth; // Force CSS reflow to retrigger animation
+        card.classList.add('shake-denied');
+      }
+      if ("vibrate" in navigator) {
+        navigator.vibrate([100, 50, 100, 50, 200]);
+      }
+    }
+
     // SAFE AUTHENTICATION HANDLERS PREVENTING REFRESH & ENFORCING OPERATING HOURS
     async function handleAuthLogin(e) {
       if (e) {
@@ -1225,6 +1253,8 @@
       const pass = (document.getElementById('loginPassword')?.value || '').trim();
       const errorElem = document.getElementById('loginAuthError');
       const errorMsg = document.getElementById('loginAuthErrorMsg');
+      const errorTitle = document.getElementById('loginAuthErrorTitle');
+      const errorIcon = document.getElementById('loginAuthErrorIcon');
 
       try {
         await syncSystemCloudRecords();
@@ -1234,8 +1264,11 @@
 
       const acc = cachedCloudAccounts[user];
       if (!acc || acc.pass !== pass) {
-        if (errorMsg) errorMsg.innerText = "Invalid username or password.";
+        if (errorTitle) errorTitle.innerText = "INVALID CREDENTIALS";
+        if (errorIcon) errorIcon.className = "fa-solid fa-circle-exclamation text-sm";
+        if (errorMsg) errorMsg.innerText = "Invalid username or password. Please try again.";
         if (errorElem) errorElem.classList.remove('hidden');
+        triggerLoginShakeEffect();
         return false;
       }
 
@@ -1246,8 +1279,11 @@
       // Developer and admin can bypass this restriction
       if (role !== 'developer' && role !== 'admin') {
         if (currentHour < 8 || currentHour >= 17) {
-          if (errorMsg) errorMsg.innerText = "Please wait for the shop to open at 8:00 AM.";
+          if (errorTitle) errorTitle.innerText = "SHOP IS CLOSED (8:00 AM - 5:00 PM)";
+          if (errorIcon) errorIcon.className = "fa-solid fa-door-closed text-sm animate-bounce";
+          if (errorMsg) errorMsg.innerHTML = "Access locked. Please wait for the shop to open at <strong>8:00 AM</strong>.";
           if (errorElem) errorElem.classList.remove('hidden');
+          triggerLoginShakeEffect();
           return false;
         }
       }
