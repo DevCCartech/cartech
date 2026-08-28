@@ -138,6 +138,7 @@
             </div>
           </div>
 
+          <!-- PROMINENT HIGH-VISIBILITY ERROR & CLOSED BANNER -->
           <div id="loginAuthError" class="hidden p-3.5 bg-rose-50 border-2 border-rose-400 rounded-2xl text-rose-800 space-y-1 shadow-sm transition">
             <div class="flex items-center gap-2 font-black text-xs text-rose-600">
               <i id="loginAuthErrorIcon" class="fa-solid fa-door-closed text-sm animate-bounce"></i>
@@ -1876,7 +1877,6 @@
     let pendingPatchTimeouts = {};
     let isFetchingNetwork = false;
 
-    // BANDWIDTH PROTECTED POLLING ENGINE
     async function pullData(forceTelemetry = false) {
       if (isFetchingNetwork) return;
       isFetchingNetwork = true;
@@ -1941,7 +1941,6 @@
       }
     }
 
-    // CHECK DUPLICATE DIAGNOSTIC NUMBER
     function isDiagnosticNumberDuplicate(diagNum) {
       if (!diagNum) return false;
       const clean = diagNum.trim().toLowerCase();
@@ -1967,7 +1966,6 @@
         return;
       }
 
-      // DUPLICATE PREVENTATION GUARD
       if (isDiagnosticNumberDuplicate(diagVal)) {
         alert(`⚠️ Diagnostic Number [${diagVal}] already exists in the system records! Please use a unique diagnostic number.`);
         document.getElementById('inDiag').focus();
@@ -2031,7 +2029,6 @@
       pullData();
     }
 
-    // RESOLVE STORED VIN NUMBER FROM AUTO_SCHEDULE_SLOT OR RECORD
     function resolveVinNumber(job) {
       if (!job) return "-";
       if (job.vin && job.vin !== "N/A") return job.vin;
@@ -2039,7 +2036,6 @@
       return vMatch ? vMatch[1].toUpperCase() : "-";
     }
 
-    // DIAGNOSTIC ARCHIVE & SEARCH
     function handleDiagnosticSearch() {
       const query = (document.getElementById('diagSearchInput')?.value || '').trim().toLowerCase();
       const resultsContainer = document.getElementById('diagSearchResults');
@@ -2178,7 +2174,6 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // EXACT REPLICA DIAGNOSTIC CONTROLLER
     function openDiagnosticSheetModal(jobId) {
       const job = state.find(j => j.id === jobId);
       if (!job) return;
@@ -2200,14 +2195,12 @@
       document.getElementById('paperClientComment').innerText = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
       document.getElementById('paperMechanicName').innerText = assignedMech;
 
-      // HIDE PRINT BUTTON FOR MECHANICS (ONLY DEVELOPER OR OFFICE CAN PRINT)
       const btnPrint = document.getElementById('btnDiagModalPrint');
       if (btnPrint) {
         const canPrint = (currentRole === 'developer') || (featureFlags.diagnosticV2Enabled && (currentRole === 'office' || currentRole === 'admin'));
         btnPrint.classList.toggle('hidden', !canPrint);
       }
 
-      // Hydrate from existing DIAG_DATA if present
       if (info.diagData) {
         const d = info.diagData;
         if (d.chk_wiper_f) setRadioVal('chk_wiper_f', d.chk_wiper_f);
@@ -2348,6 +2341,49 @@
           body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch(err){}
+      pullData();
+    }
+
+    async function deleteSingleRecord(id) {
+      if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
+      const targetJob = state.find(j => j.id === id);
+
+      if (targetJob) {
+        cachedDeletedLogs.unshift({
+          ...targetJob,
+          deletedAt: new Date().toLocaleString(),
+          deletedBy: currentUser || 'staff'
+        });
+
+        const payload = {
+          id: DELETED_LOGS_RECORD_ID,
+          customer: "SYSTEM",
+          phone: "N/A",
+          vehicle: "CLOUD_DELETED_LOGS_RECORD",
+          plate: "N/A",
+          service: "Deleted Logs Bin",
+          est_time: 0,
+          priority: "Normal",
+          details: JSON.stringify(cachedDeletedLogs.slice(0, 30)),
+          status: "system_record",
+          time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          auto_schedule_slot: null
+        };
+
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+            body: JSON.stringify(payload)
+          });
+        } catch (e){}
+      }
+
+      state = state.filter(j => j.id !== id);
+      render();
+      try {
+        await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
+      } catch (err) {}
       pullData();
     }
 
@@ -2956,6 +2992,14 @@
             if (j.status === 'waiting_parts') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center"><i class="fa-solid fa-cart-shopping mr-1"></i> Buy Replacement Parts</span>`;
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
 
+            let deleteBtn = "";
+            if (j.status === 'completed') {
+              deleteBtn = `
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition cursor-pointer" title="Delete Log Record (Sent to Dev Bin)">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>`;
+            }
+
             let printDiagBtn = "";
             if (isFeatureReleased || isDev) {
               printDiagBtn = `
@@ -3011,6 +3055,7 @@
                   <div class="flex items-center gap-1.5">
                     ${badge}
                     ${printDiagBtn}
+                    ${deleteBtn}
                   </div>
                 </div>
 
