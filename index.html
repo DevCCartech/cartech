@@ -117,7 +117,7 @@
             <i class="fa-solid fa-user-xmark"></i>
           </button>
         </div>
-        <button onclick="handleQuickOneTapLogin()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-orange-500/20 active:scale-95 transition cursor-pointer">
+        <button onclick="handleQuickOneTapLogin(event)" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-orange-500/20 active:scale-95 transition cursor-pointer">
           <i class="fa-solid fa-bolt text-yellow-200"></i> 1-Tap Fast Login (<span id="quickLoginBtnName">ENTER</span>)
         </button>
       </div>
@@ -657,7 +657,7 @@
         </button>
       </div>
 
-      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
+      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-sm flex justify-between items-center">
         <div>
           <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
           <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
@@ -1750,7 +1750,7 @@
       }
     }
 
-    // 1-TAP FAST LOGIN LOGIC (HIDES MANUAL SIGN-IN WHEN REMEMBERED)
+    // 1-TAP FAST LOGIN LOGIC & HIDE MANUAL SIGN-IN FORM
     function initRememberedDeviceUI() {
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
@@ -1771,12 +1771,10 @@
         }
         
         card.classList.remove('hidden');
-        // Hide manual username/password form when device is remembered
-        authBoxLogin.classList.add('hidden');
+        authBoxLogin.classList.add('hidden'); // Hides manual sign-in form when device is remembered
       } else {
         card.classList.add('hidden');
-        // Show manual sign in form if no remembered device exists
-        authBoxLogin.classList.remove('hidden');
+        authBoxLogin.classList.remove('hidden'); // Shows manual sign-in if no remembered device
       }
     }
 
@@ -1784,11 +1782,11 @@
       localStorage.removeItem('cartech_remembered_device_user');
       localStorage.removeItem('cartech_remembered_device_role');
       document.getElementById('quickLoginCard').classList.add('hidden');
-      // Unhide manual login form when user opts to switch accounts
       document.getElementById('authBoxLogin').classList.remove('hidden');
     }
 
-    async function handleQuickOneTapLogin() {
+    async function handleQuickOneTapLogin(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
       if (!rememberedUser || !rememberedRole) return;
@@ -1908,41 +1906,51 @@
     }
 
     function bootApp() {
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('appShell').classList.remove('hidden');
-      document.getElementById('staffBadge').innerText = currentUser;
+      const loginScreen = document.getElementById('loginScreen');
+      const appShell = document.getElementById('appShell');
+      
+      if (loginScreen) loginScreen.classList.add('hidden');
+      if (appShell) appShell.classList.remove('hidden');
+
+      const staffBadge = document.getElementById('staffBadge');
+      if (staffBadge) staffBadge.innerText = currentUser;
       
       let roleLabel = 'Front Desk';
       if (currentRole === 'developer') roleLabel = 'Developer Terminal';
       if (currentRole === 'admin') roleLabel = 'Admin Control Terminal';
       if (currentRole === 'workshop') roleLabel = currentUser === 'bot' ? '24/7 Automated Bot' : 'Mechanic Station';
-      document.getElementById('roleBadge').innerText = roleLabel;
+      
+      const roleBadge = document.getElementById('roleBadge');
+      if (roleBadge) roleBadge.innerText = roleLabel;
 
       const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
       const workshopView = document.getElementById('viewWorkshop');
       const terminalRoleHeader = document.getElementById('terminalRoleHeader');
 
-      devView.classList.add('hidden');
-      officeView.classList.add('hidden');
-      workshopView.classList.add('hidden');
+      if (devView) devView.classList.add('hidden');
+      if (officeView) officeView.classList.add('hidden');
+      if (workshopView) workshopView.classList.add('hidden');
 
       if (currentRole === 'developer' || currentRole === 'admin') {
-        devView.classList.remove('hidden');
+        if (devView) devView.classList.remove('hidden');
         if (terminalRoleHeader) {
           terminalRoleHeader.innerText = currentRole === 'developer' ? 'Developer Terminal' : 'Admin Operations Terminal';
         }
       } else if (currentRole === 'office') {
-        officeView.classList.remove('hidden');
+        if (officeView) officeView.classList.remove('hidden');
       } else {
-        workshopView.classList.remove('hidden');
-        document.getElementById('workshopStaffName').innerText = currentUser;
+        if (workshopView) workshopView.classList.remove('hidden');
+        const wsName = document.getElementById('workshopStaffName');
+        if (wsName) wsName.innerText = currentUser;
 
         const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
-        if (cachedCloudAvatars[currentUser]) {
-          avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
-        } else {
-          avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
+        if (avatarImgContainer) {
+          if (cachedCloudAvatars[currentUser]) {
+            avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
+          } else {
+            avatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
+          }
         }
       }
 
@@ -2334,7 +2342,6 @@
       document.getElementById('paperClientComment').innerText = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
       document.getElementById('paperMechanicName').innerText = assignedMech;
 
-      // Print button visibility: Only Developer or released feature for Office/Admin
       const btnPrint = document.getElementById('btnDiagModalPrint');
       if (btnPrint) {
         const canPrint = (currentRole === 'developer') || (featureFlags.diagnosticV2Enabled && (currentRole === 'office' || currentRole === 'admin'));
@@ -3053,7 +3060,7 @@
           officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-rose-50 text-rose-600 border-rose-200";
           officeBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 0 Mechanics Available (All Full)`;
         } else {
-          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-emerald-200";
+          officeBadge.className = "px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border-rose-200";
           officeBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${availableMechanicsCount} Mechanic${availableMechanicsCount > 1 ? 's' : ''} Open (Capacity)`;
         }
       }
@@ -3105,7 +3112,6 @@
       const isFeatureReleased = featureFlags.diagnosticV2Enabled;
       const isDev = currentRole === 'developer';
 
-      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -3208,7 +3214,6 @@
         }
       }
 
-      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -3373,7 +3378,6 @@
 
     syncSystemCloudRecords();
 
-    // AUTO SESSION RESTORE WITH OPERATING HOURS CHECK
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
@@ -3393,10 +3397,8 @@
 
     initRememberedDeviceUI();
 
-    // BANDWIDTH PROTECTOR: 15-SECOND POLLING INTERVAL
     setInterval(() => pullData(false), 15000);
 
-    // AUTOMATIC LOGOUT / IDLE TIMEOUT & 5:00 PM SHIFT-END PROTECTOR
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
@@ -3412,7 +3414,6 @@
       const currentHour = new Date().getHours();
       const isUnrestricted = currentRole === 'developer' || currentRole === 'admin' || currentUser === 'bot';
 
-      // 5:00 PM (17:00) to 8:00 AM (08:00) automatic logout (Bypassed by Bot, Dev, and Admin)
       if (!isUnrestricted) {
         if (currentHour >= 17 || currentHour < 8) {
           alert("Have a nice Day, come back tomorrow!");
