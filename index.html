@@ -99,8 +99,8 @@
         </form>
 
         <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-100">
-          <button onclick="switchAuthForm('register')" class="font-bold text-orange-600 hover:underline">Create Account</button>
-          <button onclick="switchAuthForm('forgot')" class="font-bold text-slate-500 hover:text-slate-800">Forgot Password?</button>
+          <button onclick="switchAuthForm('register')" class="font-bold text-orange-600 hover:underline cursor-pointer">Create Account</button>
+          <button onclick="switchAuthForm('forgot')" class="font-bold text-slate-500 hover:text-slate-800 cursor-pointer">Forgot Password?</button>
         </div>
       </div>
 
@@ -150,7 +150,7 @@
         </form>
 
         <div class="text-center pt-1 border-t border-slate-100">
-          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900">Already registered? <span class="text-orange-600">Sign In</span></button>
+          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer">Already registered? <span class="text-orange-600">Sign In</span></button>
         </div>
       </div>
 
@@ -169,7 +169,7 @@
         </div>
 
         <div class="text-center pt-2 border-t border-slate-100">
-          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900">Back to <span class="text-orange-600">Sign In</span></button>
+          <button onclick="switchAuthForm('login')" class="text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer">Back to <span class="text-orange-600">Sign In</span></button>
         </div>
       </div>
 
@@ -476,7 +476,7 @@
                   <div class="text-[9px] font-bold text-slate-400 mt-0.5">Waiting Parts</div>
                 </div>
               </div>
-              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
+              <div onclick="setFilter('completed')" id="card-completed" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-2 cursor-pointer hover:border-emerald-400 transition transform active:scale-95">
                 <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs"><i class="fa-regular fa-circle-check"></i></div>
                 <div>
                   <div id="statDone" class="text-lg font-black text-slate-900 leading-none">0</div>
@@ -791,7 +791,6 @@
     function isAppAlreadyInstalled() {
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.navigator.standalone === true || 
-             window.navigator.standalone ||
              localStorage.getItem('cartech_app_installed') === 'true';
     }
 
@@ -803,7 +802,7 @@
       });
     }
 
-    // ROBUST CLOUD TELEMETRY & SYNC ENGINE
+    // ROBUST SYSTEM SYNC
     async function syncSystemCloudRecords() {
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
@@ -1250,7 +1249,7 @@
       const successElem = document.getElementById('regSuccess');
 
       if (!AUTHORIZED_ROSTER[exactName] && !cachedCloudAccounts[exactName]) {
-        errorMsg.innerText = "Name not on CARTECH roster.";
+        errorElem.innerText = "Name not on CARTECH roster.";
         errorElem.classList.remove('hidden');
         return;
       }
@@ -1318,24 +1317,6 @@
         localStorage.removeItem('cartech_auth_user');
         localStorage.removeItem('cartech_auth_role');
         location.reload();
-      }
-    }
-
-    function switchAuthForm(type) {
-      document.getElementById('authBoxLogin').classList.add('hidden');
-      document.getElementById('authBoxRegister').classList.add('hidden');
-      document.getElementById('authBoxForgot').classList.add('hidden');
-
-      document.getElementById('loginAuthError').classList.add('hidden');
-      document.getElementById('regError').classList.add('hidden');
-      document.getElementById('regSuccess').classList.add('hidden');
-
-      if (type === 'login') {
-        document.getElementById('authBoxLogin').classList.remove('hidden');
-      } else if (type === 'register') {
-        document.getElementById('authBoxRegister').classList.remove('hidden');
-      } else if (type === 'forgot') {
-        document.getElementById('authBoxForgot').classList.remove('hidden');
       }
     }
 
@@ -2318,16 +2299,17 @@
             let deleteBtn = "";
             if (j.status === 'completed') {
               deleteBtn = `
-                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition" title="Delete Log Record (Can be recovered by Dev)">
+                <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition cursor-pointer" title="Delete Log Record (Can be recovered by Dev)">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>`;
             }
 
-            let devMarkDoneBtn = "";
-            if (currentRole === 'developer' && j.status === 'inprogress') {
-              devMarkDoneBtn = `
-                <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-1.5 px-3 rounded-xl text-xs flex items-center gap-1 shadow-sm transition">
-                  <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done (Dev Override)
+            // ADDED: Allow Shiela (Office) AND Developer to Mark Done on Working Bay!
+            let markDoneOverrideBtn = "";
+            if ((currentRole === 'developer' || currentRole === 'office') && j.status === 'inprogress') {
+              markDoneOverrideBtn = `
+                <button onclick="setStatus('${j.id}', 'completed')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-1.5 px-3 rounded-xl text-xs flex items-center gap-1 shadow-sm transition cursor-pointer">
+                  <i class="fa-solid fa-check-double text-emerald-400"></i> Mark Done (${currentRole === 'office' ? 'Front Desk' : 'Dev'})
                 </button>`;
             }
 
@@ -2361,11 +2343,11 @@
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
                   <div class="flex items-center gap-2 pt-1">
-                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative">
+                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative cursor-pointer">
                       <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
                       ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                     </button>
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
                     </button>
                   </div>
@@ -2401,7 +2383,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     ${badge}
-                    ${devMarkDoneBtn}
+                    ${markDoneOverrideBtn}
                     ${deleteBtn}
                   </div>
                 </div>
@@ -2553,17 +2535,19 @@
                 <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
                   <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
                 </div>
-                ${actionActionArea = actionArea}
+                ${actionArea}
               </div>`;
           }).join('');
         }
       }
     }
 
-    syncSystemCloudRecords();
-
-    const savedAuthUser = localStorage.getItem('cartech_auth_user');
-    const savedAuthRole = localStorage.getItem('cartech_auth_role');
+    // INITIALIZATION & NIGHTSHIFT SYNC
+    syncSystemCloudRecords().then(() => {
+      if (currentUser && currentRole) {
+        bootApp();
+      }
+    });
 
     if (savedAuthUser && savedAuthRole) {
       currentUser = savedAuthUser;
@@ -2571,7 +2555,7 @@
       bootApp();
     }
 
-    // STEADY POLLING TIMING
+    // 2-SECOND POLLING INTERVAL FOR REAL-TIME NIGHTSHIFT SYNC
     setInterval(() => pullData(false), 2000);
   </script>
 </body>
