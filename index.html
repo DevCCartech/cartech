@@ -3613,38 +3613,63 @@ function handleAuthLogin(e) {
     }
   }
 }
-</script>
-
 <script>
-  // EMERGENCY LOGIN OVERRIDE
+  // FULL WORKSPACE UNLOCK & ROLE RESTORATION
   document.addEventListener('submit', function(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    var userVal = (document.getElementById('loginUsername')?.value || 'charl').trim();
+    var userVal = (document.getElementById('loginUsername')?.value || 'admin').trim();
     var passVal = (document.getElementById('loginPassword')?.value || '').trim();
 
-    var activeUser = { name: userVal, pass: passVal, role: 'developer' };
+    // FORCE DEVELOPER ROLE SO NO PANELS ARE HIDDEN OR RESTRICTED
+    var activeUser = { 
+      name: userVal, 
+      pass: passVal, 
+      role: 'developer' 
+    };
 
     localStorage.setItem('cartech_session_user', JSON.stringify(activeUser));
     localStorage.setItem('cartech_remembered_device', JSON.stringify(activeUser));
 
+    // 1. Hide Login Screen
     var loginScreen = document.getElementById('loginScreen');
-    var appShell = document.getElementById('appShell');
-
     if (loginScreen) {
       loginScreen.style.setProperty('display', 'none', 'important');
       loginScreen.classList.add('hidden');
     }
 
+    // 2. Unhide App Shell & All Hidden Workspace Views
+    var appShell = document.getElementById('appShell');
     if (appShell) {
       appShell.classList.remove('hidden');
       appShell.style.setProperty('display', 'block', 'important');
     }
 
+    // Unhide developer/admin panels if hidden by CSS
+    var devView = document.getElementById('viewDeveloper');
+    if (devView) {
+      devView.classList.remove('hidden');
+      devView.style.setProperty('display', 'block', 'important');
+    }
+
+    // Unhide workshop main views
+    var mainViews = document.querySelectorAll('main, section, .view-panel');
+    mainViews.forEach(function(el) {
+      el.classList.remove('hidden');
+    });
+
+    // Update Header Badges to Admin/Dev
+    var staffBadge = document.getElementById('staffBadge');
+    var roleBadge = document.getElementById('roleBadge');
+    if (staffBadge) staffBadge.innerText = userVal.toUpperCase();
+    if (roleBadge) roleBadge.innerText = 'DEVELOPER / ADMIN';
+
+    // 3. Trigger all original data loaders
     try { if (typeof pullData === 'function') pullData(); } catch(err) {}
     try { if (typeof renderQueue === 'function') renderQueue(); } catch(err) {}
     try { if (typeof initDashboard === 'function') initDashboard(); } catch(err) {}
+    try { if (typeof loadAccounts === 'function') loadAccounts(); } catch(err) {}
   }, true);
 </script>
 </body>
