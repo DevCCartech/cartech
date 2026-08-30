@@ -3450,36 +3450,56 @@
   <script>
   // Initial Mechanics Roster List
   const mechanicsList = ['BERT', 'CHARL', 'MARK', 'NEL', 'ROCKY', 'BOT'];
-  
-  // Safe State Initialization
-  window.appData = window.appData || {
-    holidays: [],
-    dutyStatus: { BERT: true, CHARL: false, MARK: true, NEL: true, ROCKY: true, BOT: true }
-  };
 
   // 1. Reveal Dev Panel for Developer Logins
   function initDevControls() {
-    const savedRole = localStorage.getItem('cartech_auth_role');
-    const savedUser = localStorage.getItem('cartech_auth_user');
-    
     const panel = document.getElementById('devHolidayControlPanel');
     if (panel) {
       panel.classList.remove('hidden');
-      renderMechanicsRoster();
+      loadSavedState();
     }
   }
 
-  // 2. Render Mechanics Roster Toggles
+  // 2. Load Saved State from Storage
+  function loadSavedState() {
+    const saved = localStorage.getItem('cartech_broadcast_data');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      window.appData = window.appData || {};
+      window.appData.holidays = parsed.holidays || [];
+      window.appData.dutyStatus = parsed.dutyStatus || {};
+      
+      // Auto-fill input fields if data exists
+      if (parsed.holidays && parsed.holidays.length > 0) {
+        const last = parsed.holidays[parsed.holidays.length - 1];
+        const nameIn = document.getElementById('devHolidayName');
+        const dateIn = document.getElementById('devHolidayDate');
+        if (nameIn) nameIn.value = last.name || '';
+        if (dateIn) dateIn.value = last.date || '';
+      }
+    } else {
+      window.appData = window.appData || {};
+      if (!window.appData.dutyStatus) {
+        window.appData.dutyStatus = { BERT: true, CHARL: false, MARK: true, NEL: true, ROCKY: true, BOT: true };
+      }
+    }
+    renderMechanicsRoster();
+  }
+
+  // 3. Render Mechanics Roster Toggles
   function renderMechanicsRoster() {
     const container = document.getElementById('mechanicsDutyList');
     if (!container) return;
+
+    window.appData = window.appData || {};
+    window.appData.dutyStatus = window.appData.dutyStatus || {};
 
     container.innerHTML = mechanicsList.map(name => {
       const isOnDuty = window.appData.dutyStatus[name] !== false;
       return `
         <div class="flex items-center justify-between bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
           <span class="font-bold ${isOnDuty ? 'text-emerald-400' : 'text-slate-500'}">${name}</span>
-          <button onclick="toggleDuty('${name}')" class="px-2.5 py-1 rounded text-[10px] font-black uppercase transition ${
+          <button type="button" onclick="toggleDuty('${name}')" class="px-2.5 py-1 rounded text-[10px] font-black uppercase transition ${
             isOnDuty ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
           }">
             ${isOnDuty ? 'On Duty' : 'Off Duty'}
@@ -3489,83 +3509,110 @@
     }).join('');
   }
 
-  // 3. Toggle Duty State per Mechanic
+  // 4. Toggle Duty State per Mechanic
   function toggleDuty(name) {
+    window.appData = window.appData || {};
+    window.appData.dutyStatus = window.appData.dutyStatus || {};
     window.appData.dutyStatus[name] = !window.appData.dutyStatus[name];
     renderMechanicsRoster();
   }
 
-  // 4. Save and Broadcast Holiday Modal
+  // 5. Permanent Broadcast Function
   function saveAndBroadcastHoliday() {
-    const title = document.getElementById('devHolidayName').value.trim();
-    const date = document.getElementById('devHolidayDate').value;
+    const titleInput = document.getElementById('devHolidayName');
+    const dateInput = document.getElementById('devHolidayDate');
+    
+    const title = titleInput ? titleInput.value.trim() : '';
+    const date = dateInput ? dateInput.value : '';
+
+    if (!title) {
+      alert('Please enter a holiday title.');
+      return;
+    }
     
     const onDutyNames = mechanicsList.filter(m => window.appData.dutyStatus[m]).join(', ');
     const offDutyNames = mechanicsList.filter(m => !window.appData.dutyStatus[m]).join(', ');
 
     const dutySummary = `On-Duty: ${onDutyNames || 'None'} \n Off-Duty: ${offDutyNames || 'None'}`;
 
-    if (!title) {
-      alert('Please enter a holiday title.');
-      return;
-    }
-
     const newHoliday = { name: title, date: date, onDutyStaff: dutySummary };
+    
+    window.appData = window.appData || {};
     window.appData.holidays = [newHoliday];
 
-    // Store in localStorage for instant multi-tab broadcast
-    localStorage.setItem('cartech_shared_appdata', JSON.stringify(window.appData));
+    // Persist permanently in browser storage
+    const payload = {
+      holidays: [newHoliday],
+      dutyStatus: window.appData.dutyStatus
+    };
+    localStorage.setItem('cartech_broadcast_data', JSON.stringify(payload));
     
+    // Display Modal
     checkAndShowHolidayPopup();
-    alert('Holiday notice broadcasted live!');
+    alert('Broadcast saved and active!');
   }
 
-  // 5. Clear Active Holiday
-  function clearHolidayNotice() {
-    window.appData.holidays = [];
-    localStorage.removeItem('cartech_shared_appdata');
-    closeHolidayModal();
-    alert('Holiday notice cleared.');
-  }
-
-  // 6. Check and Display Modal Function
+  // 6. Check and Show Modal
   function checkAndShowHolidayPopup() {
-    const stored = localStorage.getItem('cartech_shared_appdata');
-    if (stored) window.appData = JSON.parse(stored);
+    const saved = localStorage.getItem('cartech_broadcast_data');
+    let holidayItem = null;
+
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.holidays && parsed.holidays.length > 0) {
+        holidayItem = parsed.holidays[0];
+      }
+    } else if (window.appData && window.appData.holidays && window.appData.holidays.length > 0) {
+      holidayItem = window.appData.holidays[0];
+    }
 
     const modal = document.getElementById('officeHolidayModal');
     if (!modal) return;
 
-    if (!window.appData || !Array.isArray(window.appData.holidays) || window.appData.holidays.length === 0) {
-      return;
-    }
+    if (holidayItem) {
+      const titleEl = document.getElementById('modalHolidayTitle');
+      const dateEl = document.getElementById('modalHolidayDate');
+      const staffEl = document.getElementById('modalHolidayStaff');
 
-    const upcoming = window.appData.holidays[window.appData.holidays.length - 1];
-    if (upcoming) {
-      document.getElementById('modalHolidayTitle').innerText = upcoming.name || 'Office Holiday Notice';
-      document.getElementById('modalHolidayDate').innerText = upcoming.date ? `Date: ${upcoming.date}` : '';
-      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No roster details specified';
+      if (titleEl) titleEl.innerText = holidayItem.name || 'Office Holiday Notice';
+      if (dateEl) dateEl.innerText = holidayItem.date ? `Date: ${holidayItem.date}` : '';
+      if (staffEl) staffEl.innerText = holidayItem.onDutyStaff || '';
+
       modal.classList.remove('hidden');
+      modal.style.display = 'flex';
     }
+  }
+
+  // 7. Clear Broadcast State
+  function clearHolidayNotice() {
+    if (window.appData) window.appData.holidays = [];
+    localStorage.removeItem('cartech_broadcast_data');
+    
+    const nameIn = document.getElementById('devHolidayName');
+    const dateIn = document.getElementById('devHolidayDate');
+    if (nameIn) nameIn.value = '';
+    if (dateIn) dateIn.value = '';
+
+    closeHolidayModal();
+    alert('Holiday notice cleared.');
   }
 
   function closeHolidayModal() {
     const modal = document.getElementById('officeHolidayModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
   }
 
-  // 7. Event Listeners for Load and Cross-Tab Broadcasts
+  // 8. Event Listeners for Load & Polling
   window.addEventListener('load', function() {
     initDevControls();
-    setTimeout(checkAndShowHolidayPopup, 500);
-    setInterval(checkAndShowHolidayPopup, 3000);
+    setTimeout(checkAndShowHolidayPopup, 600);
   });
 
-  window.addEventListener('storage', function(e) {
-    if (e.key === 'cartech_shared_appdata') {
-      checkAndShowHolidayPopup();
-    }
-  });
+  // Re-check popup every 3 seconds to prevent system telemetry from clearing it
+  setInterval(checkAndShowHolidayPopup, 3000);
 </script>
 </body>
 </html>
