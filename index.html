@@ -295,7 +295,37 @@
           </button>
         </div>
       </div>
+<!-- Developer Holiday & Duty Management Panel -->
+      <div id="devHolidayControlPanel" class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl hidden">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+          <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider">🛠️ Dev Control: Holiday & Duty Roster</h3>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Restricted Access</span>
+        </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <!-- Holiday Input -->
+          <div class="space-y-2">
+            <label class="block text-slate-400 font-semibold">Holiday Name / Event</label>
+            <input type="text" id="devHolidayName" placeholder="e.g. National Heroes Day" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+            
+            <label class="block text-slate-400 font-semibold mt-2">Holiday Date</label>
+            <input type="date" id="devHolidayDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+          </div>
+
+          <!-- Mechanics Roster Toggle -->
+          <div>
+            <label class="block text-slate-400 font-semibold mb-2">Mechanics Duty Status</label>
+            <div id="mechanicsDutyList" class="space-y-2 max-h-36 overflow-y-auto pr-1">
+              <!-- Dynamic list populates here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end gap-2">
+          <button onclick="clearHolidayNotice()" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 px-4 py-2 rounded-xl text-xs font-bold transition">Clear Holiday</button>
+          <button onclick="saveAndBroadcastHoliday()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 rounded-xl text-xs font-black transition shadow-lg shadow-amber-500/10">Broadcast to Workshop</button>
+        </div>
+      </div>
       <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
       <div id="devFeatureFlagCard" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl border border-indigo-500/30 shadow-xl space-y-4">
         <div class="flex justify-between items-center border-b border-indigo-800/60 pb-3">
@@ -3417,5 +3447,125 @@
       }
     }, 60000);
   </script>
+  <script>
+  // Initial Mechanics Roster List
+  const mechanicsList = ['BERT', 'CHARL', 'MARK', 'NEL', 'ROCKY', 'BOT'];
+  
+  // Safe State Initialization
+  window.appData = window.appData || {
+    holidays: [],
+    dutyStatus: { BERT: true, CHARL: false, MARK: true, NEL: true, ROCKY: true, BOT: true }
+  };
+
+  // 1. Reveal Dev Panel for Developer Logins
+  function initDevControls() {
+    const savedRole = localStorage.getItem('cartech_auth_role');
+    const savedUser = localStorage.getItem('cartech_auth_user');
+    
+    const panel = document.getElementById('devHolidayControlPanel');
+    if (panel) {
+      panel.classList.remove('hidden');
+      renderMechanicsRoster();
+    }
+  }
+
+  // 2. Render Mechanics Roster Toggles
+  function renderMechanicsRoster() {
+    const container = document.getElementById('mechanicsDutyList');
+    if (!container) return;
+
+    container.innerHTML = mechanicsList.map(name => {
+      const isOnDuty = window.appData.dutyStatus[name] !== false;
+      return `
+        <div class="flex items-center justify-between bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
+          <span class="font-bold ${isOnDuty ? 'text-emerald-400' : 'text-slate-500'}">${name}</span>
+          <button onclick="toggleDuty('${name}')" class="px-2.5 py-1 rounded text-[10px] font-black uppercase transition ${
+            isOnDuty ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
+          }">
+            ${isOnDuty ? 'On Duty' : 'Off Duty'}
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 3. Toggle Duty State per Mechanic
+  function toggleDuty(name) {
+    window.appData.dutyStatus[name] = !window.appData.dutyStatus[name];
+    renderMechanicsRoster();
+  }
+
+  // 4. Save and Broadcast Holiday Modal
+  function saveAndBroadcastHoliday() {
+    const title = document.getElementById('devHolidayName').value.trim();
+    const date = document.getElementById('devHolidayDate').value;
+    
+    const onDutyNames = mechanicsList.filter(m => window.appData.dutyStatus[m]).join(', ');
+    const offDutyNames = mechanicsList.filter(m => !window.appData.dutyStatus[m]).join(', ');
+
+    const dutySummary = `On-Duty: ${onDutyNames || 'None'} \n Off-Duty: ${offDutyNames || 'None'}`;
+
+    if (!title) {
+      alert('Please enter a holiday title.');
+      return;
+    }
+
+    const newHoliday = { name: title, date: date, onDutyStaff: dutySummary };
+    window.appData.holidays = [newHoliday];
+
+    // Store in localStorage for instant multi-tab broadcast
+    localStorage.setItem('cartech_shared_appdata', JSON.stringify(window.appData));
+    
+    checkAndShowHolidayPopup();
+    alert('Holiday notice broadcasted live!');
+  }
+
+  // 5. Clear Active Holiday
+  function clearHolidayNotice() {
+    window.appData.holidays = [];
+    localStorage.removeItem('cartech_shared_appdata');
+    closeHolidayModal();
+    alert('Holiday notice cleared.');
+  }
+
+  // 6. Check and Display Modal Function
+  function checkAndShowHolidayPopup() {
+    const stored = localStorage.getItem('cartech_shared_appdata');
+    if (stored) window.appData = JSON.parse(stored);
+
+    const modal = document.getElementById('officeHolidayModal');
+    if (!modal) return;
+
+    if (!window.appData || !Array.isArray(window.appData.holidays) || window.appData.holidays.length === 0) {
+      return;
+    }
+
+    const upcoming = window.appData.holidays[window.appData.holidays.length - 1];
+    if (upcoming) {
+      document.getElementById('modalHolidayTitle').innerText = upcoming.name || 'Office Holiday Notice';
+      document.getElementById('modalHolidayDate').innerText = upcoming.date ? `Date: ${upcoming.date}` : '';
+      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No roster details specified';
+      modal.classList.remove('hidden');
+    }
+  }
+
+  function closeHolidayModal() {
+    const modal = document.getElementById('officeHolidayModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  // 7. Event Listeners for Load and Cross-Tab Broadcasts
+  window.addEventListener('load', function() {
+    initDevControls();
+    setTimeout(checkAndShowHolidayPopup, 500);
+    setInterval(checkAndShowHolidayPopup, 3000);
+  });
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'cartech_shared_appdata') {
+      checkAndShowHolidayPopup();
+    }
+  });
+</script>
 </body>
 </html>
