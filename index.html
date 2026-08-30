@@ -3441,27 +3441,36 @@
   </div>
 </div>
 <script>
-  function checkAndShowHolidayPopup() {
-    // Safe check that avoids breaking if appData doesn't exist
-    if (typeof appData === 'undefined' || !appData || !appData.holidays || appData.holidays.length === 0) return;
+  // Safe initialization of appData structure
+  window.appData = window.appData || { holidays: [] };
 
-    const upcoming = appData.holidays[appData.holidays.length - 1];
+  function checkAndShowHolidayPopup() {
+    const modal = document.getElementById('officeHolidayModal');
+    if (!modal) return;
+
+    if (!window.appData || !Array.isArray(window.appData.holidays) || window.appData.holidays.length === 0) {
+      return;
+    }
+
+    const upcoming = window.appData.holidays[window.appData.holidays.length - 1];
     if (upcoming) {
-      document.getElementById('modalHolidayTitle').innerText = upcoming.name;
-      document.getElementById('modalHolidayDate').innerText = `Date: ${upcoming.date}`;
-      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No staff assigned';
-      document.getElementById('officeHolidayModal').classList.remove('hidden');
+      document.getElementById('modalHolidayTitle').innerText = upcoming.name || 'Office Holiday Notice';
+      document.getElementById('modalHolidayDate').innerText = upcoming.date ? `Date: ${upcoming.date}` : '';
+      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff ? `On-Duty Staff: ${upcoming.onDutyStaff}` : 'No staff assigned';
+      modal.classList.remove('hidden');
     }
   }
 
   function closeHolidayModal() {
-    document.getElementById('officeHolidayModal').classList.add('hidden');
+    const modal = document.getElementById('officeHolidayModal');
+    if (modal) modal.classList.add('hidden');
   }
 
+  // Initialize check on load and trigger real-time check every 3 seconds
   window.addEventListener('load', function() {
-    setTimeout(checkAndShowHolidayPopup, 1000);
+    setTimeout(checkAndShowHolidayPopup, 500);
+    setInterval(checkAndShowHolidayPopup, 3000);
   });
 </script>
-
 </body>
-    </html>
+</html>
