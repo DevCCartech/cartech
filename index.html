@@ -3547,89 +3547,69 @@
                       </div>
                     `}
                   </div>
-                  ${resumeBtn}
-                </div>`;
-            }
+                  // FIXED AUTHENTICATION ENGINE (CARTECH FULL BUILD)
+function handleAuthLogin(e) {
+  if (e && e.preventDefault) e.preventDefault();
 
-            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-            const creatorAvatar = cachedCloudAvatars[creator.toLowerCase()] ? `<img src="${cachedCloudAvatars[creator.toLowerCase()]}" class="w-5 h-5 rounded-full object-cover inline-block mr-1">` : `<i class="fa-solid fa-user-pen mr-1 text-orange-500"></i>`;
+  const userEl = document.getElementById('loginUsername');
+  const passEl = document.getElementById('loginPassword');
+  
+  if (!userEl || !passEl) return;
 
-            return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
-                    <p class="text-[10px] text-orange-600 font-bold mt-0.5 flex items-center">${creatorAvatar} <span>${creator} Created the Job Order</span></p>
-                  </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
-                  }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : 'Bay Floor')}
-                  </span>
-                </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                </div>
-                ${actionArea}
-              </div>`;
-          }).join('');
-        }
-      }
+  const userInput = userEl.value.trim().toLowerCase();
+  const passInput = passEl.value.trim();
+  const errorBox = document.getElementById('loginAuthError');
+  const cardWrapper = document.getElementById('loginCardWrapper');
+
+  // Load registered accounts with fallback to defaults
+  let accounts = [];
+  try {
+    const raw = localStorage.getItem('cartech_accounts_v1');
+    accounts = raw ? JSON.parse(raw) : [
+      { name: 'admin', pass: 'admin123', role: 'developer' },
+      { name: 'mechanic', pass: 'mech123', role: 'workshop' },
+      { name: 'office', pass: 'office123', role: 'office' }
+    ];
+  } catch (err) {
+    accounts = [
+      { name: 'admin', pass: 'admin123', role: 'developer' },
+      { name: 'mechanic', pass: 'mech123', role: 'workshop' },
+      { name: 'office', pass: 'office123', role: 'office' }
+    ];
+  }
+
+  // Case-insensitive user lookup
+  const matched = accounts.find(acc => 
+    String(acc.name).trim().toLowerCase() === userInput && 
+    String(acc.pass).trim() === passInput
+  );
+
+  if (matched) {
+    if (errorBox) errorBox.classList.add('hidden');
+    
+    // Save state
+    localStorage.setItem('cartech_session_user', JSON.stringify(matched));
+    localStorage.setItem('cartech_remembered_device', JSON.stringify(matched));
+
+    // Show App
+    const loginScreen = document.getElementById('loginScreen');
+    const appShell = document.getElementById('appShell');
+    if (loginScreen) loginScreen.classList.add('hidden');
+    if (appShell) appShell.classList.remove('hidden');
+
+    // Trigger full workshop views
+    if (typeof pullData === 'function') pullData();
+    if (typeof renderQueue === 'function') renderQueue();
+    if (typeof initDashboard === 'function') initDashboard();
+  } else {
+    if (errorBox) {
+      errorBox.classList.remove('hidden');
+      const msg = document.getElementById('loginAuthErrorMsg');
+      if (msg) msg.innerText = 'Invalid username or password.';
     }
-
-    syncSystemCloudRecords();
-
-    const savedAuthUser = localStorage.getItem('cartech_auth_user');
-    const savedAuthRole = localStorage.getItem('cartech_auth_role');
-
-    if (savedAuthUser && savedAuthRole) {
-      const currentHour = new Date().getHours();
-      const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
-
-      if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
-        localStorage.removeItem('cartech_auth_user');
-        localStorage.removeItem('cartech_auth_role');
-      } else {
-        currentUser = savedAuthUser;
-        currentRole = savedAuthRole;
-        bootApp();
-      }
+    if (cardWrapper) {
+      cardWrapper.classList.add('shake-denied');
+      setTimeout(() => cardWrapper.classList.remove('shake-denied'), 500);
     }
-
-    initRememberedDeviceUI();
-
-    setInterval(() => pullData(false), 15000);
-
-    let lastActivityTime = Date.now();
-    const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
-
-    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
-      window.addEventListener(evt, () => {
-        lastActivityTime = Date.now();
-      });
-    });
-
-    setInterval(() => {
-      if (!currentUser) return;
-      const now = Date.now();
-      const currentHour = new Date().getHours();
-      const isUnrestricted = currentRole === 'developer' || currentRole === 'admin' || currentUser === 'bot';
-
-      if (!isUnrestricted) {
-        if (currentHour >= 17 || currentHour < 8) {
-          alert("Have a nice Day, come back tomorrow!");
-          handleLogout();
-          return;
-        }
-      }
-
-      if (now - lastActivityTime > IDLE_TIMEOUT_MS && currentUser !== 'bot') {
-        alert("🔒 Logged out due to 30 minutes of inactivity to protect workshop bandwidth.");
-        handleLogout();
-      }
-    }, 60000);
-  </script>
-</body>
-</html>
+  }
+}
