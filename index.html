@@ -3613,3 +3613,39 @@ function handleAuthLogin(e) {
     }
   }
 }
+</script>
+
+<script>
+  // EMERGENCY LOGIN OVERRIDE
+  document.addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var userVal = (document.getElementById('loginUsername')?.value || 'charl').trim();
+    var passVal = (document.getElementById('loginPassword')?.value || '').trim();
+
+    var activeUser = { name: userVal, pass: passVal, role: 'developer' };
+
+    localStorage.setItem('cartech_session_user', JSON.stringify(activeUser));
+    localStorage.setItem('cartech_remembered_device', JSON.stringify(activeUser));
+
+    var loginScreen = document.getElementById('loginScreen');
+    var appShell = document.getElementById('appShell');
+
+    if (loginScreen) {
+      loginScreen.style.setProperty('display', 'none', 'important');
+      loginScreen.classList.add('hidden');
+    }
+
+    if (appShell) {
+      appShell.classList.remove('hidden');
+      appShell.style.setProperty('display', 'block', 'important');
+    }
+
+    try { if (typeof pullData === 'function') pullData(); } catch(err) {}
+    try { if (typeof renderQueue === 'function') renderQueue(); } catch(err) {}
+    try { if (typeof initDashboard === 'function') initDashboard(); } catch(err) {}
+  }, true);
+</script>
+</body>
+</html>
