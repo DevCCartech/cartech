@@ -3416,6 +3416,51 @@
         handleLogout();
       }
     }, 60000);
-  </script>
+</script>
+
+<!-- OFFICE HOLIDAY POPUP MODAL -->
+<div id="officeHolidayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+  <div class="bg-white rounded-3xl border border-amber-300 shadow-2xl max-w-md w-full p-6 space-y-4 text-center">
+    <div class="w-14 h-14 bg-gradient-to-tr from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto shadow-lg shadow-amber-500/30">
+      <i class="fa-solid fa-calendar-check"></i>
+    </div>
+    <div>
+      <span class="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+        Office Holiday Notice
+      </span>
+      <h3 id="modalHolidayTitle" class="text-xl font-black text-slate-900 mt-2">Upcoming Holiday</h3>
+      <p id="modalHolidayDate" class="text-xs font-bold text-slate-500 mt-0.5">Date: --/--/----</p>
+    </div>
+    <div class="p-4 bg-amber-50/80 rounded-2xl border border-amber-200 text-left space-y-1">
+      <span class="text-[10px] font-black uppercase text-amber-800 tracking-wider block">Assigned Staff On Duty:</span>
+      <p id="modalHolidayStaff" class="text-xs font-bold text-slate-800">None assigned</p>
+    </div>
+    <button onclick="closeHolidayModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer shadow-md">
+      Acknowledge & Close
+    </button>
+  </div>
+</div>
+
+<script>
+  function checkAndShowHolidayPopup() {
+    if (!appData || !appData.holidays || appData.holidays.length === 0) return;
+    const upcoming = appData.holidays[appData.holidays.length - 1];
+    if (upcoming) {
+      document.getElementById('modalHolidayTitle').innerText = upcoming.name;
+      document.getElementById('modalHolidayDate').innerText = `Date: ${upcoming.date}`;
+      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No staff assigned';
+      document.getElementById('officeHolidayModal').classList.remove('hidden');
+    }
+  }
+
+  function closeHolidayModal() {
+    document.getElementById('officeHolidayModal').classList.add('hidden');
+  }
+
+  window.addEventListener('load', function() {
+    setTimeout(checkAndShowHolidayPopup, 1000);
+  });
+</script>
+
 </body>
 </html>
