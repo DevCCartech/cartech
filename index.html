@@ -1122,7 +1122,7 @@
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
     const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
     const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
-    const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_CONFIG_V1"; // NEW RECORD ID FOR HOLIDAY & DUTY ROSTER
+    const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_CONFIG_V1";
 
     let featureFlags = {
       diagnosticV2Enabled: false
@@ -1245,7 +1245,6 @@
       } catch (e) {}
     }
 
-    // NEW FUNCTION: SAVE HOLIDAY & OFFICE DUTY CONFIG TO CLOUD (DEVELOPER ONLY)
     async function saveHolidayAndDutySettings() {
       if (currentRole !== 'developer') {
         alert("Permission denied. Only developer can set holidays and office duty schedules.");
@@ -1385,7 +1384,6 @@
       }
     }
 
-    // DIRECT HIGH-FIDELITY PRINT ENGINE
     function printDiagnosticReport() {
       const jobId = document.getElementById('diagFormTargetJobId').value;
       const job = state.find(j => j.id === jobId);
@@ -1627,7 +1625,6 @@
       reader.readAsDataURL(file);
     }
 
-    // NEW OFFICE PROFILE PHOTO UPLOAD HANDLER
     function handleOfficeProfilePhotoUpload(event) {
       handleProfilePhotoUpload(event);
     }
@@ -1938,7 +1935,6 @@
       }
     }
 
-    // 1-TAP FAST LOGIN LOGIC (DEVICE PERSISTENCE)
     function initRememberedDeviceUI() {
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
@@ -2297,7 +2293,6 @@
         return;
       }
 
-      // STAMP OFFICE CREATOR NAME INTO JOB RECORD
       const creatorName = currentUser ? currentUser.toLowerCase() : 'shiela';
       const slotExtra = vinVal ? `[VIN:${vinVal}] [OFFICE_CREATOR:${creatorName}]` : `[OFFICE_CREATOR:${creatorName}]`;
 
@@ -2365,14 +2360,13 @@
       return vMatch ? vMatch[1].toUpperCase() : "-";
     }
 
-    // HELPER TO RESOLVE OFFICE CREATOR NAME FROM JOB RECORD
     function resolveOfficeCreator(job) {
       if (!job) return "Shiela";
       const match = String(job.auto_schedule_slot || '').match(/\[OFFICE_CREATOR:(.*?)\]/i);
       if (match) {
         return match[1].charAt(0).toUpperCase() + match[1].slice(1);
       }
-      return "Shiela"; // Default fallback
+      return "Shiela";
     }
 
     function handleDiagnosticSearch() {
@@ -3032,7 +3026,7 @@
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
       const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
-      const senderName = senderRole === 'office' ? currentUser.toUpperCase() : currentUser.toUpperCase(); // Show exact office name (e.g. SHIELA)
+      const senderName = currentUser.toUpperCase();
 
       const newChatEntry = {
         sender: senderName,
@@ -3314,7 +3308,6 @@
       const isFeatureReleased = featureFlags.diagnosticV2Enabled;
       const isDev = currentRole === 'developer';
 
-      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -3391,7 +3384,6 @@
                 </div>`;
             }
 
-            // OFFICE CREATOR BADGE DISPLAY
             const creatorAvatar = cachedCloudAvatars[creator.toLowerCase()] ? `<img src="${cachedCloudAvatars[creator.toLowerCase()]}" class="w-5 h-5 rounded-full object-cover inline-block mr-1">` : `<i class="fa-solid fa-user-pen mr-1 text-orange-500"></i>`;
 
             return `
@@ -3422,7 +3414,6 @@
         }
       }
 
-      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -3590,7 +3581,6 @@
 
     syncSystemCloudRecords();
 
-    // AUTO SESSION RESTORE WITH OPERATING HOURS CHECK
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
@@ -3610,10 +3600,8 @@
 
     initRememberedDeviceUI();
 
-    // BANDWIDTH PROTECTOR: 15-SECOND POLLING INTERVAL
     setInterval(() => pullData(false), 15000);
 
-    // AUTOMATIC LOGOUT / IDLE TIMEOUT & 5:00 PM SHIFT-END PROTECTOR
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
