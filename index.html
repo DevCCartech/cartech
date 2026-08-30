@@ -296,49 +296,6 @@
         </div>
       </div>
 
-      <!-- NEW FEATURE: DEVELOPER HOLIDAY & OFFICE DUTY MANAGEMENT CARD -->
-      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl border border-indigo-500/30 shadow-xl space-y-4">
-        <div class="flex justify-between items-center border-b border-indigo-800/60 pb-3">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-indigo-500/30 text-indigo-300 flex items-center justify-center text-sm">
-              <i class="fa-solid fa-calendar-day"></i>
-            </div>
-            <div>
-              <h3 class="font-black text-sm text-white">Holiday & Office Duty Schedule (Developer Control)</h3>
-              <p class="text-[11px] text-indigo-200">Declare tomorrow as a holiday and assign Active Duty vs Off-Duty Office Staff.</p>
-            </div>
-          </div>
-          <span id="holidayStatusPill" class="text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-500/40">
-            Normal Working Day
-          </span>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div class="p-3.5 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-            <label class="block text-[10px] font-bold uppercase text-indigo-300">Target Date</label>
-            <input type="date" id="devHolidayDate" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-indigo-400">
-          </div>
-          <div class="p-3.5 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-            <label class="block text-[10px] font-bold uppercase text-indigo-300">Holiday Status</label>
-            <select id="devHolidayActive" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-indigo-400">
-              <option value="no">Standard Working Day</option>
-              <option value="yes">Holiday / Special Non-Working Day</option>
-            </select>
-          </div>
-          <div class="p-3.5 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-            <label class="block text-[10px] font-bold uppercase text-indigo-300">Office Duty Roster (Select Active)</label>
-            <div id="devOfficeDutyCheckboxes" class="flex flex-wrap gap-2 pt-1 text-xs">
-              <!-- Dynamically populated office staff -->
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-end pt-1">
-          <button onclick="saveHolidayAndDutySettings()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-5 py-2.5 rounded-xl text-xs transition shadow-lg cursor-pointer">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Save & Broadcast Holiday Schedule
-          </button>
-        </div>
-      </div>
-
       <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
       <div id="devFeatureFlagCard" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl border border-indigo-500/30 shadow-xl space-y-4">
         <div class="flex justify-between items-center border-b border-indigo-800/60 pb-3">
@@ -354,7 +311,6 @@
           <span id="featureStatusBadge" class="text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40">
             Dev Test Only
           </span>
-
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
           <div>
@@ -534,29 +490,6 @@
     <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 w-full">
       <div class="lg:col-span-4 bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-md h-fit space-y-4">
-        
-        <!-- OFFICE PROFILE PHOTO UPLOAD WIDGET -->
-        <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <div class="relative group cursor-pointer" onclick="document.getElementById('officeProfilePhotoInput').click()">
-            <div id="myOfficeAvatarImg" class="w-10 h-10 rounded-full overflow-hidden bg-slate-900 text-white font-black text-xs flex items-center justify-center uppercase shadow border-2 border-orange-500">
-              O
-            </div>
-            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[9px] opacity-0 group-hover:opacity-100 transition">
-              <i class="fa-solid fa-camera"></i>
-            </div>
-            <input id="officeProfilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleOfficeProfilePhotoUpload(event)">
-          </div>
-          <div class="flex-1 min-w-0">
-            <h4 class="font-black text-xs text-slate-900 uppercase truncate" id="officeStaffDisplayName">Office Staff</h4>
-            <p class="text-[10px] text-slate-500">Tap avatar photo to update your picture.</p>
-          </div>
-        </div>
-
-        <!-- HOLIDAY / DUTY STATUS BANNER FOR OFFICE -->
-        <div id="officeHolidayBanner" class="hidden p-3.5 rounded-2xl border text-xs space-y-1">
-          <!-- Populated dynamically -->
-        </div>
-
         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Intake Terminal</span>
@@ -1122,16 +1055,9 @@
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
     const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
     const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
-    const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_CONFIG_V1";
 
     let featureFlags = {
       diagnosticV2Enabled: false
-    };
-
-    let holidayConfig = {
-      date: "",
-      isHoliday: false,
-      activeOffice: []
     };
 
     const CORE_INITIAL_JOBS = [
@@ -1146,7 +1072,7 @@
         priority: "Normal",
         details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [OFFICE_CREATOR:shiela] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
+        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
         time_created: "02:05 PM"
       }
     ];
@@ -1225,9 +1151,6 @@
               if (rec.id === CONFIG_RECORD_ID && rec.details) {
                 try { featureFlags = { ...featureFlags, ...JSON.parse(rec.details) }; } catch(e){}
               }
-              if (rec.id === HOLIDAY_RECORD_ID && rec.details) {
-                try { holidayConfig = JSON.parse(rec.details); } catch(e){}
-              }
             });
 
             AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
@@ -1243,112 +1166,6 @@
           }
         }
       } catch (e) {}
-    }
-
-    async function saveHolidayAndDutySettings() {
-      if (currentRole !== 'developer') {
-        alert("Permission denied. Only developer can set holidays and office duty schedules.");
-        return;
-      }
-
-      const holidayDateVal = document.getElementById('devHolidayDate').value;
-      const isHolidayVal = document.getElementById('devHolidayActive').value === 'yes';
-      
-      const activeCheckboxes = document.querySelectorAll('input[name="officeDutyCheckbox"]:checked');
-      const activeOfficeArr = Array.from(activeCheckboxes).map(cb => cb.value);
-
-      holidayConfig = {
-        date: holidayDateVal,
-        isHoliday: isHolidayVal,
-        activeOffice: activeOfficeArr
-      };
-
-      const payload = {
-        id: HOLIDAY_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_HOLIDAY_RECORD",
-        plate: "N/A",
-        service: "Holiday & Duty Schedule",
-        est_time: 0,
-        priority: "Normal",
-        details: JSON.stringify(holidayConfig),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-        alert("✅ Holiday & Office Duty Schedule successfully saved and broadcasted to cloud!");
-        renderDeveloperAnalytics();
-      } catch (err) {
-        alert("Error saving holiday schedule.");
-      }
-    }
-
-    function renderDeveloperHolidayConfigUI() {
-      const dateInput = document.getElementById('devHolidayDate');
-      const activeSelect = document.getElementById('devHolidayActive');
-      const statusPill = document.getElementById('holidayStatusPill');
-      const container = document.getElementById('devOfficeDutyCheckboxes');
-
-      if (dateInput && holidayConfig.date) dateInput.value = holidayConfig.date;
-      if (activeSelect) activeSelect.value = holidayConfig.isHoliday ? 'yes' : 'no';
-
-      if (statusPill) {
-        if (holidayConfig.isHoliday) {
-          statusPill.className = "text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40";
-          statusPill.innerHTML = `<i class="fa-solid fa-umbrella-beach mr-1"></i> Holiday Set (${holidayConfig.date || 'Tomorrow'})`;
-        } else {
-          statusPill.className = "text-[10px] font-black uppercase px-3 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-          statusPill.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Normal Working Day`;
-        }
-      }
-
-      if (container) {
-        const officeStaffList = Object.keys(AUTHORIZED_ROSTER).filter(u => AUTHORIZED_ROSTER[u] === 'office');
-        container.innerHTML = officeStaffList.map(staff => {
-          const isActive = holidayConfig.activeOffice && holidayConfig.activeOffice.includes(staff);
-          return `
-            <label class="flex items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl cursor-pointer hover:border-indigo-400">
-              <input type="checkbox" name="officeDutyCheckbox" value="${staff}" ${isActive ? 'checked' : ''} class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
-              <span class="font-bold uppercase text-white">${staff} <span class="text-[9px] font-normal text-indigo-300">${isActive ? '(Active Duty)' : '(Off Duty)'}</span></span>
-            </label>
-          `;
-        }).join('');
-      }
-    }
-
-    function renderOfficeHolidayBanner() {
-      const banner = document.getElementById('officeHolidayBanner');
-      if (!banner) return;
-
-      if (!holidayConfig.isHoliday) {
-        banner.classList.add('hidden');
-        return;
-      }
-
-      const isMeActive = currentUser && holidayConfig.activeOffice && holidayConfig.activeOffice.includes(currentUser.toLowerCase());
-      
-      banner.className = `p-3.5 rounded-2xl border text-xs space-y-1.5 ${isMeActive ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-amber-50 border-amber-300 text-amber-900'}`;
-      banner.innerHTML = `
-        <div class="font-black uppercase flex items-center gap-1.5">
-          <i class="fa-solid ${isMeActive ? 'fa-shield-heart text-emerald-600' : 'fa-umbrella-beach text-amber-600'}"></i>
-          <span>Holiday Notice (${holidayConfig.date || 'Tomorrow'})</span>
-        </div>
-        <p class="text-[11px] leading-snug">
-          ${isMeActive 
-            ? '🟢 You are assigned on <strong>Active Duty</strong> for this holiday shift.' 
-            : '🏖️ You are scheduled as <strong>Off-Duty</strong> for this holiday shift. Enjoy your rest or coordinate with active staff.'}
-        </p>
-        <p class="text-[10px] font-semibold text-slate-600">Active Office Staff Today: <strong>${holidayConfig.activeOffice && holidayConfig.activeOffice.length > 0 ? holidayConfig.activeOffice.join(', ').toUpperCase() : 'None assigned'}</strong></p>
-      `;
-      banner.classList.remove('hidden');
     }
 
     async function toggleMechanicDiagnosticFeature() {
@@ -1384,6 +1201,7 @@
       }
     }
 
+    // DIRECT HIGH-FIDELITY PRINT ENGINE
     function printDiagnosticReport() {
       const jobId = document.getElementById('diagFormTargetJobId').value;
       const job = state.find(j => j.id === jobId);
@@ -1623,10 +1441,6 @@
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
-
-    function handleOfficeProfilePhotoUpload(event) {
-      handleProfilePhotoUpload(event);
     }
 
     async function saveAccountToCloud(username, password, role = 'workshop', hours = 0) {
@@ -1935,6 +1749,7 @@
       }
     }
 
+    // 1-TAP FAST LOGIN LOGIC (DEVICE PERSISTENCE)
     function initRememberedDeviceUI() {
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
@@ -2108,15 +1923,6 @@
         }
       } else if (currentRole === 'office') {
         officeView.classList.remove('hidden');
-        document.getElementById('officeStaffDisplayName').innerText = currentUser;
-
-        const officeAvatarImgContainer = document.getElementById('myOfficeAvatarImg');
-        if (cachedCloudAvatars[currentUser]) {
-          officeAvatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
-        } else {
-          officeAvatarImgContainer.innerText = currentUser.charAt(0).toUpperCase();
-        }
-        renderOfficeHolidayBanner();
       } else {
         workshopView.classList.remove('hidden');
         document.getElementById('workshopStaffName').innerText = currentUser;
@@ -2137,8 +1943,6 @@
       document.getElementById('viewDeveloper').classList.add('hidden');
       document.getElementById('viewWorkshop').classList.add('hidden');
       document.getElementById('viewOffice').classList.remove('hidden');
-      document.getElementById('officeStaffDisplayName').innerText = currentUser;
-      renderOfficeHolidayBanner();
     }
 
     function switchDevToWorkshopSim() {
@@ -2293,9 +2097,6 @@
         return;
       }
 
-      const creatorName = currentUser ? currentUser.toLowerCase() : 'shiela';
-      const slotExtra = vinVal ? `[VIN:${vinVal}] [OFFICE_CREATOR:${creatorName}]` : `[OFFICE_CREATOR:${creatorName}]`;
-
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: custVal,
@@ -2308,7 +2109,7 @@
         details: `[DIAG: ${diagVal}] ${detailsVal}`,
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: slotExtra
+        auto_schedule_slot: vinVal ? `[VIN:${vinVal}]` : null
       };
 
       state.unshift(newCar);
@@ -2328,7 +2129,6 @@
 
     async function devQuickDispatchTest() {
       const testDiag = "B" + Math.floor(1000 + Math.random() * 9000);
-      const creatorName = currentUser ? currentUser.toLowerCase() : 'shiela';
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
         customer: "Test Customer",
@@ -2341,7 +2141,7 @@
         details: `[DIAG: ${testDiag}] Check Engine & Safety Check`,
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: `[VIN:MRHTEST4710GP9999] [OFFICE_CREATOR:${creatorName}]`
+        auto_schedule_slot: "[VIN:MRHTEST4710GP9999]"
       };
 
       state.unshift(newCar);
@@ -2358,15 +2158,6 @@
       if (job.vin && job.vin !== "N/A") return job.vin;
       const vMatch = String(job.auto_schedule_slot || '').match(/\[VIN:(.*?)\]/i);
       return vMatch ? vMatch[1].toUpperCase() : "-";
-    }
-
-    function resolveOfficeCreator(job) {
-      if (!job) return "Shiela";
-      const match = String(job.auto_schedule_slot || '').match(/\[OFFICE_CREATOR:(.*?)\]/i);
-      if (match) {
-        return match[1].charAt(0).toUpperCase() + match[1].slice(1);
-      }
-      return "Shiela";
     }
 
     function handleDiagnosticSearch() {
@@ -2395,7 +2186,6 @@
       resultsContainer.innerHTML = matchingJobs.map(job => {
         const diagNumber = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'No Diag #');
         const assignedMech = resolveMechanicName(job) || 'Unassigned';
-        const creator = resolveOfficeCreator(job);
 
         return `
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
@@ -2406,7 +2196,7 @@
                 <strong class="text-slate-900 font-black">${job.vehicle}</strong>
                 <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${job.status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${job.status.toUpperCase()}</span>
               </div>
-              <p class="text-slate-600 mt-1"><strong>Client:</strong> ${job.customer} • <strong>Created by:</strong> ${creator} • <strong>Mechanic:</strong> ${assignedMech}</p>
+              <p class="text-slate-600 mt-1"><strong>Client:</strong> ${job.customer} • <strong>Mechanic:</strong> ${assignedMech} • <strong>Date:</strong> ${job.time_created || 'Today'}</p>
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
@@ -2452,7 +2242,6 @@
 
       const info = parsePartsInfo(currentItem ? currentItem.auto_schedule_slot : '');
       const mech = resolveMechanicName(currentItem) || currentUser || 'MECHANIC';
-      const creator = resolveOfficeCreator(currentItem);
 
       if (newStatus === 'inprogress' && !slot) {
         const myActiveJobCount = getMechanicActiveCount(currentUser);
@@ -2461,7 +2250,7 @@
           return;
         }
 
-        let tags = `Bay #1 [MECH:${mech.toLowerCase()}] [OFFICE_CREATOR:${creator.toLowerCase()}]`;
+        let tags = `Bay #1 [MECH:${mech.toLowerCase()}]`;
         if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
         if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
         if (info.diagData) tags += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
@@ -2469,13 +2258,14 @@
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
         slot = tags;
       } else if (newStatus === 'completed') {
-        let tags = `Completed Service [MECH:${mech.toLowerCase()}] [OFFICE_CREATOR:${creator.toLowerCase()}]`;
+        let tags = `Completed Service [MECH:${mech.toLowerCase()}]`;
         if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
         if (info.chatList && info.chatList.length > 0) tags += ` [CHAT]${JSON.stringify(info.chatList)}[/CHAT]`;
         if (info.diagData) tags += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
         if (info.vin) tags += ` [VIN:${info.vin}]`;
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
         slot = tags;
+        playLoudVehicleHorn();
       }
 
       pendingPatchTimeouts[id] = Date.now();
@@ -2534,6 +2324,7 @@
       document.getElementById('paperClientComment').innerText = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
       document.getElementById('paperMechanicName').innerText = assignedMech;
 
+      // Print button visibility: Only Developer or released feature for Office/Admin
       const btnPrint = document.getElementById('btnDiagModalPrint');
       if (btnPrint) {
         const canPrint = (currentRole === 'developer') || (featureFlags.diagnosticV2Enabled && (currentRole === 'office' || currentRole === 'admin'));
@@ -2808,8 +2599,7 @@
         }
       ];
 
-      const creator = resolveOfficeCreator(currentItem);
-      let slotPayload = `Waiting for Car Parts: ${partDesc} [MECH:${resolved.toLowerCase()}] [OFFICE_CREATOR:${creator.toLowerCase()}] [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
+      let slotPayload = `Waiting for Car Parts: ${partDesc} [MECH:${resolved.toLowerCase()}] [CHAT]${JSON.stringify(initialChat)}[/CHAT]`;
       if (uploadedPartImages.length > 0) {
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
@@ -2880,7 +2670,6 @@
         .replace(/\[DIAG_DATA\][\s\S]*?\[\/DIAG_DATA\]/gi, '')
         .replace(/\[VIN:.*?\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
-        .replace(/\[OFFICE_CREATOR:.*?\]/gi, '')
         .replace(/Waiting for Car Parts:/gi, '')
         .replace(/Bay #\d+/gi, '')
         .replace(/Completed Service/gi, '')
@@ -3026,7 +2815,7 @@
 
       const info = parsePartsInfo(currentItem.auto_schedule_slot);
       const senderRole = (currentRole === 'office' || currentRole === 'developer' || currentRole === 'admin') ? 'office' : 'workshop';
-      const senderName = currentUser.toUpperCase();
+      const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
 
       const newChatEntry = {
         sender: senderName,
@@ -3070,8 +2859,6 @@
       if (restrictedNotice) restrictedNotice.classList.toggle('hidden', isDev);
       if (deletedLogsPanel) deletedLogsPanel.classList.toggle('hidden', !isDev);
       if (devFeatureCard) devFeatureCard.classList.toggle('hidden', !isDev);
-
-      renderDeveloperHolidayConfigUI();
 
       const statusBadge = document.getElementById('featureStatusBadge');
       const toggleBtn = document.getElementById('btnToggleDiagnosticFeature');
@@ -3308,6 +3095,7 @@
       const isFeatureReleased = featureFlags.diagnosticV2Enabled;
       const isDev = currentRole === 'developer';
 
+      // Office Queue List Renderer
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = state.filter(j => j.status === currentFilter);
@@ -3322,7 +3110,6 @@
         } else {
           officeContainer.innerHTML = officeList.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const creator = resolveOfficeCreator(j);
             const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
 
             let badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center gap-1"><i class="fa-regular fa-bell mr-1"></i> Waiting</span>`;
@@ -3384,8 +3171,6 @@
                 </div>`;
             }
 
-            const creatorAvatar = cachedCloudAvatars[creator.toLowerCase()] ? `<img src="${cachedCloudAvatars[creator.toLowerCase()]}" class="w-5 h-5 rounded-full object-cover inline-block mr-1">` : `<i class="fa-solid fa-user-pen mr-1 text-orange-500"></i>`;
-
             return `
               <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
                 <div class="flex justify-between items-start">
@@ -3396,7 +3181,6 @@
                       ${assignedMechanic ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black rounded-lg">Handled by: ${assignedMechanic}</span>` : ''}
                     </div>
                     <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
-                    <p class="text-[10px] text-orange-600 font-bold mt-0.5 flex items-center">${creatorAvatar} <span>${creator} Created the Job Order</span></p>
                   </div>
                   <div class="flex items-center gap-1.5">
                     ${badge}
@@ -3414,6 +3198,7 @@
         }
       }
 
+      // Workshop Feed Renderer
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -3430,7 +3215,6 @@
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
-            const creator = resolveOfficeCreator(j);
             const isMyJob = assignedMechanic && currentUser && (assignedMechanic.toLowerCase() === currentUser.toLowerCase());
             const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
             const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
@@ -3486,7 +3270,7 @@
 
                     ${diagButtonHTML}
 
-                     ${(partText || chatList.length > 0) ? `
+                    ${(partText || chatList.length > 0) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
                         ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
@@ -3536,7 +3320,7 @@
                     <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
 
-                    {(isMyJob || isManagement) ? `
+                    ${(isMyJob || isManagement) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative active:scale-95 cursor-pointer">
                         <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
                         ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
@@ -3547,130 +3331,91 @@
                       </div>
                     `}
                   </div>
-                  // FIXED AUTHENTICATION ENGINE (CARTECH FULL BUILD)
-function handleAuthLogin(e) {
-  if (e && e.preventDefault) e.preventDefault();
+                  ${resumeBtn}
+                </div>`;
+            }
 
-  const userEl = document.getElementById('loginUsername');
-  const passEl = document.getElementById('loginPassword');
-  
-  if (!userEl || !passEl) return;
+            const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
 
-  const userInput = userEl.value.trim().toLowerCase();
-  const passInput = passEl.value.trim();
-  const errorBox = document.getElementById('loginAuthError');
-  const cardWrapper = document.getElementById('loginCardWrapper');
-
-  // Load registered accounts with fallback to defaults
-  let accounts = [];
-  try {
-    const raw = localStorage.getItem('cartech_accounts_v1');
-    accounts = raw ? JSON.parse(raw) : [
-      { name: 'admin', pass: 'admin123', role: 'developer' },
-      { name: 'mechanic', pass: 'mech123', role: 'workshop' },
-      { name: 'office', pass: 'office123', role: 'office' }
-    ];
-  } catch (err) {
-    accounts = [
-      { name: 'admin', pass: 'admin123', role: 'developer' },
-      { name: 'mechanic', pass: 'mech123', role: 'workshop' },
-      { name: 'office', pass: 'office123', role: 'office' }
-    ];
-  }
-
-  // Case-insensitive user lookup
-  const matched = accounts.find(acc => 
-    String(acc.name).trim().toLowerCase() === userInput && 
-    String(acc.pass).trim() === passInput
-  );
-
-  if (matched) {
-    if (errorBox) errorBox.classList.add('hidden');
-    
-    // Save state
-    localStorage.setItem('cartech_session_user', JSON.stringify(matched));
-    localStorage.setItem('cartech_remembered_device', JSON.stringify(matched));
-
-    // Show App
-    const loginScreen = document.getElementById('loginScreen');
-    const appShell = document.getElementById('appShell');
-    if (loginScreen) loginScreen.classList.add('hidden');
-    if (appShell) appShell.classList.remove('hidden');
-
-    // Trigger full workshop views
-    if (typeof pullData === 'function') pullData();
-    if (typeof renderQueue === 'function') renderQueue();
-    if (typeof initDashboard === 'function') initDashboard();
-  } else {
-    if (errorBox) {
-      errorBox.classList.remove('hidden');
-      const msg = document.getElementById('loginAuthErrorMsg');
-      if (msg) msg.innerText = 'Invalid username or password.';
-    }
-    if (cardWrapper) {
-      cardWrapper.classList.add('shake-denied');
-      setTimeout(() => cardWrapper.classList.remove('shake-denied'), 500);
-    }
-  }
-}
-<script>
-  // FULL WORKSPACE UNLOCK & ROLE RESTORATION
-  document.addEventListener('submit', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    var userVal = (document.getElementById('loginUsername')?.value || 'admin').trim();
-    var passVal = (document.getElementById('loginPassword')?.value || '').trim();
-
-    // FORCE DEVELOPER ROLE SO NO PANELS ARE HIDDEN OR RESTRICTED
-    var activeUser = { 
-      name: userVal, 
-      pass: passVal, 
-      role: 'developer' 
-    };
-
-    localStorage.setItem('cartech_session_user', JSON.stringify(activeUser));
-    localStorage.setItem('cartech_remembered_device', JSON.stringify(activeUser));
-
-    // 1. Hide Login Screen
-    var loginScreen = document.getElementById('loginScreen');
-    if (loginScreen) {
-      loginScreen.style.setProperty('display', 'none', 'important');
-      loginScreen.classList.add('hidden');
+            return `
+              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
+                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
+                  </div>
+                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
+                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
+                  }">
+                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : 'Bay Floor')}
+                  </span>
+                </div>
+                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
+                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
+                </div>
+                ${actionArea}
+              </div>`;
+          }).join('');
+        }
+      }
     }
 
-    // 2. Unhide App Shell & All Hidden Workspace Views
-    var appShell = document.getElementById('appShell');
-    if (appShell) {
-      appShell.classList.remove('hidden');
-      appShell.style.setProperty('display', 'block', 'important');
+    syncSystemCloudRecords();
+
+    // AUTO SESSION RESTORE WITH OPERATING HOURS CHECK
+    const savedAuthUser = localStorage.getItem('cartech_auth_user');
+    const savedAuthRole = localStorage.getItem('cartech_auth_role');
+
+    if (savedAuthUser && savedAuthRole) {
+      const currentHour = new Date().getHours();
+      const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
+
+      if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
+        localStorage.removeItem('cartech_auth_user');
+        localStorage.removeItem('cartech_auth_role');
+      } else {
+        currentUser = savedAuthUser;
+        currentRole = savedAuthRole;
+        bootApp();
+      }
     }
 
-    // Unhide developer/admin panels if hidden by CSS
-    var devView = document.getElementById('viewDeveloper');
-    if (devView) {
-      devView.classList.remove('hidden');
-      devView.style.setProperty('display', 'block', 'important');
-    }
+    initRememberedDeviceUI();
 
-    // Unhide workshop main views
-    var mainViews = document.querySelectorAll('main, section, .view-panel');
-    mainViews.forEach(function(el) {
-      el.classList.remove('hidden');
+    // BANDWIDTH PROTECTOR: 15-SECOND POLLING INTERVAL
+    setInterval(() => pullData(false), 15000);
+
+    // AUTOMATIC LOGOUT / IDLE TIMEOUT & 5:00 PM SHIFT-END PROTECTOR
+    let lastActivityTime = Date.now();
+    const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+
+    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, () => {
+        lastActivityTime = Date.now();
+      });
     });
 
-    // Update Header Badges to Admin/Dev
-    var staffBadge = document.getElementById('staffBadge');
-    var roleBadge = document.getElementById('roleBadge');
-    if (staffBadge) staffBadge.innerText = userVal.toUpperCase();
-    if (roleBadge) roleBadge.innerText = 'DEVELOPER / ADMIN';
+    setInterval(() => {
+      if (!currentUser) return;
+      const now = Date.now();
+      const currentHour = new Date().getHours();
+      const isUnrestricted = currentRole === 'developer' || currentRole === 'admin' || currentUser === 'bot';
 
-    // 3. Trigger all original data loaders
-    try { if (typeof pullData === 'function') pullData(); } catch(err) {}
-    try { if (typeof renderQueue === 'function') renderQueue(); } catch(err) {}
-    try { if (typeof initDashboard === 'function') initDashboard(); } catch(err) {}
-    try { if (typeof loadAccounts === 'function') loadAccounts(); } catch(err) {}
-  }, true);
-</script>
+      // 5:00 PM (17:00) to 8:00 AM (08:00) automatic logout (Bypassed by Bot, Dev, and Admin)
+      if (!isUnrestricted) {
+        if (currentHour >= 17 || currentHour < 8) {
+          alert("Have a nice Day, come back tomorrow!");
+          handleLogout();
+          return;
+        }
+      }
+
+      if (now - lastActivityTime > IDLE_TIMEOUT_MS && currentUser !== 'bot') {
+        alert("🔒 Logged out due to 30 minutes of inactivity to protect workshop bandwidth.");
+        handleLogout();
+      }
+    }, 60000);
+  </script>
 </body>
 </html>
