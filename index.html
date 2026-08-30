@@ -3440,10 +3440,12 @@
     </button>
   </div>
 </div>
-
+  </div
 <script>
   function checkAndShowHolidayPopup() {
-    if (!appData || !appData.holidays || appData.holidays.length === 0) return;
+    // Safe check that avoids breaking if appData doesn't exist
+    if (typeof appData === 'undefined' || !appData || !appData.holidays || appData.holidays.length === 0) return;
+
     const upcoming = appData.holidays[appData.holidays.length - 1];
     if (upcoming) {
       document.getElementById('modalHolidayTitle').innerText = upcoming.name;
@@ -3453,6 +3455,38 @@
     }
   }
 
+  function closeHolidayModal() {
+    document.getElementById('officeHolidayModal').classList.add('hidden');
+  }
+
+  window.addEventListener('load', function() {
+    setTimeout(checkAndShowHolidayPopup, 1000);
+  });
+</script>
+
+</body>
+</html>
+    if (!appData || !appData.holidays || appData.holidays.length === 0) return;
+    const upcoming = appData.holidays[appData.holidays.length - 1];
+    if (upcoming) {
+      document.getElementById('modalHolidayTitle').innerText = upcoming.name;
+      document.getElementById('modalHolidayDate').innerText = `Date: ${upcoming.date}`;
+      document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No staff assigned';
+      document.getElementById('officeHolidayModal').classList.remove('hidden');
+    }
+  }
+function checkAndShowHolidayPopup() {
+  // Safe check that avoids breaking if appData doesn't exist
+  if (typeof appData === 'undefined' || !appData || !appData.holidays || appData.holidays.length === 0) return;
+  
+  const upcoming = appData.holidays[appData.holidays.length - 1];
+  if (upcoming) {
+    document.getElementById('modalHolidayTitle').innerText = upcoming.name;
+    document.getElementById('modalHolidayDate').innerText = `Date: ${upcoming.date}`;
+    document.getElementById('modalHolidayStaff').innerText = upcoming.onDutyStaff || 'No staff assigned';
+    document.getElementById('officeHolidayModal').classList.remove('hidden');
+  }
+}
   function closeHolidayModal() {
     document.getElementById('officeHolidayModal').classList.add('hidden');
   }
