@@ -2183,7 +2183,7 @@
       isFetchingNetwork = true;
 
       heartbeatTick++;
-      if (true)
+      if (forceTelemetry || heartbeatTick % 3 === 0) {
         await syncSystemCloudRecords();
       }
 
