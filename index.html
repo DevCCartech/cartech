@@ -680,9 +680,7 @@
         </div>
         <div class="leading-tight">
           <h3 id="modalChatTitle" class="font-black text-xs sm:text-sm text-white truncate max-w-[170px]">Mechanic Chat</h3>
-          <p id="modalChatSub" class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active now
-          </p>
+          <p id="modalChatSub" class="text-[10px] text-emerald-400 font-bold flex items-center gap-1"></p>
         </div>
       </div>
       
@@ -1112,6 +1110,19 @@
       localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
     }
 
+    function getMechanicDutyStatus(mechanicName) {
+      if (!mechanicName) return { isOnline: false, label: 'Off Duty', badgeClass: 'bg-slate-100 text-slate-500 border-slate-200' };
+      
+      const m = mechanicName.toLowerCase();
+      const record = cachedCloudPresence[m];
+      const lastSeen = record ? record.lastSeen : 0;
+      const isOnline = (Date.now() - lastSeen) < 35000 && lastSeen > 0;
+
+      return isOnline
+        ? { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' }
+        : { isOnline: false, label: 'Off Duty', badgeClass: 'bg-rose-50 text-rose-600 border-rose-200' };
+    }
+
     async function syncSystemCloudRecords() {
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
@@ -1201,7 +1212,6 @@
       }
     }
 
-    // DIRECT HIGH-FIDELITY PRINT ENGINE
     function printDiagnosticReport() {
       const jobId = document.getElementById('diagFormTargetJobId').value;
       const job = state.find(j => j.id === jobId);
@@ -1692,7 +1702,7 @@
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
             gain.gain.exponentialRampToValueAtTime(0.9, ctx.currentTime + burstOffset + 0.04);
-            gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25);
+            gain.setValueAtTime ? gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25) : null;
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.35);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -1749,7 +1759,6 @@
       }
     }
 
-    // 1-TAP FAST LOGIN LOGIC (DEVICE PERSISTENCE)
     function initRememberedDeviceUI() {
       const rememberedUser = localStorage.getItem('cartech_remembered_device_user');
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
@@ -2282,6 +2291,33 @@
       } catch (err) {}
     }
 
+    async function officePartsReadyToPickUp(jobId) {
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      const info = parsePartsInfo(job.auto_schedule_slot);
+      const resolvedMech = resolveMechanicName(job) || 'MECHANIC';
+
+      const readyChatEntry = {
+        sender: "OFFICE",
+        role: "office",
+        text: "Parts are ready for pick-up at the front desk.",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const updatedChatList = [...info.chatList, readyChatEntry];
+      lastSeenChatCounts[jobId] = updatedChatList.length;
+      saveLastSeenChats();
+
+      let slot = `Bay Floor [MECH:${resolvedMech.toLowerCase()}] [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
+      if (info.images && info.images.length > 0) slot += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
+      if (info.diagData) slot += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
+      if (info.vin) slot += ` [VIN:${info.vin}]`;
+
+      await setStatus(jobId, 'inprogress', slot);
+      alert(`Vehicle ${job.vehicle} returned to bay. Notification sent.`);
+    }
+
     function openPartsModal(jobId) {
       const modal = document.getElementById('partsModal');
       const inputId = document.getElementById('partJobId');
@@ -2324,7 +2360,6 @@
       document.getElementById('paperClientComment').innerText = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
       document.getElementById('paperMechanicName').innerText = assignedMech;
 
-      // Print button visibility: Only Developer or released feature for Office/Admin
       const btnPrint = document.getElementById('btnDiagModalPrint');
       if (btnPrint) {
         const canPrint = (currentRole === 'developer') || (featureFlags.diagnosticV2Enabled && (currentRole === 'office' || currentRole === 'admin'));
@@ -2701,8 +2736,18 @@
       const displayInitial = (assignedMech || mechName).charAt(0).toUpperCase();
       document.getElementById('modalAvatarCircle').innerText = displayInitial;
       document.getElementById('fbBubbleAvatar').innerText = displayInitial;
-      document.getElementById('modalChatTitle').innerText = `${(assignedMech || mechName).toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
-      document.getElementById('modalChatSub').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ${job ? job.customer : 'Active now'}`;
+      
+      const targetMech = assignedMech || mechName;
+      const duty = getMechanicDutyStatus(targetMech);
+
+      document.getElementById('modalChatTitle').innerText = `${targetMech.toUpperCase()} • ${job ? job.vehicle : 'Car Station'}`;
+      document.getElementById('modalChatSub').innerHTML = `
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[9px] font-black uppercase border ${duty.badgeClass}">
+          <span class="w-1.5 h-1.5 rounded-full ${duty.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
+          ${duty.label}
+        </span>
+        <span class="text-slate-400 text-[10px] ml-1 font-medium truncate">• ${job ? job.customer : ''}</span>
+      `;
 
       const photosHTML = info.images.map(img => `
         <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-8 h-8 object-cover rounded-lg border border-purple-200 cursor-pointer shadow-sm">
@@ -3057,6 +3102,7 @@
             return res && res.toLowerCase() === m;
           });
 
+          const duty = getMechanicDutyStatus(m);
           const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [] };
           const totalMsgCount = info.chatList ? info.chatList.length : 0;
           const seenCount = activeMechJob ? (lastSeenChatCounts[activeMechJob.id] || 0) : 0;
@@ -3075,6 +3121,9 @@
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
                   ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
                 </div>
+                <!-- Duty indicator dot -->
+                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white shadow ${duty.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                
                 ${unreadCount > 0 ? `
                   <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 text-white font-black text-[10px] rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
                     ${unreadCount}
@@ -3082,8 +3131,13 @@
                 ` : ''}
               </div>
               <div class="text-center xl:text-left mt-1 xl:mt-0">
-                <div class="font-black text-xs text-slate-900 uppercase leading-none">${m}</div>
-                <div class="text-[9px] text-slate-400 font-bold mt-0.5 truncate max-w-[90px]">
+                <div class="flex items-center gap-1.5 justify-center xl:justify-start">
+                  <span class="font-black text-xs text-slate-900 uppercase leading-none">${m}</span>
+                  <span class="text-[8px] font-black px-1.5 py-0.5 rounded-md border uppercase ${duty.badgeClass}">
+                    ${duty.label}
+                  </span>
+                </div>
+                <div class="text-[9px] text-slate-400 font-bold mt-1 truncate max-w-[100px]">
                   ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
                 </div>
               </div>
@@ -3363,7 +3417,6 @@
 
     syncSystemCloudRecords();
 
-    // AUTO SESSION RESTORE WITH OPERATING HOURS CHECK
     const savedAuthUser = localStorage.getItem('cartech_auth_user');
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
@@ -3383,10 +3436,8 @@
 
     initRememberedDeviceUI();
 
-    // BANDWIDTH PROTECTOR: 15-SECOND POLLING INTERVAL
     setInterval(() => pullData(false), 15000);
 
-    // AUTOMATIC LOGOUT / IDLE TIMEOUT & 5:00 PM SHIFT-END PROTECTOR
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
@@ -3402,7 +3453,6 @@
       const currentHour = new Date().getHours();
       const isUnrestricted = currentRole === 'developer' || currentRole === 'admin' || currentUser === 'bot';
 
-      // 5:00 PM (17:00) to 8:00 AM (08:00) automatic logout (Bypassed by Bot, Dev, and Admin)
       if (!isUnrestricted) {
         if (currentHour >= 17 || currentHour < 8) {
           alert("Have a nice Day, come back tomorrow!");
