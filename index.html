@@ -46,7 +46,7 @@
 
     .sharp-img {
       image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
+      image-rendering: auto;
     }
     .fb-chat-head {
       transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -86,6 +86,24 @@
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
+
+  <!-- SYSTEM-WIDE ANNOUNCEMENT BROADCAST MODAL -->
+  <div id="announcementBroadcastModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border-2 border-orange-400 space-y-4 text-center">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl shadow-inner animate-bounce">
+        <i class="fa-solid fa-bullhorn"></i>
+      </div>
+      <div>
+        <span class="text-[10px] font-black uppercase text-orange-600 tracking-wider">Official Workshop Announcement</span>
+        <h3 class="text-xl font-black text-slate-900 mt-1" id="announcementModalTitle">Important Notice</h3>
+        <p class="text-xs text-slate-600 mt-2 leading-relaxed bg-orange-50/70 p-3.5 rounded-2xl border border-orange-100 font-semibold" id="announcementModalBody"></p>
+        <span class="text-[10px] text-slate-400 font-bold block mt-2" id="announcementModalMeta"></span>
+      </div>
+      <button onclick="dismissAnnouncementModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-2xl text-xs transition shadow-lg cursor-pointer">
+        Understood / Acknowledge
+      </button>
+    </div>
+  </div>
 
   <!-- 1. AUTH SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
@@ -294,6 +312,36 @@
             <i class="fa-solid fa-desktop"></i> Open Front Desk View
           </button>
         </div>
+      </div>
+
+      <!-- BROADCAST ANNOUNCEMENT CARD -->
+      <div class="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-6 rounded-3xl shadow-xl space-y-3 border border-orange-400/40">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-sm"><i class="fa-solid fa-bullhorn"></i></div>
+          <h3 class="font-black text-sm">System-Wide Live Pop-up Announcement</h3>
+        </div>
+        <p class="text-xs text-orange-100">Broadcast updates to all active phone and desktop screens across the workshop and office.</p>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="devAnnouncementInput" placeholder="Type official notice (e.g. Shop closes 4:00 PM today, staff meeting, holiday announcement)..." class="flex-1 bg-white text-slate-900 px-4 py-2.5 rounded-xl text-xs font-semibold focus:outline-none placeholder-slate-400">
+          <button onclick="publishDeveloperAnnouncement()" class="bg-slate-900 hover:bg-slate-800 text-white font-black px-4 py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer whitespace-nowrap">
+            <i class="fa-solid fa-paper-plane mr-1 text-orange-400"></i> Broadcast Pop-up
+          </button>
+          <button onclick="clearDeveloperAnnouncement()" class="bg-white/20 hover:bg-white/30 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs transition cursor-pointer whitespace-nowrap">
+            Clear Alert
+          </button>
+        </div>
+      </div>
+
+      <!-- HOLIDAY & DUTY SCHEDULE CONTROL CARD -->
+      <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+          <h3 class="font-black text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-check text-indigo-600"></i> Staff Holiday & Duty Override Manager
+          </h3>
+          <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Developer Scheduler</span>
+        </div>
+        <p class="text-xs text-slate-500">Manually set mechanics as On Duty, Holiday (Off Duty), or leave them to live device detection.</p>
+        <div id="devHolidayRosterList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
       </div>
 
       <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
@@ -671,7 +719,7 @@
   </div>
 
   <!-- 3. FACEBOOK-STYLE DOCKED CHAT WINDOW -->
-  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[520px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
+  <div id="fbFloatingChatWindow" class="hidden fixed bottom-0 right-4 sm:right-6 w-[94vw] sm:w-[380px] h-[540px] bg-white rounded-t-3xl shadow-2xl border border-slate-300 z-50 flex flex-col overflow-hidden transition-all duration-300">
     <div class="p-3 bg-slate-900 text-white flex items-center justify-between shadow select-none cursor-pointer" onclick="minimizeMessengerChat()">
       <div class="flex items-center space-x-2.5">
         <div id="modalAvatarCircle" class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs uppercase border border-indigo-300">
@@ -739,7 +787,7 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Part Photos (Max 10 Photos - Auto Compressed)</label>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add High-Definition Photos (Max 10)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
           <div id="partPhotosGrid" class="grid grid-cols-4 gap-2 mt-2.5"></div>
         </div>
@@ -1052,10 +1100,14 @@
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
     const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
     const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
+    const ANNOUNCEMENT_RECORD_ID = "SYS_ANNOUNCEMENT_V2";
+    const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_SCHEDULE_V2";
 
     let featureFlags = {
       diagnosticV2Enabled: false
     };
+    let activeAnnouncement = null;
+    let manualDutyOverrides = {};
 
     const CORE_INITIAL_JOBS = [
       {
@@ -1113,6 +1165,20 @@
       if (!mechanicName) return { isOnline: false, label: 'Off Duty', badgeClass: 'bg-slate-100 text-slate-500 border-slate-200' };
       
       const m = mechanicName.toLowerCase();
+
+      // Developer Manual Holiday / Duty Check
+      if (manualDutyOverrides[m] === 'holiday') {
+        return { isOnline: false, label: 'Holiday / Off', badgeClass: 'bg-rose-100 text-rose-800 border-rose-300' };
+      }
+      if (manualDutyOverrides[m] === 'onduty') {
+        return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
+      }
+
+      // Test Bot is 24/7 On Duty
+      if (m === 'bot') {
+        return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
+      }
+
       const record = cachedCloudPresence[m];
       const lastSeen = record ? record.lastSeen : 0;
       const isOnline = (Date.now() - lastSeen) < 35000 && lastSeen > 0;
@@ -1161,6 +1227,12 @@
               if (rec.id === CONFIG_RECORD_ID && rec.details) {
                 try { featureFlags = { ...featureFlags, ...JSON.parse(rec.details) }; } catch(e){}
               }
+              if (rec.id === ANNOUNCEMENT_RECORD_ID && rec.details) {
+                try { activeAnnouncement = JSON.parse(rec.details); } catch(e){}
+              }
+              if (rec.id === HOLIDAY_RECORD_ID && rec.details) {
+                try { manualDutyOverrides = JSON.parse(rec.details); } catch(e){}
+              }
             });
 
             AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
@@ -1176,6 +1248,103 @@
           }
         }
       } catch (e) {}
+
+      checkAndTriggerAnnouncementAlert();
+    }
+
+    async function publishDeveloperAnnouncement() {
+      if (currentRole !== 'developer') return;
+      const text = (document.getElementById('devAnnouncementInput')?.value || '').trim();
+      if (!text) return;
+
+      activeAnnouncement = {
+        id: "ANN-" + Date.now(),
+        text: text,
+        postedBy: currentUser.toUpperCase(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const payload = {
+        id: ANNOUNCEMENT_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_ANNOUNCEMENT_RECORD",
+        plate: "N/A",
+        service: "Announcements",
+        est_time: 0,
+        priority: "High",
+        details: JSON.stringify(activeAnnouncement),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+        alert("Announcement broadcasted to all workshop devices.");
+        document.getElementById('devAnnouncementInput').value = "";
+      } catch(e){}
+    }
+
+    async function clearDeveloperAnnouncement() {
+      if (currentRole !== 'developer') return;
+      activeAnnouncement = null;
+      try {
+        await fetch(`${API_URL}?id=eq.${ANNOUNCEMENT_RECORD_ID}`, { method: "DELETE", headers: HEADERS });
+        alert("Broadcast banner cleared.");
+      } catch(e){}
+    }
+
+    function checkAndTriggerAnnouncementAlert() {
+      if (!activeAnnouncement || !activeAnnouncement.text) return;
+      const seenKey = 'cartech_seen_announcement_' + activeAnnouncement.id;
+      if (localStorage.getItem(seenKey)) return;
+
+      document.getElementById('announcementModalBody').innerText = activeAnnouncement.text;
+      document.getElementById('announcementModalMeta').innerText = `Broadcast by ${activeAnnouncement.postedBy} at ${activeAnnouncement.time}`;
+      document.getElementById('announcementBroadcastModal').classList.remove('hidden');
+
+      if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 400]);
+    }
+
+    function dismissAnnouncementModal() {
+      if (activeAnnouncement && activeAnnouncement.id) {
+        localStorage.setItem('cartech_seen_announcement_' + activeAnnouncement.id, 'true');
+      }
+      document.getElementById('announcementBroadcastModal').classList.add('hidden');
+    }
+
+    async function setStaffHolidayDuty(mechanicName, statusMode) {
+      if (currentRole !== 'developer') return;
+      manualDutyOverrides[mechanicName.toLowerCase()] = statusMode;
+
+      const payload = {
+        id: HOLIDAY_RECORD_ID,
+        customer: "SYSTEM",
+        phone: "N/A",
+        vehicle: "CLOUD_HOLIDAY_RECORD",
+        plate: "N/A",
+        service: "Holiday Schedule",
+        est_time: 0,
+        priority: "Normal",
+        details: JSON.stringify(manualDutyOverrides),
+        status: "system_record",
+        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        auto_schedule_slot: null
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+        render();
+      } catch(e){}
     }
 
     async function toggleMechanicDiagnosticFeature() {
@@ -2568,7 +2737,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 320;
+            const maxDim = 1280; // High-definition resolution
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -2579,9 +2748,11 @@
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.5);
+            const base64 = canvas.toDataURL('image/jpeg', 0.85); // Crisp quality
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
@@ -2997,6 +3168,28 @@
       const elStaffList = document.getElementById('devStaffPresenceList');
       if (elOnline) elOnline.innerText = onlineCount;
       if (elStaffList) elStaffList.innerHTML = presenceHTML;
+
+      const rosterGrid = document.getElementById('devHolidayRosterList');
+      if (rosterGrid) {
+        rosterGrid.innerHTML = MECHANIC_ORDER.map(m => {
+          const currentMode = manualDutyOverrides[m] || 'auto';
+          return `
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+              <div class="flex items-center justify-between">
+                <strong class="uppercase text-xs font-black text-slate-900">${m}</strong>
+                <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded border ${currentMode === 'holiday' ? 'bg-rose-100 text-rose-700 border-rose-300' : (currentMode === 'onduty' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-slate-200 text-slate-700 border-slate-300')}">
+                  ${currentMode === 'auto' ? 'Live Track' : currentMode}
+                </span>
+              </div>
+              <div class="flex gap-1">
+                <button onclick="setStaffHolidayDuty('${m}', 'onduty')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 rounded-lg text-[10px]">Duty</button>
+                <button onclick="setStaffHolidayDuty('${m}', 'holiday')" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-1 rounded-lg text-[10px]">Holiday</button>
+                <button onclick="setStaffHolidayDuty('${m}', 'auto')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-1 rounded-lg text-[10px]">Auto</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
 
       if (!isDev) return;
 
