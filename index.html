@@ -63,6 +63,14 @@
       animation: shake-box 0.45s cubic-bezier(.36,.07,.19,.97) both;
     }
 
+    @keyframes bounce-short {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-bounce-short {
+      animation: bounce-short 1.6s ease-in-out infinite;
+    }
+
     @media print {
       body * {
         visibility: hidden;
@@ -86,6 +94,34 @@
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
+
+  <!-- STRICT HOLIDAY / DAY OFF LOCKOUT OVERLAY -->
+  <div id="holidayLockoutModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/95 backdrop-blur-xl z-[9999] flex items-center justify-center p-4 select-none">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center space-y-4 border-2 border-rose-500 shadow-2xl animate-bounce-short">
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-100 text-rose-600 flex items-center justify-center text-3xl shadow-inner">
+        <i class="fa-solid fa-umbrella-beach"></i>
+      </div>
+      <div class="space-y-1">
+        <span class="text-[10px] font-black uppercase text-rose-600 tracking-wider">Access Restricted</span>
+        <h3 class="text-xl font-black text-slate-900 leading-tight">You are Day OFF its Holiday</h3>
+        <p class="text-xs text-slate-600 font-semibold mt-1 leading-relaxed">
+          Workshop access is temporarily suspended for your account today. Relax and enjoy your rest day!
+        </p>
+      </div>
+      <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-[11px] text-rose-700 font-bold">
+        <i class="fa-solid fa-lock mr-1"></i> Dashboard entry is disabled by Management.
+      </div>
+      <!-- Disabled Button preventing user entry -->
+      <div class="space-y-2 pt-1">
+        <button disabled class="w-full bg-slate-200 text-slate-400 font-black py-3 rounded-2xl text-xs cursor-not-allowed border border-slate-300 shadow-none flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-ban text-[11px]"></i> Access Locked (Disabled)
+        </button>
+        <button onclick="handleHolidayLogout()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-2xl text-xs transition cursor-pointer">
+          Back to Login Screen
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- SYSTEM-WIDE ANNOUNCEMENT BROADCAST MODAL -->
   <div id="announcementBroadcastModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -340,7 +376,7 @@
           </h3>
           <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Developer Scheduler</span>
         </div>
-        <p class="text-xs text-slate-500">Manually set mechanics as On Duty, Holiday (Off Duty), or leave them to live device detection.</p>
+        <p class="text-xs text-slate-500">Manually set mechanics as On Duty, Holiday (Off Duty), or leave them to live device detection. Marking a user Holiday strictly locks them out of the workspace.</p>
         <div id="devHolidayRosterList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
       </div>
 
@@ -741,7 +777,6 @@
       </div>
     </div>
 
-    <!-- CLEAN PARTS HEADER: Displays request text and total photo count -->
     <div id="modalPartsOverview" class="p-2.5 bg-purple-50/90 border-b border-purple-100 text-[11px] font-semibold text-purple-950 flex flex-col gap-1.5"></div>
     <div id="modalChatStream" class="flex-1 p-3 overflow-y-auto space-y-2 bg-slate-50 flex flex-col-reverse text-xs"></div>
 
@@ -1159,6 +1194,40 @@
 
     function saveLastSeenChats() {
       localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
+    }
+
+    function isUserOnHoliday(username) {
+      if (!username) return false;
+      const u = username.toLowerCase();
+      if (u === 'dev' || u === 'admin') return false;
+      return manualDutyOverrides[u] === 'holiday';
+    }
+
+    function triggerHolidayLockout() {
+      const modal = document.getElementById('holidayLockoutModal');
+      if (modal) modal.classList.remove('hidden');
+
+      document.getElementById('appShell')?.classList.add('hidden');
+      document.getElementById('loginScreen')?.classList.remove('hidden');
+
+      localStorage.removeItem('cartech_auth_user');
+      localStorage.removeItem('cartech_auth_role');
+      currentUser = null;
+      currentRole = null;
+
+      if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+      }
+      if ("vibrate" in navigator) {
+        navigator.vibrate([200, 100, 200, 100, 400]);
+      }
+    }
+
+    function handleHolidayLogout() {
+      document.getElementById('holidayLockoutModal')?.classList.add('hidden');
+      document.getElementById('loginScreen')?.classList.remove('hidden');
+      initRememberedDeviceUI();
     }
 
     function getMechanicDutyStatus(mechanicName) {
@@ -1870,7 +1939,7 @@
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
             gain.gain.exponentialRampToValueAtTime(0.9, ctx.currentTime + burstOffset + 0.04);
-            gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25);
+            gain.setValueAtTime ? gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25) : null;
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.35);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -1959,6 +2028,14 @@
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
       if (!rememberedUser || !rememberedRole) return;
 
+      try { await syncSystemCloudRecords(); } catch(e){}
+
+      if (isUserOnHoliday(rememberedUser)) {
+        triggerHolidayLockout();
+        triggerLoginShakeEffect();
+        return;
+      }
+
       const currentHour = new Date().getHours();
       const isUnrestricted = rememberedRole === 'developer' || rememberedRole === 'admin' || rememberedUser === 'bot';
 
@@ -2013,6 +2090,13 @@
       }
 
       const role = acc.role || AUTHORIZED_ROSTER[user] || 'workshop';
+
+      if (isUserOnHoliday(user)) {
+        triggerHolidayLockout();
+        triggerLoginShakeEffect();
+        return false;
+      }
+
       const currentHour = new Date().getHours();
       const isUnrestricted = role === 'developer' || role === 'admin' || user === 'bot';
 
@@ -2074,6 +2158,11 @@
     }
 
     function bootApp() {
+      if (isUserOnHoliday(currentUser)) {
+        triggerHolidayLockout();
+        return;
+      }
+
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
       document.getElementById('staffBadge').innerText = currentUser;
@@ -2195,6 +2284,12 @@
           const data = await res.json();
           if (Array.isArray(data)) {
             
+            // Remote Lockout Enforcement if set while user is active
+            if (currentUser && isUserOnHoliday(currentUser)) {
+              triggerHolidayLockout();
+              return;
+            }
+
             const currentDoneCount = data.filter(j => j.status === 'completed').length;
             if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
               if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
@@ -2737,7 +2832,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 1280; // High-definition resolution
+            const maxDim = 1280;
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -2752,7 +2847,7 @@
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.85); // Crisp quality
+            const base64 = canvas.toDataURL('image/jpeg', 0.85);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
@@ -2919,7 +3014,6 @@
         <span class="text-slate-400 text-[10px] ml-1 font-medium truncate">• ${job ? job.customer : ''}</span>
       `;
 
-      // Compact info header bar without thumbnail images
       document.getElementById('modalPartsOverview').innerHTML = `
         <div class="flex justify-between items-center text-[10px]">
           <span class="font-bold text-purple-900 truncate max-w-[230px]"><i class="fa-solid fa-cart-shopping mr-1"></i> ${info.text || 'Standard Service'}</span>
@@ -2951,7 +3045,6 @@
       updateModalChatStream(activeModalChatJobId);
     }
 
-    // FACEBOOK-STYLE LARGE PHOTOS IN CHAT STREAM
     function updateModalChatStream(jobId) {
       const job = state.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [], images: [] };
@@ -2963,7 +3056,6 @@
       const myCurrentSenderName = (currentUser || "").toUpperCase();
       const isManagementView = ['admin', 'developer', 'office'].includes(currentRole);
 
-      // Embedded full-width Facebook style photo cards
       let photosChatHTML = "";
       if (info.images && info.images.length > 0) {
         photosChatHTML = `
@@ -3331,7 +3423,6 @@
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
                   ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
                 </div>
-                <!-- Duty indicator dot -->
                 <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white shadow ${duty.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                 
                 ${unreadCount > 0 ? `
@@ -3631,16 +3722,20 @@
     const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
     if (savedAuthUser && savedAuthRole) {
-      const currentHour = new Date().getHours();
-      const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
-
-      if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
-        localStorage.removeItem('cartech_auth_user');
-        localStorage.removeItem('cartech_auth_role');
+      if (isUserOnHoliday(savedAuthUser)) {
+        triggerHolidayLockout();
       } else {
-        currentUser = savedAuthUser;
-        currentRole = savedAuthRole;
-        bootApp();
+        const currentHour = new Date().getHours();
+        const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
+
+        if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
+          localStorage.removeItem('cartech_auth_user');
+          localStorage.removeItem('cartech_auth_role');
+        } else {
+          currentUser = savedAuthUser;
+          currentRole = savedAuthRole;
+          bootApp();
+        }
       }
     }
 
