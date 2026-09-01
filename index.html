@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CARTECH - Hybrid Queue</title>
+  <title>CARTECH - Hybrid Queue & 3D Digital Twin</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -12,6 +12,11 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Three.js + OrbitControls for 3D Vehicle Digital Twin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style>
     .full-screen-bg {
       background-image: 
@@ -31,7 +36,6 @@
       animation: pulse-ring 0.9s infinite;
     }
 
-    /* GLOWING ANIMATION FOR DIAGNOSTIC NUMBER BADGES */
     @keyframes diag-glow {
       0%, 100% { box-shadow: 0 0 4px rgba(249, 115, 22, 0.6), 0 0 10px rgba(249, 115, 22, 0.4); border-color: rgba(249, 115, 22, 0.9); }
       50% { box-shadow: 0 0 12px rgba(249, 115, 22, 0.95), 0 0 22px rgba(245, 158, 11, 0.8); border-color: rgba(245, 158, 11, 1); }
@@ -111,7 +115,6 @@
       <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-[11px] text-rose-700 font-bold">
         <i class="fa-solid fa-lock mr-1"></i> Dashboard entry is disabled by Management.
       </div>
-      <!-- Disabled Button preventing user entry -->
       <div class="space-y-2 pt-1">
         <button disabled class="w-full bg-slate-200 text-slate-400 font-black py-3 rounded-2xl text-xs cursor-not-allowed border border-slate-300 shadow-none flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-ban text-[11px]"></i> Access Locked (Disabled)
@@ -155,7 +158,7 @@
         </div>
       </div>
 
-      <!-- ONE-TAP QUICK LOGIN CARD (DEVICE REMEMBERED) -->
+      <!-- ONE-TAP QUICK LOGIN CARD -->
       <div id="quickLoginCard" class="hidden p-3.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-300 space-y-2.5 shadow-sm">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
@@ -818,7 +821,7 @@
         <input type="hidden" id="partJobId">
         <div>
           <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">List of Parts & Specs to Buy *</label>
-          <textarea id="partText" rows="3" placeholder="e.g. 1x Valve Cover Gasket, 1x Air Filter, 1 Set Front Brake Pads..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-purple-500"></textarea>
+          <textarea id="partText" rows="3" placeholder="e.g. 1x Valve Cover Gasket, 1x Air Filter, 1 Set Front Brake Pads, Spark Plugs..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-purple-500"></textarea>
         </div>
 
         <div>
@@ -1097,6 +1100,59 @@
     </div>
   </div>
 
+  <!-- 8. 3D INTERACTIVE CUSTOMER VEHICLE TWIN MODAL -->
+  <div id="car3DModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-2 md:p-6">
+    <div class="w-full max-w-5xl h-[88vh] bg-slate-900 rounded-3xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col md:flex-row relative">
+      
+      <!-- 3D Canvas Viewport -->
+      <div class="relative flex-1 h-2/3 md:h-full w-full bg-gradient-to-b from-slate-900 via-[#0d162d] to-slate-950">
+        <div id="threeDContainer" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+        
+        <div class="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
+          <span class="px-3 py-1 bg-orange-500/20 text-orange-400 border border-orange-500/40 rounded-xl text-xs font-black uppercase flex items-center gap-1.5 backdrop-blur-md">
+            <i class="fa-solid fa-cube text-xs animate-spin"></i> 3D Digital Twin
+          </span>
+          <span id="threeDVehicleTitle" class="text-white font-bold text-xs bg-slate-800/80 px-3 py-1 rounded-xl backdrop-blur-md border border-white/10">Vehicle Model</span>
+        </div>
+
+        <button onclick="reset3DCameraView()" class="absolute bottom-4 left-4 bg-slate-800/80 hover:bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrows-rotate"></i> Reset Angle
+        </button>
+
+        <button onclick="close3DViewerModal()" class="absolute top-4 right-4 md:hidden w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center border border-white/10 text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Flagged Parts Inspection Drawer -->
+      <div class="w-full md:w-80 h-1/3 md:h-full bg-slate-900/95 border-t md:border-t-0 md:border-l border-slate-800 p-4 md:p-6 flex flex-col justify-between overflow-y-auto">
+        <div class="space-y-3">
+          <div class="hidden md:flex justify-between items-center border-b border-slate-800 pb-3">
+            <div>
+              <span class="text-[10px] font-black uppercase text-orange-500 tracking-wider">Health Diagnostics</span>
+              <h3 class="text-base font-black text-white leading-tight">Flagged Components</h3>
+            </div>
+            <button onclick="close3DViewerModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-400">
+            Tap any flagged component below to lock 3D focus on its position:
+          </p>
+
+          <div id="threeDPartsList" class="space-y-2 max-h-[42vh] overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800/80 text-[10px] text-slate-500 flex items-center justify-between">
+          <span><i class="fa-solid fa-hand-pointer mr-1"></i> Drag: Rotate</span>
+          <span><i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Scroll: Zoom</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <script>
     const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
 
@@ -1160,7 +1216,7 @@
         priority: "Normal",
         details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
+        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket, Spark Plugs, Air Filter [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
         time_created: "02:05 PM"
       }
     ];
@@ -1239,7 +1295,6 @@
       
       const m = mechanicName.toLowerCase();
 
-      // Developer Manual Holiday / Duty Check
       if (manualDutyOverrides[m] === 'holiday') {
         return { isOnline: false, label: 'Holiday / Off', badgeClass: 'bg-rose-100 text-rose-800 border-rose-300' };
       }
@@ -1247,7 +1302,6 @@
         return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
       }
 
-      // Test Bot is 24/7 On Duty
       if (m === 'bot') {
         return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
       }
@@ -2295,7 +2349,6 @@
           const data = await res.json();
           if (Array.isArray(data)) {
             
-            // Remote Lockout Enforcement if set while user is active
             if (currentUser && isUserOnHoliday(currentUser)) {
               triggerHolidayLockout();
               return;
@@ -2421,7 +2474,7 @@
         service: "Diagnostics List",
         est_time: 30,
         priority: "High",
-        details: `[DIAG: ${testDiag}] Check Engine & Safety Check`,
+        details: `[DIAG: ${testDiag}] Check Engine & Safety Check, Spark Plugs, Brake Pads`,
         status: "waiting",
         time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         auto_schedule_slot: "[VIN:MRHTEST4710GP9999]"
@@ -2483,6 +2536,9 @@
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
+              <button onclick="open3DViewerModal('${job.id}')" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1 cursor-pointer">
+                <i class="fa-solid fa-cube text-yellow-200"></i> View 3D
+              </button>
               <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1">
                 <i class="fa-solid fa-file-invoice"></i> View / Print Sheet
               </button>
@@ -3555,6 +3611,9 @@
                   </div>
                   <div class="flex items-center gap-1.5">
                     ${badge}
+                    <button onclick="open3DViewerModal('${j.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1.5 px-2.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition cursor-pointer" title="View 3D Vehicle Digital Twin">
+                      <i class="fa-solid fa-cube text-yellow-200"></i> View 3D
+                    </button>
                     ${printDiagBtn}
                     ${deleteBtn}
                   </div>
@@ -3639,6 +3698,10 @@
                       </button>
                     </div>
 
+                    <button type="button" onclick="open3DViewerModal('${j.id}')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95 cursor-pointer">
+                      <i class="fa-solid fa-cube text-yellow-200"></i> View 3D Vehicle & Flagged Parts
+                    </button>
+
                     ${diagButtonHTML}
 
                     ${(partText || chatList.length > 0) ? `
@@ -3658,7 +3721,9 @@
                 const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
                 actionArea = `
                   <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>Working in Bay</span>
+                    <button type="button" onclick="open3DViewerModal('${j.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1 transition">
+                      <i class="fa-solid fa-cube text-orange-500"></i> View 3D
+                    </button>
                     <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
                       <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
                     </span>
@@ -3690,6 +3755,10 @@
                     </div>
                     <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
                     ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
+
+                    <button type="button" onclick="open3DViewerModal('${j.id}')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer">
+                      <i class="fa-solid fa-cube text-yellow-200"></i> Open 3D View of Needed Parts
+                    </button>
 
                     ${(isMyJob || isManagement) ? `
                       <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative active:scale-95 cursor-pointer">
@@ -3730,6 +3799,259 @@
           }).join('');
         }
       }
+    }
+
+    // ==========================================
+    // 3D DIGITAL TWIN & PART HOTSPOT ENGINE
+    // ==========================================
+    let scene3D, camera3D, renderer3D, controls3D, carRootGroup;
+    let hotspotMarkers = [];
+    let targetCameraPos = null;
+    let targetLookAt = null;
+
+    const PART_COORDINATE_MAP = [
+      { keywords: ['spark plug', 'plug', 'sparkplug', 'spark plugs'], name: 'Spark Plugs', pos: { x: 0, y: 0.9, z: 1.1 } },
+      { keywords: ['air filter', 'airfilter', 'filter'], name: 'Engine Air Filter', pos: { x: -0.4, y: 0.85, z: 1.2 } },
+      { keywords: ['valve cover', 'gasket', 'valve cover gasket'], name: 'Valve Cover & Gasket', pos: { x: 0, y: 1.0, z: 1.0 } },
+      { keywords: ['oil', 'engine oil', 'oil pan'], name: 'Engine Oil Pan', pos: { x: 0, y: 0.3, z: 0.9 } },
+      { keywords: ['brake', 'front brake', 'brake pad', 'caliper', 'brakes'], name: 'Front Brake Assemblies', pos: { x: 0.9, y: 0.45, z: 1.25 } },
+      { keywords: ['rear brake', 'rear shoe', 'drum'], name: 'Rear Brake Assemblies', pos: { x: 0.9, y: 0.45, z: -1.25 } },
+      { keywords: ['battery'], name: '12V Auxiliary Battery', pos: { x: 0.45, y: 0.85, z: 1.3 } },
+      { keywords: ['wiper', 'wipers'], name: 'Windshield Wipers', pos: { x: 0, y: 1.05, z: 0.4 } },
+      { keywords: ['coolant', 'radiator'], name: 'Cooling Radiator', pos: { x: 0, y: 0.65, z: 1.7 } },
+      { keywords: ['tire', 'tires', 'wheel'], name: 'Wheel & Tires', pos: { x: 0.9, y: 0.4, z: 1.25 } }
+    ];
+
+    function init3DScene() {
+      const container = document.getElementById('threeDContainer');
+      if (!container || renderer3D) return;
+
+      scene3D = new THREE.Scene();
+      scene3D.background = new THREE.Color(0x0a1020);
+
+      camera3D = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera3D.position.set(4, 2.5, 4.5);
+
+      renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer3D.setSize(container.clientWidth, container.clientHeight);
+      renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer3D.shadowMap.enabled = true;
+      container.appendChild(renderer3D.domElement);
+
+      controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
+      controls3D.enableDamping = true;
+      controls3D.dampingFactor = 0.05;
+      controls3D.maxPolarAngle = Math.PI / 2 - 0.01;
+      controls3D.minDistance = 2;
+      controls3D.maxDistance = 10;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      scene3D.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      keyLight.position.set(5, 8, 5);
+      keyLight.castShadow = true;
+      scene3D.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(0xf97316, 0.8);
+      rimLight.position.set(-5, 4, -5);
+      scene3D.add(rimLight);
+
+      const grid = new THREE.GridHelper(12, 24, 0xf97316, 0x1e293b);
+      grid.position.y = 0;
+      scene3D.add(grid);
+
+      buildProceduralCarMesh();
+
+      window.addEventListener('resize', () => {
+        if (!renderer3D || !container) return;
+        camera3D.aspect = container.clientWidth / container.clientHeight;
+        camera3D.updateProjectionMatrix();
+        renderer3D.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      animate3D();
+    }
+
+    function buildProceduralCarMesh() {
+      carRootGroup = new THREE.Group();
+
+      const carMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        metalness: 0.85,
+        roughness: 0.2,
+      });
+
+      const glassMaterial = new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        metalness: 0.9,
+        roughness: 0.1,
+        transparent: true,
+        opacity: 0.65
+      });
+
+      const tireMaterial = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.9 });
+      const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+
+      const lowerBodyGeo = new THREE.BoxGeometry(1.6, 0.5, 3.6);
+      const lowerBody = new THREE.Mesh(lowerBodyGeo, carMaterial);
+      lowerBody.position.y = 0.55;
+      lowerBody.castShadow = true;
+      carRootGroup.add(lowerBody);
+
+      const cabinGeo = new THREE.BoxGeometry(1.35, 0.45, 1.9);
+      const cabin = new THREE.Mesh(cabinGeo, glassMaterial);
+      cabin.position.set(0, 0.95, -0.15);
+      carRootGroup.add(cabin);
+
+      const hoodGeo = new THREE.BoxGeometry(1.4, 0.15, 1.0);
+      const hood = new THREE.Mesh(hoodGeo, carMaterial);
+      hood.position.set(0, 0.75, 1.15);
+      carRootGroup.add(hood);
+
+      const wheelPositions = [
+        { x: -0.82, y: 0.35, z: 1.1 },
+        { x: 0.82, y: 0.35, z: 1.1 },
+        { x: -0.82, y: 0.35, z: -1.1 },
+        { x: 0.82, y: 0.35, z: -1.1 }
+      ];
+
+      wheelPositions.forEach(pos => {
+        const wheelGroup = new THREE.Group();
+        const tireGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.24, 24);
+        const tire = new THREE.Mesh(tireGeo, tireMaterial);
+        tire.rotation.z = Math.PI / 2;
+        wheelGroup.add(tire);
+
+        const rimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.25, 16);
+        const rim = new THREE.Mesh(rimGeo, wheelMaterial);
+        rim.rotation.z = Math.PI / 2;
+        wheelGroup.add(rim);
+
+        wheelGroup.position.set(pos.x, pos.y, pos.z);
+        carRootGroup.add(wheelGroup);
+      });
+
+      scene3D.add(carRootGroup);
+    }
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+
+      if (controls3D) controls3D.update();
+
+      if (targetCameraPos && targetLookAt) {
+        camera3D.position.lerp(targetCameraPos, 0.06);
+        controls3D.target.lerp(targetLookAt, 0.06);
+
+        if (camera3D.position.distanceTo(targetCameraPos) < 0.05) {
+          targetCameraPos = null;
+          targetLookAt = null;
+        }
+      }
+
+      const time = Date.now() * 0.004;
+      hotspotMarkers.forEach(h => {
+        if (h.ring) {
+          const scale = 1 + Math.sin(time) * 0.25;
+          h.ring.scale.set(scale, scale, scale);
+        }
+      });
+
+      if (renderer3D && scene3D && camera3D) {
+        renderer3D.render(scene3D, camera3D);
+      }
+    }
+
+    function open3DViewerModal(jobId) {
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      document.getElementById('car3DModal').classList.remove('hidden');
+      document.getElementById('threeDVehicleTitle').innerText = `${job.vehicle} (${job.phone || 'Diag'})`;
+
+      setTimeout(() => {
+        init3DScene();
+        populate3DHotspots(job);
+        reset3DCameraView();
+      }, 100);
+    }
+
+    function close3DViewerModal() {
+      document.getElementById('car3DModal').classList.add('hidden');
+    }
+
+    function populate3DHotspots(job) {
+      hotspotMarkers.forEach(h => scene3D.remove(h.mesh));
+      hotspotMarkers = [];
+
+      const partsInfo = parsePartsInfo(job.auto_schedule_slot);
+      const combinedText = `${job.details} ${partsInfo.text || ''}`.toLowerCase();
+
+      const detectedParts = [];
+      PART_COORDINATE_MAP.forEach(item => {
+        const isMatched = item.keywords.some(kw => combinedText.includes(kw));
+        if (isMatched) {
+          detectedParts.push(item);
+        }
+      });
+
+      detectedParts.forEach(part => {
+        const beaconGroup = new THREE.Group();
+
+        const sphereGeo = new THREE.SphereGeometry(0.08, 16, 16);
+        const sphereMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+        const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+        beaconGroup.add(sphere);
+
+        const ringGeo = new THREE.RingGeometry(0.12, 0.16, 24);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xf87171, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        beaconGroup.add(ring);
+
+        beaconGroup.position.set(part.pos.x, part.pos.y, part.pos.z);
+        scene3D.add(beaconGroup);
+
+        hotspotMarkers.push({ name: part.name, mesh: beaconGroup, ring: ring, pos: part.pos });
+      });
+
+      const listContainer = document.getElementById('threeDPartsList');
+      if (!listContainer) return;
+
+      if (detectedParts.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-3 bg-slate-800/60 rounded-2xl border border-slate-700 text-center text-slate-400 text-xs">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-base mb-1 block"></i>
+            No replacement parts flagged. Vehicle systems normal.
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = detectedParts.map((p) => `
+        <div onclick="focus3DComponent(${p.pos.x}, ${p.pos.y}, ${p.pos.z})" 
+             class="p-3 bg-slate-800/80 hover:bg-slate-700/90 border border-rose-500/40 hover:border-rose-500 rounded-2xl flex items-center justify-between cursor-pointer transition group shadow-sm">
+          <div class="flex items-center gap-2.5">
+            <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
+            <div>
+              <strong class="text-xs text-white group-hover:text-orange-400 transition font-bold block">${p.name}</strong>
+              <span class="text-[10px] text-rose-400 font-semibold">Requires Replacement / Service</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-crosshairs text-slate-400 group-hover:text-white text-xs"></i>
+        </div>
+      `).join('');
+    }
+
+    function focus3DComponent(x, y, z) {
+      targetLookAt = new THREE.Vector3(x, y, z);
+      targetCameraPos = new THREE.Vector3(x + 1.2, y + 1.0, z + 1.4);
+    }
+
+    function reset3DCameraView() {
+      targetLookAt = new THREE.Vector3(0, 0.6, 0);
+      targetCameraPos = new THREE.Vector3(3.6, 2.2, 4.0);
     }
 
     syncSystemCloudRecords();
