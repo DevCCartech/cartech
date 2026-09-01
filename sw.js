@@ -1,48 +1,29 @@
-self.addEventListener("install", (e) => {
-  self.skipWaiting();
+self.addEventListener('install', () => self.skipWaiting());
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("activate", (e) => {
-  return self.clients.claim();
-});
-
-// FAST REPEATING DOORBELL VIBRATION PATTERN
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "CAR_WAITING_ALERT") {
-    const title = "🚨 CARTECH: CAR WAITING OUTSIDE!";
-    const options = {
-      body: event.data.msg || "Fast Doorbell Alert: New vehicle waiting on floor!",
-      icon: "team.jpg",
-      badge: "team.jpg",
-      // Rapid pulse pattern: [Ding-Dong, Ding-Dong, Ding-Dong]
-      vibrate: [400, 100, 600, 150, 400, 100, 600, 200, 800],
-      tag: "cartech-urgent-floor-alarm",
-      renotify: true,
-      requireInteraction: true,
-      silent: false,
-      timestamp: Date.now()
-    };
-
-    self.registration.showNotification(title, options);
-  }
-});
-
-self.addEventListener("notificationclick", (event) => {
+self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url.includes("cartech") && "focus" in client) {
-          return client.focus();
-        }
-      }
-      if (clients.openWindow) {
-        return clients.openWindow("./index.html");
-      }
-    })
-  );
-});
+  const data = event.notification.data || {};
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  event.waitUntil((async () => {
+    const openClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    if (openClients.length > 0) {
+      const target = openClients.find(client => 'focus' in client) || openClients[0];
+      await target.focus();
+      target.postMessage({
+        type: 'OPEN_CARTECH_ALERT',
+        jobId: data.jobId || null,
+        alertType: data.alertType || 'message'
+      });
+      return;
+    }
+
+    const url = new URL('./', self.location.href);
+    if (data.jobId) url.searchParams.set('alertJob', data.jobId);
+    if (data.alertType) url.searchParams.set('alertType', data.alertType);
+    await self.clients.openWindow(url.href);
+  })());
 });
