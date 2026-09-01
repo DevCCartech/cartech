@@ -1,11 +1,62 @@
 {
-  "name": "CARTECH Hybrid Queue",
+  "id": "/cartech/",
+  "name": "CARTECH PRO",
   "short_name": "CARTECH",
-  "description": "Real-time office and workshop queue alerts for CARTECH staff.",
-  "start_url": "./",
+  "description": "Automotive shop real-time repair and bay management terminal.",
+  "lang": "en",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0b1329",
   "theme_color": "#0b1329",
-  "orientation": "any"
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svgs/solid/wrench.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svgs/solid/wrench.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svgs/solid/wrench.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f527.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f527.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f527.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "CARTECH Station"
+    },
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f527.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "CARTECH Dashboard"
+    }
+  ]
 }
