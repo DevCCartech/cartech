@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CARTECH - Hybrid Queue</title>
+  <title>CARTECH - Hybrid Queue & Customer Live View</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -71,6 +71,16 @@
       animation: bounce-short 1.6s ease-in-out infinite;
     }
 
+    @keyframes pulse-pin {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.75; }
+    }
+    .pin-active { animation: pulse-pin 1.4s infinite ease-in-out; }
+    .xray-grid {
+      background-image: radial-gradient(rgba(249, 115, 22, 0.12) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+
     @media print {
       body * {
         visibility: hidden;
@@ -95,6 +105,168 @@
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
+  <!-- ======================================================== -->
+  <!-- PUBLIC CUSTOMER LIVE 3D / X-RAY TRACKER PORTAL VIEW       -->
+  <!-- ======================================================== -->
+  <div id="publicCustomerPortal" class="hidden min-h-screen bg-slate-950 text-slate-100 pb-12 select-none">
+    <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex items-center justify-between shadow-lg">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white text-sm font-black shadow-lg shadow-orange-500/20">
+          <i class="fa-solid fa-wrench"></i>
+        </div>
+        <div>
+          <h1 class="text-sm font-black tracking-tight leading-none text-white flex items-center gap-1.5">
+            CARTECH <span class="text-orange-500 text-[10px] bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/30">3D X-RAY</span>
+          </h1>
+          <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Live Vehicle Diagnostics</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="pullData(true)" class="text-slate-400 hover:text-white text-xs p-1.5 rounded-lg bg-slate-800 border border-slate-700 transition" title="Refresh Telemetry">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+        <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[10px] font-black text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live Bay
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-xl mx-auto p-4 space-y-4">
+      <!-- VEHICLE & STAGE SUMMARY -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden space-y-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-black uppercase text-orange-400 tracking-wider bg-orange-500/10 px-2.5 py-0.5 rounded-md border border-orange-500/20" id="custPortalDiagNumber">Diag #B786</span>
+            <h2 class="text-xl font-black text-white mt-1" id="custPortalVehicleName">Vehicle Model</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Owner: <strong class="text-slate-200" id="custPortalCustomerName">-</strong> • VIN: <span class="font-mono text-slate-300" id="custPortalVin">-</span></p>
+          </div>
+          <div class="text-right">
+            <span id="custPortalStatusBadge" class="px-3 py-1 rounded-xl text-xs font-black bg-blue-500/20 text-blue-400 border border-blue-500/30 inline-flex items-center gap-1.5">
+              <i class="fa-solid fa-wrench animate-spin text-[10px]"></i> IN BAY
+            </span>
+            <span class="block text-[10px] text-slate-400 font-bold mt-1">Mechanic: <strong class="text-indigo-400 uppercase" id="custPortalMechName">-</strong></span>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80 space-y-1.5">
+          <div class="flex justify-between text-[11px] font-bold">
+            <span class="text-slate-400">Workshop Floor Progress</span>
+            <span class="text-orange-400" id="custPortalProgressText">60% (In Progress)</span>
+          </div>
+          <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div id="custPortalProgressBar" class="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-700" style="width: 60%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE 3D & X-RAY BLUEPRINT -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-2xl space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-orange-400 text-xs"></i>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-300">Visual Vehicle Blueprint</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-bold">Tap hot spots for repair log</span>
+        </div>
+
+        <!-- LAYER CONTROLLER -->
+        <div class="grid grid-cols-3 gap-1.5 bg-slate-950 p-1 rounded-2xl border border-slate-800 text-xs font-bold">
+          <button onclick="switchCustomerBlueprintView('exterior')" id="cust-btn-exterior" class="py-2 rounded-xl transition text-slate-400 hover:text-white">Exterior</button>
+          <button onclick="switchCustomerBlueprintView('engine')" id="cust-btn-engine" class="py-2 rounded-xl transition bg-orange-500 text-slate-950 font-black shadow">Engine Bay</button>
+          <button onclick="switchCustomerBlueprintView('chassis')" id="cust-btn-chassis" class="py-2 rounded-xl transition text-slate-400 hover:text-white">Underchassis</button>
+        </div>
+
+        <!-- BLUEPRINT CANVAS -->
+        <div class="relative w-full h-64 bg-slate-950 rounded-2xl border border-slate-800/80 xray-grid overflow-hidden flex items-center justify-center p-4">
+          <svg viewBox="0 0 400 200" class="w-full h-full max-h-56 stroke-slate-700 fill-none transition-all duration-500">
+            <!-- Car Body -->
+            <path d="M 40 140 L 70 140 A 25 25 0 0 1 120 140 L 280 140 A 25 25 0 0 1 330 140 L 370 140 L 360 100 L 300 90 L 240 50 L 140 50 L 80 90 L 30 100 Z" stroke-width="2.5" class="stroke-slate-600"/>
+            <path d="M 145 58 L 235 58 L 285 92 L 100 92 Z" stroke-width="1.5" class="stroke-slate-700"/>
+            <circle cx="95" cy="140" r="22" stroke-width="2.5" class="stroke-slate-500 fill-slate-900"/>
+            <circle cx="305" cy="140" r="22" stroke-width="2.5" class="stroke-slate-500 fill-slate-900"/>
+
+            <!-- Engine & Fluids X-Ray Overlay -->
+            <rect id="custSvgEngineBlock" x="65" y="80" width="60" height="45" rx="6" stroke-width="2" class="stroke-orange-400/80 fill-orange-500/10" />
+
+            <!-- Underchassis & Suspension X-Ray Overlay -->
+            <path id="custSvgSuspension" d="M 95 118 L 95 140 M 305 118 L 305 140 M 120 140 L 280 140" stroke-width="3" class="stroke-purple-400/80 hidden" />
+          </svg>
+
+          <!-- DYNAMIC HOTSPOT PINS -->
+          <div id="custHotspotContainer" class="absolute inset-0">
+            <button onclick="showCustomerPartDetail('Engine & Oil System', 'Inspection underway by mechanic. Verified fluids & ignition items.', 'Checked / Active', 'emerald')" 
+                    style="top: 45%; left: 22%;" 
+                    class="absolute w-6 h-6 rounded-full bg-orange-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow-lg shadow-orange-500/50 pin-active border-2 border-white cursor-pointer" title="Engine Bay">
+              <i class="fa-solid fa-bolt"></i>
+            </button>
+            <button onclick="showCustomerPartDetail('Brake & Suspension System', 'Brake pads & disc wear measured. Front and rear inspected.', 'Inspected Safe', 'emerald')" 
+                    style="top: 66%; left: 26%;" 
+                    class="absolute w-5 h-5 rounded-full bg-emerald-500 text-white text-[9px] flex items-center justify-center shadow-md shadow-emerald-500/40 border-2 border-white cursor-pointer" title="Front Brakes">
+              <i class="fa-solid fa-check"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- COMPONENT DETAIL POPUP -->
+        <div id="custPartDetailCard" class="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between">
+          <div>
+            <span id="custDetailBadge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">Active Inspection</span>
+            <h4 id="custDetailTitle" class="text-xs font-black text-white mt-1">Diagnostics In Progress</h4>
+            <p id="custDetailDesc" class="text-[11px] text-slate-400 mt-0.5">Tap on hotspots or view the inspection table below for real-time parts status.</p>
+          </div>
+          <div class="w-8 h-8 rounded-xl bg-slate-900 text-slate-400 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-car"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE REPAIR INSTRUCTIONS & PARTS LIST -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-3">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-list text-orange-400"></i> Job Sheet & Dispatched Work
+        </h3>
+        <div id="custPortalJobDetailsBox" class="p-3.5 bg-slate-950 rounded-2xl border border-slate-800 text-xs text-slate-300 leading-relaxed font-medium"></div>
+        <div id="custPortalPartsPendingBox" class="hidden p-3.5 bg-purple-950/40 border border-purple-500/30 rounded-2xl space-y-2 text-xs">
+          <div class="flex items-center justify-between text-purple-300 font-bold">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping"></i> Parts Ordered / Needed:</span>
+          </div>
+          <p id="custPortalPartsText" class="text-purple-200 font-semibold bg-purple-900/30 p-2.5 rounded-xl border border-purple-500/20"></p>
+        </div>
+      </div>
+
+      <div class="text-center pt-2">
+        <a href="./" class="text-xs text-slate-500 hover:text-slate-300 font-bold"><i class="fa-solid fa-lock mr-1"></i> Staff Sign In Portal</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- QR CODE MODAL FOR FRONT DESK / MECHANIC -->
+  <div id="qrCodeModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl space-y-4 text-center border border-slate-200" onclick="event.stopPropagation()">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl shadow-inner">
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-black text-slate-900" id="qrModalTitle">Customer 3D Live View QR</h3>
+        <p class="text-xs text-slate-500 mt-0.5" id="qrModalSubtitle">Scan to view real-time blueprint & repair status</p>
+      </div>
+
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+        <img id="qrCodeImage" src="" alt="Customer QR Code" class="w-48 h-48 rounded-xl shadow-md border border-slate-300">
+        <input id="qrDirectUrlInput" readonly class="w-full mt-3 text-[11px] font-mono bg-white border border-slate-200 rounded-xl p-2 text-slate-600 text-center select-all">
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="copyQrTrackingLink()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">
+          <i class="fa-solid fa-copy mr-1"></i> Copy Link
+        </button>
+        <button onclick="closeQrCodeModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- STRICT HOLIDAY / DAY OFF LOCKOUT OVERLAY -->
   <div id="holidayLockoutModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/95 backdrop-blur-xl z-[9999] flex items-center justify-center p-4 select-none">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center space-y-4 border-2 border-rose-500 shadow-2xl animate-bounce-short">
@@ -111,7 +283,6 @@
       <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-[11px] text-rose-700 font-bold">
         <i class="fa-solid fa-lock mr-1"></i> Dashboard entry is disabled by Management.
       </div>
-      <!-- Disabled Button preventing user entry -->
       <div class="space-y-2 pt-1">
         <button disabled class="w-full bg-slate-200 text-slate-400 font-black py-3 rounded-2xl text-xs cursor-not-allowed border border-slate-300 shadow-none flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-ban text-[11px]"></i> Access Locked (Disabled)
@@ -1047,560 +1218,6 @@
                 </tbody>
               </table>
 
-              <div class="border border-slate-900 p-2 text-[11px] space-y-1">
-                <strong class="uppercase text-slate-900 block text-[10px]">Leaking Fluids / Oil & Origin:</strong>
-                <div class="flex gap-4">
-                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_engine_oil"> Engine Oil</label>
-                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_trans_oil"> Transmission</label>
-                  <label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="leak_diff_oil"> Differential</label>
-                </div>
-                <input id="paperLeakOrigin" placeholder="From Where: e.g. Valve cover gasket, Oil Pan..." class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-[11px] font-semibold mt-1">
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 border border-slate-900 p-2 text-[11px]">
-                <div>
-                  <strong class="uppercase text-slate-900 block text-[10px]">Tires %</strong>
-                  <div class="space-y-1 mt-1">
-                    <div class="flex items-center justify-between"><span>Front:</span> <input id="paperTiresFront" type="number" min="0" max="100" value="80" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
-                    <div class="flex items-center justify-between"><span>Rear:</span> <input id="paperTiresRear" type="number" min="0" max="100" value="80" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
-                  </div>
-                </div>
-                <div>
-                  <strong class="uppercase text-slate-900 block text-[10px]">Brake System %</strong>
-                  <div class="space-y-1 mt-1">
-                    <div class="flex items-center justify-between"><span>Front Pads:</span> <input id="paperBrakesFront" type="number" min="0" max="100" value="70" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
-                    <div class="flex items-center justify-between"><span>Rear Shoe:</span> <input id="paperBrakesRear" type="number" min="0" max="100" value="70" class="w-12 border border-slate-300 rounded px-1 text-center font-bold">%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex gap-2 pt-3 border-t border-slate-200">
-            <button type="button" onclick="closeDiagnosticSheetModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-200 cursor-pointer">Cancel</button>
-            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md shadow-indigo-600/20 cursor-pointer">
-              <i class="fa-solid fa-floppy-disk mr-1"></i> Save Checklist to Database
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7. LIGHTBOX -->
-  <div id="photoViewerModal" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6" onclick="closePhotoViewer()">
-    <div class="relative w-full max-w-5xl max-h-[92vh] flex items-center justify-center" onclick="event.stopPropagation()">
-      <img id="modalFullImage" src="" class="max-w-[95vw] max-h-[88vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20 sharp-img">
-      <button onclick="closePhotoViewer()" class="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-white text-slate-900 rounded-full w-9 h-9 md:w-11 md:h-11 flex items-center justify-center font-black shadow-2xl text-base md:text-lg border-2 border-slate-900 hover:bg-slate-200 transition cursor-pointer">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-  </div>
-
-  <script>
-    const DIAGNOSTIC_FORM_URL = "https://forms.cloud.microsoft/pages/responsepage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__58wZixUN0JNODRUNkFTVEYxVzRBODUySzNQWFdIRi4u&route=shorturl";
-
-    const DEFAULT_ROSTER = {
-      "dev": "developer",
-      "admin": "admin",
-      "shiela": "office",
-      "josh": "office",
-      "ken": "office",
-      "charl": "workshop",
-      "bert": "workshop",
-      "nel": "workshop",
-      "rocky": "workshop",
-      "mark": "workshop",
-      "bot": "workshop"
-    };
-
-    let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-    let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky", "bot"];
-    let MECHANIC_LIST = [...MECHANIC_ORDER];
-    let ALL_STAFF_ROSTER = ["shiela", "josh", "ken", "bert", "charl", "mark", "nel", "rocky", "bot"];
-
-    const TOTAL_BAYS = 4;
-    const MAX_JOBS_PER_MECHANIC = 3;
-    const API_URL = "https://jkdonbmwghxtkcuvzqlq.supabase.co/rest/v1/workshop_queue";
-    const API_KEY = "sb_publishable_7Yi3C4FuVymGnTNOeZo7dQ_pfOxner2";
-
-    const HEADERS = {
-      "apikey": API_KEY,
-      "Authorization": "Bearer " + API_KEY,
-      "Content-Type": "application/json",
-      "Prefer": "return=representation"
-    };
-
-    const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
-    const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
-    const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
-    const DELETED_LOGS_RECORD_ID = "SYS_DELETED_LOGS_V2";
-    const CONFIG_RECORD_ID = "SYS_FEATURE_FLAGS_V2";
-    const ANNOUNCEMENT_RECORD_ID = "SYS_ANNOUNCEMENT_V2";
-    const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_SCHEDULE_V2";
-
-    let featureFlags = {
-      diagnosticV2Enabled: false
-    };
-    let activeAnnouncement = null;
-    let manualDutyOverrides = {
-      "josh": "holiday",
-      "shiela": "holiday"
-    };
-
-    const CORE_INITIAL_JOBS = [
-      {
-        id: "JB-408",
-        customer: "Ariel Selman",
-        phone: "B786",
-        vehicle: "Car Honda Mobilio",
-        plate: "GAA 2776",
-        service: "Major Service & Diagnostics",
-        est_time: 120,
-        priority: "Normal",
-        details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
-        status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
-        time_created: "02:05 PM"
-      }
-    ];
-
-    let state = [...CORE_INITIAL_JOBS];
-    let currentFilter = 'waiting_parts';
-    let currentUser = localStorage.getItem('cartech_auth_user') || null;
-    let currentRole = localStorage.getItem('cartech_auth_role') || null;
-    let audioCtx = null;
-    let alarmInterval = null;
-    let uploadedPartImages = [];
-    let previousCompletedJobCount = null;
-    let activeModalChatJobId = null;
-    let isChatMinimizedToBubble = false;
-
-    let cachedCloudAccounts = { 
-      "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
-      "admin": { pass: "admin123", role: "admin", expiresAt: 0 },
-      "shiela": { pass: "1234", role: "office", expiresAt: 0 },
-      "josh": { pass: "1234", role: "office", expiresAt: 0 },
-      "ken": { pass: "1234", role: "office", expiresAt: 0 },
-      "charl": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "bert": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "nel": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "rocky": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "mark": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "bot": { pass: "1122", role: "workshop", expiresAt: 0 }
-    };
-
-    let cachedCloudPresence = {};
-    let cachedCloudAvatars = {};
-    let cachedDeletedLogs = [];
-
-    let lastSeenChatCounts = JSON.parse(localStorage.getItem('cartech_last_seen_chats') || '{}');
-
-    function saveLastSeenChats() {
-      localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
-    }
-
-    function isUserOnHoliday(username) {
-      if (!username) return false;
-      const u = username.toLowerCase();
-      if (u === 'dev' || u === 'admin') return false;
-      return manualDutyOverrides[u] === 'holiday';
-    }
-
-    function triggerHolidayLockout() {
-      const modal = document.getElementById('holidayLockoutModal');
-      if (modal) modal.classList.remove('hidden');
-
-      document.getElementById('appShell')?.classList.add('hidden');
-      document.getElementById('loginScreen')?.classList.remove('hidden');
-
-      localStorage.removeItem('cartech_auth_user');
-      localStorage.removeItem('cartech_auth_role');
-      currentUser = null;
-      currentRole = null;
-
-      if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-      }
-      if ("vibrate" in navigator) {
-        navigator.vibrate([200, 100, 200, 100, 400]);
-      }
-    }
-
-    function handleHolidayLogout() {
-      document.getElementById('holidayLockoutModal')?.classList.add('hidden');
-      document.getElementById('loginScreen')?.classList.remove('hidden');
-      initRememberedDeviceUI();
-    }
-
-    function getMechanicDutyStatus(mechanicName) {
-      if (!mechanicName) return { isOnline: false, label: 'Off Duty', badgeClass: 'bg-slate-100 text-slate-500 border-slate-200' };
-      
-      const m = mechanicName.toLowerCase();
-
-      // Developer Manual Holiday / Duty Check
-      if (manualDutyOverrides[m] === 'holiday') {
-        return { isOnline: false, label: 'Holiday / Off', badgeClass: 'bg-rose-100 text-rose-800 border-rose-300' };
-      }
-      if (manualDutyOverrides[m] === 'onduty') {
-        return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-      }
-
-      // Test Bot is 24/7 On Duty
-      if (m === 'bot') {
-        return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-      }
-
-      const record = cachedCloudPresence[m];
-      const lastSeen = record ? record.lastSeen : 0;
-      const isOnline = (Date.now() - lastSeen) < 35000 && lastSeen > 0;
-
-      return isOnline
-        ? { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' }
-        : { isOnline: false, label: 'Off Duty', badgeClass: 'bg-rose-50 text-rose-600 border-rose-200' };
-    }
-
-    async function syncSystemCloudRecords() {
-      if (currentUser && currentRole) {
-        cachedCloudPresence[currentUser] = {
-          role: currentRole,
-          lastSeen: Date.now()
-        };
-      }
-
-      try {
-        const res = await fetch(`${API_URL}?select=*`, {
-          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
-        });
-        if (res.ok) {
-          const records = await res.json();
-          if (Array.isArray(records)) {
-            records.forEach(rec => {
-              if (rec.id === USERS_RECORD_ID && rec.details) {
-                try {
-                  const parsed = JSON.parse(rec.details);
-                  Object.keys(parsed).forEach(k => {
-                    if (typeof parsed[k] === 'string') {
-                      parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
-                    }
-                  });
-                  cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
-                } catch(e){}
-              }
-              if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-                try { cachedCloudPresence = { ...cachedCloudPresence, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-              if (rec.id === AVATARS_RECORD_ID && rec.details) {
-                try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === DELETED_LOGS_RECORD_ID && rec.details) {
-                try { cachedDeletedLogs = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === CONFIG_RECORD_ID && rec.details) {
-                try { featureFlags = { ...featureFlags, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-              if (rec.id === ANNOUNCEMENT_RECORD_ID && rec.details) {
-                try { activeAnnouncement = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === HOLIDAY_RECORD_ID && rec.details) {
-                try { manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-            });
-
-            AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-            MECHANIC_LIST = [...MECHANIC_ORDER];
-            Object.keys(cachedCloudAccounts).forEach(u => {
-              const acc = cachedCloudAccounts[u];
-              const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
-              AUTHORIZED_ROSTER[u] = role;
-              if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
-                MECHANIC_LIST.push(u);
-              }
-              if (!ALL_STAFF_ROSTER.includes(u) && u !== 'dev' && u !== 'admin') {
-                ALL_STAFF_ROSTER.push(u);
-              }
-            });
-          }
-        }
-      } catch (e) {}
-
-      checkAndTriggerAnnouncementAlert();
-    }
-
-    async function publishDeveloperAnnouncement() {
-      if (currentRole !== 'developer') return;
-      const text = (document.getElementById('devAnnouncementInput')?.value || '').trim();
-      if (!text) return;
-
-      activeAnnouncement = {
-        id: "ANN-" + Date.now(),
-        text: text,
-        postedBy: currentUser.toUpperCase(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      const payload = {
-        id: ANNOUNCEMENT_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_ANNOUNCEMENT_RECORD",
-        plate: "N/A",
-        service: "Announcements",
-        est_time: 0,
-        priority: "High",
-        details: JSON.stringify(activeAnnouncement),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-        alert("Announcement broadcasted to all workshop devices.");
-        document.getElementById('devAnnouncementInput').value = "";
-      } catch(e){}
-    }
-
-    async function clearDeveloperAnnouncement() {
-      if (currentRole !== 'developer') return;
-      activeAnnouncement = null;
-      try {
-        await fetch(`${API_URL}?id=eq.${ANNOUNCEMENT_RECORD_ID}`, { method: "DELETE", headers: HEADERS });
-        alert("Broadcast banner cleared.");
-      } catch(e){}
-    }
-
-    function checkAndTriggerAnnouncementAlert() {
-      if (!activeAnnouncement || !activeAnnouncement.text) return;
-      const seenKey = 'cartech_seen_announcement_' + activeAnnouncement.id;
-      if (localStorage.getItem(seenKey)) return;
-
-      document.getElementById('announcementModalBody').innerText = activeAnnouncement.text;
-      document.getElementById('announcementModalMeta').innerText = `Broadcast by ${activeAnnouncement.postedBy} at ${activeAnnouncement.time}`;
-      document.getElementById('announcementBroadcastModal').classList.remove('hidden');
-
-      if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 400]);
-    }
-
-    function dismissAnnouncementModal() {
-      if (activeAnnouncement && activeAnnouncement.id) {
-        localStorage.setItem('cartech_seen_announcement_' + activeAnnouncement.id, 'true');
-      }
-      document.getElementById('announcementBroadcastModal').classList.add('hidden');
-    }
-
-    async function setStaffHolidayDuty(staffName, statusMode) {
-      if (currentRole !== 'developer') return;
-      manualDutyOverrides[staffName.toLowerCase()] = statusMode;
-
-      const payload = {
-        id: HOLIDAY_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_HOLIDAY_RECORD",
-        plate: "N/A",
-        service: "Holiday Schedule",
-        est_time: 0,
-        priority: "Normal",
-        details: JSON.stringify(manualDutyOverrides),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-        render();
-      } catch(e){}
-    }
-
-    async function toggleMechanicDiagnosticFeature() {
-      if (currentRole !== 'developer') return;
-
-      featureFlags.diagnosticV2Enabled = !featureFlags.diagnosticV2Enabled;
-      render();
-
-      const payload = {
-        id: CONFIG_RECORD_ID,
-        customer: "SYSTEM",
-        phone: "N/A",
-        vehicle: "CLOUD_CONFIG_RECORD",
-        plate: "N/A",
-        service: "Feature Flags",
-        est_time: 0,
-        priority: "Normal",
-        details: JSON.stringify(featureFlags),
-        status: "system_record",
-        time_created: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        auto_schedule_slot: null
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
-          body: JSON.stringify(payload)
-        });
-        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics & office can now view/print the official Diagnostics List." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
-      } catch(err) {
-        alert("Error syncing feature state to cloud.");
-      }
-    }
-
-    function printDiagnosticReport() {
-      const jobId = document.getElementById('diagFormTargetJobId').value;
-      const job = state.find(j => j.id === jobId);
-      if (!job) return;
-
-      const info = parsePartsInfo(job.auto_schedule_slot);
-      const diagNumber = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'B786');
-      const assignedMech = resolveMechanicName(job) || currentUser || '-';
-      const comment = job.details ? job.details.replace(/\[DIAG:\s*[^\]]+\]/i, '').trim() : '-';
-      const vinNum = resolveVinNumber(job);
-
-      const d = info.diagData || {};
-      const chk = (val, target) => (val === target ? '✓' : '');
-      const box = (b) => (b ? '✓' : '');
-
-      const printWindow = window.open('', '_blank', 'width=850,height=1000');
-      if (!printWindow) {
-        alert("Pop-up blocked! Please allow pop-ups for CarTech to print.");
-        return;
-      }
-
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>CarTech Diagnostics List #${diagNumber}</title>
-          <style>
-            @page { size: A4 portrait; margin: 12mm; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #000; margin: 0; padding: 0; }
-            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
-            .logo { font-size: 24px; font-weight: 900; }
-            .logo span { color: #ea580c; }
-            .title { font-size: 13px; font-weight: 900; margin: 2px 0; text-transform: uppercase; }
-            .meta-table, .data-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-bottom: 8px; }
-            .meta-table td, .data-table td, .data-table th { border: 1px solid #000; padding: 4px 6px; font-size: 10.5px; }
-            .data-table th { background-color: #f1f5f9; text-transform: uppercase; font-size: 9.5px; }
-            .center { text-align: center; }
-            .good-col { width: 45px; text-align: center; font-weight: bold; }
-            .grid { display: flex; gap: 10px; }
-            .col { flex: 1; }
-            .box { border: 1.5px solid #000; padding: 6px; margin-bottom: 8px; font-size: 10.5px; }
-            .mark { font-weight: 900; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="logo">Car<span>Tech</span></div>
-            <div class="title">DIAGNOSTICS LIST #${diagNumber}</div>
-            <div>${new Date().toLocaleDateString('en-GB').replace(/\//g, '.')}</div>
-          </div>
-
-          <table class="meta-table">
-            <tr>
-              <td width="50%"><strong>CLIENT NAME:</strong> ${job.customer || '-'}</td>
-              <td width="50%"><strong>PHONE NUMBER:</strong> ${job.phone || '-'}</td>
-            </tr>
-            <tr>
-              <td><strong>VEHICLE:</strong> ${job.vehicle || '-'}</td>
-              <td><strong>NUMBER PLATE:</strong> ${job.plate || 'N/A'}</td>
-            </tr>
-            <tr>
-              <td><strong>VIN/CHASSIS NUMBER:</strong> ${vinNum}</td>
-              <td><strong>MILEAGE:</strong> -</td>
-            </tr>
-          </table>
-
-          <div class="box">
-            <div style="display: flex; justify-content: space-between;">
-              <div><strong>COMMENT FROM CLIENT (PROBLEMS):</strong> ${comment}</div>
-              <div style="min-width: 140px; text-align: right;"><strong>Mechanic:</strong> ${assignedMech}</div>
-            </div>
-          </div>
-
-          <div class="grid">
-            <div class="col">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>BASIC DIAGNOSTICS</th>
-                    <th class="good-col">GOOD</th>
-                    <th class="good-col">NOT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Wipers (Front)</td><td class="center mark">${chk(d.chk_wiper_f, 'good')}</td><td class="center mark">${chk(d.chk_wiper_f, 'not')}</td></tr>
-                  <tr><td>Wipers (Rear)</td><td class="center mark">${chk(d.chk_wiper_r, 'good')}</td><td class="center mark">${chk(d.chk_wiper_r, 'not')}</td></tr>
-                  <tr><td>CHECK ENGINE</td><td class="center mark">${chk(d.chk_engine, 'good')}</td><td class="center mark">${chk(d.chk_engine, 'not')}</td></tr>
-                  <tr><td>ABS</td><td class="center mark">${chk(d.chk_abs, 'good')}</td><td class="center mark">${chk(d.chk_abs, 'not')}</td></tr>
-                  <tr><td colspan="3"><strong>Other Errors:</strong> ${d.other_errors || '-'}</td></tr>
-                </tbody>
-              </table>
-
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>LIGHTING FIXTURES</th>
-                    <th class="good-col">LEFT</th>
-                    <th class="good-col">RIGHT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Front Lights</td><td class="center mark">${box(d.lights?.front_l)}</td><td class="center mark">${box(d.lights?.front_r)}</td></tr>
-                  <tr><td>Front Signal Lights</td><td class="center mark">${box(d.lights?.sig_f_l)}</td><td class="center mark">${box(d.lights?.sig_f_r)}</td></tr>
-                  <tr><td>Front Fog Lights</td><td class="center mark">${box(d.lights?.fog_f_l)}</td><td class="center mark">${box(d.lights?.fog_f_r)}</td></tr>
-                  <tr><td>Rear Signal Lights</td><td class="center mark">${box(d.lights?.sig_r_l)}</td><td class="center mark">${box(d.lights?.sig_r_r)}</td></tr>
-                  <tr><td>Rear Stop Signal</td><td class="center mark">${box(d.lights?.stop_l)}</td><td class="center mark">${box(d.lights?.stop_r)}</td></tr>
-                  <tr><td>Reverse & Plate Lights</td><td class="center mark">${box(d.lights?.rev_l)}</td><td class="center mark">${box(d.lights?.rev_r)}</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="col">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>FILTERS & SPARK PLUGS</th>
-                    <th class="good-col">GOOD</th>
-                    <th class="good-col">NOT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Air Filter</td><td class="center mark">${chk(d.chk_air_filter, 'good')}</td><td class="center mark">${chk(d.chk_air_filter, 'not')}</td></tr>
-                  <tr><td>Cabin Filter</td><td class="center mark">${chk(d.chk_cabin_filter, 'good')}</td><td class="center mark">${chk(d.chk_cabin_filter, 'not')}</td></tr>
-                  <tr><td>Fuel Filter</td><td class="center mark">${chk(d.chk_fuel_filter, 'good')}</td><td class="center mark">${chk(d.chk_fuel_filter, 'not')}</td></tr>
-                  <tr><td>Spark Plugs</td><td class="center mark">${chk(d.chk_spark_plugs, 'good')}</td><td class="center mark">${chk(d.chk_spark_plugs, 'not')}</td></tr>
-                </tbody>
-              </table>
-
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>FLUIDS</th>
-                    <th class="good-col">GOOD</th>
-                    <th class="good-col">NOT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Engine Oil</td><td class="center mark">${chk(d.chk_fluid_engine, 'good')}</td><td class="center mark">${chk(d.chk_fluid_engine, 'not')}</td></tr>
-                  <tr><td>Transmission Oil</td><td class="center mark">${chk(d.chk_fluid_trans, 'good')}</td><td class="center mark">${chk(d.chk_fluid_trans, 'not')}</td></tr>
-                  <tr><td>Cooling System Fluid</td><td class="center mark">${chk(d.chk_fluid_coolant, 'good')}</td><td class="center mark">${chk(d.chk_fluid_coolant, 'not')}</td></tr>
-                  <tr><td>Power Steering Fluid</td><td class="center mark">${chk(d.chk_fluid_steering, 'good')}</td><td class="center mark">${chk(d.chk_fluid_steering, 'not')}</td></tr>
-                  <tr><td>Brake Fluid</td><td class="center mark">${chk(d.chk_fluid_brake, 'good')}</td><td class="center mark">${chk(d.chk_fluid_brake, 'not')}</td></tr>
-                </tbody>
-              </table>
-
               <div class="box">
                 <strong>LEAKING FLUIDS/OIL:</strong> 
                 ${d.leaks?.engine ? '[ Engine Oil ] ' : ''} 
@@ -2341,6 +1958,9 @@
           if (activeModalChatJobId) {
             updateModalChatStream(activeModalChatJobId);
           }
+          if (activeCustomerTrackJobId) {
+            renderPublicCustomerPortal(activeCustomerTrackJobId);
+          }
         }
       } catch (e) {
       } finally {
@@ -2443,6 +2063,140 @@
       return vMatch ? vMatch[1].toUpperCase() : "-";
     }
 
+    /* ======================================================== */
+    /* CUSTOMER LIVE 3D / X-RAY TRACKER ROUTING & LOGIC         */
+    /* ======================================================== */
+    let activeCustomerTrackJobId = null;
+
+    function openCustomerTrackingQrModal(jobId) {
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      const currentOrigin = window.location.origin + window.location.pathname;
+      const trackUrl = `${currentOrigin}?track=${job.id}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(trackUrl)}`;
+
+      document.getElementById('qrModalTitle').innerText = `${job.vehicle} Live View`;
+      document.getElementById('qrModalSubtitle').innerText = `Customer: ${job.customer} • Diag #${job.phone || 'B786'}`;
+      document.getElementById('qrCodeImage').src = qrApiUrl;
+      document.getElementById('qrDirectUrlInput').value = trackUrl;
+
+      document.getElementById('qrCodeModal').classList.remove('hidden');
+    }
+
+    function closeQrCodeModal() {
+      document.getElementById('qrCodeModal').classList.add('hidden');
+    }
+
+    function copyQrTrackingLink() {
+      const inp = document.getElementById('qrDirectUrlInput');
+      if (!inp) return;
+      inp.select();
+      navigator.clipboard.writeText(inp.value);
+      alert("📋 Scannable customer link copied to clipboard!");
+    }
+
+    function renderPublicCustomerPortal(targetIdentifier) {
+      const cleanId = String(targetIdentifier).trim().toLowerCase();
+      const job = state.find(j => {
+        const idMatch = String(j.id || '').toLowerCase() === cleanId;
+        const phoneMatch = String(j.phone || '').toLowerCase() === cleanId;
+        const diagMatch = String(j.details || '').toLowerCase().includes(`[diag: ${cleanId}]`);
+        return idMatch || phoneMatch || diagMatch;
+      });
+
+      if (!job) return;
+
+      activeCustomerTrackJobId = job.id;
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('appShell').classList.add('hidden');
+      document.getElementById('publicCustomerPortal').classList.remove('hidden');
+
+      const info = parsePartsInfo(job.auto_schedule_slot);
+      const diagNum = job.phone && job.phone !== 'N/A' ? job.phone : (job.details.match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || 'B786');
+      const assignedMech = resolveMechanicName(job) || 'FLOOR ROTATION';
+
+      document.getElementById('custPortalDiagNumber').innerText = `Diag #${diagNum}`;
+      document.getElementById('custPortalVehicleName').innerText = job.vehicle;
+      document.getElementById('custPortalCustomerName').innerText = job.customer;
+      document.getElementById('custPortalVin').innerText = resolveVinNumber(job);
+      document.getElementById('custPortalMechName').innerText = assignedMech;
+
+      const badge = document.getElementById('custPortalStatusBadge');
+      const progressText = document.getElementById('custPortalProgressText');
+      const progressBar = document.getElementById('custPortalProgressBar');
+
+      if (job.status === 'waiting') {
+        badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 inline-flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-regular fa-clock text-[10px]"></i> QUEUED`;
+        progressText.innerText = "20% (Intake Registered)";
+        progressBar.style.width = "20%";
+      } else if (job.status === 'inprogress') {
+        badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-blue-500/20 text-blue-400 border border-blue-500/30 inline-flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-solid fa-wrench animate-spin text-[10px]"></i> IN BAY (ACTIVE)`;
+        progressText.innerText = "65% (Repair & Inspection)";
+        progressBar.style.width = "65%";
+      } else if (job.status === 'waiting_parts') {
+        badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-purple-500/20 text-purple-400 border border-purple-500/30 inline-flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-solid fa-cart-shopping text-[10px]"></i> WAITING PARTS`;
+        progressText.innerText = "50% (Parts Procured)";
+        progressBar.style.width = "50%";
+      } else if (job.status === 'completed') {
+        badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 inline-flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-solid fa-circle-check text-[10px]"></i> SERVICE COMPLETED`;
+        progressText.innerText = "100% (Ready for Release)";
+        progressBar.style.width = "100%";
+      }
+
+      document.getElementById('custPortalJobDetailsBox').innerText = job.details || 'Standard maintenance instructions';
+
+      const partsBox = document.getElementById('custPortalPartsPendingBox');
+      const partsTxt = document.getElementById('custPortalPartsText');
+      if (job.status === 'waiting_parts' || info.text) {
+        partsBox.classList.remove('hidden');
+        partsTxt.innerText = info.text || 'Replacement components requested from parts inventory.';
+      } else {
+        partsBox.classList.add('hidden');
+      }
+    }
+
+    function switchCustomerBlueprintView(mode) {
+      ['exterior', 'engine', 'chassis'].forEach(m => {
+        const btn = document.getElementById('cust-btn-' + m);
+        if (m === mode) {
+          btn.className = "py-2 rounded-xl transition bg-orange-500 text-slate-950 font-black shadow";
+        } else {
+          btn.className = "py-2 rounded-xl transition text-slate-400 hover:text-white";
+        }
+      });
+
+      const engineBlock = document.getElementById('custSvgEngineBlock');
+      const suspension = document.getElementById('custSvgSuspension');
+
+      if (mode === 'engine') {
+        engineBlock.classList.remove('hidden');
+        suspension.classList.add('hidden');
+      } else if (mode === 'chassis') {
+        engineBlock.classList.add('hidden');
+        suspension.classList.remove('hidden');
+      } else {
+        engineBlock.classList.add('hidden');
+        suspension.classList.add('hidden');
+      }
+    }
+
+    function showCustomerPartDetail(title, desc, badgeText, colorMode) {
+      document.getElementById('custDetailTitle').innerText = title;
+      document.getElementById('custDetailDesc').innerText = desc;
+      const badge = document.getElementById('custDetailBadge');
+      badge.innerText = badgeText;
+      if (colorMode === 'rose') {
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30";
+      } else {
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+      }
+    }
+
     function handleDiagnosticSearch() {
       const query = (document.getElementById('diagSearchInput')?.value || '').trim().toLowerCase();
       const resultsContainer = document.getElementById('diagSearchResults');
@@ -2483,6 +2237,9 @@
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
+              <button onclick="openCustomerTrackingQrModal('${job.id}')" class="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1">
+                <i class="fa-solid fa-qrcode"></i> Live QR
+              </button>
               <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1">
                 <i class="fa-solid fa-file-invoice"></i> View / Print Sheet
               </button>
@@ -3554,6 +3311,9 @@
                     <p class="text-[11px] text-slate-500 mt-0.5">Customer: <strong class="text-slate-700">${j.customer}</strong> • Dispatched: ${j.time_created || 'Today'}</p>
                   </div>
                   <div class="flex items-center gap-1.5">
+                    <button onclick="openCustomerTrackingQrModal('${j.id}')" class="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-bold py-1.5 px-2.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition" title="Customer 3D Live View QR">
+                      <i class="fa-solid fa-qrcode"></i> Live QR
+                    </button>
                     ${badge}
                     ${printDiagBtn}
                     ${deleteBtn}
@@ -3734,28 +3494,38 @@
 
     syncSystemCloudRecords();
 
-    const savedAuthUser = localStorage.getItem('cartech_auth_user');
-    const savedAuthRole = localStorage.getItem('cartech_auth_role');
+    // PUBLIC CUSTOMER URL CHECK (?track=JB-408 or ?diag=B786)
+    const urlParams = new URLSearchParams(window.location.search);
+    const trackingQuery = urlParams.get('track') || urlParams.get('diag');
 
-    if (savedAuthUser && savedAuthRole) {
-      if (isUserOnHoliday(savedAuthUser)) {
-        triggerHolidayLockout();
-      } else {
-        const currentHour = new Date().getHours();
-        const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
+    if (trackingQuery) {
+      pullData(true).then(() => {
+        renderPublicCustomerPortal(trackingQuery);
+      });
+    } else {
+      const savedAuthUser = localStorage.getItem('cartech_auth_user');
+      const savedAuthRole = localStorage.getItem('cartech_auth_role');
 
-        if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
-          localStorage.removeItem('cartech_auth_user');
-          localStorage.removeItem('cartech_auth_role');
+      if (savedAuthUser && savedAuthRole) {
+        if (isUserOnHoliday(savedAuthUser)) {
+          triggerHolidayLockout();
         } else {
-          currentUser = savedAuthUser;
-          currentRole = savedAuthRole;
-          bootApp();
+          const currentHour = new Date().getHours();
+          const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
+
+          if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
+            localStorage.removeItem('cartech_auth_user');
+            localStorage.removeItem('cartech_auth_role');
+          } else {
+            currentUser = savedAuthUser;
+            currentRole = savedAuthRole;
+            bootApp();
+          }
         }
       }
-    }
 
-    initRememberedDeviceUI();
+      initRememberedDeviceUI();
+    }
 
     setInterval(() => pullData(false), 15000);
 
