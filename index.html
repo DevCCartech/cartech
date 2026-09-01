@@ -3447,6 +3447,27 @@
       }
     }, 60000);
   </script>
+  <!-- Office Broadcast Popup Modal -->
+<div id="officeHolidayModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4 hidden">
+  <div class="bg-slate-900 border border-amber-500/30 text-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+      <h2 id="modalHolidayTitle" class="text-lg font-black text-amber-400 uppercase tracking-wide">Office Holiday Notice</h2>
+      <button onclick="closeHolidayModal()" class="text-slate-400 hover:text-white font-bold text-xl px-2">&times;</button>
+    </div>
+    
+    <div class="space-y-3">
+      <p id="modalHolidayDate" class="text-xs font-bold text-slate-300"></p>
+      <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+        <p class="text-[11px] text-slate-400 uppercase font-bold mb-1">Roster Details</p>
+        <pre id="modalHolidayStaff" class="text-xs text-emerald-400 font-mono whitespace-pre-wrap"></pre>
+      </div>
+    </div>
+
+    <button onclick="closeHolidayModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
+      Acknowledge & Close
+    </button>
+  </div>
+</div>
   <script>
   // Initial Mechanics Roster List
   const mechanicsList = ['BERT', 'CHARL', 'MARK', 'NEL', 'ROCKY', 'BOT'];
