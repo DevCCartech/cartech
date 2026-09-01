@@ -71,6 +71,17 @@
       animation: bounce-short 1.6s ease-in-out infinite;
     }
 
+    @keyframes alert-slide-in {
+      from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes alert-slide-out {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-10px) scale(0.97); }
+    }
+    .cartech-alert-enter { animation: alert-slide-in 0.24s ease-out both; }
+    .cartech-alert-leave { animation: alert-slide-out 0.2s ease-in both; }
+
     @media print {
       body * {
         visibility: hidden;
@@ -94,6 +105,9 @@
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
+
+  <!-- LIVE ALERTS: stays outside the rendered job lists so alerts are not deleted on refresh -->
+  <div id="liveAlertStack" class="fixed top-3 right-3 left-3 sm:left-auto sm:w-[390px] z-[10000] space-y-2 pointer-events-none" aria-live="assertive" aria-atomic="true"></div>
 
   <!-- STRICT HOLIDAY / DAY OFF LOCKOUT OVERLAY -->
   <div id="holidayLockoutModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/95 backdrop-blur-xl z-[9999] flex items-center justify-center p-4 select-none">
@@ -326,6 +340,24 @@
         </button>
       </div>
     </header>
+
+    <!-- ONE-TAP PERMISSION FOR SOUND + CLICKABLE ALERTS IN OTHER BROWSER TABS -->
+    <div id="notificationPermissionBanner" class="hidden mx-4 md:mx-6 mt-3 rounded-2xl border border-orange-300 bg-gradient-to-r from-orange-50 to-amber-50 p-3.5 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 shrink-0 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div>
+            <p class="text-sm font-black text-slate-900">Turn on CARTECH live alerts</p>
+            <p class="text-[11px] text-slate-600 font-semibold">Hear messages and receive a clickable pop-up even while working in another tab.</p>
+          </div>
+        </div>
+        <button type="button" onclick="enableCartechAlerts()" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white font-black px-4 py-2.5 rounded-xl text-xs shadow active:scale-95 transition cursor-pointer">
+          <i class="fa-solid fa-volume-high mr-1"></i> Enable Alerts
+        </button>
+      </div>
+    </div>
 
     <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
@@ -1175,6 +1207,10 @@
     let previousCompletedJobCount = null;
     let activeModalChatJobId = null;
     let isChatMinimizedToBubble = false;
+    let notificationRegistration = null;
+    let previousJobStatuses = {};
+    let markSeenInFlight = {};
+    let pendingAlertNavigation = null;
 
     let cachedCloudAccounts = { 
       "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
@@ -1198,6 +1234,306 @@
 
     function saveLastSeenChats() {
       localStorage.setItem('cartech_last_seen_chats', JSON.stringify(lastSeenChatCounts));
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function getViewerSeenId() {
+      return (currentUser || 'guest').toLowerCase();
+    }
+
+    function createChatMessageId() {
+      if (crypto?.randomUUID) return crypto.randomUUID();
+      return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    }
+
+    function isMessageMine(msg) {
+      if (!msg) return false;
+      const viewer = getViewerSeenId();
+      if (msg.senderId) return String(msg.senderId).toLowerCase() === viewer;
+      if (['admin', 'developer', 'office'].includes(currentRole)) return msg.role === 'office';
+      return String(msg.sender || '').toLowerCase() === viewer;
+    }
+
+    function isRelevantIncomingMessage(job, msg) {
+      if (!currentUser || !job || !msg || isMessageMine(msg)) return false;
+      if (['admin', 'developer', 'office'].includes(currentRole)) return msg.role === 'workshop';
+      const assigned = resolveMechanicName(job);
+      return currentRole === 'workshop' && assigned && assigned.toLowerCase() === currentUser.toLowerCase() && msg.role === 'office';
+    }
+
+    function notificationHistoryKey() {
+      return `cartech_delivered_alerts_${getViewerSeenId()}`;
+    }
+
+    function claimAlertDelivery(eventKey) {
+      if (!eventKey || !currentUser) return false;
+      const key = notificationHistoryKey();
+      let history = {};
+      try { history = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
+      const now = Date.now();
+      Object.keys(history).forEach(k => {
+        if (now - Number(history[k] || 0) > 7 * 24 * 60 * 60 * 1000) delete history[k];
+      });
+      if (history[eventKey]) return false;
+      history[eventKey] = now;
+      localStorage.setItem(key, JSON.stringify(history));
+      return true;
+    }
+
+    function showLiveAlert({ title, body, jobId, alertType = 'message' }) {
+      const stack = document.getElementById('liveAlertStack');
+      if (!stack) return;
+
+      const iconClass = alertType === 'done'
+        ? 'fa-flag-checkered text-emerald-600 bg-emerald-100'
+        : alertType === 'parts'
+          ? 'fa-cart-shopping text-purple-600 bg-purple-100'
+          : 'fa-comment-dots text-indigo-600 bg-indigo-100';
+
+      const alertEl = document.createElement('button');
+      alertEl.type = 'button';
+      alertEl.className = 'cartech-alert-enter pointer-events-auto w-full bg-white border border-slate-200 rounded-2xl shadow-2xl p-3.5 text-left flex items-start gap-3 hover:border-orange-400 active:scale-[0.99] transition cursor-pointer';
+      alertEl.innerHTML = `
+        <span class="w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center ${iconClass.split(' ').slice(1).join(' ')}">
+          <i class="fa-solid ${iconClass.split(' ')[0]}"></i>
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="flex items-center justify-between gap-2">
+            <strong class="text-sm text-slate-900 truncate">${escapeHTML(title)}</strong>
+            <span class="text-[9px] font-black uppercase text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-full">New</span>
+          </span>
+          <span class="block text-xs text-slate-600 mt-0.5 line-clamp-2">${escapeHTML(body)}</span>
+          <span class="block text-[10px] font-bold text-orange-600 mt-1">Tap to open in CARTECH</span>
+        </span>`;
+      alertEl.onclick = () => {
+        alertEl.remove();
+        navigateToAlert(jobId, alertType);
+      };
+      stack.prepend(alertEl);
+      while (stack.children.length > 4) stack.lastElementChild.remove();
+
+      setTimeout(() => {
+        if (!alertEl.isConnected) return;
+        alertEl.classList.remove('cartech-alert-enter');
+        alertEl.classList.add('cartech-alert-leave');
+        setTimeout(() => alertEl.remove(), 220);
+      }, alertType === 'done' ? 20000 : 12000);
+    }
+
+    async function showBrowserNotification({ title, body, jobId, alertType, eventKey }) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      const options = {
+        body,
+        tag: `cartech-${eventKey}`,
+        renotify: true,
+        requireInteraction: true,
+        data: { jobId, alertType },
+        vibrate: alertType === 'done' ? [500, 120, 500, 120, 800] : [180, 80, 180]
+      };
+
+      try {
+        if (notificationRegistration) {
+          await notificationRegistration.showNotification(title, options);
+        } else {
+          const n = new Notification(title, options);
+          n.onclick = () => {
+            window.focus();
+            navigateToAlert(jobId, alertType);
+            n.close();
+          };
+        }
+      } catch (e) {}
+    }
+
+    function deliverCartechAlert({ eventKey, title, body, jobId, alertType = 'message', sound = 'message' }) {
+      if (!claimAlertDelivery(eventKey)) return;
+      if (sound === 'horn') playLoudVehicleHorn();
+      else playMessengerBeep();
+
+      showLiveAlert({ title, body, jobId, alertType });
+      if (document.hidden || !document.hasFocus()) {
+        showBrowserNotification({ title, body, jobId, alertType, eventKey });
+      }
+    }
+
+    async function enableCartechAlerts() {
+      getAudioContext();
+      localStorage.setItem('cartech_whistle_permission_granted', 'true');
+
+      if ('Notification' in window && Notification.permission !== 'granted') {
+        try { await Notification.requestPermission(); } catch (e) {}
+      }
+
+      const banner = document.getElementById('notificationPermissionBanner');
+      if (banner) banner.classList.toggle('hidden', !('Notification' in window) || Notification.permission === 'granted');
+      document.getElementById('whistlePermissionCard')?.classList.add('hidden');
+      playMessengerBeep();
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        showLiveAlert({
+          title: 'CARTECH alerts are on',
+          body: 'Messages, parts requests, and completed jobs can now alert you in another tab.',
+          jobId: null,
+          alertType: 'message'
+        });
+      }
+    }
+
+    async function initCartechNotificationSystem() {
+      if ('serviceWorker' in navigator) {
+        try { notificationRegistration = await navigator.serviceWorker.register('./sw.js'); } catch (e) {}
+        navigator.serviceWorker.addEventListener('message', event => {
+          if (event.data?.type === 'OPEN_CARTECH_ALERT') {
+            navigateToAlert(event.data.jobId, event.data.alertType);
+          }
+        });
+      }
+
+      const banner = document.getElementById('notificationPermissionBanner');
+      if (banner && currentUser && 'Notification' in window && Notification.permission === 'default') {
+        banner.classList.remove('hidden');
+      }
+
+      const params = new URLSearchParams(location.search);
+      const alertJob = params.get('alertJob');
+      const alertType = params.get('alertType');
+      if (alertJob) {
+        pendingAlertNavigation = { jobId: alertJob, alertType: alertType || 'message' };
+        params.delete('alertJob');
+        params.delete('alertType');
+        const cleanQuery = params.toString();
+        history.replaceState({}, '', `${location.pathname}${cleanQuery ? '?' + cleanQuery : ''}${location.hash}`);
+        if (currentUser) {
+          const target = pendingAlertNavigation;
+          pendingAlertNavigation = null;
+          setTimeout(() => navigateToAlert(target.jobId, target.alertType), 0);
+        }
+      }
+    }
+
+    async function navigateToAlert(jobId, alertType = 'message') {
+      if (!jobId) return;
+      if (!currentUser) {
+        pendingAlertNavigation = { jobId, alertType };
+        return;
+      }
+
+      await pullData(true);
+      const job = state.find(j => j.id === jobId);
+      if (!job) return;
+
+      if (alertType === 'done') {
+        if (currentRole === 'developer' || currentRole === 'admin') switchDevToOfficeSim();
+        setFilter('completed');
+      } else {
+        if (currentRole === 'developer' || currentRole === 'admin') switchDevToOfficeSim();
+        setFilter(job.status === 'waiting_parts' ? 'waiting_parts' : 'inprogress');
+        const assigned = resolveMechanicName(job) || currentUser;
+        openMessengerChatForJob(jobId, assigned);
+      }
+
+      setTimeout(() => {
+        const card = document.querySelector(`[data-job-id="${CSS.escape(jobId)}"]`);
+        card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
+    }
+
+    async function markConversationSeen(jobId) {
+      if (!jobId || !currentUser || markSeenInFlight[jobId]) return;
+      markSeenInFlight[jobId] = true;
+
+      try {
+        let currentItem = state.find(j => j.id === jobId);
+        if (!currentItem) return;
+
+        try {
+          const latestRes = await fetch(`${API_URL}?id=eq.${encodeURIComponent(jobId)}&select=id,auto_schedule_slot`, {
+            headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+          });
+          if (latestRes.ok) {
+            const latestRows = await latestRes.json();
+            if (latestRows?.[0]) currentItem = { ...currentItem, auto_schedule_slot: latestRows[0].auto_schedule_slot };
+          }
+        } catch (e) {}
+
+        const info = parsePartsInfo(currentItem.auto_schedule_slot);
+        const viewer = getViewerSeenId();
+        let changed = false;
+        const updatedChatList = info.chatList.map(msg => {
+          if (!isRelevantIncomingMessage(currentItem, msg)) return msg;
+          const seenBy = Array.isArray(msg.seenBy) ? [...msg.seenBy] : [];
+          if (!seenBy.map(v => String(v).toLowerCase()).includes(viewer)) {
+            seenBy.push(viewer);
+            changed = true;
+            return { ...msg, seenBy, seenAt: Date.now() };
+          }
+          return msg;
+        });
+
+        lastSeenChatCounts[jobId] = updatedChatList.length;
+        saveLastSeenChats();
+        if (!changed) return;
+
+        const slotBase = String(currentItem.auto_schedule_slot || '')
+          .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
+          .trim();
+        const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
+
+        pendingPatchTimeouts[jobId] = Date.now();
+        state = state.map(j => j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j);
+        updateModalChatStream(jobId);
+        render();
+        updateUnreadTitle();
+
+        await fetch(`${API_URL}?id=eq.${encodeURIComponent(jobId)}`, {
+          method: 'PATCH',
+          headers: HEADERS,
+          body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
+        });
+      } catch (e) {
+      } finally {
+        markSeenInFlight[jobId] = false;
+      }
+    }
+
+    function updateUnreadTitle() {
+      if (!currentUser) {
+        document.title = 'CARTECH - Hybrid Queue';
+        return;
+      }
+
+      const viewer = getViewerSeenId();
+      let unread = 0;
+      state.forEach(job => {
+        const messages = parsePartsInfo(job.auto_schedule_slot).chatList || [];
+        const locallySeenCount = Number(lastSeenChatCounts[job.id] || 0);
+        messages.forEach((msg, index) => {
+          if (!isRelevantIncomingMessage(job, msg)) return;
+          const seenBy = Array.isArray(msg.seenBy) ? msg.seenBy.map(v => String(v).toLowerCase()) : [];
+          if (!seenBy.includes(viewer) && index >= locallySeenCount) unread++;
+        });
+      });
+      document.title = unread > 0 ? `(${unread}) CARTECH - New Message` : 'CARTECH - Hybrid Queue';
+    }
+
+    function getUnreadCountForJob(job) {
+      if (!job || !currentUser) return 0;
+      const viewer = getViewerSeenId();
+      const messages = parsePartsInfo(job.auto_schedule_slot).chatList || [];
+      const locallySeenCount = Number(lastSeenChatCounts[job.id] || 0);
+      return messages.reduce((count, msg, index) => {
+        if (!isRelevantIncomingMessage(job, msg)) return count;
+        const seenBy = Array.isArray(msg.seenBy) ? msg.seenBy.map(v => String(v).toLowerCase()) : [];
+        return count + (!seenBy.includes(viewer) && index >= locallySeenCount ? 1 : 0);
+      }, 0);
     }
 
     function isUserOnHoliday(username) {
@@ -1987,11 +2323,8 @@
       } catch (e) {}
     }
 
-    function requestPocketAlertPermission() {
-      localStorage.setItem('cartech_whistle_permission_granted', 'true');
-      const card = document.getElementById('whistlePermissionCard');
-      if (card) card.classList.add('hidden');
-      getAudioContext();
+    async function requestPocketAlertPermission() {
+      await enableCartechAlerts();
       triggerFastDoorbellSound();
     }
 
@@ -2204,6 +2537,12 @@
         workshopView.classList.remove('hidden');
         document.getElementById('workshopStaffName').innerText = currentUser;
 
+        const soundCard = document.getElementById('whistlePermissionCard');
+        if (soundCard) {
+          const alertsEnabled = localStorage.getItem('cartech_whistle_permission_granted') === 'true';
+          soundCard.classList.toggle('hidden', alertsEnabled);
+        }
+
         const avatarImgContainer = document.getElementById('myMechanicAvatarImg');
         if (cachedCloudAvatars[currentUser]) {
           avatarImgContainer.innerHTML = `<img src="${cachedCloudAvatars[currentUser]}" class="w-full h-full object-cover">`;
@@ -2213,7 +2552,18 @@
       }
 
       setFilter('waiting_parts');
-      pullData(true);
+      const permissionBanner = document.getElementById('notificationPermissionBanner');
+      if (permissionBanner && 'Notification' in window && Notification.permission === 'default') {
+        permissionBanner.classList.remove('hidden');
+      }
+
+      pullData(true).then(() => {
+        if (pendingAlertNavigation) {
+          const target = pendingAlertNavigation;
+          pendingAlertNavigation = null;
+          navigateToAlert(target.jobId, target.alertType);
+        }
+      });
     }
 
     function switchDevToOfficeSim() {
@@ -2301,29 +2651,62 @@
               return;
             }
 
-            const currentDoneCount = data.filter(j => j.status === 'completed').length;
-            if (previousCompletedJobCount !== null && currentDoneCount > previousCompletedJobCount) {
-              if (currentRole === 'office' || currentRole === 'admin' || currentRole === 'developer') {
-                playLoudVehicleHorn();
-              }
-            }
-            previousCompletedJobCount = currentDoneCount;
-
             data.forEach(job => {
               const info = parsePartsInfo(job.auto_schedule_slot);
               const totalMsgCount = info.chatList ? info.chatList.length : 0;
               const prevMsgCount = previousChatCounts[job.id] !== undefined ? previousChatCounts[job.id] : totalMsgCount;
+              const previousStatus = previousJobStatuses[job.id];
+              const hasPreviousSnapshot = previousStatus !== undefined;
+              const changedToParts = hasPreviousSnapshot && previousStatus !== 'waiting_parts' && job.status === 'waiting_parts';
+              const changedToDone = hasPreviousSnapshot && previousStatus !== 'completed' && job.status === 'completed';
+
+              if (changedToDone && ['office', 'admin', 'developer'].includes(currentRole)) {
+                const mechanic = resolveMechanicName(job) || 'Workshop';
+                deliverCartechAlert({
+                  eventKey: `done:${job.id}:${totalMsgCount}:${String(job.auto_schedule_slot || '').length}`,
+                  title: `JOB DONE • ${job.vehicle}`,
+                  body: `${mechanic} marked ${job.customer}'s vehicle as completed. Tap to view the completed job.`,
+                  jobId: job.id,
+                  alertType: 'done',
+                  sound: 'horn'
+                });
+              }
+
+              if (changedToParts && ['office', 'admin', 'developer'].includes(currentRole)) {
+                const mechanic = resolveMechanicName(job) || 'Mechanic';
+                deliverCartechAlert({
+                  eventKey: `parts:${job.id}:${totalMsgCount}:${info.text}`,
+                  title: `PARTS NEEDED • ${job.vehicle}`,
+                  body: `${mechanic}: ${info.text || 'Replacement parts requested'}`,
+                  jobId: job.id,
+                  alertType: 'parts',
+                  sound: 'message'
+                });
+              }
 
               if (totalMsgCount > prevMsgCount) {
-                const lastMsg = info.chatList[totalMsgCount - 1];
-                const isMyOwnMessage = lastMsg && lastMsg.sender.toUpperCase() === (currentUser || "").toUpperCase();
+                info.chatList.slice(prevMsgCount).forEach((msg, offset) => {
+                  if (!isRelevantIncomingMessage(job, msg)) return;
+                  if (changedToParts && /^Requested Parts:/i.test(String(msg.text || ''))) return;
+                  if (activeModalChatJobId === job.id && !isChatMinimizedToBubble && !document.hidden && document.hasFocus()) return;
 
-                if (!isMyOwnMessage && activeModalChatJobId !== job.id) {
-                  playMessengerBeep();
-                }
+                  const messageIndex = prevMsgCount + offset;
+                  const messageId = msg.id || `${messageIndex}:${msg.sender}:${msg.time}:${String(msg.text || '').slice(0, 32)}`;
+                  deliverCartechAlert({
+                    eventKey: `message:${job.id}:${messageId}`,
+                    title: `${msg.sender || 'CARTECH'} • ${job.vehicle}`,
+                    body: String(msg.text || 'New message').slice(0, 180),
+                    jobId: job.id,
+                    alertType: 'message',
+                    sound: 'message'
+                  });
+                });
               }
               previousChatCounts[job.id] = totalMsgCount;
+              previousJobStatuses[job.id] = job.status;
             });
+
+            previousCompletedJobCount = data.filter(j => j.status === 'completed').length;
 
             const now = Date.now();
             const merged = data.map(remoteJob => {
@@ -2340,7 +2723,9 @@
           updateAlarmState();
           if (activeModalChatJobId) {
             updateModalChatStream(activeModalChatJobId);
+            if (!isChatMinimizedToBubble && !document.hidden && document.hasFocus()) markConversationSeen(activeModalChatJobId);
           }
+          updateUnreadTitle();
         }
       } catch (e) {
       } finally {
@@ -2552,6 +2937,7 @@
       }
 
       pendingPatchTimeouts[id] = Date.now();
+      previousJobStatuses[id] = newStatus;
       state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
       render();
       updateAlarmState();
@@ -2573,10 +2959,14 @@
       const resolvedMech = resolveMechanicName(job) || 'MECHANIC';
 
       const readyChatEntry = {
+        id: createChatMessageId(),
         sender: "OFFICE",
+        senderId: getViewerSeenId(),
         role: "office",
         text: "Parts are ready for pick-up at the front desk.",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sentAt: Date.now(),
+        seenBy: [getViewerSeenId()]
       };
 
       const updatedChatList = [...info.chatList, readyChatEntry];
@@ -2903,10 +3293,14 @@
       const resolved = resolveMechanicName(currentItem) || currentUser || 'MECHANIC';
       const initialChat = [
         {
+          id: createChatMessageId(),
           sender: resolved.toUpperCase(),
+          senderId: getViewerSeenId(),
           role: "workshop",
           text: `Requested Parts: ${partDesc}`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sentAt: Date.now(),
+          seenBy: [getViewerSeenId()]
         }
       ];
 
@@ -2916,6 +3310,7 @@
       }
 
       pendingPatchTimeouts[jobId] = Date.now();
+      previousJobStatuses[jobId] = 'waiting_parts';
       state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
       render();
       closePartsModal();
@@ -3035,6 +3430,8 @@
       updateModalChatStream(jobId);
       document.getElementById('fbFloatingChatWindow').classList.remove('hidden');
       document.getElementById('fbFloatingBubble').classList.add('hidden');
+      markConversationSeen(jobId);
+      updateUnreadTitle();
       
       setTimeout(() => {
         const inp = document.getElementById('modalChatInput');
@@ -3054,6 +3451,7 @@
       document.getElementById('fbFloatingBubble').classList.add('hidden');
       document.getElementById('fbFloatingChatWindow').classList.remove('hidden');
       updateModalChatStream(activeModalChatJobId);
+      markConversationSeen(activeModalChatJobId);
     }
 
     function updateModalChatStream(jobId) {
@@ -3098,6 +3496,14 @@
           isMyMessage = (msg.sender.toUpperCase() === myCurrentSenderName);
         }
 
+        const senderIdentity = String(msg.senderId || msg.sender || msg.role || '').toLowerCase();
+        const seenByOthers = (Array.isArray(msg.seenBy) ? msg.seenBy : [])
+          .map(v => String(v).toLowerCase())
+          .filter(v => v && v !== senderIdentity);
+        const seenLabel = isMyMessage && seenByOthers.length > 0
+          ? `<span class="text-[8px] text-indigo-500 font-black mt-0.5"><i class="fa-solid fa-check-double mr-0.5"></i> Seen${seenByOthers[0] !== 'office' ? ` by ${escapeHTML(seenByOthers[0].toUpperCase())}` : ''}</span>`
+          : '';
+
         return `
           <div class="flex flex-col ${isMyMessage ? 'items-end' : 'items-start'} text-xs my-0.5">
             <div class="flex items-center gap-1 text-[8px] text-slate-400 font-bold mb-0.5">
@@ -3116,6 +3522,7 @@
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
+            ${seenLabel}
           </div>
         `;
       }).join('');
@@ -3154,10 +3561,14 @@
       const senderName = senderRole === 'office' ? 'OFFICE' : currentUser.toUpperCase();
 
       const newChatEntry = {
+        id: createChatMessageId(),
         sender: senderName,
+        senderId: getViewerSeenId(),
         role: senderRole,
         text: text,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sentAt: Date.now(),
+        seenBy: [getViewerSeenId()]
       };
 
       const updatedChatList = [...info.chatList, newChatEntry];
@@ -3423,8 +3834,7 @@
           const duty = getMechanicDutyStatus(m);
           const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [] };
           const totalMsgCount = info.chatList ? info.chatList.length : 0;
-          const seenCount = activeMechJob ? (lastSeenChatCounts[activeMechJob.id] || 0) : 0;
-          const unreadCount = Math.max(0, totalMsgCount - seenCount);
+          const unreadCount = activeMechJob ? getUnreadCountForJob(activeMechJob) : 0;
 
           const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
 
@@ -3516,8 +3926,7 @@
               `).join('');
 
               const totalMsgCount = chatList.length;
-              const seenCount = lastSeenChatCounts[j.id] || 0;
-              const unreadC = Math.max(0, totalMsgCount - seenCount);
+              const unreadC = getUnreadCountForJob(j);
 
               partsSection = `
                 <div class="mt-2.5 bg-purple-50/80 border border-purple-200 p-3.5 rounded-2xl space-y-2.5">
@@ -3543,7 +3952,7 @@
             }
 
             return `
-              <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
+              <div data-job-id="${escapeHTML(j.id)}" class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition space-y-2.5">
                 <div class="flex justify-between items-start">
                   <div>
                     <div class="flex items-center space-x-2">
@@ -3604,8 +4013,7 @@
             } else if (j.status === 'inprogress') {
               if (isMyJob || isManagement) {
                 const totalMsgCount = chatList.length;
-                const seenCount = lastSeenChatCounts[j.id] || 0;
-                const unreadC = Math.max(0, totalMsgCount - seenCount);
+                const unreadC = getUnreadCountForJob(j);
 
                 let diagButtonHTML = "";
                 if (isFeatureReleased) {
@@ -3678,8 +4086,7 @@
               }
 
               const totalMsgCount = chatList.length;
-              const seenCount = lastSeenChatCounts[j.id] || 0;
-              const unreadC = Math.max(0, totalMsgCount - seenCount);
+              const unreadC = getUnreadCountForJob(j);
 
               actionArea = `
                 <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
@@ -3709,7 +4116,7 @@
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
 
             return `
-              <div class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
+              <div data-job-id="${escapeHTML(j.id)}" class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
@@ -3731,6 +4138,18 @@
         }
       }
     }
+
+    initCartechNotificationSystem();
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && activeModalChatJobId && !isChatMinimizedToBubble) {
+        markConversationSeen(activeModalChatJobId);
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      if (activeModalChatJobId && !isChatMinimizedToBubble) markConversationSeen(activeModalChatJobId);
+    });
 
     syncSystemCloudRecords();
 
