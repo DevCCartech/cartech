@@ -105,7 +105,7 @@
         <span class="text-[10px] font-black uppercase text-rose-600 tracking-wider">Access Restricted</span>
         <h3 class="text-xl font-black text-slate-900 leading-tight">You are Day OFF its Holiday</h3>
         <p class="text-xs text-slate-600 font-semibold mt-1 leading-relaxed">
-          Workshop access is temporarily suspended for your account today. Relax and enjoy your rest day!
+          Workshop and office access is temporarily suspended for your account today. Relax and enjoy your rest day!
         </p>
       </div>
       <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-[11px] text-rose-700 font-bold">
@@ -335,7 +335,7 @@
             <i class="fa-solid fa-sliders mr-1"></i> <span id="terminalRoleHeader">Admin & Dev Control Terminal</span>
           </span>
           <h2 id="devMainTitle" class="text-2xl font-black text-slate-900 tracking-tight mt-1.5">Staff Registry & Flow Control</h2>
-          <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop floor management.</p>
+          <p id="devSubTitle" class="text-xs text-slate-500 mt-0.5">Real-time presence, timed account access, and workshop/office schedule management.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="pullData(true)" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-indigo-200 transition cursor-pointer">
@@ -376,7 +376,7 @@
           </h3>
           <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">Developer Scheduler</span>
         </div>
-        <p class="text-xs text-slate-500">Manually set mechanics as On Duty, Holiday (Off Duty), or leave them to live device detection. Marking a user Holiday strictly locks them out of the workspace.</p>
+        <p class="text-xs text-slate-500">Manage mechanics and office staff status. Marking any user as <strong>Holiday</strong> strictly locks them out of the workspace with the Day-Off screen.</p>
         <div id="devHolidayRosterList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
       </div>
 
@@ -1117,6 +1117,7 @@
     let AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
     let MECHANIC_ORDER = ["bert", "charl", "mark", "nel", "rocky", "bot"];
     let MECHANIC_LIST = [...MECHANIC_ORDER];
+    let ALL_STAFF_ROSTER = ["shiela", "josh", "ken", "bert", "charl", "mark", "nel", "rocky", "bot"];
 
     const TOTAL_BAYS = 4;
     const MAX_JOBS_PER_MECHANIC = 3;
@@ -1142,7 +1143,10 @@
       diagnosticV2Enabled: false
     };
     let activeAnnouncement = null;
-    let manualDutyOverrides = {};
+    let manualDutyOverrides = {
+      "josh": "holiday",
+      "shiela": "holiday"
+    };
 
     const CORE_INITIAL_JOBS = [
       {
@@ -1300,7 +1304,7 @@
                 try { activeAnnouncement = JSON.parse(rec.details); } catch(e){}
               }
               if (rec.id === HOLIDAY_RECORD_ID && rec.details) {
-                try { manualDutyOverrides = JSON.parse(rec.details); } catch(e){}
+                try { manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) }; } catch(e){}
               }
             });
 
@@ -1312,6 +1316,9 @@
               AUTHORIZED_ROSTER[u] = role;
               if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
                 MECHANIC_LIST.push(u);
+              }
+              if (!ALL_STAFF_ROSTER.includes(u) && u !== 'dev' && u !== 'admin') {
+                ALL_STAFF_ROSTER.push(u);
               }
             });
           }
@@ -1387,9 +1394,9 @@
       document.getElementById('announcementBroadcastModal').classList.add('hidden');
     }
 
-    async function setStaffHolidayDuty(mechanicName, statusMode) {
+    async function setStaffHolidayDuty(staffName, statusMode) {
       if (currentRole !== 'developer') return;
-      manualDutyOverrides[mechanicName.toLowerCase()] = statusMode;
+      manualDutyOverrides[staffName.toLowerCase()] = statusMode;
 
       const payload = {
         id: HOLIDAY_RECORD_ID,
@@ -1705,6 +1712,9 @@
       if (role === 'workshop' && !MECHANIC_LIST.includes(username)) {
         MECHANIC_LIST.push(username);
       }
+      if (!ALL_STAFF_ROSTER.includes(username) && username !== 'dev' && username !== 'admin') {
+        ALL_STAFF_ROSTER.push(username);
+      }
 
       const payload = {
         id: USERS_RECORD_ID,
@@ -1775,6 +1785,7 @@
       delete cachedCloudAccounts[username];
       delete AUTHORIZED_ROSTER[username];
       MECHANIC_LIST = MECHANIC_LIST.filter(m => m !== username);
+      ALL_STAFF_ROSTER = ALL_STAFF_ROSTER.filter(m => m !== username);
 
       const payload = {
         id: USERS_RECORD_ID,
@@ -3263,14 +3274,19 @@
 
       const rosterGrid = document.getElementById('devHolidayRosterList');
       if (rosterGrid) {
-        rosterGrid.innerHTML = MECHANIC_ORDER.map(m => {
+        rosterGrid.innerHTML = ALL_STAFF_ROSTER.map(m => {
           const currentMode = manualDutyOverrides[m] || 'auto';
+          const role = AUTHORIZED_ROSTER[m] || 'workshop';
+          const roleTag = role === 'office' ? '<span class="text-[8px] bg-orange-100 text-orange-800 px-1.5 py-0.2 rounded font-black">OFFICE</span>' : '<span class="text-[8px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded font-black">BAY</span>';
           return `
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
               <div class="flex items-center justify-between">
-                <strong class="uppercase text-xs font-black text-slate-900">${m}</strong>
+                <div class="flex items-center gap-1.5">
+                  <strong class="uppercase text-xs font-black text-slate-900">${m}</strong>
+                  ${roleTag}
+                </div>
                 <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded border ${currentMode === 'holiday' ? 'bg-rose-100 text-rose-700 border-rose-300' : (currentMode === 'onduty' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-slate-200 text-slate-700 border-slate-300')}">
-                  ${currentMode === 'auto' ? 'Live Track' : currentMode}
+                  ${currentMode === 'auto' ? 'Live Track' : (currentMode === 'holiday' ? 'Day Off / Holiday' : 'On Duty')}
                 </span>
               </div>
               <div class="flex gap-1">
