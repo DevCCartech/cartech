@@ -11,6 +11,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .full-screen-bg {
@@ -31,7 +32,6 @@
       animation: pulse-ring 0.9s infinite;
     }
 
-    /* GLOWING ANIMATION FOR DIAGNOSTIC NUMBER BADGES */
     @keyframes diag-glow {
       0%, 100% { box-shadow: 0 0 4px rgba(249, 115, 22, 0.6), 0 0 10px rgba(249, 115, 22, 0.4); border-color: rgba(249, 115, 22, 0.9); }
       50% { box-shadow: 0 0 12px rgba(249, 115, 22, 0.95), 0 0 22px rgba(245, 158, 11, 0.8); border-color: rgba(245, 158, 11, 1); }
@@ -106,7 +106,6 @@
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
-  <!-- LIVE ALERTS: stays outside the rendered job lists so alerts are not deleted on refresh -->
   <div id="liveAlertStack" class="fixed top-3 right-3 left-3 sm:left-auto sm:w-[390px] z-[10000] space-y-2 pointer-events-none" aria-live="assertive" aria-atomic="true"></div>
 
   <!-- STRICT HOLIDAY / DAY OFF LOCKOUT OVERLAY -->
@@ -125,7 +124,6 @@
       <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-[11px] text-rose-700 font-bold">
         <i class="fa-solid fa-lock mr-1"></i> Dashboard entry is disabled by Management.
       </div>
-      <!-- Disabled Button preventing user entry -->
       <div class="space-y-2 pt-1">
         <button disabled class="w-full bg-slate-200 text-slate-400 font-black py-3 rounded-2xl text-xs cursor-not-allowed border border-slate-300 shadow-none flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-ban text-[11px]"></i> Access Locked (Disabled)
@@ -341,7 +339,6 @@
       </div>
     </header>
 
-    <!-- ONE-TAP PERMISSION FOR SOUND + CLICKABLE ALERTS IN OTHER BROWSER TABS -->
     <div id="notificationPermissionBanner" class="hidden mx-4 md:mx-6 mt-3 rounded-2xl border border-orange-300 bg-gradient-to-r from-orange-50 to-amber-50 p-3.5 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -666,7 +663,7 @@
           </span>
           <div class="flex gap-1.5">
             <input id="officeQuickDiagInput" placeholder="Enter Diag # (e.g. B786)..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-indigo-500">
-            <button onclick="handleOfficeQuickDiagLookup()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
+            <button onclick="handleOfficeQuickDiagLookup()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition cursor-pointer">
               Find
             </button>
           </div>
@@ -854,7 +851,7 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add High-Definition Photos (Max 10)</label>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Add Photos (Max 10)</label>
           <input id="partPhotoInput" type="file" accept="image/*" multiple onchange="handleMultiplePartImages(event)" class="w-full text-xs text-slate-500 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
           <div id="partPhotosGrid" class="grid grid-cols-4 gap-2 mt-2.5"></div>
         </div>
@@ -1163,6 +1160,11 @@
       "Prefer": "return=representation"
     };
 
+    // SUPABASE REALTIME CLIENT INITIALIZATION
+    const SUPABASE_PROJECT_URL = "https://thqoydzuthttyybwijgq.supabase.co";
+    const supabaseClient = window.supabase ? supabase.createClient(SUPABASE_PROJECT_URL, API_KEY) : null;
+    let realtimeChannel = null;
+
     const USERS_RECORD_ID = "SYS_ACCOUNTS_V2";
     const PRESENCE_RECORD_ID = "SYS_PRESENCE_V2";
     const AVATARS_RECORD_ID = "SYS_AVATARS_V2";
@@ -1171,14 +1173,9 @@
     const ANNOUNCEMENT_RECORD_ID = "SYS_ANNOUNCEMENT_V2";
     const HOLIDAY_RECORD_ID = "SYS_HOLIDAY_SCHEDULE_V2";
 
-    let featureFlags = {
-      diagnosticV2Enabled: false
-    };
+    let featureFlags = { diagnosticV2Enabled: false };
     let activeAnnouncement = null;
-    let manualDutyOverrides = {
-      "josh": "holiday",
-      "shiela": "holiday"
-    };
+    let manualDutyOverrides = { "josh": "holiday", "shiela": "holiday" };
 
     const CORE_INITIAL_JOBS = [
       {
@@ -1192,19 +1189,22 @@
         priority: "Normal",
         details: "[DIAG: B786] Change Engine Oil, Air Filter, Spark Plugs, Valve Cover Gasket",
         status: "waiting_parts",
-        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{\"sender\":\"OFFICE\",\"role\":\"office\",\"text\":\"approve\",\"time\":\"11:14 PM\"}][/CHAT]`,
+        auto_schedule_slot: `Waiting for Car Parts: Valve cover gasket [MECH:charl] [VIN:MRHDD4710GP020925] [CHAT][{"sender":"OFFICE","role":"office","text":"approve","time":"11:14 PM"}][/CHAT]`,
         time_created: "02:05 PM"
       }
     ];
 
+    // STATE MANAGEMENT SEPARATION
     let state = [...CORE_INITIAL_JOBS];
+    let completedArchive = [];
+    let isCompletedLoaded = false;
+
     let currentFilter = 'waiting_parts';
     let currentUser = localStorage.getItem('cartech_auth_user') || null;
     let currentRole = localStorage.getItem('cartech_auth_role') || null;
     let audioCtx = null;
     let alarmInterval = null;
     let uploadedPartImages = [];
-    let previousCompletedJobCount = null;
     let activeModalChatJobId = null;
     let isChatMinimizedToBubble = false;
     let notificationRegistration = null;
@@ -1426,8 +1426,11 @@
         return;
       }
 
-      await pullData(true);
-      const job = state.find(j => j.id === jobId);
+      let job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
+      if (!job) {
+        await pullData(true);
+        job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
+      }
       if (!job) return;
 
       if (alertType === 'done') {
@@ -1451,18 +1454,8 @@
       markSeenInFlight[jobId] = true;
 
       try {
-        let currentItem = state.find(j => j.id === jobId);
+        let currentItem = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
         if (!currentItem) return;
-
-        try {
-          const latestRes = await fetch(`${API_URL}?id=eq.${encodeURIComponent(jobId)}&select=id,auto_schedule_slot`, {
-            headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
-          });
-          if (latestRes.ok) {
-            const latestRows = await latestRes.json();
-            if (latestRows?.[0]) currentItem = { ...currentItem, auto_schedule_slot: latestRows[0].auto_schedule_slot };
-          }
-        } catch (e) {}
 
         const info = parsePartsInfo(currentItem.auto_schedule_slot);
         const viewer = getViewerSeenId();
@@ -1487,8 +1480,9 @@
           .trim();
         const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
-        pendingPatchTimeouts[jobId] = Date.now();
         state = state.map(j => j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j);
+        completedArchive = completedArchive.map(j => j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j);
+        
         updateModalChatStream(jobId);
         render();
         updateUnreadTitle();
@@ -1512,7 +1506,7 @@
 
       const viewer = getViewerSeenId();
       let unread = 0;
-      state.forEach(job => {
+      [...state, ...completedArchive].forEach(job => {
         const messages = parsePartsInfo(job.auto_schedule_slot).chatList || [];
         const locallySeenCount = Number(lastSeenChatCounts[job.id] || 0);
         messages.forEach((msg, index) => {
@@ -1572,19 +1566,12 @@
 
     function getMechanicDutyStatus(mechanicName) {
       if (!mechanicName) return { isOnline: false, label: 'Off Duty', badgeClass: 'bg-slate-100 text-slate-500 border-slate-200' };
-      
       const m = mechanicName.toLowerCase();
 
-      // Developer Manual Holiday / Duty Check
       if (manualDutyOverrides[m] === 'holiday') {
         return { isOnline: false, label: 'Holiday / Off', badgeClass: 'bg-rose-100 text-rose-800 border-rose-300' };
       }
-      if (manualDutyOverrides[m] === 'onduty') {
-        return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-      }
-
-      // Test Bot is 24/7 On Duty
-      if (m === 'bot') {
+      if (manualDutyOverrides[m] === 'onduty' || m === 'bot') {
         return { isOnline: true, label: 'On Duty', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
       }
 
@@ -1597,7 +1584,10 @@
         : { isOnline: false, label: 'Off Duty', badgeClass: 'bg-rose-50 text-rose-600 border-rose-200' };
     }
 
+    // SYNC SYSTEM RECORDS DIRECTLY BY ID
     async function syncSystemCloudRecords() {
+      if (document.hidden) return;
+
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
           role: currentRole,
@@ -1606,62 +1596,132 @@
       }
 
       try {
-        const res = await fetch(`${API_URL}?select=*`, {
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${CONFIG_RECORD_ID},${ANNOUNCEMENT_RECORD_ID},${HOLIDAY_RECORD_ID},${AVATARS_RECORD_ID})&select=id,details`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const records = await res.json();
           if (Array.isArray(records)) {
-            records.forEach(rec => {
-              if (rec.id === USERS_RECORD_ID && rec.details) {
-                try {
-                  const parsed = JSON.parse(rec.details);
-                  Object.keys(parsed).forEach(k => {
-                    if (typeof parsed[k] === 'string') {
-                      parsed[k] = { pass: parsed[k], role: DEFAULT_ROSTER[k] || 'workshop', expiresAt: 0 };
-                    }
-                  });
-                  cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
-                } catch(e){}
-              }
-              if (rec.id === PRESENCE_RECORD_ID && rec.details) {
-                try { cachedCloudPresence = { ...cachedCloudPresence, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-              if (rec.id === AVATARS_RECORD_ID && rec.details) {
-                try { cachedCloudAvatars = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === DELETED_LOGS_RECORD_ID && rec.details) {
-                try { cachedDeletedLogs = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === CONFIG_RECORD_ID && rec.details) {
-                try { featureFlags = { ...featureFlags, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-              if (rec.id === ANNOUNCEMENT_RECORD_ID && rec.details) {
-                try { activeAnnouncement = JSON.parse(rec.details); } catch(e){}
-              }
-              if (rec.id === HOLIDAY_RECORD_ID && rec.details) {
-                try { manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) }; } catch(e){}
-              }
-            });
-
-            AUTHORIZED_ROSTER = { ...DEFAULT_ROSTER };
-            MECHANIC_LIST = [...MECHANIC_ORDER];
-            Object.keys(cachedCloudAccounts).forEach(u => {
-              const acc = cachedCloudAccounts[u];
-              const role = acc.role || DEFAULT_ROSTER[u] || 'workshop';
-              AUTHORIZED_ROSTER[u] = role;
-              if (role === 'workshop' && !MECHANIC_LIST.includes(u)) {
-                MECHANIC_LIST.push(u);
-              }
-              if (!ALL_STAFF_ROSTER.includes(u) && u !== 'dev' && u !== 'admin') {
-                ALL_STAFF_ROSTER.push(u);
-              }
-            });
+            records.forEach(rec => handleSystemRecordUpdate(rec));
           }
         }
       } catch (e) {}
 
       checkAndTriggerAnnouncementAlert();
+    }
+
+    function handleSystemRecordUpdate(rec) {
+      if (!rec || !rec.details) return;
+      try {
+        if (rec.id === USERS_RECORD_ID) {
+          const parsed = JSON.parse(rec.details);
+          cachedCloudAccounts = { ...cachedCloudAccounts, ...parsed };
+        }
+        if (rec.id === PRESENCE_RECORD_ID) cachedCloudPresence = { ...cachedCloudPresence, ...JSON.parse(rec.details) };
+        if (rec.id === AVATARS_RECORD_ID) cachedCloudAvatars = JSON.parse(rec.details);
+        if (rec.id === CONFIG_RECORD_ID) featureFlags = { ...featureFlags, ...JSON.parse(rec.details) };
+        if (rec.id === ANNOUNCEMENT_RECORD_ID) activeAnnouncement = JSON.parse(rec.details);
+        if (rec.id === HOLIDAY_RECORD_ID) manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) };
+      } catch(e){}
+    }
+
+    // REALTIME WEBSOCKET SUBSCRIPTION
+    function initRealtimeSubscription() {
+      if (!supabaseClient || realtimeChannel) return;
+
+      realtimeChannel = supabaseClient
+        .channel('workshop_realtime_stream')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'workshop_queue' },
+          (payload) => {
+            if (payload.eventType === 'INSERT') {
+              const newRecord = payload.new;
+              if (newRecord.status === 'system_record') {
+                handleSystemRecordUpdate(newRecord);
+                render();
+                return;
+              }
+
+              if (newRecord.status === 'completed') {
+                completedArchive.unshift(newRecord);
+                if (completedArchive.length > 100) completedArchive.pop();
+              } else {
+                if (currentRole === 'workshop') {
+                  const mech = resolveMechanicName(newRecord);
+                  if (newRecord.status === 'waiting' || (mech && mech.toLowerCase() === currentUser.toLowerCase())) {
+                    if (!state.some(j => j.id === newRecord.id)) state.unshift(newRecord);
+                  }
+                } else {
+                  if (!state.some(j => j.id === newRecord.id)) state.unshift(newRecord);
+                }
+              }
+
+              render();
+              updateAlarmState();
+            } 
+            else if (payload.eventType === 'UPDATE') {
+              const updated = payload.new;
+              if (updated.status === 'system_record') {
+                handleSystemRecordUpdate(updated);
+                render();
+                return;
+              }
+
+              const prevStatus = previousJobStatuses[updated.id];
+              const isFinishedNow = updated.status === 'completed';
+
+              if (isFinishedNow) {
+                state = state.filter(j => j.id !== updated.id);
+                if (!completedArchive.some(j => j.id === updated.id)) {
+                  completedArchive.unshift(updated);
+                } else {
+                  completedArchive = completedArchive.map(j => j.id === updated.id ? updated : j);
+                }
+                if (completedArchive.length > 100) completedArchive.pop();
+
+                if (prevStatus && prevStatus !== 'completed' && ['office', 'admin', 'developer'].includes(currentRole)) {
+                  const mech = resolveMechanicName(updated) || 'Workshop';
+                  deliverCartechAlert({
+                    eventKey: `done:${updated.id}:${Date.now()}`,
+                    title: `JOB DONE • ${updated.vehicle}`,
+                    body: `${mech} marked ${updated.customer}'s vehicle as completed.`,
+                    jobId: updated.id,
+                    alertType: 'done',
+                    sound: 'horn'
+                  });
+                }
+              } else {
+                if (currentRole === 'workshop') {
+                  const mech = resolveMechanicName(updated);
+                  if (updated.status === 'waiting' || (mech && mech.toLowerCase() === currentUser.toLowerCase())) {
+                    const idx = state.findIndex(j => j.id === updated.id);
+                    if (idx >= 0) state[idx] = updated;
+                    else state.unshift(updated);
+                  } else {
+                    state = state.filter(j => j.id !== updated.id);
+                  }
+                } else {
+                  state = state.map(j => (j.id === updated.id ? updated : j));
+                  completedArchive = completedArchive.filter(j => j.id !== updated.id);
+                }
+              }
+
+              previousJobStatuses[updated.id] = updated.status;
+              render();
+              updateAlarmState();
+              if (activeModalChatJobId === updated.id) {
+                updateModalChatStream(updated.id);
+              }
+            } 
+            else if (payload.eventType === 'DELETE') {
+              state = state.filter(j => j.id !== payload.old.id);
+              completedArchive = completedArchive.filter(j => j.id !== payload.old.id);
+              render();
+            }
+          }
+        )
+        .subscribe();
     }
 
     async function publishDeveloperAnnouncement() {
@@ -1761,7 +1821,6 @@
 
     async function toggleMechanicDiagnosticFeature() {
       if (currentRole !== 'developer') return;
-
       featureFlags.diagnosticV2Enabled = !featureFlags.diagnosticV2Enabled;
       render();
 
@@ -1786,7 +1845,7 @@
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(payload)
         });
-        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published! All mechanics & office can now view/print the official Diagnostics List." : "🔒 Feature Restricted! Diagnostic sheet is now Developer Test Only.");
+        alert(featureFlags.diagnosticV2Enabled ? "🚀 Feature Published!" : "🔒 Feature Restricted to Dev!");
       } catch(err) {
         alert("Error syncing feature state to cloud.");
       }
@@ -1794,7 +1853,7 @@
 
     function printDiagnosticReport() {
       const jobId = document.getElementById('diagFormTargetJobId').value;
-      const job = state.find(j => j.id === jobId);
+      const job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       if (!job) return;
 
       const info = parsePartsInfo(job.auto_schedule_slot);
@@ -2286,7 +2345,7 @@
             osc.frequency.setValueAtTime(freq, ctx.currentTime + burstOffset);
             gain.gain.setValueAtTime(0.01, ctx.currentTime + burstOffset);
             gain.gain.exponentialRampToValueAtTime(0.9, ctx.currentTime + burstOffset + 0.04);
-            gain.setValueAtTime ? gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25) : null;
+            gain.gain.setValueAtTime(0.9, ctx.currentTime + burstOffset + 0.25);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + burstOffset + 0.35);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -2419,9 +2478,7 @@
 
       try {
         await syncSystemCloudRecords();
-      } catch (err) {
-        console.warn("Cloud sync failed during login, using cached defaults:", err);
-      }
+      } catch (err) {}
 
       const acc = cachedCloudAccounts[user];
       if (!acc || acc.pass !== pass) {
@@ -2557,6 +2614,8 @@
         permissionBanner.classList.remove('hidden');
       }
 
+      initRealtimeSubscription();
+
       pullData(true).then(() => {
         if (pendingAlertNavigation) {
           const target = pendingAlertNavigation;
@@ -2608,7 +2667,8 @@
       }
     }
 
-    function setFilter(flt) {
+    // ON-DEMAND ARCHIVE FETCH FOR COMPLETED JOBS (100 LIMIT)
+    async function setFilter(flt) {
       currentFilter = flt;
       ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
         const card = document.getElementById(`card-${c}`);
@@ -2620,112 +2680,82 @@
           }
         }
       });
-      render();
+
+      if (flt === 'completed' && !isCompletedLoaded) {
+        await fetchCompletedJobsArchive();
+      } else {
+        render();
+      }
     }
 
-    let previousChatCounts = {};
-    let heartbeatTick = 0;
-    let pendingPatchTimeouts = {};
-    let isFetchingNetwork = false;
-
-    async function pullData(forceTelemetry = false) {
-      if (isFetchingNetwork) return;
-      isFetchingNetwork = true;
-
-      heartbeatTick++;
-      if (forceTelemetry || heartbeatTick % 3 === 0) {
-        await syncSystemCloudRecords();
-      }
-
+    async function fetchCompletedJobsArchive() {
       try {
-        const res = await fetch(`${API_URL}?status=neq.system_record&order=created_at.desc`, {
+        const res = await fetch(`${API_URL}?status=eq.completed&order=created_at.desc&limit=100`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            
-            // Remote Lockout Enforcement if set while user is active
+            completedArchive = data;
+            isCompletedLoaded = true;
+            render();
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load completed archive:", err);
+      }
+    }
+
+    let heartbeatTick = 0;
+    let isFetchingNetwork = false;
+
+    // HIGH-EFFICIENCY ROLE-PARTITIONED EGRESS FETCH
+    async function pullData(forceTelemetry = false) {
+      if (document.hidden && !forceTelemetry) return;
+      if (isFetchingNetwork) return;
+      isFetchingNetwork = true;
+
+      heartbeatTick++;
+      if (forceTelemetry || heartbeatTick % 5 === 0) {
+        await syncSystemCloudRecords();
+      }
+
+      try {
+        let endpoint = `${API_URL}?order=created_at.desc`;
+
+        if (currentRole === 'workshop' && currentUser) {
+          // MECHANICS: Download only waiting jobs OR jobs assigned specifically to this mechanic
+          const mechTag = `*MECH:${currentUser.toLowerCase()}*`;
+          endpoint += `&or=(status.eq.waiting,auto_schedule_slot.ilike.${encodeURIComponent(mechTag)})&status=neq.completed&limit=10`;
+        } else {
+          // OFFICE / ADMIN / DEV: Skip background pull if in completed view
+          if (currentFilter === 'completed' && !forceTelemetry) {
+            isFetchingNetwork = false;
+            return;
+          }
+          endpoint += `&status=in.(waiting,inprogress,waiting_parts)&limit=100`;
+        }
+
+        const res = await fetch(endpoint, {
+          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
             if (currentUser && isUserOnHoliday(currentUser)) {
               triggerHolidayLockout();
               return;
             }
 
-            data.forEach(job => {
-              const info = parsePartsInfo(job.auto_schedule_slot);
-              const totalMsgCount = info.chatList ? info.chatList.length : 0;
-              const prevMsgCount = previousChatCounts[job.id] !== undefined ? previousChatCounts[job.id] : totalMsgCount;
-              const previousStatus = previousJobStatuses[job.id];
-              const hasPreviousSnapshot = previousStatus !== undefined;
-              const changedToParts = hasPreviousSnapshot && previousStatus !== 'waiting_parts' && job.status === 'waiting_parts';
-              const changedToDone = hasPreviousSnapshot && previousStatus !== 'completed' && job.status === 'completed';
-
-              if (changedToDone && ['office', 'admin', 'developer'].includes(currentRole)) {
-                const mechanic = resolveMechanicName(job) || 'Workshop';
-                deliverCartechAlert({
-                  eventKey: `done:${job.id}:${totalMsgCount}:${String(job.auto_schedule_slot || '').length}`,
-                  title: `JOB DONE • ${job.vehicle}`,
-                  body: `${mechanic} marked ${job.customer}'s vehicle as completed. Tap to view the completed job.`,
-                  jobId: job.id,
-                  alertType: 'done',
-                  sound: 'horn'
-                });
-              }
-
-              if (changedToParts && ['office', 'admin', 'developer'].includes(currentRole)) {
-                const mechanic = resolveMechanicName(job) || 'Mechanic';
-                deliverCartechAlert({
-                  eventKey: `parts:${job.id}:${totalMsgCount}:${info.text}`,
-                  title: `PARTS NEEDED • ${job.vehicle}`,
-                  body: `${mechanic}: ${info.text || 'Replacement parts requested'}`,
-                  jobId: job.id,
-                  alertType: 'parts',
-                  sound: 'message'
-                });
-              }
-
-              if (totalMsgCount > prevMsgCount) {
-                info.chatList.slice(prevMsgCount).forEach((msg, offset) => {
-                  if (!isRelevantIncomingMessage(job, msg)) return;
-                  if (changedToParts && /^Requested Parts:/i.test(String(msg.text || ''))) return;
-                  if (activeModalChatJobId === job.id && !isChatMinimizedToBubble && !document.hidden && document.hasFocus()) return;
-
-                  const messageIndex = prevMsgCount + offset;
-                  const messageId = msg.id || `${messageIndex}:${msg.sender}:${msg.time}:${String(msg.text || '').slice(0, 32)}`;
-                  deliverCartechAlert({
-                    eventKey: `message:${job.id}:${messageId}`,
-                    title: `${msg.sender || 'CARTECH'} • ${job.vehicle}`,
-                    body: String(msg.text || 'New message').slice(0, 180),
-                    jobId: job.id,
-                    alertType: 'message',
-                    sound: 'message'
-                  });
-                });
-              }
-              previousChatCounts[job.id] = totalMsgCount;
-              previousJobStatuses[job.id] = job.status;
-            });
-
-            previousCompletedJobCount = data.filter(j => j.status === 'completed').length;
-
-            const now = Date.now();
-            const merged = data.map(remoteJob => {
-              if (pendingPatchTimeouts[remoteJob.id] && (now - pendingPatchTimeouts[remoteJob.id] < 3000)) {
-                const localJob = state.find(j => j.id === remoteJob.id);
-                return localJob || remoteJob;
-              }
-              return remoteJob;
-            });
-
-            state = merged;
+            state = data;
+            render();
+            updateAlarmState();
+            if (activeModalChatJobId) {
+              updateModalChatStream(activeModalChatJobId);
+            }
+            updateUnreadTitle();
           }
-          render();
-          updateAlarmState();
-          if (activeModalChatJobId) {
-            updateModalChatStream(activeModalChatJobId);
-            if (!isChatMinimizedToBubble && !document.hidden && document.hasFocus()) markConversationSeen(activeModalChatJobId);
-          }
-          updateUnreadTitle();
         }
       } catch (e) {
       } finally {
@@ -2736,7 +2766,7 @@
     function isDiagnosticNumberDuplicate(diagNum) {
       if (!diagNum) return false;
       const clean = diagNum.trim().toLowerCase();
-      return state.some(j => {
+      return [...state, ...completedArchive].some(j => {
         const pNum = String(j.phone || '').trim().toLowerCase();
         const dMatch = String(j.details || '').match(/\[DIAG:\s*([^\]]+)\]/i);
         const dNum = dMatch ? dMatch[1].trim().toLowerCase() : '';
@@ -2792,7 +2822,6 @@
           body: JSON.stringify(newCar)
         });
       } catch (err) {}
-      pullData();
     }
 
     async function devQuickDispatchTest() {
@@ -2818,7 +2847,6 @@
       try {
         await fetch(API_URL, { method: "POST", headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify(newCar) });
       } catch (e){}
-      pullData();
     }
 
     function resolveVinNumber(job) {
@@ -2838,7 +2866,8 @@
         return;
       }
 
-      const matchingJobs = state.filter(j => {
+      const allRecords = [...state, ...completedArchive];
+      const matchingJobs = allRecords.filter(j => {
         const pMatch = String(j.phone || '').toLowerCase().includes(query);
         const dMatch = String(j.details || '').toLowerCase().includes(query);
         const cMatch = String(j.customer || '').toLowerCase().includes(query);
@@ -2868,7 +2897,7 @@
               <p class="text-slate-500 text-[11px] mt-0.5"><strong>Job:</strong> ${job.details}</p>
             </div>
             <div class="flex items-center gap-1.5 self-end sm:self-center">
-              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1">
+              <button onclick="openDiagnosticSheetModal('${job.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1 cursor-pointer">
                 <i class="fa-solid fa-file-invoice"></i> View / Print Sheet
               </button>
             </div>
@@ -2877,15 +2906,31 @@
       }).join('');
     }
 
-    function handleOfficeQuickDiagLookup() {
-      const q = (document.getElementById('officeQuickDiagInput')?.value || '').trim().toLowerCase();
+    // DIRECT SINGLE-ROW LOOKUP TO PROTECT EGRESS
+    async function handleOfficeQuickDiagLookup() {
+      const q = (document.getElementById('officeQuickDiagInput')?.value || '').trim();
       if (!q) return;
 
-      const target = state.find(j => {
-        const pMatch = String(j.phone || '').toLowerCase().includes(q);
-        const dMatch = String(j.details || '').toLowerCase().includes(q);
+      let target = [...state, ...completedArchive].find(j => {
+        const pMatch = String(j.phone || '').toLowerCase().includes(q.toLowerCase());
+        const dMatch = String(j.details || '').toLowerCase().includes(q.toLowerCase());
         return pMatch || dMatch;
       });
+
+      if (!target) {
+        try {
+          const res = await fetch(`${API_URL}?or=(phone.ilike.*${encodeURIComponent(q)}*,details.ilike.*${encodeURIComponent(q)}*)&limit=1`, {
+            headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+          });
+          if (res.ok) {
+            const rows = await res.json();
+            if (rows && rows.length > 0) {
+              target = rows[0];
+              completedArchive.unshift(target);
+            }
+          }
+        } catch(e) {}
+      }
 
       if (target) {
         openDiagnosticSheetModal(target.id);
@@ -2904,8 +2949,9 @@
       }).length;
     }
 
+    // COMPLETE JOB HANDLING: TRANSFERS TO COMPLETED ARCHIVE IMMEDIATELY
     async function setStatus(id, newStatus, customSlot = null) {
-      const currentItem = state.find(j => j.id === id);
+      const currentItem = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
       let slot = customSlot;
 
       const info = parsePartsInfo(currentItem ? currentItem.auto_schedule_slot : '');
@@ -2936,9 +2982,20 @@
         playLoudVehicleHorn();
       }
 
-      pendingPatchTimeouts[id] = Date.now();
       previousJobStatuses[id] = newStatus;
-      state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
+
+      if (newStatus === 'completed') {
+        const finishedJob = currentItem ? { ...currentItem, status: 'completed', auto_schedule_slot: slot } : null;
+        state = state.filter(j => j.id !== id);
+        if (finishedJob) {
+          completedArchive.unshift(finishedJob);
+          if (completedArchive.length > 100) completedArchive.pop();
+        }
+      } else {
+        state = state.map(j => (j.id === id ? { ...j, status: newStatus, auto_schedule_slot: slot } : j));
+        completedArchive = completedArchive.filter(j => j.id !== id);
+      }
+
       render();
       updateAlarmState();
 
@@ -2993,9 +3050,7 @@
       uploadedPartImages = [];
       if (grid) grid.innerHTML = "";
       
-      if (modal) {
-        modal.classList.remove('hidden');
-      }
+      if (modal) modal.classList.remove('hidden');
     }
 
     function closePartsModal() {
@@ -3004,7 +3059,7 @@
     }
 
     function openDiagnosticSheetModal(jobId) {
-      const job = state.find(j => j.id === jobId);
+      const job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       if (!job) return;
 
       const info = parsePartsInfo(job.auto_schedule_slot);
@@ -3101,7 +3156,7 @@
     async function saveDiagnosticSheet(e) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
       const jobId = document.getElementById('diagFormTargetJobId').value;
-      const currentItem = state.find(j => j.id === jobId);
+      const currentItem = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       if (!currentItem) return;
 
       const diagPayload = {
@@ -3157,11 +3212,12 @@
 
       const newSlotPayload = `${slotBase} [DIAG_DATA]${JSON.stringify(diagPayload)}[/DIAG_DATA]`;
 
-      pendingPatchTimeouts[jobId] = Date.now();
       state = state.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      completedArchive = completedArchive.map(j => (j.id === jobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      
       render();
       closeDiagnosticSheetModal();
-      alert("✅ CarTech Diagnostics List saved & synced directly to cloud job record!");
+      alert("✅ CarTech Diagnostics List saved & synced!");
 
       try {
         await fetch(`${API_URL}?id=eq.${jobId}`, {
@@ -3170,12 +3226,11 @@
           body: JSON.stringify({ auto_schedule_slot: newSlotPayload })
         });
       } catch(err){}
-      pullData();
     }
 
     async function deleteSingleRecord(id) {
       if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
-      const targetJob = state.find(j => j.id === id);
+      const targetJob = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
 
       if (targetJob) {
         cachedDeletedLogs.unshift({
@@ -3209,11 +3264,12 @@
       }
 
       state = state.filter(j => j.id !== id);
+      completedArchive = completedArchive.filter(j => j.id !== id);
       render();
+
       try {
         await fetch(`${API_URL}?id=eq.${id}`, { method: "DELETE", headers: HEADERS });
       } catch (err) {}
-      pullData();
     }
 
     function handleMultiplePartImages(event) {
@@ -3233,7 +3289,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 1280;
+            const maxDim = 800; // Scaled down to prevent excessive payload weights
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -3244,11 +3300,9 @@
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.85);
+            const base64 = canvas.toDataURL('image/jpeg', 0.7);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
@@ -3309,7 +3363,6 @@
         slotPayload += ` [IMGS]${JSON.stringify(uploadedPartImages)}[/IMGS]`;
       }
 
-      pendingPatchTimeouts[jobId] = Date.now();
       previousJobStatuses[jobId] = 'waiting_parts';
       state = state.map(j => (j.id === jobId ? { ...j, status: 'waiting_parts', auto_schedule_slot: slotPayload } : j));
       render();
@@ -3323,7 +3376,6 @@
         });
       } catch (err) {} finally {
         if (btn) { btn.disabled = false; btn.innerText = "Submit to Office"; }
-        pullData();
       }
     }
 
@@ -3385,7 +3437,7 @@
     }
 
     function openMessengerChatForJob(jobId, mechName) {
-      const job = state.find(j => j.id === jobId);
+      const job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       const assignedMech = resolveMechanicName(job);
 
       const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
@@ -3455,7 +3507,7 @@
     }
 
     function updateModalChatStream(jobId) {
-      const job = state.find(j => j.id === jobId);
+      const job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [], images: [] };
       const reversedList = info.chatList ? [...info.chatList].reverse() : [];
 
@@ -3489,13 +3541,7 @@
       }
 
       const messagesHTML = reversedList.map(msg => {
-        let isMyMessage = false;
-        if (isManagementView) {
-          isMyMessage = (msg.role === 'office');
-        } else {
-          isMyMessage = (msg.sender.toUpperCase() === myCurrentSenderName);
-        }
-
+        let isMyMessage = isManagementView ? (msg.role === 'office') : (msg.sender.toUpperCase() === myCurrentSenderName);
         const senderIdentity = String(msg.senderId || msg.sender || msg.role || '').toLowerCase();
         const seenByOthers = (Array.isArray(msg.seenBy) ? msg.seenBy : [])
           .map(v => String(v).toLowerCase())
@@ -3532,7 +3578,7 @@
 
     function closeMessengerModal() {
       if (activeModalChatJobId) {
-        const job = state.find(j => j.id === activeModalChatJobId);
+        const job = state.find(j => j.id === activeModalChatJobId) || completedArchive.find(j => j.id === activeModalChatJobId);
         const info = job ? parsePartsInfo(job.auto_schedule_slot) : { chatList: [] };
         lastSeenChatCounts[activeModalChatJobId] = info.chatList ? info.chatList.length : 0;
         saveLastSeenChats();
@@ -3541,14 +3587,13 @@
       isChatMinimizedToBubble = false;
       document.getElementById('fbFloatingChatWindow').classList.add('hidden');
       document.getElementById('fbFloatingBubble').classList.add('hidden');
-      pullData();
     }
 
     async function handleModalChatSubmit(event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
       if (!activeModalChatJobId) return;
 
-      const currentItem = state.find(j => j.id === activeModalChatJobId);
+      const currentItem = state.find(j => j.id === activeModalChatJobId) || completedArchive.find(j => j.id === activeModalChatJobId);
       if (!currentItem) return;
 
       const input = document.getElementById('modalChatInput');
@@ -3581,8 +3626,9 @@
 
       const newSlotPayload = `${slotBase} [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
 
-      pendingPatchTimeouts[activeModalChatJobId] = Date.now();
       state = state.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      completedArchive = completedArchive.map(j => (j.id === activeModalChatJobId ? { ...j, auto_schedule_slot: newSlotPayload } : j));
+      
       updateModalChatStream(activeModalChatJobId);
       render();
 
@@ -3638,12 +3684,10 @@
 
       const elReg = document.getElementById('devTotalRegistered');
       const elJobs = document.getElementById('devTotalQueueJobs');
-      const elParts = document.getElementById('devTotalPartsReq');
       const elSub = document.getElementById('devActiveSubCount');
 
       if (elReg) elReg.innerText = accountsList.length;
-      if (elJobs) elJobs.innerText = state.length;
-      if (elParts) elParts.innerText = partsCount;
+      if (elJobs) elJobs.innerText = state.length + completedArchive.length;
       if (elSub) elSub.innerText = subCount;
 
       let onlineCount = 0;
@@ -3769,7 +3813,7 @@
       const waiting = state.filter(j => j.status === 'waiting').length;
       const inProg = state.filter(j => j.status === 'inprogress').length;
       const parts = state.filter(j => j.status === 'waiting_parts').length;
-      const done = state.filter(j => j.status === 'completed').length;
+      const done = completedArchive.length;
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
@@ -3833,9 +3877,7 @@
 
           const duty = getMechanicDutyStatus(m);
           const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [] };
-          const totalMsgCount = info.chatList ? info.chatList.length : 0;
           const unreadCount = activeMechJob ? getUnreadCountForJob(activeMechJob) : 0;
-
           const hasWaitingParts = activeMechJob && activeMechJob.status === 'waiting_parts';
 
           let ringColor = "ring-2 ring-slate-200";
@@ -3876,10 +3918,10 @@
       const isFeatureReleased = featureFlags.diagnosticV2Enabled;
       const isDev = currentRole === 'developer';
 
-      // Office Queue List Renderer
+      // OFFICE RENDERER (SPLIT BETWEEN ACTIVE JOBS AND COMPLETED ARCHIVE)
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
-        const officeList = state.filter(j => j.status === currentFilter);
+        const officeList = currentFilter === 'completed' ? completedArchive : state.filter(j => j.status === currentFilter);
 
         if (officeList.length === 0) {
           officeContainer.innerHTML = `
@@ -3914,7 +3956,7 @@
             let printDiagBtn = "";
             if (isFeatureReleased || isDev) {
               printDiagBtn = `
-                <button onclick="openDiagnosticSheetModal('${j.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold py-1.5 px-2.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition" title="Print CarTech Diagnostics List">
+                <button onclick="openDiagnosticSheetModal('${j.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold py-1.5 px-2.5 rounded-xl text-xs flex items-center gap-1 shadow-sm transition cursor-pointer" title="Print CarTech Diagnostics List">
                   <i class="fa-solid fa-print"></i> Print Sheet ${!isFeatureReleased ? '<span class="text-[8px] bg-indigo-200 px-1 rounded font-black text-indigo-900">DEV</span>' : ''}
                 </button>`;
             }
@@ -3940,11 +3982,11 @@
                   ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
                   
                   <div class="flex items-center gap-2 pt-1">
-                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative">
+                    <button onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || 'Mechanic'}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition relative cursor-pointer">
                       <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
                       ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
                     </button>
-                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                    <button onclick="officePartsReadyToPickUp('${j.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer">
                       <i class="fa-solid fa-box-check"></i> Part Ready to Pick Up
                     </button>
                   </div>
@@ -3978,7 +4020,7 @@
         }
       }
 
-      // Workshop Feed Renderer
+      // WORKSHOP FEED RENDERER
       const wsContainer = document.getElementById('workshopFeedList');
       if (wsContainer) {
         const activeWorkshopJobs = state.filter(j => j.status === 'waiting' || j.status === 'inprogress' || j.status === 'waiting_parts');
@@ -4142,8 +4184,11 @@
     initCartechNotificationSystem();
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && activeModalChatJobId && !isChatMinimizedToBubble) {
-        markConversationSeen(activeModalChatJobId);
+      if (!document.hidden && currentUser) {
+        if (activeModalChatJobId && !isChatMinimizedToBubble) {
+          markConversationSeen(activeModalChatJobId);
+        }
+        pullData(false);
       }
     });
 
@@ -4176,7 +4221,12 @@
 
     initRememberedDeviceUI();
 
-    setInterval(() => pullData(false), 15000);
+    // RELAXED SAFETY-NET POLLING (2 MINUTES) TO PREVENT EGRESS OVERRUNS
+    setInterval(() => {
+      if (!document.hidden && currentUser) {
+        pullData(false);
+      }
+    }, 120000);
 
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
