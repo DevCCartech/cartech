@@ -167,7 +167,7 @@
         </div>
       </div>
 
-      <!-- ONE-TAP QUICK LOGIN CARD (DEVICE REMEMBERED) -->
+      <!-- ONE-TAP QUICK LOGIN CARD -->
       <div id="quickLoginCard" class="hidden p-3.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-300 space-y-2.5 shadow-sm">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
@@ -1160,7 +1160,7 @@
       "Prefer": "return=representation"
     };
 
-    // SUPABASE REALTIME CLIENT INITIALIZATION
+    // SUPABASE CLIENT INITIALIZATION
     const SUPABASE_PROJECT_URL = "https://thqoydzuthttyybwijgq.supabase.co";
     const supabaseClient = window.supabase ? supabase.createClient(SUPABASE_PROJECT_URL, API_KEY) : null;
     let realtimeChannel = null;
@@ -1194,7 +1194,6 @@
       }
     ];
 
-    // STATE MANAGEMENT SEPARATION
     let state = [...CORE_INITIAL_JOBS];
     let completedArchive = [];
     let isCompletedLoaded = false;
@@ -1584,7 +1583,6 @@
         : { isOnline: false, label: 'Off Duty', badgeClass: 'bg-rose-50 text-rose-600 border-rose-200' };
     }
 
-    // SYNC SYSTEM RECORDS DIRECTLY BY ID
     async function syncSystemCloudRecords() {
       if (document.hidden) return;
 
@@ -1625,24 +1623,27 @@
       } catch(e){}
     }
 
-    // REALTIME WEBSOCKET SUBSCRIPTION
+    // PURE ZERO-DELAY REALTIME SUBSCRIPTION
     function initRealtimeSubscription() {
       if (!supabaseClient || realtimeChannel) return;
 
       realtimeChannel = supabaseClient
-        .channel('workshop_realtime_stream')
+        .channel('workshop_queue_live_zero_delay')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'workshop_queue' },
           (payload) => {
-            if (payload.eventType === 'INSERT') {
-              const newRecord = payload.new;
-              if (newRecord.status === 'system_record') {
-                handleSystemRecordUpdate(newRecord);
-                render();
-                return;
-              }
+            const { eventType, new: newRecord, old: oldRecord } = payload;
 
+            // 1. SYSTEM RECORD SYNC
+            if (newRecord && newRecord.status === 'system_record') {
+              handleSystemRecordUpdate(newRecord);
+              render();
+              return;
+            }
+
+            // 2. ZERO-DELAY INSERT
+            if (eventType === 'INSERT') {
               if (newRecord.status === 'completed') {
                 completedArchive.unshift(newRecord);
                 if (completedArchive.length > 100) completedArchive.pop();
@@ -1656,68 +1657,64 @@
                   if (!state.some(j => j.id === newRecord.id)) state.unshift(newRecord);
                 }
               }
-
               render();
               updateAlarmState();
             } 
-            else if (payload.eventType === 'UPDATE') {
-              const updated = payload.new;
-              if (updated.status === 'system_record') {
-                handleSystemRecordUpdate(updated);
-                render();
-                return;
-              }
+            
+            // 3. ZERO-DELAY UPDATE
+            else if (eventType === 'UPDATE') {
+              const isDone = newRecord.status === 'completed';
 
-              const prevStatus = previousJobStatuses[updated.id];
-              const isFinishedNow = updated.status === 'completed';
-
-              if (isFinishedNow) {
-                state = state.filter(j => j.id !== updated.id);
-                if (!completedArchive.some(j => j.id === updated.id)) {
-                  completedArchive.unshift(updated);
+              if (isDone) {
+                state = state.filter(j => j.id !== newRecord.id);
+                if (!completedArchive.some(j => j.id === newRecord.id)) {
+                  completedArchive.unshift(newRecord);
+                  if (completedArchive.length > 100) completedArchive.pop();
                 } else {
-                  completedArchive = completedArchive.map(j => j.id === updated.id ? updated : j);
+                  completedArchive = completedArchive.map(j => j.id === newRecord.id ? newRecord : j);
                 }
-                if (completedArchive.length > 100) completedArchive.pop();
 
-                if (prevStatus && prevStatus !== 'completed' && ['office', 'admin', 'developer'].includes(currentRole)) {
-                  const mech = resolveMechanicName(updated) || 'Workshop';
+                if (['office', 'admin', 'developer'].includes(currentRole)) {
+                  const mech = resolveMechanicName(newRecord) || 'Workshop';
                   deliverCartechAlert({
-                    eventKey: `done:${updated.id}:${Date.now()}`,
-                    title: `JOB DONE • ${updated.vehicle}`,
-                    body: `${mech} marked ${updated.customer}'s vehicle as completed.`,
-                    jobId: updated.id,
+                    eventKey: `done:${newRecord.id}:${Date.now()}`,
+                    title: `JOB DONE • ${newRecord.vehicle}`,
+                    body: `${mech} marked ${newRecord.customer}'s vehicle as completed.`,
+                    jobId: newRecord.id,
                     alertType: 'done',
                     sound: 'horn'
                   });
                 }
               } else {
                 if (currentRole === 'workshop') {
-                  const mech = resolveMechanicName(updated);
-                  if (updated.status === 'waiting' || (mech && mech.toLowerCase() === currentUser.toLowerCase())) {
-                    const idx = state.findIndex(j => j.id === updated.id);
-                    if (idx >= 0) state[idx] = updated;
-                    else state.unshift(updated);
+                  const mech = resolveMechanicName(newRecord);
+                  if (newRecord.status === 'waiting' || (mech && mech.toLowerCase() === currentUser.toLowerCase())) {
+                    const idx = state.findIndex(j => j.id === newRecord.id);
+                    if (idx >= 0) state[idx] = newRecord;
+                    else state.unshift(newRecord);
                   } else {
-                    state = state.filter(j => j.id !== updated.id);
+                    state = state.filter(j => j.id !== newRecord.id);
                   }
                 } else {
-                  state = state.map(j => (j.id === updated.id ? updated : j));
-                  completedArchive = completedArchive.filter(j => j.id !== updated.id);
+                  state = state.map(j => j.id === newRecord.id ? newRecord : j);
                 }
               }
 
-              previousJobStatuses[updated.id] = updated.status;
+              previousJobStatuses[newRecord.id] = newRecord.status;
               render();
               updateAlarmState();
-              if (activeModalChatJobId === updated.id) {
-                updateModalChatStream(updated.id);
+
+              if (activeModalChatJobId === newRecord.id) {
+                updateModalChatStream(newRecord.id);
               }
             } 
-            else if (payload.eventType === 'DELETE') {
-              state = state.filter(j => j.id !== payload.old.id);
-              completedArchive = completedArchive.filter(j => j.id !== payload.old.id);
+            
+            // 4. ZERO-DELAY DELETE
+            else if (eventType === 'DELETE') {
+              state = state.filter(j => j.id !== oldRecord.id);
+              completedArchive = completedArchive.filter(j => j.id !== oldRecord.id);
               render();
+              updateAlarmState();
             }
           }
         )
@@ -2667,7 +2664,6 @@
       }
     }
 
-    // ON-DEMAND ARCHIVE FETCH FOR COMPLETED JOBS (100 LIMIT)
     async function setFilter(flt) {
       currentFilter = flt;
       ['waiting', 'inprogress', 'waiting_parts', 'completed'].forEach(c => {
@@ -2709,7 +2705,6 @@
     let heartbeatTick = 0;
     let isFetchingNetwork = false;
 
-    // HIGH-EFFICIENCY ROLE-PARTITIONED EGRESS FETCH
     async function pullData(forceTelemetry = false) {
       if (document.hidden && !forceTelemetry) return;
       if (isFetchingNetwork) return;
@@ -2724,11 +2719,9 @@
         let endpoint = `${API_URL}?order=created_at.desc`;
 
         if (currentRole === 'workshop' && currentUser) {
-          // MECHANICS: Download only waiting jobs OR jobs assigned specifically to this mechanic
           const mechTag = `*MECH:${currentUser.toLowerCase()}*`;
           endpoint += `&or=(status.eq.waiting,auto_schedule_slot.ilike.${encodeURIComponent(mechTag)})&status=neq.completed&limit=10`;
         } else {
-          // OFFICE / ADMIN / DEV: Skip background pull if in completed view
           if (currentFilter === 'completed' && !forceTelemetry) {
             isFetchingNetwork = false;
             return;
@@ -2906,7 +2899,6 @@
       }).join('');
     }
 
-    // DIRECT SINGLE-ROW LOOKUP TO PROTECT EGRESS
     async function handleOfficeQuickDiagLookup() {
       const q = (document.getElementById('officeQuickDiagInput')?.value || '').trim();
       if (!q) return;
@@ -2949,7 +2941,6 @@
       }).length;
     }
 
-    // COMPLETE JOB HANDLING: TRANSFERS TO COMPLETED ARCHIVE IMMEDIATELY
     async function setStatus(id, newStatus, customSlot = null) {
       const currentItem = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
       let slot = customSlot;
@@ -3289,7 +3280,7 @@
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 800; // Scaled down to prevent excessive payload weights
+            const maxDim = 800;
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -3671,7 +3662,6 @@
       }
 
       const accountsList = Object.keys(cachedCloudAccounts);
-      const partsCount = state.filter(j => j.status === 'waiting_parts' || (j.auto_schedule_slot && j.auto_schedule_slot.includes('Waiting for Car Parts:'))).length;
       const now = Date.now();
 
       let subCount = 0;
@@ -3918,7 +3908,7 @@
       const isFeatureReleased = featureFlags.diagnosticV2Enabled;
       const isDev = currentRole === 'developer';
 
-      // OFFICE RENDERER (SPLIT BETWEEN ACTIVE JOBS AND COMPLETED ARCHIVE)
+      // OFFICE RENDERER
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
         const officeList = currentFilter === 'completed' ? completedArchive : state.filter(j => j.status === currentFilter);
@@ -4221,12 +4211,12 @@
 
     initRememberedDeviceUI();
 
-    // RELAXED SAFETY-NET POLLING (2 MINUTES) TO PREVENT EGRESS OVERRUNS
+    // 5-MINUTE EMERGENCY OFFLINE FALLBACK TIMER (PROTECTS EGRESS QUOTA)
     setInterval(() => {
       if (!document.hidden && currentUser) {
         pullData(false);
       }
-    }, 120000);
+    }, 300000);
 
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
