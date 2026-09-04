@@ -176,7 +176,7 @@
               M
             </div>
             <div>
-              <span class="text-[10px] font-bold uppercase text-orange-600 block leading-none">Remembered Phone / Tablet</span>
+              <span class="text-[10px] font-bold uppercase text-orange-600 block leading-none">Remembered Device</span>
               <strong id="quickLoginUsername" class="text-sm font-black text-slate-900 uppercase">Mechanic</strong>
             </div>
           </div>
@@ -196,7 +196,7 @@
           <p class="text-xs text-slate-500 mt-0.5">Enter your credentials to access your station.</p>
         </div>
 
-        <form onsubmit="handleAuthLogin(event); return false;" class="space-y-3.5">
+        <form onsubmit="event.preventDefault(); handleAuthLogin(event);" class="space-y-3.5">
           <div>
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Username</label>
             <div class="relative">
@@ -247,7 +247,7 @@
           <p class="text-xs text-slate-500 mt-0.5">One-time registration for your CARTECH station.</p>
         </div>
 
-        <form onsubmit="handleAuthRegister(event); return false;" class="space-y-3">
+        <form onsubmit="event.preventDefault(); handleAuthRegister(event);" class="space-y-3">
           <div>
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1 text-left">Exact Staff Name on Record *</label>
             <div class="relative">
@@ -890,7 +890,7 @@
     </button>
   </div>
 
-  <!-- 5. MODAL: PARTS REQUEST WITH DEVELOPER UPLOAD TOGGLE -->
+  <!-- 5. MODAL: PARTS REQUEST -->
   <div id="partsModal" class="hidden fixed inset-0 w-full h-full bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -2775,8 +2775,12 @@
       bootApp();
     }
 
+    // NON-BLOCKING LOGIN HANDLER (PREVENTS REFRESH LOOPS)
     async function handleAuthLogin(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (e) { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+      }
 
       const user = (document.getElementById('loginUsername')?.value || '').trim().toLowerCase();
       const pass = (document.getElementById('loginPassword')?.value || '').trim();
@@ -2784,6 +2788,12 @@
       const errorMsg = document.getElementById('loginAuthErrorMsg');
       const errorTitle = document.getElementById('loginAuthErrorTitle');
       const errorIcon = document.getElementById('loginAuthErrorIcon');
+
+      if (!user || !pass) {
+        if (errorElem) errorElem.classList.remove('hidden');
+        if (errorMsg) errorMsg.innerText = "Please enter both username and password.";
+        return false;
+      }
 
       try {
         await syncSystemCloudRecords();
@@ -2831,9 +2841,7 @@
       localStorage.setItem('cartech_remembered_device_role', currentRole);
       localStorage.setItem('cartech_auth_epoch', featureFlags.authEpoch || 1);
 
-      try {
-        await sendPresenceHeartbeat(true);
-      } catch (err) {}
+      sendPresenceHeartbeat(true).catch(() => {});
 
       getAudioContext();
       bootApp();
@@ -4435,4 +4443,5 @@
                   <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700Sorry, something went wrong. Please try your request again.
+                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
+Sorry, something went wrong. Please try your request again.
