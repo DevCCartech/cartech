@@ -315,6 +315,30 @@
 
   <!-- 2. MAIN APPLICATION -->
   <div id="appShell" class="hidden min-h-screen flex flex-col">
+
+    <!-- STICKY FLOATING TOP ANNOUNCEMENT BANNER -->
+    <div id="topFloatingAnnouncementBanner" class="hidden sticky top-0 z-[60] w-full bg-gradient-to-r from-amber-500 via-orange-600 to-rose-600 text-white shadow-xl border-b-2 border-amber-300">
+      <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-8 h-8 shrink-0 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-sm shadow-inner animate-bounce">
+            <i class="fa-solid fa-bullhorn"></i>
+          </span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[9px] font-black uppercase tracking-wider bg-black/25 px-1.5 py-0.5 rounded text-amber-200 border border-white/20">Maintenance / System Notice</span>
+              <span id="topBannerMeta" class="text-[10px] text-amber-100/90 font-semibold hidden sm:inline"></span>
+            </div>
+            <p id="topBannerText" class="text-xs sm:text-sm font-black text-white truncate drop-shadow-sm mt-0.5"></p>
+          </div>
+        </div>
+        <div class="shrink-0 flex items-center gap-1.5">
+          <button onclick="document.getElementById('announcementBroadcastModal')?.classList.remove('hidden')" class="bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition backdrop-blur-sm cursor-pointer">
+            <i class="fa-solid fa-expand mr-1"></i> Expand
+          </button>
+        </div>
+      </div>
+    </div>
+
     <header class="bg-[#0b1329] text-white px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 border-b border-slate-800 shadow-lg">
       <div class="flex items-center space-x-3">
         <div class="w-8 h-8 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white text-base font-bold shadow-md shadow-orange-500/20">
@@ -383,13 +407,13 @@
       <div class="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-6 rounded-3xl shadow-xl space-y-3 border border-orange-400/40">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-sm"><i class="fa-solid fa-bullhorn"></i></div>
-          <h3 class="font-black text-sm">System-Wide Live Pop-up Announcement</h3>
+          <h3 class="font-black text-sm">System-Wide Live Pop-up & Floating Top Announcement</h3>
         </div>
-        <p class="text-xs text-orange-100">Broadcast updates to all active phone and desktop screens across the workshop and office.</p>
+        <p class="text-xs text-orange-100">Broadcast official alerts to all active screens. It floats pinned to the top of everyone's dashboard until cleared.</p>
         <div class="flex flex-col sm:flex-row gap-2">
-          <input id="devAnnouncementInput" placeholder="Type official notice (e.g. Shop closes 4:00 PM today, staff meeting, holiday announcement)..." class="flex-1 bg-white text-slate-900 px-4 py-2.5 rounded-xl text-xs font-semibold focus:outline-none placeholder-slate-400">
+          <input id="devAnnouncementInput" placeholder="Type official notice (e.g. Workshop Maintenance on Sept 22, Shop closing early)..." class="flex-1 bg-white text-slate-900 px-4 py-2.5 rounded-xl text-xs font-semibold focus:outline-none placeholder-slate-400">
           <button onclick="publishDeveloperAnnouncement()" class="bg-slate-900 hover:bg-slate-800 text-white font-black px-4 py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer whitespace-nowrap">
-            <i class="fa-solid fa-paper-plane mr-1 text-orange-400"></i> Broadcast Pop-up
+            <i class="fa-solid fa-paper-plane mr-1 text-orange-400"></i> Broadcast Notice
           </button>
           <button onclick="clearDeveloperAnnouncement()" class="bg-white/20 hover:bg-white/30 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs transition cursor-pointer whitespace-nowrap">
             Clear Alert
@@ -1618,7 +1642,10 @@
         if (rec.id === PRESENCE_RECORD_ID) cachedCloudPresence = { ...cachedCloudPresence, ...JSON.parse(rec.details) };
         if (rec.id === AVATARS_RECORD_ID) cachedCloudAvatars = JSON.parse(rec.details);
         if (rec.id === CONFIG_RECORD_ID) featureFlags = { ...featureFlags, ...JSON.parse(rec.details) };
-        if (rec.id === ANNOUNCEMENT_RECORD_ID) activeAnnouncement = JSON.parse(rec.details);
+        if (rec.id === ANNOUNCEMENT_RECORD_ID) {
+          activeAnnouncement = JSON.parse(rec.details);
+          renderTopFloatingAnnouncement();
+        }
         if (rec.id === HOLIDAY_RECORD_ID) manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) };
       } catch(e){}
     }
@@ -1711,6 +1738,13 @@
             
             // 4. ZERO-DELAY DELETE
             else if (eventType === 'DELETE') {
+              if (oldRecord && oldRecord.id === ANNOUNCEMENT_RECORD_ID) {
+                activeAnnouncement = null;
+                renderTopFloatingAnnouncement();
+                document.getElementById('announcementBroadcastModal')?.classList.add('hidden');
+                return;
+              }
+
               state = state.filter(j => j.id !== oldRecord.id);
               completedArchive = completedArchive.filter(j => j.id !== oldRecord.id);
               render();
@@ -1721,15 +1755,37 @@
         .subscribe();
     }
 
+    // RENDER OR HIDE THE TOP FLOATING BANNER
+    function renderTopFloatingAnnouncement() {
+      const banner = document.getElementById('topFloatingAnnouncementBanner');
+      const textEl = document.getElementById('topBannerText');
+      const metaEl = document.getElementById('topBannerMeta');
+
+      if (!banner || !textEl) return;
+
+      if (activeAnnouncement && activeAnnouncement.text) {
+        textEl.innerText = activeAnnouncement.text;
+        if (metaEl) {
+          metaEl.innerText = `• Broadcast by ${activeAnnouncement.postedBy || 'DEV'} at ${activeAnnouncement.time || ''}`;
+        }
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
     async function publishDeveloperAnnouncement() {
-      if (currentRole !== 'developer') return;
+      if (currentRole !== 'developer' && currentRole !== 'admin') return;
       const text = (document.getElementById('devAnnouncementInput')?.value || '').trim();
-      if (!text) return;
+      if (!text) {
+        alert("Please enter announcement text first.");
+        return;
+      }
 
       activeAnnouncement = {
         id: "ANN-" + Date.now(),
         text: text,
-        postedBy: currentUser.toUpperCase(),
+        postedBy: (currentUser || 'DEV').toUpperCase(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -1748,31 +1804,45 @@
         auto_schedule_slot: null
       };
 
+      renderTopFloatingAnnouncement();
+      checkAndTriggerAnnouncementAlert();
+
       try {
         await fetch(API_URL, {
           method: "POST",
           headers: { ...HEADERS, "Prefer": "resolution=merge-duplicates" },
           body: JSON.stringify(payload)
         });
-        alert("Announcement broadcasted to all workshop devices.");
+        alert("🚨 Announcement broadcasted & pinned to top for all screens!");
         document.getElementById('devAnnouncementInput').value = "";
-      } catch(e){}
+      } catch(e){
+        alert("Error publishing announcement to cloud.");
+      }
     }
 
     async function clearDeveloperAnnouncement() {
-      if (currentRole !== 'developer') return;
+      if (currentRole !== 'developer' && currentRole !== 'admin') return;
       activeAnnouncement = null;
+      renderTopFloatingAnnouncement();
+      document.getElementById('announcementBroadcastModal')?.classList.add('hidden');
+
       try {
         await fetch(`${API_URL}?id=eq.${ANNOUNCEMENT_RECORD_ID}`, { method: "DELETE", headers: HEADERS });
-        alert("Broadcast banner cleared.");
+        alert("Announcement deleted and removed from all screens.");
       } catch(e){}
     }
 
     function checkAndTriggerAnnouncementAlert() {
-      if (!activeAnnouncement || !activeAnnouncement.text) return;
+      renderTopFloatingAnnouncement();
+
+      if (!activeAnnouncement || !activeAnnouncement.text) {
+        document.getElementById('announcementBroadcastModal')?.classList.add('hidden');
+        return;
+      }
       const seenKey = 'cartech_seen_announcement_' + activeAnnouncement.id;
       if (localStorage.getItem(seenKey)) return;
 
+      document.getElementById('announcementModalTitle').innerText = "System Maintenance Notice";
       document.getElementById('announcementModalBody').innerText = activeAnnouncement.text;
       document.getElementById('announcementModalMeta').innerText = `Broadcast by ${activeAnnouncement.postedBy} at ${activeAnnouncement.time}`;
       document.getElementById('announcementBroadcastModal').classList.remove('hidden');
@@ -3555,7 +3625,7 @@
                 ${msg.text}
               </div>
               <button onclick="navigator.clipboard.writeText(\`${msg.text.replace(/`/g, '\\`')}\`); alert('📋 Message copied to clipboard!');" 
-                      class="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center" title="Copy message">
+                      class="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center cursor-pointer" title="Copy message">
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
@@ -3810,6 +3880,8 @@
       if (currentRole === 'developer' || currentRole === 'admin') {
         renderDeveloperAnalytics();
       }
+
+      renderTopFloatingAnnouncement();
 
       const mechanicLoads = {};
       MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
