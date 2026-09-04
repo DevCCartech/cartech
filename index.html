@@ -167,6 +167,23 @@
         </div>
       </div>
 
+      <!-- SYSTEM NOTICE: UNDER DEVELOPMENT & BETA NOTICE -->
+      <div class="p-3.5 bg-amber-500/10 border-2 border-amber-500/60 rounded-2xl space-y-1.5 text-center shadow-inner">
+        <div class="flex items-center justify-center gap-1.5 text-amber-700 font-black text-xs uppercase tracking-wider">
+          <i class="fa-solid fa-triangle-exclamation text-sm text-amber-600 animate-pulse"></i>
+          <span>UNDER DEVELOPMENT</span>
+        </div>
+        <p class="text-[11px] font-bold text-slate-800 leading-snug">
+          CARTECH Hybrid Queue System is currently under development.
+        </p>
+        <div class="pt-1 border-t border-amber-200/60">
+          <p class="text-[10px] font-black uppercase text-amber-800 tracking-tight leading-relaxed">
+            More updates and features will be added.<br>
+            <span class="text-rose-700 font-black">SEPTEMBER 19 BETA TEST IS ENDED</span>
+          </p>
+        </div>
+      </div>
+
       <!-- ONE-TAP QUICK LOGIN CARD -->
       <div id="quickLoginCard" class="hidden p-3.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-300 space-y-2.5 shadow-sm">
         <div class="flex items-center justify-between">
@@ -1075,7 +1092,7 @@
                   <tr>
                     <td class="p-1.5 font-medium border-r border-slate-900">Engine Oil</td>
                     <td class="p-1 text-center border-r border-slate-900"><input type="radio" name="chk_fluid_engine" value="good" checked></td>
-                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_engine" value="not"></td>
+                    <td class="p-1 text-center"><input type="radio" name="chk_fluid_trans" value="not"></td>
                   </tr>
                   <tr>
                     <td class="p-1.5 font-medium border-r border-slate-900">Transmission Oil</td>
@@ -2498,6 +2515,22 @@
       const rememberedRole = localStorage.getItem('cartech_remembered_device_role');
       if (!rememberedUser || !rememberedRole) return;
 
+      // SEPTEMBER 19 BETA DEADLINE CHECK
+      const betaDeadline = new Date(2026, 8, 19, 0, 0, 0); // Sept 19, 2026
+      if (Date.now() >= betaDeadline.getTime() && rememberedRole !== 'developer' && rememberedRole !== 'admin') {
+        const errorElem = document.getElementById('loginAuthError');
+        const errorTitle = document.getElementById('loginAuthErrorTitle');
+        const errorIcon = document.getElementById('loginAuthErrorIcon');
+        const errorMsg = document.getElementById('loginAuthErrorMsg');
+
+        if (errorTitle) errorTitle.innerText = "BETA TEST ENDED";
+        if (errorIcon) errorIcon.className = "fa-solid fa-ban text-sm";
+        if (errorMsg) errorMsg.innerHTML = "Beta test ended on <strong>September 19</strong>. Web system closed for scheduled update.";
+        if (errorElem) errorElem.classList.remove('hidden');
+        triggerLoginShakeEffect();
+        return;
+      }
+
       try { await syncSystemCloudRecords(); } catch(e){}
 
       if (isUserOnHoliday(rememberedUser)) {
@@ -2542,6 +2575,17 @@
       const errorMsg = document.getElementById('loginAuthErrorMsg');
       const errorTitle = document.getElementById('loginAuthErrorTitle');
       const errorIcon = document.getElementById('loginAuthErrorIcon');
+
+      // SEPTEMBER 19 BETA DEADLINE CHECK
+      const betaDeadline = new Date(2026, 8, 19, 0, 0, 0); // Sept 19, 2026
+      if (Date.now() >= betaDeadline.getTime() && user !== 'dev' && user !== 'admin') {
+        if (errorTitle) errorTitle.innerText = "BETA TEST ENDED";
+        if (errorIcon) errorIcon.className = "fa-solid fa-ban text-sm";
+        if (errorMsg) errorMsg.innerHTML = "Beta test ended on <strong>September 19</strong>. Web system closed for scheduled update.";
+        if (errorElem) errorElem.classList.remove('hidden');
+        triggerLoginShakeEffect();
+        return false;
+      }
 
       try {
         await syncSystemCloudRecords();
@@ -4270,7 +4314,12 @@
         const currentHour = new Date().getHours();
         const isUnrestricted = savedAuthRole === 'developer' || savedAuthRole === 'admin' || savedAuthUser === 'bot';
 
-        if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
+        // Auto clean session after Sept 19 for non-admin accounts
+        const betaDeadline = new Date(2026, 8, 19, 0, 0, 0);
+        if (Date.now() >= betaDeadline.getTime() && savedAuthRole !== 'developer' && savedAuthRole !== 'admin') {
+          localStorage.removeItem('cartech_auth_user');
+          localStorage.removeItem('cartech_auth_role');
+        } else if (!isUnrestricted && (currentHour < 8 || currentHour >= 17)) {
           localStorage.removeItem('cartech_auth_user');
           localStorage.removeItem('cartech_auth_role');
         } else {
