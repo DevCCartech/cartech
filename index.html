@@ -465,6 +465,103 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
   #appShell { padding-left: 0 !important; }
 }
 
+
+/* Compact workshop layout: jobs lead the screen on desktop and phones. */
+html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+#viewWorkshop { max-width: 1220px; padding: 18px 24px 24px; }
+#viewWorkshop > * { margin-top: 0; }
+#workshopFeedList { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
+#workshopFeedList > * { margin: 0 !important; min-width: 0; }
+#workshopFeedList > :only-child { grid-column: 1 / -1; }
+#workshopFeedList > .ct-ws-card { padding: 15px 16px; border: 1px solid #e1e7ee; border-radius: 10px; background: white; box-shadow: 0 1px 3px #17304c06; }
+#workshopFeedList > .ct-ws-card[data-status='waiting_parts'] { border-color: #e9d8c5; }
+#workshopFeedList > .ct-ws-card[data-urgent='true'] { border-left: 3px solid #ed9965; }
+#workshopFeedList .ct-ws-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+#workshopFeedList .ct-ws-title { min-width: 0; flex: 1; }
+#workshopFeedList .ct-ws-id { display: block; color: #8a98aa; font-size: 11px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+#workshopFeedList .ct-ws-title h3 { font-size: 16px; font-weight: 650; line-height: 1.4; letter-spacing: -.015em; margin: 0; color: #26364d; overflow-wrap: anywhere; }
+#workshopFeedList .ct-ws-status { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; font-size: 11px; font-weight: 550; line-height: 1.45; border-radius: 5px; border: 1px solid #e3e9ef; background: #f6f8fa; color: #78879b; white-space: nowrap; text-transform: none; }
+#workshopFeedList .ct-ws-status.ct-ws-working { background: #edf3fc; border-color: #e1eaf8; color: #6888b8; }
+#workshopFeedList .ct-ws-status.ct-ws-parts { background: #fff4e8; border-color: #f3e4d0; color: #ac7b42; }
+#workshopFeedList .ct-ws-status.ct-ws-urgent { background: #fff1e7; border-color: #f2dac6; color: #b57847; }
+#workshopFeedList .ct-ws-meta { display: flex; flex-wrap: wrap; gap: 4px 15px; color: #8895a6; font-size: 12px; line-height: 1.5; margin-top: 7px; }
+#workshopFeedList .ct-ws-meta strong { font-size: inherit; font-weight: 500; color: #63748a; }
+#workshopFeedList .ct-ws-note { padding: 9px 11px; border: 1px solid #edf0f4; border-radius: 7px; background: #f8fafc; margin-top: 11px; }
+#workshopFeedList .ct-ws-note p { font-size: 14px; font-weight: 400; line-height: 1.55; margin: 0; color: #64758b; overflow-wrap: anywhere; }
+#workshopFeedList .ct-ws-note strong { font-weight: 550; }
+#workshopFeedList .ct-ws-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; border-top: 1px solid #edf0f4; padding-top: 11px; margin-top: 11px; }
+#workshopFeedList .ct-ws-action { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; min-height: 38px; width: 100%; padding: 8px 10px; border: 1px solid #e0e6ee; border-radius: 6px; background: #fff; color: #65758c; font-size: 13px; font-weight: 550; line-height: 1.35; text-align: center; text-decoration: none; box-shadow: none; transition: background .15s, border-color .15s; }
+#workshopFeedList .ct-ws-action:hover { background: #f6f8fb; border-color: #cdd7e3; }
+#workshopFeedList .ct-ws-action.ct-ws-primary { background: #2c826c; border-color: #2c826c; color: white; }
+#workshopFeedList .ct-ws-action.ct-ws-primary:hover { background: #246e5b; }
+#workshopFeedList .ct-ws-action.ct-ws-request { color: #a67340; border-color: #efdfcd; background: #fff8f0; }
+#workshopFeedList .ct-ws-action.ct-ws-chat { color: #5a7aa6; border-color: #dde7f3; background: #f5f8fc; }
+#workshopFeedList .ct-ws-action:disabled { background: #eff2f5; color: #9ba5b2; border-color: #e5e9ef; cursor: not-allowed; }
+#workshopFeedList .ct-ws-action > i { font-size: 12px; flex: none; }
+#workshopFeedList .ct-ws-unread { color: white; background: #e7794c; padding: 1px 5px; border-radius: 8px; font-size: 10px; min-width: 16px; }
+#workshopFeedList .ct-ws-dev { font-size: 9px; border: 1px solid #e3d4a4; background: #fff9e8; color: #a28c51; border-radius: 3px; padding: 1px 3px; }
+#workshopFeedList .ct-ws-parts-block { margin-top: 11px; padding: 11px; border: 1px solid #f0e2d3; border-radius: 7px; background: #fff9f2; }
+#workshopFeedList .ct-ws-parts-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: #a58662; margin-bottom: 7px; }
+#workshopFeedList .ct-ws-parts-heading strong { font-size: 12px; font-weight: 550; color: #997448; }
+#workshopFeedList .ct-ws-parts-block p { font-size: 14px; line-height: 1.55; font-weight: 400; color: #886e51; margin: 0; overflow-wrap: anywhere; }
+#workshopFeedList .ct-ws-photos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+#workshopFeedList .ct-ws-photos img { width: 42px; height: 42px; object-fit: cover; border: 1px solid #eddbca; border-radius: 6px; cursor: pointer; }
+#workshopFeedList .ct-ws-private { font-size: 12px; color: #8b98a8; margin-top: 10px; line-height: 1.5; }
+#workshopFeedList .ct-ws-empty { grid-column: 1 / -1; padding: 30px 20px; border: 1px dashed #dce4ed; border-radius: 10px; background: white; text-align: center; }
+#workshopFeedList .ct-ws-empty > i { color: #84ad9d; font-size: 23px; margin-bottom: 10px; }
+#workshopFeedList .ct-ws-empty p { font-size: 14px; line-height: 1.55; color: #8190a3; margin: 0; }
+#workshopFeedList .ct-ws-empty p:first-of-type { font-weight: 550; color: #596f88; margin-bottom: 4px; }
+.ct-profile-photo { position: relative; border: 0; padding: 0; background: transparent; color: white; flex: none; border-radius: 50%; min-height: 36px; }
+.ct-profile-photo #myMechanicAvatarImg { width: 36px; height: 36px; border: 1px solid #526477; border-radius: 50%; background: #334252; color: #e6edf5; font-size: 12px; font-weight: 550; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: none; }
+.ct-profile-photo #myMechanicAvatarImg img { width: 100%; height: 100%; object-fit: cover; }
+.ct-profile-photo > .ct-camera { position: absolute; bottom: -3px; right: -4px; font-size: 8px; background: #63758b; border: 2px solid #141c28; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+.ct-topbar #wsBellIcon { width: 22px; height: 22px; min-width: 22px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 0; box-shadow: none; background: transparent; color: inherit; }
+.ct-topbar #wsBellIcon.alarm-active { color: #ec8b53; animation: none; box-shadow: none; }
+#whistlePermissionCard:not(.hidden) { padding: 11px 13px; margin-bottom: 12px; border-radius: 8px; background: #fff7ed; color: #9d744d; border: 1px solid #efddc8; box-shadow: none; gap: 12px; }
+#whistlePermissionCard > div > div:first-child { display: none; }
+#whistlePermissionCard > div { gap: 0; }
+#whistlePermissionCard > div > div { margin: 0; }
+#whistlePermissionCard h3 { font-size: 13px; font-weight: 550; }
+#whistlePermissionCard p { font-size: 12px; color: #aa8c6e; }
+#whistlePermissionCard button { min-height: 36px; padding: 8px 10px; background: white; border: 1px solid #efddc8; box-shadow: none; color: #9d744d; font-size: 12px; white-space: nowrap; }
+/* Keep the office queue compact on phones as well. */
+@media (min-width: 1280px) {
+  #workshopFeedList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #workshopFeedList > .ct-ws-card:only-child .ct-ws-actions { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
+}
+@media (max-width: 760px) {
+  #viewWorkshop { padding: 12px 12px 20px; }
+  #workshopFeedList { gap: 10px; }
+  #workshopFeedList > .ct-ws-card { padding: 12px; border-radius: 9px; }
+  #workshopFeedList .ct-ws-title h3 { font-size: 15px; line-height: 1.4; }
+  #workshopFeedList .ct-ws-status { font-size: 10px; padding: 4px 6px; gap: 4px; }
+  #workshopFeedList .ct-ws-meta { font-size: 12px; margin-top: 6px; gap: 3px 11px; }
+  #workshopFeedList .ct-ws-note { padding: 8px 9px; margin-top: 9px; }
+  #workshopFeedList .ct-ws-note p, #workshopFeedList .ct-ws-parts-block p { font-size: 13px; line-height: 1.55; }
+  #workshopFeedList .ct-ws-actions { gap: 7px; margin-top: 10px; padding-top: 10px; }
+  #workshopFeedList .ct-ws-action { min-height: 40px; font-size: 12px; padding: 8px 7px; gap: 5px; }
+  #workshopFeedList .ct-ws-parts-block { padding: 9px; }
+  .ct-job-title h3 { font-size: 15px; }
+  .ct-job-instructions { font-size: 14px; line-height: 1.55; margin-top: 9px; }
+  .ct-job-main { padding: 12px; }
+  .ct-job-footer { padding: 9px 12px; }
+  .ct-job-parts p { font-size: 13px; line-height: 1.55; }
+  .ct-job-actions button, .ct-job-parts button { font-size: 12px; }
+  .ct-job-top { gap: 7px 9px; }
+  .ct-job-meta { margin-top: 10px; }
+  .ct-job-badge { margin-left: 50px; }
+  .ct-job-badge > span { font-size: 11px; padding: 4px 6px; }
+  .ct-stat { min-height: 89px; padding: 12px 14px; }
+  .ct-stat-top { font-size: 12px; }
+  .ct-stat-bottom { margin-top: 9px; }
+  .ct-stat-bottom strong { font-size: 25px; }
+  .ct-page-heading h2 { font-size: 23px; }
+}
+@media (max-width: 350px) {
+  #workshopFeedList .ct-ws-heading { gap: 7px; flex-wrap: wrap; }
+  #workshopFeedList .ct-ws-action { padding: 8px 5px; font-size: 11px; }
+}
+
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -710,7 +807,8 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
       </nav>
       <div class="ct-sidebar-space"></div>
       <div id="ctSidebarCapacity" class="ct-capacity"><p>Workshop capacity</p><div class="ct-capacity-value"><strong id="ctCapacityNumber">0</strong><span id="ctCapacityTotal">mechanics</span></div><div id="ctCapacityBars" class="ct-capacity-bars" aria-hidden="true"></div><small id="ctCapacityNote">Below the job limit</small></div>
-      <div class="ct-profile"><span class="ct-profile-avatar" id="ctProfileInitial" aria-hidden="true">CT</span><div><strong id="ctProfileName">Staff</strong><small id="ctProfileRole">Workshop terminal</small></div></div>
+      <div class="ct-profile"><span class="ct-profile-avatar" id="ctProfileInitial" aria-hidden="true">CT</span><button type="button" id="ctProfilePhotoButton" class="ct-profile-photo" onclick="document.getElementById('profilePhotoInput').click()" aria-label="Update your profile photo" title="Update profile photo" hidden><span id="myMechanicAvatarImg">M</span><span class="ct-camera"><i class="fa-solid fa-camera" aria-hidden="true"></i></span></button><div><strong id="ctProfileName">Staff</strong><small id="ctProfileRole">Workshop terminal</small><span id="workshopStaffName" hidden>Mechanic</span></div></div>
+      <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
     </aside>
     <button class="ct-menu-backdrop no-print" type="button" onclick="CartechUI.toggleMenu(false)" aria-label="Close navigation"></button>
 
@@ -743,7 +841,7 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
       <div class="ct-breadcrumb"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Workspace</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="ctBreadcrumb">Workshop</strong></div>
       <div class="ct-top-actions"><span id="ctDate" class="ct-date"></span><span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
         <button type="button" class="ct-icon-button" onclick="enableCartechAlerts()" title="Enable live notification sounds and pop-ups" aria-label="Enable live alerts"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
-        <button type="button" id="ctInboxButton" class="ct-icon-button" onclick="CartechUI.openInbox()" aria-label="Unread messages"><i class="fa-regular fa-bell" aria-hidden="true"></i><span id="ctUnreadCount" class="ct-bell-count" hidden>0</span></button>
+        <button type="button" id="ctInboxButton" class="ct-icon-button" onclick="CartechUI.openInbox()" aria-label="Unread messages"><span id="wsBellIcon"><i class="fa-regular fa-bell" aria-hidden="true"></i></span><span id="ctUnreadCount" class="ct-bell-count" hidden>0</span></button>
         <button type="button" class="ct-button ct-quiet ct-signout" onclick="handleLogout()" title="Sign out"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Logout</span></button>
       </div>
     </header>
@@ -1038,28 +1136,7 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
     </main>
 
     <!-- MECHANIC WORKSHOP -->
-    <main id="viewWorkshop" class="hidden max-w-2xl mx-auto p-4 md:p-6 space-y-4 flex-1 w-full">
-      <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="relative group cursor-pointer" onclick="document.getElementById('profilePhotoInput').click()">
-            <div id="myMechanicAvatarImg" class="w-12 h-12 rounded-full overflow-hidden bg-slate-900 text-white font-black text-base flex items-center justify-center uppercase shadow-md border-2 border-indigo-500">
-              M
-            </div>
-            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition">
-              <i class="fa-solid fa-camera"></i>
-            </div>
-            <input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
-          </div>
-          <div>
-            <h3 class="font-black text-sm text-slate-900 uppercase leading-tight" id="workshopStaffName">Mechanic</h3>
-            <p class="text-[11px] text-slate-500">Tap avatar photo to update your profile image.</p>
-          </div>
-        </div>
-        <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer">
-          <i class="fa-solid fa-camera text-[10px]"></i> Photo
-        </button>
-      </div>
-
+    <main id="viewWorkshop" class="hidden flex-1 w-full" tabindex="-1" aria-label="Workshop jobs">
       <div id="whistlePermissionCard" class="hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white p-4 rounded-3xl shadow-lg border border-orange-400/40 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-lg shadow-inner">
@@ -1067,7 +1144,7 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
           </div>
           <div>
             <h3 class="font-black text-xs md:text-sm">Activate Fast Doorbell Alert</h3>
-            <p class="text-[11px] text-orange-100">Tap once to enable alert sound & vibrate.</p>
+            <p class="text-[11px] text-orange-100">Tap once to enable alert sound &amp; vibrate.</p>
           </div>
         </div>
         <button onclick="requestPocketAlertPermission()" class="bg-white text-slate-900 hover:bg-slate-100 font-black px-4 py-2.5 rounded-2xl text-xs shadow-md active:scale-95 transition flex items-center gap-1.5 cursor-pointer">
@@ -1075,18 +1152,8 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
         </button>
       </div>
 
-      <div class="bg-white p-4 md:p-5 rounded-3xl border border-slate-200/80 shadow-md flex justify-between items-center">
-        <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">Mechanic Station</span>
-          <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mt-1">Floor Queue & Bay Action</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Accept vehicles (max 3 per mechanic), request parts, or mark completed.</p>
-        </div>
-        <div id="wsBellIcon" class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-lg border border-slate-200 transition">
-          <i class="fa-solid fa-bell"></i>
-        </div>
-      </div>
-
-      <div id="workshopFeedList" class="space-y-3.5"></div>
+      
+      <div id="workshopFeedList" aria-live="polite" aria-label="Vehicle jobs"></div>
     </main>
   </div>
 
@@ -4444,154 +4511,57 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
         const isMyCapacityFull = myActiveCount >= MAX_JOBS_PER_MECHANIC;
 
         if (activeWorkshopJobs.length === 0) {
-          wsContainer.innerHTML = `
-            <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-              <i class="fa-solid fa-circle-check text-3xl text-emerald-400 mb-2"></i>
-              <p class="font-bold text-slate-700 text-sm md:text-base">Workshop Floor Clear</p>
-              <p class="text-xs text-slate-400 mt-0.5">No pending vehicles on the floor.</p>
-            </div>`;
+          wsContainer.innerHTML = `<div class="ct-ws-empty"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><p>Workshop floor clear</p><p>No pending vehicles.</p></div>`;
         } else {
           wsContainer.innerHTML = activeWorkshopJobs.map(j => {
             const assignedMechanic = resolveMechanicName(j);
             const isMyJob = assignedMechanic && currentUser && (assignedMechanic.toLowerCase() === currentUser.toLowerCase());
             const isManagement = ['admin', 'developer', 'office'].includes(currentRole);
             const { text: partText, images: partImages, chatList } = parsePartsInfo(j.auto_schedule_slot);
+            let actionArea = '';
 
-            let actionArea = "";
             if (j.status === 'waiting') {
-              actionArea = `
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
-                  <button type="button" onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="flex-1 ${isMyCapacityFull ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 active:scale-95'} font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition cursor-pointer">
-                    <i class="fa-solid fa-check mr-1.5"></i> ${isMyCapacityFull ? `Capacity Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept into Bay (${currentUser.toUpperCase()}: ${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}
-                  </button>
-                  <button type="button" onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-2xl text-xs flex items-center justify-center transition shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer">
-                    <i class="fa-solid fa-hourglass-half mr-1.5"></i> Set as Waiting
-                  </button>
-                </div>`;
-            } else if (j.status === 'inprogress') {
-              if (isMyJob || isManagement) {
-                const totalMsgCount = chatList.length;
-                const unreadC = getUnreadCountForJob(j);
-
-                let diagButtonHTML = "";
-                if (isFeatureReleased) {
-                  diagButtonHTML = `
-                    <button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
-                      <i class="fa-solid fa-clipboard-list text-orange-400"></i> Fill Official CarTech Diagnostics List
-                    </button>`;
-                } else {
-                  if (isDev) {
-                    diagButtonHTML = `
-                      <button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-clipboard-list text-amber-300"></i> Test New CarTech Diagnostic Form <span class="text-[8px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black">DEV ONLY</span>
-                      </button>`;
-                  } else {
-                    diagButtonHTML = `
-                      <a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-clipboard-check"></i> Diagnostic Form (Excel)
-                      </a>`;
-                  }
-                }
-
-                actionArea = `
-                  <div class="flex flex-col gap-2.5 mt-3 pt-3 border-t border-slate-100">
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        Bay Floor • <strong>You are handling this car</strong>
-                      </span>
-                      <button type="button" onclick="openPartsModal('${j.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-cart-shopping"></i> Need Car Parts?
-                      </button>
-                    </div>
-
-                    ${diagButtonHTML}
-
-                    ${(partText || chatList.length > 0) ? `
-                      <button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 relative active:scale-95 cursor-pointer">
-                        <i class="fa-brands fa-facebook-messenger"></i> Open Parts Chat with Office (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
-                      </button>
-                    ` : ''}
-
-                    <div class="flex items-center gap-2">
-                      <button type="button" onclick="setStatus('${j.id}', 'completed')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-check-double"></i> Mark Done
-                      </button>
-                    </div>
-                  </div>`;
-              } else {
-                const displayMech = assignedMechanic ? `Handled by: ${assignedMechanic}` : 'Handled by: Another Mechanic';
-                actionArea = `
-                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span>Working in Bay</span>
-                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 flex items-center gap-1.5">
-                      <i class="fa-solid fa-user-gear text-slate-500"></i> ${displayMech}
-                    </span>
-                  </div>`;
-              }
-            } else if (j.status === 'waiting_parts') {
-              const photosThumbnails = partImages.map(img => `
-                <img src="${img}" onclick="openPhotoViewer('${img}')" class="w-12 h-12 object-cover rounded-xl border border-purple-200 shadow-sm cursor-pointer hover:opacity-80 transition">
-              `).join('');
-
-              let resumeBtn = "";
-              if (isMyJob || isManagement) {
-                resumeBtn = `
-                  <button type="button" onclick="setStatus('${j.id}', 'inprogress')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                    <i class="fa-solid fa-wrench"></i> Parts Arrived (Resume Work)
-                  </button>`;
-              }
-
+              actionArea = `<div class="ct-ws-actions">
+                <button type="button" onclick="setStatus('${j.id}', 'inprogress')" ${isMyCapacityFull ? 'disabled' : ''} class="ct-ws-action ct-ws-primary"><i class="fa-solid fa-check" aria-hidden="true"></i>${isMyCapacityFull ? `Full (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})` : `Accept job (${myActiveCount}/${MAX_JOBS_PER_MECHANIC})`}</button>
+                <button type="button" onclick="setStatus('${j.id}', 'waiting', 'Waiting in Parking / Queue')" class="ct-ws-action"><i class="fa-regular fa-clock" aria-hidden="true"></i>Keep in queue</button>
+              </div>`;
+            } else if (j.status === 'inprogress' && (isMyJob || isManagement)) {
               const totalMsgCount = chatList.length;
               const unreadC = getUnreadCountForJob(j);
-
-              actionArea = `
-                <div class="mt-3 pt-3 border-t border-purple-100 space-y-2.5">
-                  <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 space-y-2">
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] font-black uppercase text-purple-900"><i class="fa-solid fa-cart-shopping mr-1"></i> Parts to Buy (Sent to Office):</span>
-                      <span class="text-[10px] font-bold text-purple-700">${partImages.length} Photo${partImages.length > 1 ? 's' : ''}</span>
-                    </div>
-                    <p class="text-xs font-bold text-purple-800">${partText || 'Replacement parts required'}</p>
-                    ${partImages.length > 0 ? `<div class="flex flex-wrap gap-1.5 pt-1">${photosThumbnails}</div>` : ''}
-
-                    ${(isMyJob || isManagement) ? `
-                      <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm mt-1 relative active:scale-95 cursor-pointer">
-                        <i class="fa-brands fa-facebook-messenger"></i> Open Messenger Chat (${totalMsgCount})
-                        ${unreadC > 0 ? `<span class="ml-1.5 bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${unreadC}</span>` : ''}
-                      </button>
-                    ` : `
-                      <div class="text-[11px] text-slate-400 italic text-center py-1 bg-white/70 rounded-xl border border-purple-100">
-                        <i class="fa-solid fa-lock text-[10px] mr-1"></i> Private chat between ${assignedMechanic || 'assigned mechanic'} and office
-                      </div>
-                    `}
-                  </div>
-                  ${resumeBtn}
-                </div>`;
+              let diagButtonHTML = '';
+              if (isFeatureReleased) {
+                diagButtonHTML = `<button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="ct-ws-action"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>Diagnostics</button>`;
+              } else if (isDev) {
+                diagButtonHTML = `<button type="button" onclick="openDiagnosticSheetModal('${j.id}')" class="ct-ws-action"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>Diagnostics <span class="ct-ws-dev">DEV</span></button>`;
+              } else {
+                diagButtonHTML = `<a href="${DIAGNOSTIC_FORM_URL}" target="_blank" rel="noopener noreferrer" class="ct-ws-action"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>Diagnostics (Excel)</a>`;
+              }
+              actionArea = `<div class="ct-ws-actions">
+                <button type="button" onclick="openPartsModal('${j.id}')" class="ct-ws-action ct-ws-request"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Request parts</button>
+                ${diagButtonHTML}
+                ${(partText || chatList.length > 0) ? `<button type="button" onclick="openMessengerChatForJob('${j.id}', '${currentUser}')" class="ct-ws-action ct-ws-chat"><i class="fa-regular fa-comment-dots" aria-hidden="true"></i>Chat (${totalMsgCount})${unreadC > 0 ? `<span class="ct-ws-unread">${unreadC}</span>` : ''}</button>` : ''}
+                <button type="button" onclick="setStatus('${j.id}', 'completed')" class="ct-ws-action ct-ws-primary"><i class="fa-solid fa-check-double" aria-hidden="true"></i>Mark done</button>
+              </div>`;
+            } else if (j.status === 'waiting_parts') {
+              const photosThumbnails = partImages.map(img => `<img src="${img}" onclick="openPhotoViewer('${img}')" alt="Requested replacement part">`).join('');
+              const totalMsgCount = chatList.length;
+              const unreadC = getUnreadCountForJob(j);
+              actionArea = `<section class="ct-ws-parts-block"><div class="ct-ws-parts-heading"><strong><i class="fa-solid fa-box-open" aria-hidden="true"></i> Parts requested</strong><span>${partImages.length} photo${partImages.length === 1 ? '' : 's'}</span></div><p>${escapeHTML(partText || 'Replacement parts required')}</p>${partImages.length ? `<div class="ct-ws-photos">${photosThumbnails}</div>` : ''}</section>
+                ${(isMyJob || isManagement) ? `<div class="ct-ws-actions">
+                  <button type="button" onclick="openMessengerChatForJob('${j.id}', '${assignedMechanic || currentUser}')" class="ct-ws-action ct-ws-chat"><i class="fa-regular fa-comment-dots" aria-hidden="true"></i>Chat (${totalMsgCount})${unreadC > 0 ? `<span class="ct-ws-unread">${unreadC}</span>` : ''}</button>
+                  <button type="button" onclick="setStatus('${j.id}', 'inprogress')" class="ct-ws-action ct-ws-primary"><i class="fa-solid fa-wrench" aria-hidden="true"></i>Resume work</button>
+                </div>` : `<div class="ct-ws-private"><i class="fa-solid fa-lock" aria-hidden="true"></i> Chat is private to the assigned mechanic and office.</div>`}`;
             }
 
             const isUrgentPending = j.status === 'waiting' && !j.auto_schedule_slot;
-
-            return `
-              <div data-job-id="${escapeHTML(j.id)}" class="bg-white p-4 md:p-5 rounded-3xl border ${isUrgentPending ? 'border-rose-400 ring-4 ring-rose-500/20 shadow-lg shadow-rose-500/10' : (j.status === 'waiting_parts' ? 'border-purple-300 ring-2 ring-purple-400/20' : 'border-slate-200/80 shadow-sm')}">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-lg border border-slate-100">${j.id}</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1">${j.vehicle}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Owner: <strong class="text-slate-700">${j.customer}</strong></p>
-                  </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase flex items-center gap-1.5 ${
-                    isUrgentPending ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' : (j.status === 'waiting_parts' ? 'bg-purple-100 text-purple-800 border border-purple-300' : 'bg-blue-50 text-blue-600 border border-blue-200/80')
-                  }">
-                    ${isUrgentPending ? '<i class="fa-solid fa-bell animate-bounce text-rose-600"></i> CAR OUTSIDE!' : (j.status === 'waiting_parts' ? '<i class="fa-solid fa-hourglass-half"></i> Waiting for Parts' : 'Bay Floor')}
-                  </span>
-                </div>
-                <div class="mt-2.5 bg-slate-50/80 p-2.5 rounded-2xl text-xs text-slate-700 border border-slate-100">
-                  <p><strong>Instructions:</strong> ${j.details || 'Standard intake'}</p>
-                </div>
-                ${actionArea}
-              </div>`;
+            const statusClass = isUrgentPending ? 'ct-ws-urgent' : j.status === 'waiting_parts' ? 'ct-ws-parts' : j.status === 'inprogress' ? 'ct-ws-working' : '';
+            const statusLabel = isUrgentPending ? 'New arrival' : j.status === 'waiting_parts' ? 'Needs parts' : j.status === 'inprogress' ? 'In progress' : 'Pending';
+            return `<article data-job-id="${escapeHTML(j.id)}" data-status="${escapeHTML(j.status)}" data-urgent="${isUrgentPending}" class="ct-ws-card">
+              <div class="ct-ws-heading"><div class="ct-ws-title"><span class="ct-ws-id">${escapeHTML(j.id)}</span><h3>${escapeHTML(j.vehicle)}</h3></div><span class="ct-ws-status ${statusClass}">${isUrgentPending ? '<i class="fa-regular fa-bell" aria-hidden="true"></i>' : ''}${statusLabel}</span></div>
+              <div class="ct-ws-meta"><span>Customer: <strong>${escapeHTML(j.customer)}</strong></span>${assignedMechanic ? `<span>Mechanic: <strong>${escapeHTML(assignedMechanic)}</strong></span>` : ''}</div>
+              <div class="ct-ws-note"><p>${escapeHTML(j.details || 'Standard intake')}</p></div>
+              ${actionArea}
+            </article>`;
           }).join('');
         }
       }
@@ -4844,6 +4814,8 @@ window.CartechUI = (() => {
     setText('ctProfileRole', currentRole === 'office' ? 'Office terminal' : currentRole === 'workshop' ? 'Mechanic station' : currentRole === 'developer' ? 'Developer terminal' : 'Admin terminal');
     const inOffice = !byId('viewOffice').classList.contains('hidden');
     const inWorkshop = !byId('viewWorkshop').classList.contains('hidden');
+    byId('ctProfilePhotoButton').hidden = !inWorkshop;
+    byId('ctProfileInitial').hidden = inWorkshop;
     const activeNav = inOffice ? (currentFilter === 'waiting_parts' ? 'ctNavParts' : 'ctNavQueue') : inWorkshop ? 'ctNavWorkshop' : 'ctNavControl';
     for (const id of ['ctNavQueue', 'ctNavParts', 'ctNavWorkshop', 'ctNavControl']) {
       const button = byId(id);
