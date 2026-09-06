@@ -2027,7 +2027,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
       }
 
       try {
-        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${CONFIG_RECORD_ID},${ANNOUNCEMENT_RECORD_ID},${HOLIDAY_RECORD_ID},${AVATARS_RECORD_ID})&select=id,details`, {
+        const res = await fetch(`${API_URL}?id=in.(${USERS_RECORD_ID},${PRESENCE_RECORD_ID},${CONFIG_RECORD_ID},${ANNOUNCEMENT_RECORD_ID},${HOLIDAY_RECORD_ID})&select=id,details`, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
         if (res.ok) {
@@ -3321,7 +3321,6 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
       saveLastSeenChats();
 
       let slot = `Bay Floor [MECH:${resolvedMech.toLowerCase()}] [CHAT]${JSON.stringify(updatedChatList)}[/CHAT]`;
-      if (info.images && info.images.length > 0) slot += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
       if (info.diagData) slot += ` [DIAG_DATA]${JSON.stringify(info.diagData)}[/DIAG_DATA]`;
       if (info.vin) slot += ` [VIN:${info.vin}]`;
 
@@ -3425,7 +3424,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 800;
+            const maxDim = 400;
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
               width = maxDim;
@@ -3438,7 +3437,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.7);
+            const base64 = canvas.toDataURL('image/jpeg', 0.4);
             uploadedPartImages.push(base64);
             renderModalPhotoGrid();
           };
