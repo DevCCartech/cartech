@@ -705,9 +705,27 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ct-launch-preview select { flex: 1; min-width: 0; min-height: 41px; padding: 8px 10px; border: 1px solid #d3e1e2; border-radius: 6px; background: #fff; color: #3a5c60; font-size: 13px; }
 .ct-launch-preview small { display: block; color: #7a8e91; font-size: 11px; margin-top: 8px; }
 .ct-launch-bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 17px; }
+.ct-launch-copy { min-width: 0; flex: 1; }
 .ct-launch-bottom p { color: #667d80; font-size: 12px; max-width: 560px; margin: 0; }
-.ct-launch-bottom button { flex: none; }
+.ct-launch-copy small { display: block; color: #849397; font-size: 11px; line-height: 1.5; max-width: 620px; margin-top: 6px; }
+.ct-diag-release-control { flex: none; display: inline-flex; align-items: center; gap: 11px; padding: 9px 11px; border: 1px solid #dbe6e7; border-radius: 9px; background: #f8fbfb; }
+.ct-diag-state { color: #99742d; font-size: 11px; font-weight: 650; white-space: nowrap; }
+.ct-diag-state.ct-diag-state-on { color: #347a61; }
+.ct-diag-switch { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; color: #697d80; font-size: 11px; font-weight: 650; cursor: pointer; }
+.ct-diag-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ct-diag-switch-track { position: relative; display: inline-flex; align-items: center; width: 43px; height: 24px; padding: 3px; border-radius: 999px; background: #b9c8ca; transition: background .15s ease; }
+.ct-diag-switch-knob { display: block; width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 1px 3px #17304c33; transform: translateX(0); transition: transform .15s ease; }
+.ct-diag-switch input:checked + .ct-diag-switch-track { background: #2c826c; }
+.ct-diag-switch input:checked + .ct-diag-switch-track .ct-diag-switch-knob { transform: translateX(19px); }
+.ct-diag-switch input:focus-visible + .ct-diag-switch-track { outline: 2px solid #79acb0; outline-offset: 2px; }
+.ct-diag-switch input:disabled + .ct-diag-switch-track { opacity: .55; cursor: wait; }
+.ct-diag-switch input:disabled ~ #ctDiagnosticReleaseToggleText { opacity: .6; }
+#ctDiagnosticReleaseToggleText { min-width: 25px; }
 #ctDiagLaunchMessage { font-size: 12px; padding: 11px; margin-top: 14px; background: #eff6f6; color: #466e73; border-radius: 6px; }
+#ctWorkshopDiagnosticStatus { display: flex; align-items: center; gap: 9px; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #dbe6e7; border-radius: 9px; background: #f8fbfb; color: #647b7e; font-size: 12px; line-height: 1.5; }
+#ctWorkshopDiagnosticStatus.ct-workshop-diagnostic-on { background: #edf8f3; border-color: #cde7db; color: #347a61; }
+#ctWorkshopDiagnosticStatus.ct-workshop-diagnostic-off { background: #fff9ed; border-color: #eadbb9; color: #99742d; }
+#ctWorkshopDiagnosticStatus i { flex: none; }
 #workshopFeedList .ct-ws-vin-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 9px; font-size: 11px; color: #8995a4; }
 #workshopFeedList .ct-ws-vin-row strong { font-size: 12px; color: #647689; font-weight: 500; overflow-wrap: anywhere; }
 #workshopFeedList .ct-ws-vin-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: none; min-height: 36px; padding: 6px 9px; border: 1px solid #dce6e9; background: #f7fafb; color: #617e89; border-radius: 6px; font-size: 11px; cursor: pointer; }
@@ -724,7 +742,8 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .ct-launch-heading, .ct-launch-bottom { flex-direction: column; gap: 12px; }
   .ct-launch-preview > div { flex-direction: column; align-items: stretch; }
   .ct-launch-preview select { width: 100%; font-size: 16px; }
-  .ct-launch-bottom button { width: 100%; }
+  .ct-launch-copy, .ct-diag-release-control { width: 100%; }
+  .ct-diag-release-control { justify-content: space-between; }
   .ct-launch-heading h3 { font-size: 16px; }
 }
 @media print {
@@ -1351,7 +1370,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       <section id="devFeatureFlagCard" class="ct-launch-card hidden" aria-labelledby="ctDiagLaunchTitle">
         <div class="ct-launch-heading"><div><span class="df-eyebrow">DEVELOPER CONTROLS</span><h3 id="ctDiagLaunchTitle">Diagnostics · workshop release</h3><p>Preview the complete inspection, belts, battery checks, and mechanic VIN entry.</p></div><span id="featureStatusBadge" class="ct-launch-badge">Developer preview only</span></div>
         <div class="ct-launch-preview"><label for="ctDiagPreviewJob">Choose a job to preview</label><div><select id="ctDiagPreviewJob" aria-label="Job for developer preview"></select><button id="ctDiagPreviewButton" type="button" class="ct-button" onclick="CartechDiagnostics.preview()">Preview inspection</button></div><small>Preview uses the selected job. Saving updates that job’s inspection.</small></div>
-        <div class="ct-launch-bottom"><p id="ctDiagLaunchHelp">The developer and active temporary testers can preview this revision before launch. Staff keep their existing diagnostic link.</p><button id="btnToggleDiagnosticFeature" type="button" class="ct-button ct-primary" onclick="toggleMechanicDiagnosticFeature()">Launch Diagnostics</button></div><p id="ctDiagLaunchMessage" role="status" hidden></p>
+        <div class="ct-launch-bottom"><div class="ct-launch-copy"><p id="ctDiagLaunchHelp">The developer and active temporary testers can preview this revision before launch. Staff keep their existing diagnostic link.</p><small id="ctDiagLaunchAudience">OFF: only the developer and active temporary testers can preview the new form.</small></div><div class="ct-diag-release-control"><span id="ctDiagAvailabilityState" class="ct-diag-state">OFF · Developer preview only</span><label class="ct-diag-switch" for="ctDiagnosticReleaseToggle"><input id="ctDiagnosticReleaseToggle" type="checkbox" role="switch" aria-label="Make the new diagnostics form available to mechanics" aria-checked="false" onchange="CartechDiagnostics.setLaunch(this.checked)"><span class="ct-diag-switch-track" aria-hidden="true"><span class="ct-diag-switch-knob"></span></span><span id="ctDiagnosticReleaseToggleText">OFF</span></label></div></div><p id="ctDiagLaunchMessage" role="status" hidden></p>
       </section>
 
       <!-- KPI Metrics -->
@@ -1566,6 +1585,8 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
           <i class="fa-solid fa-play text-orange-600 text-[10px]"></i> Test Doorbell
         </button>
       </div>
+
+      <div id="ctWorkshopDiagnosticStatus" role="status" hidden></div>
 
       
       <div id="workshopFeedList" aria-live="polite" aria-label="Vehicle jobs"></div>
@@ -2352,6 +2373,32 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       checkAndTriggerAnnouncementAlert();
     }
 
+    // Realtime normally delivers this record immediately. This lightweight fallback keeps
+    // already-open mechanic pages in sync when a browser/file:// session cannot keep a
+    // Supabase realtime channel alive.
+    let featureConfigSyncBusy = false;
+    let lastFeatureConfigSyncAt = 0;
+    async function syncFeatureConfig(force = false) {
+      if (!currentUser || !window.CartechAccess?.sessionValid()) return false;
+      if (document.hidden && !force) return false;
+      const currentTime = Date.now();
+      if (featureConfigSyncBusy || (!force && currentTime - lastFeatureConfigSyncAt < 15000)) return false;
+      featureConfigSyncBusy = true;
+      lastFeatureConfigSyncAt = currentTime;
+      try {
+        const res = await fetch(`${API_URL}?id=eq.${encodeURIComponent(CONFIG_RECORD_ID)}&select=id,details`, {
+          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY },
+          cache: 'no-store'
+        });
+        if (!res.ok) return false;
+        const records = await res.json();
+        const record = Array.isArray(records) ? records.find(item => item.id === CONFIG_RECORD_ID) : null;
+        if (record) handleSystemRecordUpdate(record);
+        return !!record;
+      } catch (_) { return false; }
+      finally { featureConfigSyncBusy = false; }
+    }
+
     function handleSystemRecordUpdate(rec) {
       if (!rec || !rec.details) return;
       try {
@@ -2364,6 +2411,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
         if (rec.id === AVATARS_RECORD_ID) cachedCloudAvatars = JSON.parse(rec.details);
         if (rec.id === CONFIG_RECORD_ID) {
           const config = JSON.parse(rec.details);
+          const beforeConfigSignature = [featureFlags.diagnosticV2Enabled === true, featureFlags.diagnosticWorkshopV4Enabled === true, featureFlags.dryRunEndsAt || ''].join('|');
           const configuredEnd = Number(config?.dryRunEndsAt);
           const parsedEnd = Number.isFinite(configuredEnd) && configuredEnd > 0
             ? configuredEnd
@@ -2378,8 +2426,11 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
               ? parsedEnd
               : (featureFlags.dryRunEndsAt || Date.parse('2026-09-20T00:00:00+08:00'))
           };
-          if (window.CartechAccess?.receiveConfig) window.CartechAccess.receiveConfig(config);
-          if (window.CartechDiagnostics) render();
+          const afterConfigSignature = [featureFlags.diagnosticV2Enabled === true, featureFlags.diagnosticWorkshopV4Enabled === true, featureFlags.dryRunEndsAt || ''].join('|');
+          if (beforeConfigSignature !== afterConfigSignature) {
+            if (window.CartechAccess?.receiveConfig) window.CartechAccess.receiveConfig(config);
+            if (window.CartechDiagnostics) render();
+          }
         }
         if (rec.id === ANNOUNCEMENT_RECORD_ID) {
           activeAnnouncement = JSON.parse(rec.details);
@@ -3020,6 +3071,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       }
 
       initRealtimeSubscription();
+      void syncFeatureConfig(true);
 
       pullData(true).then(() => {
         if (pendingAlertNavigation) {
@@ -4163,6 +4215,15 @@ async function submitPartsRequest() {
 
       const isFeatureReleased = featureFlags.diagnosticWorkshopV4Enabled === true;
       const isDev = currentRole === 'developer';
+      const workshopDiagnosticStatus = document.getElementById('ctWorkshopDiagnosticStatus');
+      if (workshopDiagnosticStatus) {
+        const showWorkshopStatus = currentRole === 'workshop' && !!currentUser;
+        workshopDiagnosticStatus.hidden = !showWorkshopStatus;
+        workshopDiagnosticStatus.className = `ct-workshop-diagnostic-status ${isFeatureReleased ? 'ct-workshop-diagnostic-on' : 'ct-workshop-diagnostic-off'}`;
+        workshopDiagnosticStatus.innerHTML = isFeatureReleased
+          ? '<i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><strong>New Diagnostics is ON.</strong> It is available to every mechanic account on its assigned active vehicle.</span>'
+          : '<i class="fa-solid fa-circle-pause" aria-hidden="true"></i><span><strong>New Diagnostics is OFF.</strong> The developer is still testing it; use the existing Excel diagnostic link.</span>';
+      }
 
       // OFFICE RENDERER
       const officeContainer = document.getElementById('officeQueueList');
@@ -4349,6 +4410,10 @@ async function submitPartsRequest() {
         pullData(false);
       }
     }, 300000);
+
+    // Keep the developer's ON/OFF diagnostic release visible to every active mechanic
+    // even when realtime is unavailable. Realtime remains the fast path.
+    setInterval(() => { if (!document.hidden && currentUser) void syncFeatureConfig(); }, 15000);
 
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
@@ -4660,7 +4725,7 @@ window.CartechDiagnostics = (() => {
   const allowedStatus = (value, field) => (field?.choices ? field.choices.some(choice => choice[0] === value) : ['good', 'not', 'na', 'uninspected'].includes(value)) ? value : '';
   const needsAttention = value => ['not', 'monitor', 'replace'].includes(value);
   let step = 0, dirty = false, saving = false, returnFocus = null, noticeTimer;
-  let openedVin = '', openedInspection = 'null', vinJobId = null, vinOriginal = '', vinSaving = false, vinReturnFocus = null, launchBusy = false;
+  let openedVin = '', openedInspection = 'null', vinJobId = null, vinOriginal = '', vinSaving = false, vinReturnFocus = null, launchBusy = false, launchTarget = null;
   const launched = () => featureFlags[releaseKey] === true;
   const normalizeVin = value => String(value ?? '').trim().toUpperCase().replace(/\s+/g, '');
   const jobVin = job => ['-', 'N/A', '—'].includes(resolveVinNumber(job)) ? '' : normalizeVin(resolveVinNumber(job));
@@ -4725,15 +4790,27 @@ window.CartechDiagnostics = (() => {
   }
   function refreshLaunch() {
     const isDev = currentRole === 'developer';
+    const displayedLaunchState = launchBusy && launchTarget !== null ? launchTarget : launched();
     byId('devFeatureFlagCard').classList.toggle('hidden', !isDev);
-    byId('featureStatusBadge').textContent = launched() ? 'Launched for staff' : 'Developer preview only';
-    byId('featureStatusBadge').className = 'ct-launch-badge' + (launched() ? ' ct-launch-live' : '');
-    const button = byId('btnToggleDiagnosticFeature');
-    button.textContent = launchBusy ? 'Saving availability…' : launched() ? 'Pause Diagnostics' : 'Launch Diagnostics';
-    button.disabled = launchBusy || !isDev;
-    button.setAttribute('aria-pressed', String(launched()));
-    byId('ctDiagLaunchHelp').textContent = launched() ? 'Assigned mechanics can inspect and update VINs. Office staff can open and print saved inspections. Pause to return this revision to developer access.' : 'The developer and active temporary testers can preview this revision. Launch when you are ready for staff to use it.';
-    byId('ctDiagModeLabel').textContent = tester() ? 'Tester preview · changes stay in this session' : launched() ? 'Mechanic diagnostic list' : 'Developer preview · not launched';
+    byId('featureStatusBadge').textContent = displayedLaunchState ? 'ON · Available to mechanics' : 'OFF · Developer preview only';
+    byId('featureStatusBadge').className = 'ct-launch-badge' + (displayedLaunchState ? ' ct-launch-live' : '');
+    const toggle = byId('ctDiagnosticReleaseToggle');
+    if (toggle) {
+      toggle.checked = displayedLaunchState;
+      toggle.disabled = launchBusy || !isDev;
+      toggle.setAttribute('aria-checked', String(displayedLaunchState));
+      toggle.setAttribute('aria-busy', String(launchBusy));
+    }
+    const toggleText = byId('ctDiagnosticReleaseToggleText');
+    if (toggleText) toggleText.textContent = launchBusy ? 'SAVING…' : displayedLaunchState ? 'ON' : 'OFF';
+    const availabilityState = byId('ctDiagAvailabilityState');
+    if (availabilityState) {
+      availabilityState.textContent = launchBusy ? 'Saving shared setting…' : displayedLaunchState ? 'ON · Every mechanic account' : 'OFF · Developer preview only';
+      availabilityState.className = `ct-diag-state${displayedLaunchState ? ' ct-diag-state-on' : ''}`;
+    }
+    byId('ctDiagLaunchHelp').textContent = displayedLaunchState ? 'Assigned mechanics can inspect and update VINs. Office staff can open and print saved inspections. Turn OFF to return this revision to developer access.' : 'The developer and active temporary testers can preview this revision. Turn ON when you want every mechanic account to use it on assigned active vehicles.';
+    byId('ctDiagLaunchAudience').textContent = displayedLaunchState ? 'ON: the shared setting is saved online and mechanic pages receive it through realtime or the automatic sync check.' : 'OFF: only the developer and active temporary testers can preview the new form; mechanics keep the existing Excel link.';
+    byId('ctDiagModeLabel').textContent = tester() ? 'Tester preview · changes stay in this session' : displayedLaunchState ? 'Mechanic diagnostic list' : 'Developer preview · not launched';
     const selector = byId('ctDiagPreviewJob');
     const selected = selector.value;
     const jobs = [...state, ...completedArchive].filter((job, i, list) => list.findIndex(item => item.id === job.id) === i);
@@ -4746,21 +4823,26 @@ window.CartechDiagnostics = (() => {
     const id = byId('ctDiagPreviewJob').value;
     if (id) open(id);
   }
-  async function toggleLaunch() {
+  async function setLaunch(enabled) {
     if (currentRole !== 'developer' || launchBusy) return;
-    const enabled = !launched();
+    const target = enabled === true;
+    if (target === launched()) { refreshLaunch(); return; }
     launchBusy = true;
+    launchTarget = target;
     refreshLaunch();
     const message = byId('ctDiagLaunchMessage');
     message.hidden = true;
     try {
-      const confirmed = await window.CartechAccess?.updateConfig({ [releaseKey]: enabled });
-      if (!confirmed || confirmed[releaseKey] !== enabled) throw new Error('The server did not confirm the availability change.');
+      const confirmed = await window.CartechAccess?.updateConfig({ [releaseKey]: target });
+      if (!confirmed || confirmed[releaseKey] !== target) throw new Error('The server did not confirm the availability change.');
       featureFlags = { ...featureFlags, ...confirmed };
-      message.textContent = enabled ? 'Diagnostics launched. Staff will receive the update through the existing live sync.' : 'Diagnostics paused. This revision is available to the developer and active temporary testers.';
+      message.textContent = target ? 'Diagnostics ON. Every active mechanic page will receive the new form through the shared setting.' : 'Diagnostics OFF. The new form is hidden from mechanics; the developer and active temporary testers can still preview it.';
       render();
     } catch (error) { message.textContent = `Could not confirm the availability change. ${error.message} Check the status before retrying.`; }
-    finally { launchBusy = false; message.hidden = false; refreshLaunch(); }
+    finally { launchBusy = false; launchTarget = null; message.hidden = false; refreshLaunch(); }
+  }
+  async function toggleLaunch() {
+    return setLaunch(!launched());
   }
   function openVin(jobId) {
     const job = state.find(item => item.id === jobId) || completedArchive.find(item => item.id === jobId);
@@ -5190,7 +5272,7 @@ window.CartechDiagnostics = (() => {
   });
   window.addEventListener('afterprint', clearPrintView);
   refreshLaunch();
-  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, toggleLaunch, refreshLaunch, preview };
+  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview };
 })();
 
   </script>
@@ -5944,10 +6026,10 @@ window.CartechAccess = (() => {
     const access = event.target.closest('[data-edit-access]'); if (access) openEditAccess(access.dataset.editAccess);
     const preview = event.target.closest('[data-preview-job]'); if (preview) window.CartechDiagnostics.open(preview.dataset.previewJob);
   });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkExpiry(); void verifyActive(); } });
-  window.addEventListener('focus', () => { checkExpiry(); void verifyActive(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkExpiry(); void verifyActive(); void syncFeatureConfig(true); } });
+  window.addEventListener('focus', () => { checkExpiry(); void verifyActive(); void syncFeatureConfig(true); });
   window.addEventListener('resize', syncPhoneLayout);
-  window.addEventListener('pageshow', () => { checkExpiry(); void verifyActive(); });
+  window.addEventListener('pageshow', () => { checkExpiry(); void verifyActive(); void syncFeatureConfig(true); });
   window.addEventListener('storage', event => { if (['cartech_auth_user','cartech_auth_role'].includes(event.key) && verifiedUser && (localStorage.getItem('cartech_auth_user') !== verifiedUser || localStorage.getItem('cartech_auth_role') !== verifiedRole)) signOut(); });
   setInterval(checkExpiry, 1000);
   // The first telemetry sync runs before this module is created, so apply any schedule
