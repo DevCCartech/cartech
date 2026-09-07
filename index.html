@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
+  <meta name="cartech-build" content="cartech-e60be6fbb13dee0a1e29">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -953,6 +955,22 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 }
 @media print { .ct-welcome-screen,.ct-development-screen { display:none!important; } }
 
+#ctWelcomeTitle:focus,#ctDevelopmentTitle:focus { outline:none; }
+.ct-welcome-role-note { background:#f0f6f8; border-left:3px solid #7fa9b7; padding:12px 14px; margin-bottom:18px!important; }
+.ct-access-add-row { display:flex; align-items:center; gap:9px; margin:7px 0 14px; }
+.ct-access-add-row input { flex:1; min-width:0; }
+.ct-access-add-row button { flex:none; }
+.ct-update-notice { position:fixed; inset:0; z-index:100100; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#f5f8fa; color:#244352; padding:24px; text-align:center; }
+.ct-update-notice strong { font-size:25px; }
+.ct-update-notice p { max-width:460px; font-size:14px; line-height:1.7; color:#6e808c; }
+#ctUpdateStatus { display:block; font-size:11px; margin-top:12px; color:#6d8190; }
+#ctEditAccessDialog .ct-welcome-check { margin-bottom:12px; }
+#ctEditAccessDialog input { max-width:100%; }
+@media(max-width:760px) { #ctEditAccessDialog input:not([type='checkbox']) { font-size:16px; min-height:44px; } #ctEditAccessDialog .ct-button { min-height:44px; } }
+
+.ct-account-timer { font-size:10px; color:#976b2e; background:#fff8e8; border:1px solid #f3e2bf; padding:3px 6px; border-radius:4px; display:inline-block; line-height:1.6; }
+.ct-account-timer.ct-account-ended { color:#b44450; background:#fff0f1; border-color:#f3d9dc; }
+
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -1313,9 +1331,9 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 
       <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
       <section id="ctTrialControlCard" class="ct-trial-controls" hidden aria-labelledby="ctTrialControlTitle">
-        <div class="ct-trial-controls-top"><h3 id="ctTrialControlTitle">Tester agreement & dry-run schedule</h3><span id="ctTrialProgramStatus" class="ct-welcome-chip">Dry run open</span></div>
-        <p>Testing runs through September 19, 2026, 11:59 PM Philippine time. Non-developer access closes at midnight on September 20. No release date has been announced.</p>
-        <div class="ct-trial-controls-actions"><button type="button" class="ct-button" onclick="CartechAccess.previewAgreement()"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Preview tester agreement</button><button type="button" class="ct-button" onclick="CartechAccess.previewDevelopment()"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Preview Under Development</button></div>
+        <div class="ct-trial-controls-top"><h3 id="ctTrialControlTitle" tabindex="-1">User agreement & dry-run schedule</h3><span id="ctTrialProgramStatus" class="ct-welcome-chip">Dry run open</span></div>
+        <p>Testing runs through September 19, 2026, 11:59 PM Philippine time. Non-developer access closes at midnight on September 20. No release date has been announced. All registered users must accept the terms before entering. Existing accounts with no shorter timer automatically use this deadline; no bulk editing is needed.</p>
+        <div class="ct-trial-controls-actions"><button type="button" class="ct-button" onclick="CartechAccess.previewAgreement()"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Preview user agreement</button><button type="button" class="ct-button" onclick="CartechAccess.previewDevelopment()"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Preview Under Development</button><button type="button" class="ct-button" onclick="CartechUpdates.check(true)">Check for update</button></div><small id="ctUpdateStatus" role="status">Automatic update checks are enabled for the hosted website.</small>
       </section>
 
       <section id="devFeatureFlagCard" class="ct-launch-card hidden" aria-labelledby="ctDiagLaunchTitle">
@@ -1412,7 +1430,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
                   <select onchange="CartechAccess.durationChanged()" id="subDuration" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-indigo-500">
                     <option value="0.5">30 Minutes</option><option value="1">1 Hour</option><option value="2">2 Hours</option><option value="4">4 Hours (Half Day)</option>
                     <option value="8">8 Hours (1 Full Shift)</option>
-                    <option value="24" selected>1 Day (24 Hours - Auto Kickout)</option>
+                    <option value="program" selected>Until September 19 · program default</option><option value="24">1 Day (24 Hours - Auto Kickout)</option>
                     <option value="72">3 Days</option>
                     <option value="168">1 Week</option>
                     <option id="ctPermanentDuration" value="0">Permanent (No Expiry)</option><option value="custom">Custom minutes</option><option value="until">Choose expiry date / time</option>
@@ -1422,7 +1440,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 
               <div id="ctCustomDurationField" hidden><label class="df-label" for="ctCustomDuration">Access duration (minutes)</label><input id="ctCustomDuration" class="df-input" type="number" min="1" max="43200" step="1" value="60"></div>
               <div id="ctExpiryDateField" hidden><label class="df-label" for="ctAccountExpires">Access expires at · your local time</label><input id="ctAccountExpires" class="df-input" type="datetime-local"></div>
-              <p id="ctTesterAccountHelp" class="ct-access-help" hidden>Timer starts when the account is created. Testers must accept the welcome agreement before entering. Access ends at the account expiry or the September 19 dry-run deadline, whichever is earlier. Preview saves stay in their session.</p>
+              <p id="ctTesterAccountHelp" class="ct-access-help" hidden>All users must accept the agreement. The default is the shared September 19 deadline. Choose a shorter duration if needed; its timer starts when the account is created. Tester preview saves stay in their session.</p>
               <p id="ctAccountMessage" role="status" class="ct-access-help" hidden></p>
               <button id="ctCreateAccountButton" type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer">
                 <i class="fa-solid fa-user-check text-xs"></i> Create account
@@ -1628,35 +1646,35 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     <div class="ct-welcome-wrap">
       <header class="ct-welcome-brand"><span class="ct-welcome-mark"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><div><strong>CARTECH</strong><small>HYBRID QUEUE · DEVELOPER DRY RUN</small></div><span id="ctWelcomePreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></header>
       <article class="ct-welcome-card">
-        <div class="ct-welcome-hero"><span class="ct-welcome-chip">TEMPORARY TESTER ACCESS</span><h1 id="ctWelcomeTitle" tabindex="-1">Welcome to the CARTECH dry run.</h1><p>This space is for invited testers. Before entering the office preview, please read the testing terms and guidelines below.</p></div>
+        <div class="ct-welcome-hero"><span id="ctWelcomeAccessLabel" class="ct-welcome-chip">ALL REGISTERED USERS</span><h1 id="ctWelcomeTitle" tabindex="-1">Welcome to the CARTECH dry run.</h1><p>All registered users must read and accept these terms before entering CARTECH. This applies to office staff, mechanics, admins, testers, and the developer.</p></div>
         <div class="ct-welcome-session"><div><span>Signed in as</span><strong id="ctWelcomeUser">Tester</strong><small id="ctWelcomeExpires"></small></div><div class="ct-welcome-timer"><span>Your remaining access</span><time id="ctWelcomeCountdown" aria-label="Testing time remaining">00:00:00</time><small>The timer continues while you read.</small></div></div>
-        <div class="ct-welcome-content">
+        <div class="ct-welcome-content"><p id="ctWelcomeRoleNote" class="ct-welcome-role-note"></p>
           <section class="ct-welcome-deadline"><i class="fa-regular fa-calendar" aria-hidden="true"></i><div><h2>Dry run ends September 19, 2026</h2><p>Testing runs through <strong>11:59 PM, Philippine time</strong>. From <strong>September 20, 2026 at 12:00 AM (UTC+8)</strong>, staff and tester access closes and the website shows <strong>UNDER DEVELOPMENT</strong>. Your account may expire sooner.</p><span class="ct-release-note">No release date has been announced.</span></div></section>
           <section class="ct-welcome-note"><h2>A note from the developer</h2><p>I am building CARTECH independently with a limited budget. I do not yet have funding for dedicated server or cloud infrastructure. This dry run uses the resources currently available so I can learn from your feedback and improve the system before deciding on a future release. Thank you for helping me test it responsibly.</p></section>
           <div class="ct-welcome-rules">
-            <section><span class="ct-rule-number">01</span><div><h2>Test the features and share useful feedback</h2><p>You can view the office panel, try unreleased inspection forms, and note anything confusing or broken. Features may change, stop working, or be paused during testing. Preview answers may be cleared when you refresh or sign out.</p></div></section>
-            <section><span class="ct-rule-number">02</span><div><h2>Use the preview safely</h2><p>Diagnostic preview saves stay in your session and do not update customer jobs. Use sample information where possible. Do not enter payment details, personal passwords, or other sensitive information into test fields. Do not use preview findings as approval for a repair or a vehicle safety decision.</p></div></section>
-            <section><span class="ct-rule-number">03</span><div><h2>Respect privacy and account access</h2><p>The office view may contain workshop and customer information. Keep it private; do not share customer details, screenshots, or your login without permission. Use only the features provided to your tester account. Do not attempt to change staff accounts, live records, or access limits.</p></div></section>
+            <section><span class="ct-rule-number">01</span><div><h2>Test the features and share useful feedback</h2><p>Use the panel and features assigned to your role. Testers may preview the office and unreleased diagnostics; workshop and office staff keep their usual permissions. Report confusing steps or errors to the developer. Features may change or be paused during this dry run.</p></div></section>
+            <section><span class="ct-rule-number">02</span><div><h2>Use CARTECH responsibly</h2><p>Staff actions can update live customer jobs. Verify the vehicle, findings, parts, and status before saving, and wait for a confirmed save. Tester diagnostic previews stay in the session and do not update customer jobs; use sample answers. Never enter payment details or passwords into test fields. A preview result is not approval for a repair or a vehicle safety decision.</p></div></section>
+            <section><span class="ct-rule-number">03</span><div><h2>Respect privacy and account access</h2><p>The office view may contain workshop and customer information. Keep it private; do not share customer details, screenshots, or your login without permission. Use only the features permitted for your account. Do not bypass role permissions or access limits. Only the developer may manage access times. Keep your own copies of important confirmed work using the available reports.</p></div></section>
             <section><span class="ct-rule-number">04</span><div><h2>Understand the limits of this dry run</h2><p>This is an unfinished test system. It is not a promise of uninterrupted service, permanent data storage, or complete security. If something looks unsafe or a save behaves unexpectedly, stop that action and report it to the developer. You can leave the test at any time.</p></div></section>
-            <section><span class="ct-rule-number">05</span><div><h2>Your access is temporary</h2><p>Access ends when your account timer expires, the developer revokes it, or the dry run closes—whichever happens first. Extending your account does not extend the September 19 testing period. A public release will only follow a separate announcement.</p></div></section>
+            <section><span class="ct-rule-number">05</span><div><h2>Your access is temporary</h2><p>Staff and tester access ends when the account timer expires, access is revoked, or the dry run closes—whichever happens first. Accounts without a shorter expiry use the September 19 deadline automatically. Only the developer retains maintenance access afterward. Updates may sign you out and require this agreement again. Unsaved work may be lost when a session ends. No public release date has been announced.</p></div></section>
           </div>
         </div>
         <form id="ctTesterAgreementForm" class="ct-welcome-footer" onsubmit="CartechAccess.acceptAgreement(event); return false;" novalidate>
-          <div id="ctWelcomeAcknowledgement"><label class="ct-welcome-check" for="ctTesterTermsAccepted"><input id="ctTesterTermsAccepted" type="checkbox" onchange="CartechAccess.updateAgreementButton()"><span>I have read the testing terms and guidelines, understand the limits and expiry, and agree to use this tester account responsibly.</span></label><small class="ct-welcome-consent-note">This acknowledgement applies to this testing session. Choose Leave test if you do not agree.</small></div>
+          <div id="ctWelcomeAcknowledgement"><label class="ct-welcome-check" for="ctTesterTermsAccepted"><input id="ctTesterTermsAccepted" type="checkbox" onchange="CartechAccess.updateAgreementButton()"><span>I have read the testing terms and guidelines, understand the limits and expiry, and agree to use my assigned CARTECH account responsibly.</span></label><small class="ct-welcome-consent-note">This acknowledgement applies to this testing session. Choose Sign out if you do not agree.</small></div>
           <p id="ctWelcomeError" class="ct-welcome-error" role="alert" hidden></p>
-          <div class="ct-welcome-actions"><button id="ctWelcomeDecline" type="button" class="ct-button" onclick="CartechAccess.declineAgreement()">Leave test</button><button id="ctWelcomeContinue" type="submit" class="ct-button ct-welcome-primary" disabled>I agree · Enter preview <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button><button id="ctWelcomePreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
+          <div class="ct-welcome-actions"><button id="ctWelcomeDecline" type="button" class="ct-button" onclick="CartechAccess.declineAgreement()">Sign out</button><button id="ctWelcomeContinue" type="submit" class="ct-button ct-welcome-primary" disabled>I agree · Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button><button id="ctWelcomePreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
         </form>
       </article>
-      <p class="ct-welcome-footnote">CARTECH HYBRID QUEUE · Limited developer dry run · Terms version September 6, 2026</p>
+      <p class="ct-welcome-footnote">CARTECH HYBRID QUEUE · Limited developer dry run · Terms version September 7, 2026</p>
     </div>
   </section>
   <section id="ctUnderDevelopment" class="ct-development-screen" hidden aria-labelledby="ctDevelopmentTitle">
     <div class="ct-development-card"><span class="ct-development-icon"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span><h1 id="ctDevelopmentTitle" tabindex="-1">UNDER DEVELOPMENT</h1><p>The CARTECH dry run ended on <strong>September 19, 2026</strong>, Philippine time. Staff and tester access is now closed while the developer reviews feedback and works on improvements.</p><div class="ct-development-release">No release date has been announced.</div><p class="ct-development-note">This project is built by an independent developer with limited resources. Thank you to everyone who helped test it.</p><button id="ctDevelopmentSignIn" type="button" class="ct-button" onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctDevelopmentPreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
   </section>
 
-  <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="Temporary tester access">
-    <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> Tester preview</span><span class="ct-tester-caption">Office view & unreleased diagnostics</span></div>
-    <div class="ct-tester-tools"><time id="ctTesterCountdown" aria-label="Time remaining">01:00:00</time><button type="button" class="ct-button" onclick="CartechAccess.openFeedback()">Feedback notes</button><button type="button" class="ct-button" onclick="handleLogout()">Exit test</button></div>
+  <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="CARTECH account access">
+    <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> <span id="ctAccessModeLabel">CARTECH dry run</span></span><span id="ctAccessCaption" class="ct-tester-caption">Program ends September 19 · PHT</span></div>
+    <div class="ct-tester-tools"><time id="ctTesterCountdown" aria-label="Time remaining">01:00:00</time><button id="ctAccessFeedbackButton" type="button" class="ct-button" onclick="CartechAccess.openFeedback()">Feedback notes</button><button id="ctAccessExitButton" type="button" class="ct-button" onclick="handleLogout()">Sign out</button></div>
   </aside>
   <dialog id="ctInspectionReport" class="ct-dialog ct-inspection-report" aria-labelledby="ctInspectionReportTitle">
     <div class="ct-dialog-head"><div><h2 id="ctInspectionReportTitle">CARTECH Inspection</h2><p id="ctInspectionReportSubtitle">Saved mechanic findings</p></div><button type="button" class="ct-icon-button" onclick="CartechInspections.close()" aria-label="Close inspection report"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
@@ -1665,14 +1683,23 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
   </dialog>
   <dialog id="ctEditAccessDialog" class="ct-dialog ct-access-dialog" aria-labelledby="ctEditAccessTitle">
     <form id="ctEditAccessForm" onsubmit="CartechAccess.editExpiry(event); return false;">
-      <div class="ct-dialog-head"><div><h2 id="ctEditAccessTitle">Edit tester access</h2><p id="ctEditAccessUser"></p></div><button id="ctEditAccessClose" type="button" class="ct-icon-button" onclick="CartechAccess.closeEditAccess()" aria-label="Close access editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
-      <div class="ct-dialog-body"><label class="df-label" for="ctEditAccessExpiry">New expiry · your local time</label><input id="ctEditAccessExpiry" type="datetime-local" class="df-input" required><div class="ct-duration-shortcuts"><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(30)">30 min from now</button><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(60)">1 hour from now</button><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(120)">2 hours from now</button></div><p class="df-help">Changes apply to the existing account. Revoking access signs the tester out on the next live update or access check.</p><p id="ctEditAccessMessage" role="status" hidden></p><div class="ct-detail-actions"><button id="ctEditAccessSave" type="submit" class="ct-button ct-primary">Save expiry</button><button id="ctEditAccessRevoke" type="button" class="ct-button" onclick="CartechAccess.revokeEditing()">Revoke now</button></div></div>
+      <div class="ct-dialog-head"><div><h2 id="ctEditAccessTitle">Edit account access</h2><p id="ctEditAccessUser"></p></div><button id="ctEditAccessClose" type="button" class="ct-icon-button" onclick="CartechAccess.closeEditAccess()" aria-label="Close access editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+      <div class="ct-dialog-body">
+        <label class="ct-welcome-check" for="ctEditAccessUseDefault"><input id="ctEditAccessUseDefault" type="checkbox" onchange="CartechAccess.syncAccessEditor()"><span id="ctEditAccessDefaultLabel">Use the shared September 19 deadline</span></label>
+        <label class="df-label" for="ctEditAccessExpiry">Individual expiry · your local time</label><input id="ctEditAccessExpiry" type="datetime-local" class="df-input" required>
+        <div class="ct-duration-shortcuts"><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(30)">Set 30 min</button><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(60)">Set 1 hour</button><button type="button" class="ct-button" onclick="CartechAccess.setExpiryFromNow(120)">Set 2 hours</button></div>
+        <label for="ctEditAddMinutes" class="df-label">Add minutes to the selected expiry</label><div class="ct-access-add-row"><input id="ctEditAddMinutes" type="number" min="1" max="43200" step="1" value="60" class="df-input"><button type="button" class="ct-button" onclick="CartechAccess.addAccessTime()">Add time</button></div>
+        <p class="df-help">The shared deadline applies to all staff and testers, including existing accounts. Individual timers may end sooner. Changes take effect after Save access and reach online sessions on their next access check.</p>
+        <p id="ctEditAccessMessage" role="status" hidden></p><div class="ct-detail-actions"><button id="ctEditAccessSave" type="submit" class="ct-button ct-primary">Save access</button><button id="ctEditAccessRevoke" type="button" class="ct-button" onclick="CartechAccess.revokeEditing()">Revoke now</button></div>
+      </div>
     </form>
   </dialog>
   <dialog id="ctTesterFeedbackDialog" class="ct-dialog ct-access-dialog" aria-labelledby="ctTesterFeedbackTitle">
     <div class="ct-dialog-head"><div><h2 id="ctTesterFeedbackTitle">Feedback for the developer</h2><p>Capture what you would change while testing.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeFeedback()" aria-label="Close feedback notes"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
     <div class="ct-dialog-body"><label for="ctTesterFeedback" class="df-label">What worked? What needs adjusting?</label><textarea id="ctTesterFeedback" class="df-input" rows="6" maxlength="6000" placeholder="For example: the Belts choices are clear, but the Next button should be easier to reach on my phone."></textarea><p class="df-help">Download your notes and share them with the developer. Notes are not sent automatically.</p><button type="button" class="ct-button ct-primary" onclick="CartechAccess.downloadFeedback()">Download feedback</button><p id="ctFeedbackStatus" role="status"></p></div>
   </dialog>
+
+  <section id="ctUpdateNotice" class="ct-update-notice" role="status" aria-live="polite" hidden><strong>Updating CARTECH</strong><p>The developer published an update. Please sign in again and read the agreement before continuing.</p><button type="button" class="ct-button" onclick="CartechUpdates.reload()">Reload now</button></section>
 
   <dialog id="diagnosticSheetModal" class="hidden" aria-labelledby="ctDiagDialogTitle">
     <header class="df-toolbar">
@@ -2148,7 +2175,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function markConversationSeen(jobId) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (!jobId || !currentUser || markSeenInFlight[jobId]) return;
       markSeenInFlight[jobId] = true;
 
@@ -2459,6 +2486,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function publishDeveloperAnnouncement() {
+      if (!window.CartechAccess?.sessionValid()) return;
       if (currentRole !== 'developer' && currentRole !== 'admin') return;
       const text = (document.getElementById('devAnnouncementInput')?.value || '').trim();
       if (!text) {
@@ -2505,6 +2533,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function clearDeveloperAnnouncement() {
+      if (!window.CartechAccess?.sessionValid()) return;
       if (currentRole !== 'developer' && currentRole !== 'admin') return;
       activeAnnouncement = null;
       renderTopFloatingAnnouncement();
@@ -2543,6 +2572,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function setStaffHolidayDuty(staffName, statusMode) {
+      if (!window.CartechAccess?.sessionValid()) return;
       if (currentRole !== 'developer') return;
       manualDutyOverrides[staffName.toLowerCase()] = statusMode;
 
@@ -2576,7 +2606,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     function printDiagnosticReport() { return window.CartechDiagnostics.print(); }
 
     function handleProfilePhotoUpload(event) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const file = event.target.files[0];
       if (!file) return;
 
@@ -2642,7 +2672,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     async function devDeleteStaffAccount(username) { return window.CartechAccess.revoke(username); }
 
     async function restoreInitialShopRecords() {
-      if (currentRole !== 'developer') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole !== 'developer') return;
       state = [...CORE_INITIAL_JOBS];
       currentFilter = 'waiting_parts';
       render();
@@ -2662,7 +2692,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function sendPresenceHeartbeat(isExplicitOnline = true) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (!currentUser || !currentRole) return;
 
       cachedCloudPresence[currentUser] = {
@@ -3114,7 +3144,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function handleDispatch(e) {
-      e?.preventDefault(); if (!currentUser || currentRole === 'tester') return;
+      e?.preventDefault(); if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (e) { e.preventDefault(); e.stopPropagation(); }
       const custVal = document.getElementById('inCust').value.trim();
       const diagVal = document.getElementById('inDiag').value.trim();
@@ -3166,7 +3196,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function devQuickDispatchTest() {
-      if (currentRole !== 'developer') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole !== 'developer') return;
       const testDiag = "B" + Math.floor(1000 + Math.random() * 9000);
       const newCar = {
         id: "JB-" + Math.floor(100 + Math.random() * 900),
@@ -3249,7 +3279,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function handleOfficeQuickDiagLookup() {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const q = (document.getElementById('officeQuickDiagInput')?.value || '').trim();
       if (!q) return;
 
@@ -3292,7 +3322,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function setStatus(id, newStatus, customSlot = null) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const currentItem = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
       let slot = customSlot;
 
@@ -3351,7 +3381,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     async function officePartsReadyToPickUp(jobId) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const job = state.find(j => j.id === jobId);
       if (!job) return;
 
@@ -3383,7 +3413,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     function openPartsModal(jobId) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const modal = document.getElementById('partsModal');
       const inputId = document.getElementById('partJobId');
       const inputText = document.getElementById('partText');
@@ -3419,7 +3449,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     async function saveDiagnosticSheet(e) { return window.CartechDiagnostics.save(e); }
 
     async function deleteSingleRecord(id) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
       const targetJob = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
 
@@ -3523,7 +3553,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
 async function submitPartsRequest() {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
       if (!partDesc) { alert('Please describe the replacement parts required.'); return; }
@@ -3621,7 +3651,7 @@ async function submitPartsRequest() {
     }
 
     function openMessengerChatForJob(jobId, mechName) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       const job = state.find(j => j.id === jobId) || completedArchive.find(j => j.id === jobId);
       const assignedMech = resolveMechanicName(job);
 
@@ -3683,7 +3713,7 @@ async function submitPartsRequest() {
     }
 
     function restoreMessengerChat() {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (!activeModalChatJobId) return;
       isChatMinimizedToBubble = false;
       document.getElementById('fbFloatingBubble').classList.add('hidden');
@@ -3776,7 +3806,7 @@ async function submitPartsRequest() {
     }
 
     async function handleModalChatSubmit(event) {
-      if (!currentUser || currentRole === 'tester') return;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
       if (event) { event.preventDefault(); event.stopPropagation(); }
       if (!activeModalChatJobId) return;
 
@@ -3932,17 +3962,14 @@ async function submitPartsRequest() {
         let accHTML = "";
         accountsList.forEach(u => {
           const acc = cachedCloudAccounts[u];
-          let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
-
-          if (acc && acc.expiresAt && acc.expiresAt > 0) {
-            const timeLeftMs = (acc.role === 'tester' ? Math.min(acc.expiresAt, window.CartechAccess?.programEndsAt ?? acc.expiresAt) : acc.expiresAt) - now;
-            if (timeLeftMs > 0) {
-              const hoursLeft = Math.floor(timeLeftMs / (3600000));
-              const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
-              timerBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-[10px] font-black border border-amber-200"><i class="fa-regular fa-clock mr-1 animate-spin"></i> ${hoursLeft}h ${minutesLeft}m Left</span>`;
-            } else {
-              timerBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-black border border-rose-200"><i class="fa-solid fa-ban mr-1"></i> EXPIRED / KICKED</span>`;
-            }
+          const effectiveExpiry = window.CartechAccess.effectiveExpiry(acc);
+          const timeLeftMs = effectiveExpiry - window.CartechAccess.now();
+          let timerBadge = `<span class="ct-account-timer">Developer maintenance access</span>`;
+          if (acc.revoked || timeLeftMs <= 0) timerBadge = `<span class="ct-account-timer ct-account-ended">EXPIRED / REVOKED</span>`;
+          else if (Number.isFinite(effectiveExpiry)) {
+            const h = Math.floor(timeLeftMs / 3600000), m = Math.floor(timeLeftMs % 3600000 / 60000);
+            const label = !acc.expiresAt ? 'Program deadline · Sep 19' : 'Individual timer';
+            timerBadge = `<span class="ct-account-timer">${h}h ${m}m left · ${label}</span>`;
           }
 
           const isPermanentAdmin = u === 'dev' || u === 'admin';
@@ -3958,7 +3985,7 @@ async function submitPartsRequest() {
                     <span class="font-black text-slate-900 uppercase text-xs">${u}</span>
                     <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-extrabold uppercase">${acc.role || 'workshop'}</span>
                   </div>
-                  <div class="mt-0.5">${timerBadge}</div>${acc.role === 'tester' ? `<button type="button" class="ct-edit-access" data-edit-access="${escapeHTML(u)}">Edit access <i class="fa-regular fa-clock" aria-hidden="true"></i></button>` : ''}
+                  <div class="mt-0.5">${timerBadge}</div>${currentRole === 'developer' ? `<button type="button" class="ct-edit-access" data-edit-access="${escapeHTML(u)}">Edit access <i class="fa-regular fa-clock" aria-hidden="true"></i></button>` : ''}
                 </div>
               </div>
 
@@ -5141,8 +5168,11 @@ window.CartechAccess = (() => {
   const previews = new Map();
   // Inclusive September 19 dry run, independent of the device's timezone.
   const programEndsAt = Date.parse('2026-09-20T00:00:00+08:00');
-  const agreementVersion = 'cartech-dry-run-2026-09-06-v1';
-  const consentKey = 'cartech_tester_agreement_session';
+  const agreementVersion = 'cartech-dry-run-2026-09-07-v2';
+  const buildId = 'cartech-e60be6fbb13dee0a1e29';
+  const sessionRevision = buildId + ':' + (document.lastModified || 'local');
+  const signInKey = 'cartech_verified_signin_session';
+  const consentKey = 'cartech_terms_agreement_session';
   let agreementAccepted = false, agreementPreview = false, underDevPreview = false, agreementBusy = false;
   let developerLoginOpen = false, authGeneration = 0, phoneLayout = null;
   const allowedRoles = ['developer', 'admin', 'office', 'workshop', 'tester'];
@@ -5163,7 +5193,20 @@ window.CartechAccess = (() => {
   const programClosed = () => now() >= programEndsAt;
   function validAccount(acc) { return acc && typeof acc === 'object' && allowedRoles.includes(acc.role) && typeof acc.pass === 'string'; }
   function finiteExpiry(acc) { return Number.isFinite(acc?.expiresAt) && acc.expiresAt > 0; }
-  function ended(acc) { return !validAccount(acc) || acc.revoked === true || (acc.role === 'tester' && !finiteExpiry(acc)) || (finiteExpiry(acc) && acc.expiresAt <= now()); }
+  function effectiveExpiry(acc) {
+    const individual = finiteExpiry(acc) ? acc.expiresAt : Infinity;
+    return acc?.role === 'developer' ? individual : Math.min(individual, programEndsAt);
+  }
+  function ended(acc) {
+    return !validAccount(acc) || acc.revoked === true || (acc.expiresAt != null && acc.expiresAt !== 0 && !finiteExpiry(acc)) || effectiveExpiry(acc) <= now();
+  }
+  function rememberedSignIn(user, role) {
+    try { const entry = JSON.parse(sessionStorage.getItem(signInKey) || 'null'); return entry?.user === user && entry?.role === role && entry?.revision === sessionRevision; }
+    catch (_) { return false; }
+  }
+  function rememberSignIn(user, role) {
+    try { sessionStorage.setItem(signInKey, JSON.stringify({ user, role, revision:sessionRevision })); } catch (_) {}
+  }
   function loginError(title, message) {
     byId('loginAuthErrorTitle').textContent = title;
     byId('loginAuthErrorMsg').textContent = message;
@@ -5213,7 +5256,7 @@ window.CartechAccess = (() => {
     if (ended(accountSnapshot)) { signOut(currentRole === 'tester' ? 'expired' : 'revoked'); return false; }
     return true;
   }
-  function sessionValid() { return identityValid() && (currentRole !== 'tester' || agreementAccepted); }
+  function sessionValid() { return identityValid() && agreementAccepted && !window.CartechUpdates?.pending(); }
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid() && now() - lastVerified < 65000;
   }
@@ -5228,6 +5271,9 @@ window.CartechAccess = (() => {
     return true;
   }
   async function authenticate(user, password, mode = 'password') {
+    await window.CartechUpdates?.check();
+    if (window.CartechUpdates?.pending()) return false;
+    if (mode !== 'password' && !rememberedSignIn(user, cachedCloudAccounts[user]?.role)) { signOut('updated'); return false; }
     const cloud = await readAccounts();
     receiveAccounts(cloud.parsed);
     const acc = cloud.accounts[user];
@@ -5247,8 +5293,9 @@ window.CartechAccess = (() => {
     }
     if (verifiedUser !== user) previews.clear();
     authGeneration++;
-    agreementAccepted = acc.role !== 'tester' || (mode === 'restore' && restoredConsent(user, acc));
-    if (acc.role === 'tester' && !agreementAccepted) clearConsent();
+    agreementAccepted = mode === 'restore' && restoredConsent(user, acc);
+    if (!agreementAccepted) clearConsent();
+    if (mode === 'password') rememberSignIn(user, acc.role);
     currentUser = user; currentRole = acc.role;
     verifiedUser = user; verifiedRole = acc.role; accountSnapshot = { ...acc }; lastVerified = lastPoll = now();
     localStorage.setItem('cartech_auth_user', user); localStorage.setItem('cartech_auth_role', acc.role);
@@ -5257,9 +5304,8 @@ window.CartechAccess = (() => {
     byId('loginPassword').value = '';
     byId('loginAuthError').classList.add('hidden');
     byId('holidayLockoutModal')?.classList.add('hidden');
-    if (acc.role !== 'tester') { try { await sendPresenceHeartbeat(true); } catch (_) {} }
     if (!identityValid()) return false;
-    if (acc.role === 'tester' && !agreementAccepted) { showAgreement(false); return true; }
+    if (!agreementAccepted) { showAgreement(false); return true; }
     enterWorkspace(); return true;
   }
   async function login(event) {
@@ -5285,9 +5331,12 @@ window.CartechAccess = (() => {
     finally { loginBusy = false; }
   }
   async function restoreSession(user, role) {
+    await window.CartechUpdates?.check();
+    if (window.CartechUpdates?.pending()) return;
     if (!user || !role) { currentUser = currentRole = null; refresh(); return; }
+    if (!rememberedSignIn(user, role)) { signOut('updated'); return; }
     try { if (!await authenticate(user, null, 'restore')) { currentUser = currentRole = null; refresh(); } }
-    catch (_) { clearAuth(); currentUser = currentRole = null; refresh(); loginError('SIGN-IN REQUIRED', 'Reconnect and sign in to verify your access.'); }
+    catch (_) { signOut(); loginError('SIGN-IN REQUIRED', 'Reconnect and sign in to verify your access.'); }
   }
   function clearAuth() {
     localStorage.removeItem('cartech_auth_user'); localStorage.removeItem('cartech_auth_role');
@@ -5300,7 +5349,8 @@ window.CartechAccess = (() => {
     if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
     if (realtimeChannel && supabaseClient) { supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; }
     clearAuth();
-    if (wasTester) clearRememberedDevice();
+    clearRememberedDevice();
+    try { sessionStorage.removeItem(signInKey); } catch (_) {}
     currentUser = currentRole = verifiedUser = verifiedRole = null; accountSnapshot = null;
     previews.clear();
     state = []; completedArchive = []; isCompletedLoaded = false; previousJobStatuses = {};
@@ -5315,9 +5365,10 @@ window.CartechAccess = (() => {
     byId('loginPassword').value = '';
     refresh();
     if (reason === 'expired') loginError('TEST ACCESS EXPIRED', 'Your testing time is finished. Ask the developer to extend or renew access.');
-    else if (reason === 'verification') loginError('TEST ACCESS PAUSED', 'The account could not be verified. Reconnect and sign in to continue.');
+    else if (reason === 'verification') loginError('ACCESS VERIFICATION PAUSED', 'The account could not be verified. Reconnect and sign in to continue.');
     else if (reason === 'revoked') loginError('ACCESS ENDED', 'This account is expired or its access has changed. Please sign in again.');
-    if (reason === 'declined') loginError('TEST NOT STARTED', 'You left the tester agreement. Sign in again if you choose to take part.');
+    if (reason === 'declined') loginError('AGREEMENT REQUIRED', 'You left the agreement. Sign in and accept the terms before entering CARTECH.');
+    if (reason === 'updated') loginError('SYSTEM UPDATED — SIGN IN AGAIN', 'CARTECH has updated its program or terms. Enter your password, then read and accept the agreement to continue.');
     if (reason === 'program-ended' || programClosed()) { showDevelopment(false); return; }
     byId('loginUsername').focus();
   }
@@ -5330,7 +5381,7 @@ window.CartechAccess = (() => {
       if (verifiedUser !== actor) return;
       receiveAccounts(cloud.parsed);
     } catch (_) {
-      if (verifiedUser === actor && currentRole === 'tester' && now() - lastVerified >= 60000) signOut('verification');
+      if (verifiedUser === actor && now() - lastVerified >= 60000) signOut('verification');
     } finally { checking = false; }
   }
   function checkExpiry() {
@@ -5342,43 +5393,48 @@ window.CartechAccess = (() => {
     }
     if (!verifiedUser) return;
     if (!identityValid()) return;
-    if (currentRole === 'tester' && now() - lastVerified >= 65000) { signOut('verification'); return; }
-    if (currentRole === 'tester' && now() - lastPoll >= 30000) void verifyActive();
+    if (now() - lastVerified >= 65000) { signOut('verification'); return; }
+    if (now() - lastPoll >= 30000) void verifyActive();
     refreshCountdown();
   }
   const pad = number => String(number).padStart(2, '0');
   function durationLabel(ms) { const seconds = Math.max(0, Math.ceil(ms / 1000)); return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds % 3600 / 60))}:${pad(seconds % 60)}`; }
   function refreshCountdown() {
-    if (currentRole !== 'tester' || !accountSnapshot) return;
-    const effectiveExpiry = Math.min(accountSnapshot.expiresAt, programEndsAt);
-    const remaining = effectiveExpiry - now();
-    byId('ctTesterCountdown').textContent = durationLabel(remaining);
-    byId('ctTesterCountdown').dateTime = new Date(effectiveExpiry).toISOString();
-    byId('ctTesterCountdown').title = `Access expires ${philippineDate(effectiveExpiry)}`;
-    byId('ctWelcomeCountdown').textContent = durationLabel(remaining);
-    byId('ctWelcomeCountdown').dateTime = new Date(effectiveExpiry).toISOString();
-    byId('ctWelcomeExpires').textContent = `Access ends ${philippineDate(effectiveExpiry)}`;
+    if (!accountSnapshot || !verifiedUser) return;
+    const expiry = effectiveExpiry(accountSnapshot), remaining = expiry - now();
+    const label = Number.isFinite(expiry) ? durationLabel(remaining) : 'No expiry';
+    const endLabel = Number.isFinite(expiry) ? `Access ends ${philippineDate(expiry)}` : 'Developer maintenance access stays available after the dry run.';
+    for (const id of ['ctTesterCountdown','ctWelcomeCountdown']) {
+      byId(id).textContent = label;
+      if (Number.isFinite(expiry)) byId(id).dateTime = new Date(expiry).toISOString();
+      else byId(id).removeAttribute('datetime');
+      byId(id).title = endLabel;
+    }
+    byId('ctWelcomeExpires').textContent = endLabel;
     byId('ctWelcomeCountdown').parentElement?.classList.toggle('ct-time-urgent', remaining <= 5 * 60000);
     byId('ctTesterBanner').classList.toggle('ct-tester-urgent', remaining <= 5 * 60000);
   }
   function refresh() {
     const testing = currentRole === 'tester' && !!verifiedUser && agreementAccepted;
-    refreshProgramStatus();
-    syncPhoneLayout();
+    const entered = !!verifiedUser && agreementAccepted;
+    refreshProgramStatus(); syncPhoneLayout();
     document.body.classList.toggle('ct-tester-mode', testing);
-    byId('ctTesterBanner').hidden = !testing;
+    byId('ctTesterBanner').hidden = !entered;
     byId('ctTesterRoleOption').hidden = currentRole !== 'developer';
     byId('ctTesterRoleOption').disabled = currentRole !== 'developer';
-    if (currentRole === 'tester' && verifiedUser && !agreementAccepted) {
-      byId('appShell').classList.add('hidden'); byId('appShell').inert = true; refreshCountdown();
+    if (verifiedUser && !agreementAccepted) {
+      byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
     }
-    if (testing) {
-      // Keep the timer in the workspace header, outside every modal's scroll area.
+    if (entered) {
       const shell = byId('appShell');
       if (byId('ctTesterBanner').parentElement !== shell) shell.prepend(byId('ctTesterBanner'));
-      byId('viewDeveloper').classList.add('hidden'); byId('viewWorkshop').classList.add('hidden'); byId('viewOffice').classList.remove('hidden');
-      refreshCountdown();
+      byId('ctAccessModeLabel').textContent = testing ? 'Tester preview' : currentRole === 'developer' ? 'Developer access' : 'CARTECH dry run';
+      byId('ctAccessCaption').textContent = testing ? 'Office view & unreleased diagnostics' : 'Program ends September 19 · PHT';
+      byId('ctAccessFeedbackButton').hidden = !testing;
+      byId('ctAccessExitButton').textContent = 'Sign out';
+      if (testing) { byId('viewDeveloper').classList.add('hidden'); byId('viewWorkshop').classList.add('hidden'); byId('viewOffice').classList.remove('hidden'); }
     }
+    refreshCountdown();
   }
   function message(id, text, error = false) {
     byId(id).textContent = text; byId(id).hidden = false; byId(id).setAttribute('data-error', String(error));
@@ -5390,19 +5446,21 @@ window.CartechAccess = (() => {
   function restoredConsent(user, account) {
     try {
       const accepted = JSON.parse(sessionStorage.getItem(consentKey) || 'null');
-      return accepted?.version === agreementVersion && accepted.user === user && accepted.accountCreatedAt === (account.createdAt || 0) && Number.isFinite(accepted.acceptedAt) && accepted.acceptedAt <= now() && accepted.acceptedAt < programEndsAt;
+      return accepted?.version === agreementVersion && accepted.revision === sessionRevision && accepted.role === account.role && accepted.user === user && accepted.accountCreatedAt === (account.createdAt || 0) && Number.isFinite(accepted.acceptedAt) && accepted.acceptedAt <= now() && (account.role === 'developer' || accepted.acceptedAt < programEndsAt);
     } catch (_) { return false; }
   }
   function updateAgreementButton() {
-    byId('ctWelcomeContinue').disabled = agreementPreview || agreementBusy || !byId('ctTesterTermsAccepted').checked || !verifiedUser || currentRole !== 'tester' || programClosed();
+    byId('ctWelcomeContinue').disabled = agreementPreview || agreementBusy || !byId('ctTesterTermsAccepted').checked || !verifiedUser || (currentRole !== 'developer' && programClosed());
   }
   function showAgreement(preview = false) {
-    if (preview ? currentRole !== 'developer' || !identityValid() : currentRole !== 'tester' || !identityValid()) return;
+    if (!identityValid() || (preview && (currentRole !== 'developer' || !agreementAccepted))) return;
     agreementPreview = preview; underDevPreview = false;
     byId('ctUnderDevelopment').hidden = true;
     byId('loginScreen').classList.add('hidden'); byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
     byId('ctTesterWelcome').hidden = false;
-    byId('ctWelcomeUser').textContent = preview ? 'Example tester' : currentUser;
+    byId('ctWelcomeUser').textContent = preview ? 'Example registered user' : currentUser;
+    byId('ctWelcomeAccessLabel').textContent = preview ? 'ALL REGISTERED USERS' : currentRole === 'tester' ? 'TEMPORARY TESTER ACCESS' : `${currentRole.toUpperCase()} · PROGRAM AGREEMENT`;
+    byId('ctWelcomeRoleNote').textContent = preview ? 'Each user keeps the permissions assigned to their account.' : currentRole === 'tester' ? 'Your inspection saves are previews only and do not change customer jobs.' : currentRole === 'developer' ? 'Your account can maintain CARTECH after the public dry run closes.' : 'Your permitted actions may update live workshop records. Check every change before saving.';
     byId('ctWelcomePreviewBadge').hidden = !preview;
     byId('ctWelcomeAcknowledgement').hidden = preview;
     byId('ctWelcomeDecline').hidden = preview;
@@ -5412,7 +5470,7 @@ window.CartechAccess = (() => {
     byId('ctWelcomeError').hidden = true;
     if (preview) {
       byId('ctWelcomeCountdown').textContent = '01:00:00';
-      byId('ctWelcomeExpires').textContent = 'Example countdown · no tester session is started';
+      byId('ctWelcomeExpires').textContent = 'Example countdown · no account session is started';
     } else refreshCountdown();
     updateAgreementButton();
     window.scrollTo?.({ top:0, behavior:'instant' });
@@ -5423,10 +5481,11 @@ window.CartechAccess = (() => {
     agreementPreview = false; underDevPreview = false; developerLoginOpen = false;
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
     getAudioContext(); bootApp(); refresh();
+    if (currentRole !== 'tester') void sendPresenceHeartbeat(true);
   }
   async function acceptAgreement(event) {
     event?.preventDefault(); event?.stopPropagation();
-    if (agreementPreview || agreementBusy || currentRole !== 'tester' || !identityValid()) return;
+    if (agreementPreview || agreementBusy || !identityValid() || window.CartechUpdates?.pending()) return;
     if (!byId('ctTesterTermsAccepted').checked) { message('ctWelcomeError', 'Please read and accept the testing terms before entering.', true); return; }
     const actor = currentUser, generation = authGeneration;
     agreementBusy = true; byId('ctTesterTermsAccepted').disabled = true; updateAgreementButton();
@@ -5436,14 +5495,14 @@ window.CartechAccess = (() => {
       const cloud = await readAccounts();
       if (actor !== currentUser || authGeneration !== generation) return;
       receiveAccounts(cloud.parsed);
-      if (!identityValid() || currentRole !== 'tester' || !byId('ctTesterTermsAccepted').checked) return;
+      if (!identityValid() || window.CartechUpdates?.pending() || !byId('ctTesterTermsAccepted').checked) return;
       agreementAccepted = true;
-      try { sessionStorage.setItem(consentKey, JSON.stringify({ user:actor, accountCreatedAt:accountSnapshot.createdAt || 0, version:agreementVersion, acceptedAt:now() })); } catch (_) {}
+      try { sessionStorage.setItem(consentKey, JSON.stringify({ user:actor, role:currentRole, revision:sessionRevision, accountCreatedAt:accountSnapshot.createdAt || 0, version:agreementVersion, acceptedAt:now() })); } catch (_) {}
       enterWorkspace();
     } catch (error) { if (actor === currentUser && authGeneration === generation) message('ctWelcomeError', `Access could not be verified. ${error.message} Reconnect and try again.`, true); }
-    finally { agreementBusy = false; byId('ctTesterTermsAccepted').disabled = false; byId('ctWelcomeContinue').textContent = 'I agree · Enter preview'; updateAgreementButton(); }
+    finally { agreementBusy = false; byId('ctTesterTermsAccepted').disabled = false; byId('ctWelcomeContinue').textContent = 'I agree · Continue'; updateAgreementButton(); }
   }
-  function declineAgreement() { if (!agreementPreview && currentRole === 'tester') signOut('declined'); }
+  function declineAgreement() { if (!agreementPreview && verifiedUser) signOut('declined'); }
   function showDevelopment(preview = false) {
     if (preview && (currentRole !== 'developer' || !identityValid())) return;
     if (!preview && !programClosed()) return;
@@ -5488,13 +5547,9 @@ window.CartechAccess = (() => {
     document.querySelectorAll('details[data-dev-fold]').forEach(details => { details.open = !phone; });
   }
   function roleChanged() {
-    const role = byId('subRole').value;
-    const tester = role === 'tester';
-    if (tester && previousSubRole !== 'tester') byId('subDuration').value = '1';
-    byId('ctPermanentDuration').disabled = tester;
-    byId('ctPermanentDuration').hidden = tester;
-    byId('ctTesterAccountHelp').hidden = !tester;
-    previousSubRole = role; durationChanged();
+    byId('ctPermanentDuration').disabled = true; byId('ctPermanentDuration').hidden = true;
+    byId('ctTesterAccountHelp').hidden = false;
+    previousSubRole = byId('subRole').value; durationChanged();
   }
   function durationChanged() {
     byId('ctCustomDurationField').hidden = byId('subDuration').value !== 'custom';
@@ -5503,32 +5558,30 @@ window.CartechAccess = (() => {
   }
   function localDateTime(ms) { const date = new Date(ms); return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`; }
   function formExpiry(role) {
+    if (role !== 'developer' && programClosed()) throw new Error('The dry run is closed. Staff and tester access cannot pass September 19.');
     const selection = byId('subDuration').value;
-    let expiresAt;
-    if (selection === 'until') expiresAt = new Date(byId('ctAccountExpires').value).getTime();
+    if (selection === 'program') return 0; // Inherit the single program deadline; no per-account migration is needed.
+    let expiry;
+    if (selection === 'until') expiry = new Date(byId('ctAccountExpires').value).getTime();
     else if (selection === 'custom') {
       const minutes = Number(byId('ctCustomDuration').value);
       if (!Number.isInteger(minutes) || minutes < 1 || minutes > 43200) throw new Error('Enter 1–43,200 minutes.');
-      expiresAt = now() + minutes * 60000;
+      expiry = now() + minutes * 60000;
     } else {
       const hours = Number(selection);
-      if (!Number.isFinite(hours) || hours < 0) throw new Error('Choose a valid duration.');
-      expiresAt = hours === 0 ? 0 : now() + hours * 3600000;
+      if (!Number.isFinite(hours) || hours <= 0) throw new Error('Choose the program deadline or a positive duration.');
+      expiry = now() + hours * 3600000;
     }
-    if ((role === 'tester' && !expiresAt) || (expiresAt !== 0 && (!Number.isFinite(expiresAt) || expiresAt <= now()))) throw new Error('Choose an expiry in the future. Testers cannot have permanent access.');
-    if (role === 'tester') {
-      if (programClosed()) throw new Error('The dry run has ended. Tester access cannot be extended beyond September 19.');
-      expiresAt = Math.min(expiresAt, programEndsAt);
-    }
-    return expiresAt;
+    if (!Number.isFinite(expiry) || expiry <= now()) throw new Error('Choose an expiry in the future.');
+    return role === 'developer' ? expiry : Math.min(expiry, programEndsAt);
   }
   async function mutateAccounts(compose, requireDev = true) {
     const actor = currentUser;
-    if (!identityValid()) throw new Error('Sign in with an active management account.');
+    if (!sessionValid()) throw new Error('Sign in and accept the agreement with an active management account.');
     if (requireDev ? currentRole !== 'developer' : !['developer','admin'].includes(currentRole)) throw new Error('Developer access is required.');
     const cloud = await readAccounts();
     const actorAccount = cloud.accounts[actor];
-    if (!actor || currentUser !== actor || ended(actorAccount) || (requireDev ? actorAccount.role !== 'developer' : !['developer','admin'].includes(actorAccount.role))) throw new Error('Account management access is no longer available.');
+    if (!actor || currentUser !== actor || !sessionValid() || ended(actorAccount) || (requireDev ? actorAccount.role !== 'developer' : !['developer','admin'].includes(actorAccount.role))) throw new Error('Account management access is no longer available.');
     const next = compose({ ...cloud.accounts });
     const details = JSON.stringify(next);
     let result;
@@ -5550,12 +5603,12 @@ window.CartechAccess = (() => {
     validateName(username, password);
     // This compatibility entry point cannot create a privileged or permanent tester account.
     if (!['workshop','office','tester'].includes(role)) throw new Error('Choose Workshop, Office, or Temporary Tester.');
-    if (!Number.isFinite(hours) || hours < 0 || (role === 'tester' && hours <= 0)) throw new Error('A tester needs a finite duration.');
+    if (!Number.isFinite(hours) || hours < 0 || false) throw new Error('A tester needs a finite duration.');
     return mutateAccounts(accounts => {
       if (Object.hasOwn(accounts, username)) throw new Error('This username already exists. Use its edit controls.');
-      if (role === 'tester' && programClosed()) throw new Error('The tester dry run has ended.');
+      if (programClosed()) throw new Error('The staff and tester dry run has ended.');
       const expiry = hours > 0 ? now() + hours * 3600000 : 0;
-      accounts[username] = { pass: password, role, expiresAt: role === 'tester' ? Math.min(expiry, programEndsAt) : expiry, createdAt: now(), createdBy: currentUser };
+      accounts[username] = { pass: password, role, expiresAt: expiry ? Math.min(expiry, programEndsAt) : 0, createdAt: now(), createdBy: currentUser };
       return accounts;
     }, role === 'tester');
   }
@@ -5573,7 +5626,7 @@ window.CartechAccess = (() => {
         return accounts;
       }, role === 'tester');
       const expires = next[user].expiresAt;
-      message('ctAccountMessage', `${user} is ready to sign in.${expires ? ' Access expires ' + new Date(expires).toLocaleString() + '.' : ''}${role === 'tester' ? ' Share the username and password you entered. Diagnostic preview is available before launch.' : ''}`);
+      message('ctAccountMessage', `${user} is ready to sign in.${expires ? ' Access expires ' + philippineDate(expires) + '.' : ' Access follows the September 19 program deadline.'} All users must accept the program agreement.${role === 'tester' ? ' Share the username and password you entered. Diagnostic preview is available before launch.' : ''}`);
       byId('subUsername').value = ''; byId('subPassword').value = '';
     } catch (error) { message('ctAccountMessage', error.message, true); }
     finally { accountBusy = false; byId('ctCreateAccountButton').disabled = false; }
@@ -5595,28 +5648,53 @@ window.CartechAccess = (() => {
     finally { accountBusy = false; }
   }
   function openEditAccess(user) {
-    if (currentRole !== 'developer' || cachedCloudAccounts[user]?.role !== 'tester') return;
-    editing = user; byId('ctEditAccessUser').textContent = user;
-    byId('ctEditAccessExpiry').value = localDateTime(Math.max(cachedCloudAccounts[user].expiresAt || 0, now()+60000));
-    byId('ctEditAccessMessage').hidden = true;
+    if (currentRole !== 'developer' || !sessionValid() || !validAccount(cachedCloudAccounts[user])) return;
+    editing = user; const acc = cachedCloudAccounts[user];
+    byId('ctEditAccessUser').textContent = `${user} · ${acc.role}`;
+    byId('ctEditAccessUseDefault').checked = !finiteExpiry(acc);
+    byId('ctEditAccessDefaultLabel').textContent = acc.role === 'developer' ? 'Keep developer maintenance access (no expiry)' : 'Use the shared September 19 deadline';
+    byId('ctEditAccessExpiry').value = localDateTime(Math.max(Number.isFinite(effectiveExpiry(acc)) ? effectiveExpiry(acc) : now()+3600000, now()+60000));
+    byId('ctEditAccessExpiry').max = acc.role === 'developer' ? '' : localDateTime(programEndsAt);
+    byId('ctEditAccessRevoke').hidden = ['dev','admin'].includes(user);
+    byId('ctEditAccessMessage').hidden = true; syncAccessEditor();
     byId('ctEditAccessDialog').showModal();
   }
   function closeEditAccess() { if (accountBusy) return; byId('ctEditAccessDialog').close(); editing = null; }
-  function setExpiryFromNow(minutes) { if (currentRole === 'developer' && [30,60,120].includes(minutes)) byId('ctEditAccessExpiry').value = localDateTime(now()+minutes*60000); }
+  function syncAccessEditor() { byId('ctEditAccessExpiry').disabled = byId('ctEditAccessUseDefault').checked; }
+  function setExpiryFromNow(minutes) {
+    if (currentRole !== 'developer' || !sessionValid() || !editing || ![30,60,120].includes(minutes)) return;
+    const acc = cachedCloudAccounts[editing];
+    byId('ctEditAccessUseDefault').checked = false; syncAccessEditor();
+    byId('ctEditAccessExpiry').value = localDateTime(acc.role === 'developer' ? now()+minutes*60000 : Math.min(now()+minutes*60000, programEndsAt));
+  }
+  function addAccessTime() {
+    if (currentRole !== 'developer' || !sessionValid() || !editing) return;
+    const minutes = Number(byId('ctEditAddMinutes').value), acc = cachedCloudAccounts[editing];
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 43200) { message('ctEditAccessMessage','Enter 1–43,200 minutes to add.',true); return; }
+    const selected = byId('ctEditAccessUseDefault').checked ? effectiveExpiry(acc) : new Date(byId('ctEditAccessExpiry').value).getTime();
+    if (!Number.isFinite(selected)) { message('ctEditAccessMessage','This developer account already has no expiry.',false); return; }
+    let expiry = Math.max(now(), Number.isFinite(selected) ? selected : now()) + minutes*60000;
+    if (acc.role !== 'developer') expiry = Math.min(expiry, programEndsAt);
+    byId('ctEditAccessUseDefault').checked = false; syncAccessEditor(); byId('ctEditAccessExpiry').value = localDateTime(expiry);
+    message('ctEditAccessMessage', expiry === programEndsAt ? 'The September 19 program deadline is the latest permitted expiry. Click Save access to confirm.' : 'Time added to the selected expiry. Click Save access to confirm.');
+  }
   async function editExpiry(event) {
     event?.preventDefault(); event?.stopPropagation();
-    if (!editing || accountBusy || currentRole !== 'developer') return;
-    const user = editing, expiry = Math.min(new Date(byId('ctEditAccessExpiry').value).getTime(), programEndsAt);
+    if (!editing || accountBusy || currentRole !== 'developer' || !sessionValid()) return;
+    const user = editing, useDefault = byId('ctEditAccessUseDefault').checked;
+    const selected = new Date(byId('ctEditAccessExpiry').value).getTime();
     accountBusy = true; byId('ctEditAccessSave').disabled = true;
     try {
-      if (programClosed()) throw new Error('The dry run has ended. Tester accounts cannot be renewed for this testing period.');
-      if (!Number.isFinite(expiry) || expiry <= now()) throw new Error('Choose an expiry in the future, or use Revoke now.');
       await mutateAccounts(accounts => {
-        if (accounts[user]?.role !== 'tester') throw new Error('This tester account is no longer available.');
-        accounts[user] = { ...accounts[user], expiresAt: expiry, revoked: false, accessUpdatedAt: now(), accessUpdatedBy: currentUser };
+        const acc = accounts[user];
+        if (!validAccount(acc)) throw new Error('This account is no longer available.');
+        if (acc.role !== 'developer' && programClosed()) throw new Error('The dry run has ended. Staff and tester accounts cannot be renewed past September 19.');
+        const expiry = useDefault ? 0 : acc.role === 'developer' ? selected : Math.min(selected, programEndsAt);
+        if (!useDefault && (!Number.isFinite(expiry) || expiry <= now())) throw new Error('Choose an expiry in the future, or use Revoke now.');
+        accounts[user] = { ...acc, expiresAt:expiry, revoked:false, accessUpdatedAt:now(), accessUpdatedBy:currentUser };
         return accounts;
       });
-      message('ctEditAccessMessage', `Access now ends ${new Date(expiry).toLocaleString()}.`);
+      byId('ctEditAccessDialog').close(); editing = null; message('ctAccountMessage', `Access updated for ${user}. Online sessions receive it on their next account check.`);
     } catch (error) { message('ctEditAccessMessage', error.message, true); }
     finally { accountBusy = false; byId('ctEditAccessSave').disabled = false; }
   }
@@ -5663,7 +5741,7 @@ window.CartechAccess = (() => {
   window.addEventListener('storage', event => { if (['cartech_auth_user','cartech_auth_role'].includes(event.key) && verifiedUser && (localStorage.getItem('cartech_auth_user') !== verifiedUser || localStorage.getItem('cartech_auth_role') !== verifiedRole)) signOut(); });
   setInterval(checkExpiry, 1000);
   roleChanged(); refresh(); checkExpiry();
-  return { programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  return { buildId, sessionRevision, agreementVersion, effectiveExpiry, syncAccessEditor, addAccessTime, programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
 })();
 
 window.CartechInspections = (() => {
@@ -5740,6 +5818,95 @@ window.CartechInspections = (() => {
   document.addEventListener('click', event => { const button=event.target.closest('[data-inspection-job]'); if(button)open(button.dataset.inspectionJob); });
   dialog.addEventListener('close',()=>{selected=null;});
   return { card, info, open, close, print, download, refresh, reset };
+})();
+
+/* Same-origin deployment checks. HEAD requests avoid downloading embedded logos every minute.
+   First installation still requires loading this code once on each old, already-open page. */
+window.CartechUpdates = (() => {
+  'use strict';
+  const status = text => { const node=document.getElementById('ctUpdateStatus'); if(node)node.textContent=text; };
+  let busy=null, lastCheck=0, lastBodyCheck=0, initialized=false, signature=null, updatePending=false, reloadTarget='';
+  const loadedModified = Date.parse(document.lastModified || '');
+  function eligible() { return typeof location !== 'undefined' && ['http:','https:'].includes(location.protocol); }
+  function sourceURL() {
+    const url=new URL(location.href);
+    url.hash=''; url.searchParams.delete('_ct_release'); url.searchParams.delete('_ct_check');
+    url.searchParams.set('_ct_check',String(Date.now())); return url;
+  }
+  function stamp(response) { return response.headers.get('etag') || response.headers.get('last-modified') || null; }
+  async function fetchPage(method) {
+    const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),12000);
+    try {
+      const response=await fetch(sourceURL().href,{method,cache:'no-store',credentials:'same-origin',redirect:'error',signal:controller.signal});
+      if(!response.ok)throw new Error('Update check unavailable');
+      if(method==='HEAD')return {signature:stamp(response),modified:Date.parse(response.headers.get('last-modified')||'')};
+      let text='';
+      if(response.body?.getReader && typeof TextDecoder!=='undefined') {
+        const reader=response.body.getReader(), decoder=new TextDecoder();
+        try { while(text.length<16384) { const part=await reader.read(); if(part.done)break; text+=decoder.decode(part.value,{stream:true}); if(text.includes('</head>') || (/<meta\b[^>]*name=["']cartech-build["'][^>]*>/i.test(text) && /<meta\b[^>]*name=["']cartech-application["'][^>]*>/i.test(text)))break; } }
+        finally { await reader.cancel().catch(()=>{}); }
+      } else text=(await response.text()).slice(0,16384);
+      const meta={};
+      for(const tag of text.match(/<meta\b[^>]*>/gi)||[]) {
+        const name=tag.match(/\bname\s*=\s*["']([^"']+)["']/i)?.[1];
+        const value=tag.match(/\bcontent\s*=\s*["']([^"']+)["']/i)?.[1];
+        if(name)meta[name]=value;
+      }
+      if(meta['cartech-application']!=='CARTECH-HYBRID-QUEUE' || !/^[a-z0-9-]{6,100}$/i.test(meta['cartech-build']||''))throw new Error('Not a CARTECH release');
+      return {build:meta['cartech-build'],signature:stamp(response),modified:Date.parse(response.headers.get('last-modified')||'')};
+    } finally { clearTimeout(timeout); }
+  }
+  function reload() {
+    if(!updatePending || !eligible())return;
+    const url=new URL(location.href);url.hash='';url.searchParams.delete('_ct_check');
+    url.searchParams.set('_ct_release',Date.now().toString(36));location.replace(url.href);
+  }
+  function beginUpdate(target) {
+    if(updatePending)return;
+    updatePending=true; reloadTarget=target;
+    window.CartechAccess.signOut('updated');
+    document.getElementById('ctUpdateNotice').hidden=false;
+    status('Update published. Signing out and loading the new release.');
+    let autoReload=true;
+    try {
+      const key='cartech_update_reload_guard', previous=JSON.parse(sessionStorage.getItem(key)||'null');
+      const recent=previous?.target===target && Date.now()-previous.at<60000;
+      const attempts=recent ? previous.attempts+1 : 1;
+      autoReload=attempts<=2;sessionStorage.setItem(key,JSON.stringify({target,at:Date.now(),attempts}));
+    } catch (_) {}
+    if(autoReload)setTimeout(reload,900);
+  }
+  function check(force=false) {
+    if(updatePending)return Promise.resolve(true);
+    if(busy)return busy;
+    if(!eligible()){status('Automatic updates become available when this HTML is hosted online.');return Promise.resolve(false);}
+    if((document.hidden && !force) || (!force && Date.now()-lastCheck<45000))return Promise.resolve(false);
+    lastCheck=Date.now();
+    busy=(async()=>{
+      try {
+        let head=null;
+        try { head=await fetchPage('HEAD'); } catch (_) {}
+        if(initialized && head?.signature && signature===head.signature){status('Up to date · checks every minute while active');return false;}
+        if(initialized && !head?.signature && Date.now()-lastBodyCheck<300000 && !force)return false;
+        const page=await fetchPage('GET');lastBodyCheck=Date.now();
+        const nextSignature=page.signature||head?.signature||null;
+        const modified=Number.isFinite(page.modified)?page.modified:head?.modified;
+        const changed=page.build!==window.CartechAccess.buildId ||
+          (initialized && !!nextSignature && !!signature && nextSignature!==signature) ||
+          (!initialized && Number.isFinite(loadedModified) && Number.isFinite(modified) && modified>loadedModified+1000);
+        if(changed){beginUpdate(page.build+':'+(nextSignature||modified||''));return true;}
+        signature=nextSignature;initialized=true;status('Up to date · checks every minute while active');return false;
+      } catch (_) {status('Update check unavailable · will retry when connected');return false;}
+      finally {busy=null;}
+    })();
+    return busy;
+  }
+  setInterval(()=>void check(),60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void check(true);});
+  window.addEventListener('focus',()=>void check());
+  window.addEventListener('online',()=>void check(true));
+  window.addEventListener('pageshow',()=>void check(true));
+  return {check,reload,pending:()=>updatePending};
 })();
 
 /* Manufacturer logos: https://github.com/filippofilip95/car-logos-dataset
