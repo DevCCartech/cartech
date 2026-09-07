@@ -829,6 +829,130 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 }
 @media print { .ct-tester-banner { display:none!important; } }
 
+
+.ct-welcome-screen,.ct-development-screen { background:#f3f6fa; min-height:100dvh; width:100%; padding:28px 20px; color:#233448; }
+.ct-welcome-screen[hidden],.ct-development-screen[hidden],#ctWelcomePreviewClose[hidden],#ctDevelopmentPreviewClose[hidden],#ctTrialControlCard[hidden] { display:none!important; }
+.ct-welcome-wrap { max-width:820px; margin:auto; }
+.ct-welcome-brand { display:flex; align-items:center; gap:11px; padding:0 4px 22px; }
+.ct-welcome-mark { display:grid; place-items:center; flex:none; width:37px; height:37px; border-radius:10px; background:#f16e36; color:#fff; font-size:18px; }
+.ct-welcome-brand strong { display:block; font-size:17px; letter-spacing:.05em; font-weight:750; }
+.ct-welcome-brand small { display:block; margin-top:3px; font-size:9px; letter-spacing:.12em; color:#76849a; }
+.ct-welcome-brand > .ct-welcome-chip { margin-left:auto; }
+.ct-welcome-card { border:1px solid #dfe6ef; background:#fff; border-radius:16px; overflow:clip; box-shadow:0 7px 28px #293c5610; }
+.ct-welcome-hero { padding:28px 30px 23px; border-top:4px solid #177e80; }
+.ct-welcome-chip { display:inline-flex; align-items:center; font-size:10px; font-weight:650; letter-spacing:.04em; padding:5px 8px; border-radius:5px; color:#156a71; background:#ebf5f5; }
+.ct-welcome-hero h1 { margin:14px 0 10px; font-size:28px; font-weight:650; line-height:1.25; letter-spacing:-.025em; }
+.ct-welcome-hero > p { font-size:14px; line-height:1.7; color:#687c90; max-width:650px; }
+.ct-welcome-session { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; padding:17px 30px; background:#f8fafc; border-block:1px solid #e5ebf1; }
+.ct-welcome-session span,.ct-welcome-session small { display:block; font-size:11px; line-height:1.5; color:#738497; }
+.ct-welcome-session strong { display:block; font-size:14px; margin:4px 0; overflow-wrap:anywhere; }
+.ct-welcome-timer { text-align:right; }
+.ct-welcome-timer time { display:block; color:#16777a; font:600 25px/1.4 ui-monospace,monospace; letter-spacing:.03em; font-variant-numeric:tabular-nums; }
+.ct-welcome-timer.ct-time-urgent time { color:#a73b41; }
+.ct-welcome-content { padding:24px 30px; }
+.ct-welcome-content h2 { font-size:14px; font-weight:650; line-height:1.5; margin:0 0 7px; }
+.ct-welcome-content p { font-size:13px; line-height:1.75; color:#66798b; margin:0; }
+.ct-welcome-deadline { display:flex; align-items:flex-start; gap:13px; border:1px solid #eedcc5; background:#fffaf1; border-radius:10px; padding:16px; }
+.ct-welcome-deadline > i { color:#bc8142; font-size:18px; margin-top:2px; }
+.ct-welcome-deadline h2 { color:#8c602e; }
+.ct-release-note { display:block; font-size:12px; font-weight:600; color:#8d673d; margin-top:8px; }
+.ct-welcome-note { padding:22px 0; border-bottom:1px solid #e8edf2; }
+.ct-welcome-rules > section { display:flex; gap:14px; padding-top:22px; }
+.ct-rule-number { display:flex; align-items:center; justify-content:center; width:29px; height:29px; flex:none; border-radius:7px; background:#f0f5f8; font-size:11px; font-weight:600; color:#72899c; }
+.ct-welcome-footer { padding:20px 30px; background:#f8fafb; border-top:1px solid #e1e8ef; }
+.ct-welcome-check { display:flex; align-items:flex-start; gap:11px; padding:8px 0; font-size:13px; line-height:1.7; color:#354c60; cursor:pointer; }
+.ct-welcome-check input { flex:none; width:19px; height:19px; margin-top:2px; accent-color:#16787a; }
+.ct-welcome-consent-note { font-size:11px; color:#7c8c9b; display:block; margin:3px 0 0 30px; line-height:1.6; }
+.ct-welcome-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:9px; margin-top:16px; }
+.ct-button.ct-welcome-primary { background:#16787a; border-color:#16787a; color:#fff; }
+.ct-button.ct-welcome-primary:hover { background:#116a6b; }
+.ct-welcome-error { color:#ae3445; font-size:12px; margin-top:12px; }
+.ct-welcome-footnote { text-align:center; margin:17px 0 5px; font-size:10px; color:#8592a2; }
+.ct-development-screen { display:grid; place-items:center; }
+.ct-development-card { max-width:590px; padding:36px 34px; text-align:center; border:1px solid #e2e8f0; border-radius:18px; background:white; box-shadow:0 7px 28px #293c5610; }
+.ct-development-icon { display:grid; place-items:center; width:68px; height:68px; border-radius:18px; color:#d7723c; background:#fff3e8; margin:0 auto 20px; font-size:29px; }
+.ct-development-brand { color:#76859a; font-size:10px; letter-spacing:.15em; margin-bottom:15px; }
+.ct-development-card h1 { font-size:27px; letter-spacing:.02em; font-weight:700; margin:14px 0; line-height:1.3; }
+.ct-development-card p { font-size:14px; line-height:1.8; color:#6d7e8d; }
+.ct-development-release { font-size:13px; padding:12px; margin:20px 0; background:#f1f7f7; color:#347c7d; border-radius:8px; }
+.ct-development-card .ct-development-note { font-size:12px; margin-bottom:25px; }
+.ct-trial-controls { border:1px solid #dce7ec; border-radius:12px; background:#f7fbfb; padding:18px 20px; }
+.ct-trial-controls-top { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 14px; }
+.ct-trial-controls h3 { font-size:15px; font-weight:650; color:#294a58; }
+.ct-trial-controls p { font-size:12px; color:#718393; margin:7px 0 12px; line-height:1.65; }
+.ct-trial-controls-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.ct-trial-controls-actions .ct-button { font-size:12px!important; }
+/* The control terminal uses phone-sized cards, never viewport zoom or scaled text. */
+#viewDeveloper, #viewDeveloper .ct-dev-columns, #viewDeveloper .ct-dev-columns > div { min-width:0; }
+#viewDeveloper .ct-dev-fold { background:white; border:1px solid #e2e8f0; border-radius:12px; }
+#viewDeveloper .ct-dev-fold > summary { list-style:none; padding:14px 17px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13px; font-weight:600; color:#52657b; cursor:pointer; min-height:46px; }
+#viewDeveloper .ct-dev-fold > summary::-webkit-details-marker { display:none; }
+#viewDeveloper .ct-dev-fold > summary:after { content:'+'; font-size:18px; font-weight:400; }
+#viewDeveloper .ct-dev-fold[open] > summary:after { content:'−'; }
+#viewDeveloper .ct-dev-fold > div { margin:0!important; border:0; box-shadow:none; border-radius:0 0 12px 12px; }
+#viewDeveloper .ct-account-card { min-width:0; }
+#viewDeveloper .ct-account-card .ct-account-actions { min-width:0; flex-wrap:wrap; }
+#viewDeveloper .ct-account-card .ct-account-password { overflow-wrap:anywhere; white-space:normal; max-width:100%; }
+@media (max-width:1100px) {
+ #viewDeveloper .ct-dev-columns { display:flex; flex-direction:column; gap:14px; }
+ #viewDeveloper .ct-dev-columns > div { width:100%; }
+}
+@media (max-width:760px) {
+ .ct-welcome-screen,.ct-development-screen { padding:15px 12px; }
+ .ct-welcome-brand { padding:0 2px 14px; gap:8px; }
+ .ct-welcome-brand > .ct-welcome-chip { font-size:9px; padding:4px 6px; }
+ .ct-welcome-card { border-radius:12px; }
+ .ct-welcome-hero { padding:21px 18px 18px; }
+ .ct-welcome-hero h1 { font-size:23px; }
+ .ct-welcome-hero > p { font-size:13px; }
+ .ct-welcome-session { padding:14px 18px; gap:10px; position:sticky; top:0; z-index:2; }
+ .ct-welcome-timer time { font-size:23px; }
+ .ct-welcome-content { padding:18px; }
+ .ct-welcome-content p { font-size:13px; }
+ .ct-welcome-deadline { padding:12px; gap:9px; }
+ .ct-welcome-rules > section { gap:10px; padding-top:19px; }
+ .ct-welcome-footer { padding:15px 18px; }
+ .ct-welcome-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+ .ct-welcome-actions .ct-button { font-size:12px; padding:10px 8px; min-height:44px; white-space:normal; }
+ #ctWelcomePreviewClose { grid-column:1/-1; }
+ .ct-development-card { padding:28px 22px; }
+ .ct-development-card h1 { font-size:24px; }
+ #viewDeveloper { padding:12px; width:100%; max-width:100%; }
+ #viewDeveloper > * + * { margin-top:12px!important; }
+ #viewDeveloper > .ct-dev-header { padding:15px; gap:12px; border-radius:10px; box-shadow:none; }
+ #viewDeveloper .ct-dev-header h2 { font-size:20px; line-height:1.3; }
+ #viewDeveloper .ct-dev-header p { font-size:12px; line-height:1.6; }
+ #viewDeveloper .ct-dev-header > div:last-child { display:flex; flex-wrap:wrap; width:100%; gap:7px; }
+ #viewDeveloper .ct-dev-header > div:last-child button { flex:1; min-width:0; white-space:normal; font-size:12px; padding:9px; }
+ #viewDeveloper .ct-dev-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+ #viewDeveloper .ct-dev-metrics > div { padding:12px; border-radius:9px; min-width:0; }
+ #viewDeveloper .ct-dev-metrics .text-3xl { font-size:25px; }
+ #viewDeveloper .ct-dev-metrics .text-\[10px\] { font-size:10px; line-height:1.6; }
+ #viewDeveloper .ct-dev-columns { display:contents; }
+ #viewDeveloper .ct-dev-columns > div { display:contents; }
+ #viewDeveloper .ct-dev-columns > div > div { margin-top:12px!important; padding:14px; box-shadow:none; border-radius:10px; }
+ #viewDeveloper .ct-dev-columns h3,#viewDeveloper .ct-dev-fold h3 { font-size:13px; line-height:1.55; min-width:0; }
+ #viewDeveloper .ct-dev-columns .flex.justify-between { flex-wrap:wrap; gap:8px; }
+ #viewDeveloper input:not([type='checkbox']),#viewDeveloper select,#viewDeveloper textarea { width:100%; max-width:100%; min-width:0; font-size:16px; min-height:44px; padding:10px 11px; }
+ #viewDeveloper form label { font-size:11px; line-height:1.6; }
+ #viewDeveloper form .grid { grid-template-columns:1fr; gap:11px; }
+ #viewDeveloper button { min-height:42px; font-size:12px; overflow-wrap:anywhere; white-space:normal; }
+ #viewDeveloper .ct-account-card { padding:12px; gap:10px; }
+ #viewDeveloper .ct-account-actions { align-self:stretch; width:100%; display:flex; gap:7px; }
+ #viewDeveloper .ct-account-actions .ct-account-password { flex:1; min-width:0; font-size:12px; line-height:1.6; padding:7px 8px; }
+ #viewDeveloper .ct-account-actions button { flex:none; min-width:42px; min-height:42px; }
+ #devRegisteredAccountsContainer,#devStaffPresenceList,#devDeletedLogsList { max-height:none; overflow:visible; padding-right:0; }
+ #devHolidayRosterList { grid-template-columns:1fr; }
+ #viewDeveloper .ct-trial-controls { padding:15px; }
+ #viewDeveloper .ct-trial-controls-actions { display:grid; grid-template-columns:1fr; }
+ #viewDeveloper .ct-launch-card { padding:14px; }
+ #viewDeveloper .ct-launch-heading { flex-wrap:wrap; }
+ #viewDeveloper .ct-launch-preview > div,#viewDeveloper .ct-launch-bottom { flex-wrap:wrap; }
+ #viewDeveloper .ct-launch-preview button { width:100%; }
+ #viewDeveloper .ct-launch-bottom button { width:100%; }
+}
+@media print { .ct-welcome-screen,.ct-development-screen { display:none!important; } }
+
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -1132,7 +1256,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 
     <!-- DEVELOPER & ADMIN VIEW -->
     <main id="viewDeveloper" class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full">
-      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="ct-dev-header bg-white p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span id="devBadgeTitle" class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
             <i class="fa-solid fa-sliders mr-1"></i> <span id="terminalRoleHeader">Admin & Dev Control Terminal</span>
@@ -1154,6 +1278,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       </div>
 
       <!-- BROADCAST ANNOUNCEMENT CARD -->
+      <details id="ctDevAnnouncementFold" class="ct-dev-fold" data-dev-fold open><summary>Announcements & notices</summary>
       <div class="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-6 rounded-3xl shadow-xl space-y-3 border border-orange-400/40">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-sm"><i class="fa-solid fa-bullhorn"></i></div>
@@ -1170,8 +1295,10 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
           </button>
         </div>
       </div>
+      </details>
 
       <!-- HOLIDAY & DUTY SCHEDULE CONTROL CARD -->
+      <details id="ctDevDutyFold" class="ct-dev-fold" data-dev-fold open><summary>Staff duty & holiday settings</summary>
       <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
           <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -1182,8 +1309,15 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
         <p class="text-xs text-slate-500">Manage mechanics and office staff status. Marking any user as <strong>Holiday</strong> strictly locks them out of the workspace with the Day-Off screen.</p>
         <div id="devHolidayRosterList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
       </div>
+      </details>
 
       <!-- DEVELOPER FEATURE FLAG MANAGEMENT -->
+      <section id="ctTrialControlCard" class="ct-trial-controls" hidden aria-labelledby="ctTrialControlTitle">
+        <div class="ct-trial-controls-top"><h3 id="ctTrialControlTitle">Tester agreement & dry-run schedule</h3><span id="ctTrialProgramStatus" class="ct-welcome-chip">Dry run open</span></div>
+        <p>Testing runs through September 19, 2026, 11:59 PM Philippine time. Non-developer access closes at midnight on September 20. No release date has been announced.</p>
+        <div class="ct-trial-controls-actions"><button type="button" class="ct-button" onclick="CartechAccess.previewAgreement()"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Preview tester agreement</button><button type="button" class="ct-button" onclick="CartechAccess.previewDevelopment()"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Preview Under Development</button></div>
+      </section>
+
       <section id="devFeatureFlagCard" class="ct-launch-card hidden" aria-labelledby="ctDiagLaunchTitle">
         <div class="ct-launch-heading"><div><span class="df-eyebrow">DEVELOPER CONTROLS</span><h3 id="ctDiagLaunchTitle">Diagnostics · workshop release</h3><p>Preview the complete inspection, belts, battery checks, and mechanic VIN entry.</p></div><span id="featureStatusBadge" class="ct-launch-badge">Developer preview only</span></div>
         <div class="ct-launch-preview"><label for="ctDiagPreviewJob">Choose a job to preview</label><div><select id="ctDiagPreviewJob" aria-label="Job for developer preview"></select><button id="ctDiagPreviewButton" type="button" class="ct-button" onclick="CartechDiagnostics.preview()">Preview inspection</button></div><small>Preview uses the selected job. Saving updates that job’s inspection.</small></div>
@@ -1191,7 +1325,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       </section>
 
       <!-- KPI Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="ct-dev-metrics grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
           <div>
@@ -1223,6 +1357,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       </div>
 
       <!-- DIAGNOSTIC LOG ARCHIVE HUB -->
+      <details id="ctDevArchiveFold" class="ct-dev-fold" data-dev-fold open><summary>Diagnostic archive & printing</summary>
       <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
           <h3 class="font-black text-slate-900 flex items-center gap-2">
@@ -1239,9 +1374,10 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
         </div>
         <div id="diagSearchResults" class="space-y-2 max-h-[260px] overflow-y-auto"></div>
       </div>
+      </details>
 
       <!-- SUB-ACCOUNT REGISTRATION & PRESENCE GRID -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="ct-dev-columns grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-6 space-y-6">
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
@@ -1286,7 +1422,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 
               <div id="ctCustomDurationField" hidden><label class="df-label" for="ctCustomDuration">Access duration (minutes)</label><input id="ctCustomDuration" class="df-input" type="number" min="1" max="43200" step="1" value="60"></div>
               <div id="ctExpiryDateField" hidden><label class="df-label" for="ctAccountExpires">Access expires at · your local time</label><input id="ctAccountExpires" class="df-input" type="datetime-local"></div>
-              <p id="ctTesterAccountHelp" class="ct-access-help" hidden>Timer starts when the account is created. Testers can view the office panel and try unreleased diagnostics. Preview saves stay in their session; shop records remain protected from test edits.</p>
+              <p id="ctTesterAccountHelp" class="ct-access-help" hidden>Timer starts when the account is created. Testers must accept the welcome agreement before entering. Access ends at the account expiry or the September 19 dry-run deadline, whichever is earlier. Preview saves stay in their session.</p>
               <p id="ctAccountMessage" role="status" class="ct-access-help" hidden></p>
               <button id="ctCreateAccountButton" type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer">
                 <i class="fa-solid fa-user-check text-xs"></i> Create account
@@ -1488,6 +1624,36 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
   </div>
 
   <!-- 6. CARTECH INSPECTION FORM -->
+  <section id="ctTesterWelcome" class="ct-welcome-screen" hidden aria-labelledby="ctWelcomeTitle">
+    <div class="ct-welcome-wrap">
+      <header class="ct-welcome-brand"><span class="ct-welcome-mark"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><div><strong>CARTECH</strong><small>HYBRID QUEUE · DEVELOPER DRY RUN</small></div><span id="ctWelcomePreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></header>
+      <article class="ct-welcome-card">
+        <div class="ct-welcome-hero"><span class="ct-welcome-chip">TEMPORARY TESTER ACCESS</span><h1 id="ctWelcomeTitle" tabindex="-1">Welcome to the CARTECH dry run.</h1><p>This space is for invited testers. Before entering the office preview, please read the testing terms and guidelines below.</p></div>
+        <div class="ct-welcome-session"><div><span>Signed in as</span><strong id="ctWelcomeUser">Tester</strong><small id="ctWelcomeExpires"></small></div><div class="ct-welcome-timer"><span>Your remaining access</span><time id="ctWelcomeCountdown" aria-label="Testing time remaining">00:00:00</time><small>The timer continues while you read.</small></div></div>
+        <div class="ct-welcome-content">
+          <section class="ct-welcome-deadline"><i class="fa-regular fa-calendar" aria-hidden="true"></i><div><h2>Dry run ends September 19, 2026</h2><p>Testing runs through <strong>11:59 PM, Philippine time</strong>. From <strong>September 20, 2026 at 12:00 AM (UTC+8)</strong>, staff and tester access closes and the website shows <strong>UNDER DEVELOPMENT</strong>. Your account may expire sooner.</p><span class="ct-release-note">No release date has been announced.</span></div></section>
+          <section class="ct-welcome-note"><h2>A note from the developer</h2><p>I am building CARTECH independently with a limited budget. I do not yet have funding for dedicated server or cloud infrastructure. This dry run uses the resources currently available so I can learn from your feedback and improve the system before deciding on a future release. Thank you for helping me test it responsibly.</p></section>
+          <div class="ct-welcome-rules">
+            <section><span class="ct-rule-number">01</span><div><h2>Test the features and share useful feedback</h2><p>You can view the office panel, try unreleased inspection forms, and note anything confusing or broken. Features may change, stop working, or be paused during testing. Preview answers may be cleared when you refresh or sign out.</p></div></section>
+            <section><span class="ct-rule-number">02</span><div><h2>Use the preview safely</h2><p>Diagnostic preview saves stay in your session and do not update customer jobs. Use sample information where possible. Do not enter payment details, personal passwords, or other sensitive information into test fields. Do not use preview findings as approval for a repair or a vehicle safety decision.</p></div></section>
+            <section><span class="ct-rule-number">03</span><div><h2>Respect privacy and account access</h2><p>The office view may contain workshop and customer information. Keep it private; do not share customer details, screenshots, or your login without permission. Use only the features provided to your tester account. Do not attempt to change staff accounts, live records, or access limits.</p></div></section>
+            <section><span class="ct-rule-number">04</span><div><h2>Understand the limits of this dry run</h2><p>This is an unfinished test system. It is not a promise of uninterrupted service, permanent data storage, or complete security. If something looks unsafe or a save behaves unexpectedly, stop that action and report it to the developer. You can leave the test at any time.</p></div></section>
+            <section><span class="ct-rule-number">05</span><div><h2>Your access is temporary</h2><p>Access ends when your account timer expires, the developer revokes it, or the dry run closes—whichever happens first. Extending your account does not extend the September 19 testing period. A public release will only follow a separate announcement.</p></div></section>
+          </div>
+        </div>
+        <form id="ctTesterAgreementForm" class="ct-welcome-footer" onsubmit="CartechAccess.acceptAgreement(event); return false;" novalidate>
+          <div id="ctWelcomeAcknowledgement"><label class="ct-welcome-check" for="ctTesterTermsAccepted"><input id="ctTesterTermsAccepted" type="checkbox" onchange="CartechAccess.updateAgreementButton()"><span>I have read the testing terms and guidelines, understand the limits and expiry, and agree to use this tester account responsibly.</span></label><small class="ct-welcome-consent-note">This acknowledgement applies to this testing session. Choose Leave test if you do not agree.</small></div>
+          <p id="ctWelcomeError" class="ct-welcome-error" role="alert" hidden></p>
+          <div class="ct-welcome-actions"><button id="ctWelcomeDecline" type="button" class="ct-button" onclick="CartechAccess.declineAgreement()">Leave test</button><button id="ctWelcomeContinue" type="submit" class="ct-button ct-welcome-primary" disabled>I agree · Enter preview <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button><button id="ctWelcomePreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
+        </form>
+      </article>
+      <p class="ct-welcome-footnote">CARTECH HYBRID QUEUE · Limited developer dry run · Terms version September 6, 2026</p>
+    </div>
+  </section>
+  <section id="ctUnderDevelopment" class="ct-development-screen" hidden aria-labelledby="ctDevelopmentTitle">
+    <div class="ct-development-card"><span class="ct-development-icon"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span><h1 id="ctDevelopmentTitle" tabindex="-1">UNDER DEVELOPMENT</h1><p>The CARTECH dry run ended on <strong>September 19, 2026</strong>, Philippine time. Staff and tester access is now closed while the developer reviews feedback and works on improvements.</p><div class="ct-development-release">No release date has been announced.</div><p class="ct-development-note">This project is built by an independent developer with limited resources. Thank you to everyone who helped test it.</p><button id="ctDevelopmentSignIn" type="button" class="ct-button" onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctDevelopmentPreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
+  </section>
+
   <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="Temporary tester access">
     <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> Tester preview</span><span class="ct-tester-caption">Office view & unreleased diagnostics</span></div>
     <div class="ct-tester-tools"><time id="ctTesterCountdown" aria-label="Time remaining">01:00:00</time><button type="button" class="ct-button" onclick="CartechAccess.openFeedback()">Feedback notes</button><button type="button" class="ct-button" onclick="handleLogout()">Exit test</button></div>
@@ -2351,6 +2517,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
     }
 
     function checkAndTriggerAnnouncementAlert() {
+      if (!window.CartechAccess?.sessionValid() || document.getElementById('appShell').classList.contains('hidden')) return;
       renderTopFloatingAnnouncement();
 
       if (!activeAnnouncement || !activeAnnouncement.text) {
@@ -3768,7 +3935,7 @@ async function submitPartsRequest() {
           let timerBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"><i class="fa-solid fa-infinity mr-1"></i> Permanent</span>`;
 
           if (acc && acc.expiresAt && acc.expiresAt > 0) {
-            const timeLeftMs = acc.expiresAt - now;
+            const timeLeftMs = (acc.role === 'tester' ? Math.min(acc.expiresAt, window.CartechAccess?.programEndsAt ?? acc.expiresAt) : acc.expiresAt) - now;
             if (timeLeftMs > 0) {
               const hoursLeft = Math.floor(timeLeftMs / (3600000));
               const minutesLeft = Math.floor((timeLeftMs % 3600000) / 60000);
@@ -3781,7 +3948,7 @@ async function submitPartsRequest() {
           const isPermanentAdmin = u === 'dev' || u === 'admin';
 
           accHTML += `
-            <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+            <div class="ct-account-card p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
               <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">
                   <i class="fa-solid fa-user"></i>
@@ -3795,8 +3962,8 @@ async function submitPartsRequest() {
                 </div>
               </div>
 
-              <div class="flex items-center gap-1.5 self-end sm:self-center">
-                <span class="font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${escapeHTML(acc.pass)}</span>
+              <div class="ct-account-actions flex items-center gap-1.5 self-end sm:self-center">
+                <span class="ct-account-password font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold">Pass: ${escapeHTML(acc.pass)}</span>
                 <button onclick="devChangeStaffPassword('${u}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-xs font-bold border border-indigo-200 transition" title="Change Password">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
@@ -4122,6 +4289,7 @@ async function submitPartsRequest() {
 
     setInterval(() => {
       if (!currentUser) return;
+      if (window.CartechAccess && !window.CartechAccess.identityValid()) return;
       if (currentRole === 'tester') { window.CartechAccess?.checkExpiry(); return; }
       const now = Date.now();
       const currentHour = new Date().getHours();
@@ -4971,6 +5139,12 @@ window.CartechAccess = (() => {
   const safe = value => escapeHTML(String(value ?? ''));
   const defaults = JSON.parse(JSON.stringify(cachedCloudAccounts));
   const previews = new Map();
+  // Inclusive September 19 dry run, independent of the device's timezone.
+  const programEndsAt = Date.parse('2026-09-20T00:00:00+08:00');
+  const agreementVersion = 'cartech-dry-run-2026-09-06-v1';
+  const consentKey = 'cartech_tester_agreement_session';
+  let agreementAccepted = false, agreementPreview = false, underDevPreview = false, agreementBusy = false;
+  let developerLoginOpen = false, authGeneration = 0, phoneLayout = null;
   const allowedRoles = ['developer', 'admin', 'office', 'workshop', 'tester'];
   const nowMono = () => typeof performance !== 'undefined' ? performance.now() : Date.now();
   let clockBase = Date.now(), monoBase = nowMono(), clockOffset = 0, highestTime = clockBase;
@@ -4986,6 +5160,7 @@ window.CartechAccess = (() => {
     if (!Number.isFinite(serverTime)) return;
     clockBase = serverTime; monoBase = nowMono(); clockOffset = serverTime - Date.now(); highestTime = serverTime;
   }
+  const programClosed = () => now() >= programEndsAt;
   function validAccount(acc) { return acc && typeof acc === 'object' && allowedRoles.includes(acc.role) && typeof acc.pass === 'string'; }
   function finiteExpiry(acc) { return Number.isFinite(acc?.expiresAt) && acc.expiresAt > 0; }
   function ended(acc) { return !validAccount(acc) || acc.revoked === true || (acc.role === 'tester' && !finiteExpiry(acc)) || (finiteExpiry(acc) && acc.expiresAt <= now()); }
@@ -5032,19 +5207,19 @@ window.CartechAccess = (() => {
     }
     refresh();
   }
-  function sessionValid() {
+  function identityValid() {
     if (!currentUser || !currentRole || verifiedUser !== currentUser || verifiedRole !== currentRole) return false;
+    if (programClosed() && currentRole !== 'developer') { signOut('program-ended'); return false; }
     if (ended(accountSnapshot)) { signOut(currentRole === 'tester' ? 'expired' : 'revoked'); return false; }
     return true;
   }
+  function sessionValid() { return identityValid() && (currentRole !== 'tester' || agreementAccepted); }
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid() && now() - lastVerified < 65000;
   }
   function restrictions(user, acc) {
+    if (programClosed() && acc.role !== 'developer') { signOut('program-ended'); return false; }
     if (acc.role === 'tester') return true;
-    if (!['developer', 'admin'].includes(acc.role) && Date.now() >= new Date(2026, 8, 19).getTime()) {
-      loginError('BETA TEST ENDED', 'The beta ended on September 19. Please contact the developer.'); return false;
-    }
     if (isUserOnHoliday(user)) { triggerHolidayLockout(); return false; }
     const hour = new Date().getHours();
     if (!['developer', 'admin'].includes(acc.role) && user !== 'bot' && (hour < 8 || hour >= 17)) {
@@ -5065,12 +5240,15 @@ window.CartechAccess = (() => {
     if (mode === 'quick' && acc.role === 'tester') {
       clearRememberedDevice(); loginError('TESTER SIGN-IN REQUIRED', 'Enter the username and password provided by the developer.'); return false;
     }
+    if (!restrictions(user, acc)) { clearAuth(); return false; }
     if (ended(acc)) {
       loginError(acc.role === 'tester' ? 'TEST ACCESS EXPIRED' : 'ACCESS EXPIRED', 'Your access has ended. Ask the developer to renew it.');
       clearAuth(); return false;
     }
-    if (!restrictions(user, acc)) { clearAuth(); return false; }
     if (verifiedUser !== user) previews.clear();
+    authGeneration++;
+    agreementAccepted = acc.role !== 'tester' || (mode === 'restore' && restoredConsent(user, acc));
+    if (acc.role === 'tester' && !agreementAccepted) clearConsent();
     currentUser = user; currentRole = acc.role;
     verifiedUser = user; verifiedRole = acc.role; accountSnapshot = { ...acc }; lastVerified = lastPoll = now();
     localStorage.setItem('cartech_auth_user', user); localStorage.setItem('cartech_auth_role', acc.role);
@@ -5080,8 +5258,9 @@ window.CartechAccess = (() => {
     byId('loginAuthError').classList.add('hidden');
     byId('holidayLockoutModal')?.classList.add('hidden');
     if (acc.role !== 'tester') { try { await sendPresenceHeartbeat(true); } catch (_) {} }
-    if (!sessionValid()) return false;
-    getAudioContext(); bootApp(); refresh(); return true;
+    if (!identityValid()) return false;
+    if (acc.role === 'tester' && !agreementAccepted) { showAgreement(false); return true; }
+    enterWorkspace(); return true;
   }
   async function login(event) {
     event?.preventDefault(); event?.stopPropagation();
@@ -5115,6 +5294,9 @@ window.CartechAccess = (() => {
   }
   function signOut(reason = 'logout') {
     const wasTester = currentRole === 'tester' || verifiedRole === 'tester';
+    authGeneration++; agreementAccepted = false; agreementPreview = false; underDevPreview = false; agreementBusy = false; developerLoginOpen = false; clearConsent();
+    byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true;
+    byId('ctTesterTermsAccepted').checked = false; byId('ctTesterTermsAccepted').disabled = false;
     if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
     if (realtimeChannel && supabaseClient) { supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; }
     clearAuth();
@@ -5127,7 +5309,7 @@ window.CartechAccess = (() => {
     document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
     ['partsModal','announcementBroadcastModal','photoViewerModal','fbFloatingChatWindow','fbFloatingBubble','holidayLockoutModal'].forEach(id => byId(id)?.classList.add('hidden'));
     activeModalChatJobId = null;
-    byId('appShell').classList.add('hidden'); byId('loginScreen').classList.remove('hidden');
+    byId('appShell').classList.add('hidden'); byId('appShell').inert = false; byId('loginScreen').classList.remove('hidden');
     ['officeQueueList','workshopFeedList','ctJobBody','ctInspectionReportBody','ctDiagnosticPrintHost','devRegisteredAccountsContainer'].forEach(id => { byId(id).innerHTML = ''; });
     byId('ctTesterFeedback').value = '';
     byId('loginPassword').value = '';
@@ -5135,6 +5317,8 @@ window.CartechAccess = (() => {
     if (reason === 'expired') loginError('TEST ACCESS EXPIRED', 'Your testing time is finished. Ask the developer to extend or renew access.');
     else if (reason === 'verification') loginError('TEST ACCESS PAUSED', 'The account could not be verified. Reconnect and sign in to continue.');
     else if (reason === 'revoked') loginError('ACCESS ENDED', 'This account is expired or its access has changed. Please sign in again.');
+    if (reason === 'declined') loginError('TEST NOT STARTED', 'You left the tester agreement. Sign in again if you choose to take part.');
+    if (reason === 'program-ended' || programClosed()) { showDevelopment(false); return; }
     byId('loginUsername').focus();
   }
   async function verifyActive() {
@@ -5150,8 +5334,14 @@ window.CartechAccess = (() => {
     } finally { checking = false; }
   }
   function checkExpiry() {
+    refreshProgramStatus();
+    if (programClosed() && currentRole !== 'developer') {
+      if (verifiedUser) signOut('program-ended');
+      else if (!developerLoginOpen) showDevelopment(false);
+      return;
+    }
     if (!verifiedUser) return;
-    if (!sessionValid()) return;
+    if (!identityValid()) return;
     if (currentRole === 'tester' && now() - lastVerified >= 65000) { signOut('verification'); return; }
     if (currentRole === 'tester' && now() - lastPoll >= 30000) void verifyActive();
     refreshCountdown();
@@ -5160,18 +5350,28 @@ window.CartechAccess = (() => {
   function durationLabel(ms) { const seconds = Math.max(0, Math.ceil(ms / 1000)); return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds % 3600 / 60))}:${pad(seconds % 60)}`; }
   function refreshCountdown() {
     if (currentRole !== 'tester' || !accountSnapshot) return;
-    const remaining = accountSnapshot.expiresAt - now();
+    const effectiveExpiry = Math.min(accountSnapshot.expiresAt, programEndsAt);
+    const remaining = effectiveExpiry - now();
     byId('ctTesterCountdown').textContent = durationLabel(remaining);
-    byId('ctTesterCountdown').dateTime = new Date(accountSnapshot.expiresAt).toISOString();
-    byId('ctTesterCountdown').title = `Access expires ${new Date(accountSnapshot.expiresAt).toLocaleString()}`;
+    byId('ctTesterCountdown').dateTime = new Date(effectiveExpiry).toISOString();
+    byId('ctTesterCountdown').title = `Access expires ${philippineDate(effectiveExpiry)}`;
+    byId('ctWelcomeCountdown').textContent = durationLabel(remaining);
+    byId('ctWelcomeCountdown').dateTime = new Date(effectiveExpiry).toISOString();
+    byId('ctWelcomeExpires').textContent = `Access ends ${philippineDate(effectiveExpiry)}`;
+    byId('ctWelcomeCountdown').parentElement?.classList.toggle('ct-time-urgent', remaining <= 5 * 60000);
     byId('ctTesterBanner').classList.toggle('ct-tester-urgent', remaining <= 5 * 60000);
   }
   function refresh() {
-    const testing = currentRole === 'tester' && !!verifiedUser;
+    const testing = currentRole === 'tester' && !!verifiedUser && agreementAccepted;
+    refreshProgramStatus();
+    syncPhoneLayout();
     document.body.classList.toggle('ct-tester-mode', testing);
     byId('ctTesterBanner').hidden = !testing;
     byId('ctTesterRoleOption').hidden = currentRole !== 'developer';
     byId('ctTesterRoleOption').disabled = currentRole !== 'developer';
+    if (currentRole === 'tester' && verifiedUser && !agreementAccepted) {
+      byId('appShell').classList.add('hidden'); byId('appShell').inert = true; refreshCountdown();
+    }
     if (testing) {
       // Keep the timer in the workspace header, outside every modal's scroll area.
       const shell = byId('appShell');
@@ -5182,6 +5382,110 @@ window.CartechAccess = (() => {
   }
   function message(id, text, error = false) {
     byId(id).textContent = text; byId(id).hidden = false; byId(id).setAttribute('data-error', String(error));
+  }
+  function philippineDate(value) {
+    return new Date(value).toLocaleString('en-PH', { timeZone:'Asia/Manila', month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) + ' PHT';
+  }
+  function clearConsent() { try { sessionStorage.removeItem(consentKey); } catch (_) {} }
+  function restoredConsent(user, account) {
+    try {
+      const accepted = JSON.parse(sessionStorage.getItem(consentKey) || 'null');
+      return accepted?.version === agreementVersion && accepted.user === user && accepted.accountCreatedAt === (account.createdAt || 0) && Number.isFinite(accepted.acceptedAt) && accepted.acceptedAt <= now() && accepted.acceptedAt < programEndsAt;
+    } catch (_) { return false; }
+  }
+  function updateAgreementButton() {
+    byId('ctWelcomeContinue').disabled = agreementPreview || agreementBusy || !byId('ctTesterTermsAccepted').checked || !verifiedUser || currentRole !== 'tester' || programClosed();
+  }
+  function showAgreement(preview = false) {
+    if (preview ? currentRole !== 'developer' || !identityValid() : currentRole !== 'tester' || !identityValid()) return;
+    agreementPreview = preview; underDevPreview = false;
+    byId('ctUnderDevelopment').hidden = true;
+    byId('loginScreen').classList.add('hidden'); byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
+    byId('ctTesterWelcome').hidden = false;
+    byId('ctWelcomeUser').textContent = preview ? 'Example tester' : currentUser;
+    byId('ctWelcomePreviewBadge').hidden = !preview;
+    byId('ctWelcomeAcknowledgement').hidden = preview;
+    byId('ctWelcomeDecline').hidden = preview;
+    byId('ctWelcomeContinue').hidden = preview;
+    byId('ctWelcomePreviewClose').hidden = !preview;
+    byId('ctTesterTermsAccepted').checked = false;
+    byId('ctWelcomeError').hidden = true;
+    if (preview) {
+      byId('ctWelcomeCountdown').textContent = '01:00:00';
+      byId('ctWelcomeExpires').textContent = 'Example countdown · no tester session is started';
+    } else refreshCountdown();
+    updateAgreementButton();
+    window.scrollTo?.({ top:0, behavior:'instant' });
+    byId('ctWelcomeTitle').focus();
+  }
+  function enterWorkspace() {
+    if (!sessionValid()) return;
+    agreementPreview = false; underDevPreview = false; developerLoginOpen = false;
+    byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
+    getAudioContext(); bootApp(); refresh();
+  }
+  async function acceptAgreement(event) {
+    event?.preventDefault(); event?.stopPropagation();
+    if (agreementPreview || agreementBusy || currentRole !== 'tester' || !identityValid()) return;
+    if (!byId('ctTesterTermsAccepted').checked) { message('ctWelcomeError', 'Please read and accept the testing terms before entering.', true); return; }
+    const actor = currentUser, generation = authGeneration;
+    agreementBusy = true; byId('ctTesterTermsAccepted').disabled = true; updateAgreementButton();
+    byId('ctWelcomeContinue').textContent = 'Checking access…';
+    byId('ctWelcomeError').hidden = true;
+    try {
+      const cloud = await readAccounts();
+      if (actor !== currentUser || authGeneration !== generation) return;
+      receiveAccounts(cloud.parsed);
+      if (!identityValid() || currentRole !== 'tester' || !byId('ctTesterTermsAccepted').checked) return;
+      agreementAccepted = true;
+      try { sessionStorage.setItem(consentKey, JSON.stringify({ user:actor, accountCreatedAt:accountSnapshot.createdAt || 0, version:agreementVersion, acceptedAt:now() })); } catch (_) {}
+      enterWorkspace();
+    } catch (error) { if (actor === currentUser && authGeneration === generation) message('ctWelcomeError', `Access could not be verified. ${error.message} Reconnect and try again.`, true); }
+    finally { agreementBusy = false; byId('ctTesterTermsAccepted').disabled = false; byId('ctWelcomeContinue').textContent = 'I agree · Enter preview'; updateAgreementButton(); }
+  }
+  function declineAgreement() { if (!agreementPreview && currentRole === 'tester') signOut('declined'); }
+  function showDevelopment(preview = false) {
+    if (preview && (currentRole !== 'developer' || !identityValid())) return;
+    if (!preview && !programClosed()) return;
+    const wasHidden = byId('ctUnderDevelopment').hidden;
+    underDevPreview = preview; agreementPreview = false;
+    byId('ctTesterWelcome').hidden = true;
+    byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
+    byId('loginScreen').classList.add('hidden'); byId('ctUnderDevelopment').hidden = false;
+    byId('ctDevelopmentPreviewBadge').hidden = !preview;
+    byId('ctDevelopmentPreviewClose').hidden = !preview;
+    byId('ctDevelopmentSignIn').hidden = preview;
+    if (wasHidden) { window.scrollTo?.({ top:0, behavior:'instant' }); byId('ctDevelopmentTitle').focus(); }
+  }
+  function openDeveloperLogin() {
+    if (!programClosed() || underDevPreview) return;
+    developerLoginOpen = true; byId('ctUnderDevelopment').hidden = true;
+    byId('loginScreen').classList.remove('hidden');
+    byId('authBoxRegister').classList.add('hidden'); byId('authBoxForgot').classList.add('hidden'); byId('authBoxLogin').classList.remove('hidden');
+    loginError('DEVELOPER ACCESS ONLY', 'The dry run is closed. Only the developer can enter while the website is under development.');
+    byId('loginUsername').focus();
+  }
+  function previewAgreement() { if (currentRole === 'developer' && identityValid()) showAgreement(true); }
+  function previewDevelopment() { if (currentRole === 'developer' && identityValid()) showDevelopment(true); }
+  function closeProgramPreview() {
+    if (currentRole !== 'developer' || !identityValid() || !(agreementPreview || underDevPreview)) return;
+    agreementPreview = underDevPreview = false;
+    byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true;
+    byId('appShell').inert = false; byId('appShell').classList.remove('hidden');
+    window.CartechUI?.navigate('control');
+    byId('ctTrialControlTitle').focus?.();
+  }
+  function refreshProgramStatus() {
+    const dev = currentRole === 'developer' && verifiedUser === currentUser;
+    byId('ctTrialControlCard').hidden = !dev;
+    byId('ctTrialProgramStatus').textContent = programClosed() ? 'Dry run closed · developer access only' : 'Dry run open · ends September 19';
+    if (dev && !agreementPreview && !underDevPreview) byId('ctUnderDevelopment').hidden = true;
+  }
+  function syncPhoneLayout() {
+    const phone = window.matchMedia?.('(max-width: 760px)').matches === true;
+    if (phoneLayout === phone) return;
+    phoneLayout = phone;
+    document.querySelectorAll('details[data-dev-fold]').forEach(details => { details.open = !phone; });
   }
   function roleChanged() {
     const role = byId('subRole').value;
@@ -5212,10 +5516,15 @@ window.CartechAccess = (() => {
       expiresAt = hours === 0 ? 0 : now() + hours * 3600000;
     }
     if ((role === 'tester' && !expiresAt) || (expiresAt !== 0 && (!Number.isFinite(expiresAt) || expiresAt <= now()))) throw new Error('Choose an expiry in the future. Testers cannot have permanent access.');
+    if (role === 'tester') {
+      if (programClosed()) throw new Error('The dry run has ended. Tester access cannot be extended beyond September 19.');
+      expiresAt = Math.min(expiresAt, programEndsAt);
+    }
     return expiresAt;
   }
   async function mutateAccounts(compose, requireDev = true) {
     const actor = currentUser;
+    if (!identityValid()) throw new Error('Sign in with an active management account.');
     if (requireDev ? currentRole !== 'developer' : !['developer','admin'].includes(currentRole)) throw new Error('Developer access is required.');
     const cloud = await readAccounts();
     const actorAccount = cloud.accounts[actor];
@@ -5244,7 +5553,9 @@ window.CartechAccess = (() => {
     if (!Number.isFinite(hours) || hours < 0 || (role === 'tester' && hours <= 0)) throw new Error('A tester needs a finite duration.');
     return mutateAccounts(accounts => {
       if (Object.hasOwn(accounts, username)) throw new Error('This username already exists. Use its edit controls.');
-      accounts[username] = { pass: password, role, expiresAt: hours > 0 ? now() + hours * 3600000 : 0, createdAt: now(), createdBy: currentUser };
+      if (role === 'tester' && programClosed()) throw new Error('The tester dry run has ended.');
+      const expiry = hours > 0 ? now() + hours * 3600000 : 0;
+      accounts[username] = { pass: password, role, expiresAt: role === 'tester' ? Math.min(expiry, programEndsAt) : expiry, createdAt: now(), createdBy: currentUser };
       return accounts;
     }, role === 'tester');
   }
@@ -5295,9 +5606,10 @@ window.CartechAccess = (() => {
   async function editExpiry(event) {
     event?.preventDefault(); event?.stopPropagation();
     if (!editing || accountBusy || currentRole !== 'developer') return;
-    const user = editing, expiry = new Date(byId('ctEditAccessExpiry').value).getTime();
+    const user = editing, expiry = Math.min(new Date(byId('ctEditAccessExpiry').value).getTime(), programEndsAt);
     accountBusy = true; byId('ctEditAccessSave').disabled = true;
     try {
+      if (programClosed()) throw new Error('The dry run has ended. Tester accounts cannot be renewed for this testing period.');
       if (!Number.isFinite(expiry) || expiry <= now()) throw new Error('Choose an expiry in the future, or use Revoke now.');
       await mutateAccounts(accounts => {
         if (accounts[user]?.role !== 'tester') throw new Error('This tester account is no longer available.');
@@ -5346,11 +5658,12 @@ window.CartechAccess = (() => {
   });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkExpiry(); void verifyActive(); } });
   window.addEventListener('focus', () => { checkExpiry(); void verifyActive(); });
+  window.addEventListener('resize', syncPhoneLayout);
   window.addEventListener('pageshow', () => { checkExpiry(); void verifyActive(); });
   window.addEventListener('storage', event => { if (['cartech_auth_user','cartech_auth_role'].includes(event.key) && verifiedUser && (localStorage.getItem('cartech_auth_user') !== verifiedUser || localStorage.getItem('cartech_auth_role') !== verifiedRole)) signOut(); });
   setInterval(checkExpiry, 1000);
-  roleChanged(); refresh();
-  return { login, quickLogin, restoreSession, sessionValid, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  roleChanged(); refresh(); checkExpiry();
+  return { programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
 })();
 
 window.CartechInspections = (() => {
