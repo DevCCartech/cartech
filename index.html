@@ -202,6 +202,9 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 .ct-attention strong { font-size: 14px; color: #785236; font-weight: 600; display: block; }
 .ct-attention p { margin-top: 3px; font-size: 12px; line-height: 1.5; }
 .ct-attention > button { margin-left: auto; }
+.ct-inspection-attention-banner { border-color:#efbcbc; background:#fff5f5; color:#9d3d3d; }
+.ct-inspection-attention-banner > i { background:#ffe2e2; color:#b43f3f; }
+.ct-inspection-attention-banner strong { color:#a33d3d; }
 .ct-queue-tools { display: flex; align-items: center; justify-content: space-between; gap: 13px; margin-bottom: 14px; }
 .ct-queue-tools h3 { font-size: 16px; font-weight: 650; }
 .ct-total { font-size: 12px; padding: 2px 6px; margin-left: 6px; background: #e9edf2; color: #77879b; border-radius: 5px; }
@@ -456,6 +459,8 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
   .ct-detail-grid { grid-template-columns: 1fr; gap: 15px; }
   .ct-attention { padding: 12px; gap: 10px; }
   .ct-attention strong { font-size: 13px; }
+  .ct-office-inspection-item { align-items: stretch; flex-direction: column; gap: 10px; }
+  .ct-office-inspection-action, .ct-office-inspection-action .ct-inspection-open { width: 100%; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -786,14 +791,32 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ct-ws-vehicle > span:last-child { min-width:0; overflow-wrap:anywhere; }
 .ct-inspection-label { display:flex; align-items:center; justify-content:space-between; gap:8px 12px; flex-wrap:wrap; padding:10px 12px; margin-top:12px; border:1px solid #e3eaf0; border-radius:9px; background:#f8fafc; color:#53667a; }
 .ct-inspection-label.ct-inspection-ready { border-color:#c6e7df; background:#f2faf7; }
+.ct-inspection-label.ct-inspection-attention-state { border-color:#efbcbc; background:#fff5f5; color:#9d3d3d; }
 .ct-inspection-caption { display:flex; align-items:center; gap:6px 9px; flex-wrap:wrap; font-size:11px; line-height:1.45; }
 .ct-inspection-caption strong { color:#233447; font-size:11px; font-weight:700; }
 .ct-inspection-status { display:inline-flex; align-items:center; gap:5px; font-weight:600; color:#627184; }
 .ct-inspection-ready .ct-inspection-status { color:#16705d; }
+.ct-inspection-attention-state .ct-inspection-caption strong, .ct-inspection-attention-state .ct-inspection-status { color:#b43f3f; }
 .ct-inspection-meta { margin-top:3px; font-size:10px; color:#60748b; line-height:1.5; }
-.ct-inspection-attention { color:#a35310; margin-left:6px; }
+.ct-inspection-attention { color:#b43f3f; margin-left:6px; font-weight:650; }
 .ct-inspection-open { min-height:36px; padding:6px 9px; display:inline-flex; align-items:center; gap:6px; border-radius:6px; border:1px solid #b8dacf; background:white; color:#156c5d; font-size:11px; font-weight:600; white-space:nowrap; }
 .ct-inspection-open:hover { background:#e6f4ee; }
+.ct-inspection-attention-state .ct-inspection-open { border-color:#e6b4b4; color:#b43f3f; }
+.ct-inspection-attention-state .ct-inspection-open:hover { background:#ffe9e9; }
+.ct-office-inspection-item { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 15px; border:1px solid #dce6ee; border-radius:10px; background:white; box-shadow:0 1px 3px #263c5805; }
+.ct-office-inspection-item.ct-inspection-attention-state { border-color:#efbcbc; background:#fff8f8; }
+.ct-office-inspection-main { min-width:0; flex:1; }
+.ct-office-inspection-title { display:flex; align-items:center; flex-wrap:wrap; gap:6px 9px; color:#27384f; font-size:14px; line-height:1.45; }
+.ct-office-inspection-title strong { font-weight:650; overflow-wrap:anywhere; }
+.ct-office-inspection-number { color:#8190a3; font-size:11px; font-variant-numeric:tabular-nums; }
+.ct-office-inspection-meta { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:5px; color:#7e8da0; font-size:11px; line-height:1.5; }
+.ct-office-inspection-meta .ct-office-inspection-issues { color:#b43f3f; font-weight:650; }
+.ct-office-inspection-meta .ct-office-inspection-ok { color:#16705d; font-weight:600; }
+.ct-office-inspection-action { flex:none; }
+.ct-office-inspection-action .ct-inspection-open { min-height:38px; font-size:12px; }
+#ctJobsHeading.ct-inspection-heading { color:#a33d3d; }
+#ctInspectionCount { color:#b43f3f; }
+.ct-tab[aria-pressed='true'] #ctInspectionCount { color:#b43f3f; background:#ffe2e2; }
 .ct-job-actions .ct-inspect-preview { font-size:11px; padding:6px 9px; }
 .ct-inspection-report { width:min(940px,calc(100vw - 28px)); max-height:calc(100dvh - 32px); }
 .ct-inspection-report[open] { display:flex; flex-direction:column; }
@@ -1547,8 +1570,9 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       <section class="ct-stats" aria-label="Queue summary"><button type="button" id="card-waiting" class="ct-stat" onclick="CartechUI.selectFilter('waiting')"><span class="ct-stat-top">In queue<i class="fa-regular fa-clock" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statWaiting">0</strong><small>awaiting a mechanic</small></span></button><button type="button" id="card-inprogress" class="ct-stat" onclick="CartechUI.selectFilter('inprogress')"><span class="ct-stat-top">In progress<i class="fa-solid fa-wrench" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statActive">0</strong><small>in the workshop</small></span></button><button type="button" id="card-waiting_parts" class="ct-stat" onclick="CartechUI.selectFilter('waiting_parts')"><span class="ct-stat-top">Waiting for parts<i class="fa-solid fa-box-open" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statParts">0</strong><small>needs attention</small></span></button><button type="button" id="card-completed" class="ct-stat" onclick="CartechUI.selectFilter('completed')"><span class="ct-stat-top">Completed<i class="fa-regular fa-circle-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statDone">0</strong><small id="ctArchiveCaption">tap to load archive</small></span></button></section>
       <div class="ct-body-grid"><section class="ct-queue-panel" aria-label="Vehicle jobs">
         <div id="ctAttention" class="ct-attention" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong id="ctAttentionTitle">Parts requested</strong><p id="ctAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('waiting_parts')" aria-label="Review parts requests"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+        <div id="ctInspectionAttention" class="ct-attention ct-inspection-attention-banner" hidden><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><div><strong id="ctInspectionAttentionTitle">Inspection findings need review</strong><p id="ctInspectionAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('inspections')" aria-label="Review submitted inspections"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
         <div class="ct-queue-tools"><h3><span id="ctJobsHeading">Workshop jobs</span><span id="ctVisibleTotal" class="ct-total">0</span></h3><label class="ct-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="ctSearch" type="search" placeholder="Vehicle or diagnostic no.…" aria-label="Search loaded vehicles, customers, or diagnostic numbers" oninput="CartechUI.search(this.value)" autocomplete="off"></label></div>
-        <div class="ct-tabs" aria-label="Filter jobs by status"><button type="button" class="ct-tab" data-ct-filter="all" onclick="CartechUI.selectFilter('all')" aria-pressed="false">All active<span id="ctAllCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="waiting" onclick="CartechUI.selectFilter('waiting')" aria-pressed="false">Pending<span id="ctPendingCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="inprogress" onclick="CartechUI.selectFilter('inprogress')" aria-pressed="false">In progress<span id="ctWorkingCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="waiting_parts" onclick="CartechUI.selectFilter('waiting_parts')" aria-pressed="false">Parts<span id="ctPartsCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="completed" onclick="CartechUI.selectFilter('completed')" aria-pressed="false">Completed<span id="ctDoneCount">0</span></button></div>
+        <div class="ct-tabs" aria-label="Filter queue and inspections"><button type="button" class="ct-tab" data-ct-filter="all" onclick="CartechUI.selectFilter('all')" aria-pressed="false">All active<span id="ctAllCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="waiting" onclick="CartechUI.selectFilter('waiting')" aria-pressed="false">Pending<span id="ctPendingCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="inprogress" onclick="CartechUI.selectFilter('inprogress')" aria-pressed="false">In progress<span id="ctWorkingCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="inspections" onclick="CartechUI.selectFilter('inspections')" aria-pressed="false">Inspections<span id="ctInspectionCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="waiting_parts" onclick="CartechUI.selectFilter('waiting_parts')" aria-pressed="false">Parts<span id="ctPartsCount">0</span></button><button type="button" class="ct-tab" data-ct-filter="completed" onclick="CartechUI.selectFilter('completed')" aria-pressed="false">Completed<span id="ctDoneCount">0</span></button></div>
         <div id="officeQueueList" aria-live="polite"></div>
       </section><aside class="ct-rail" aria-label="Workshop overview">
         <section class="ct-panel ct-team-panel"><div class="ct-panel-title"><h3>Workshop team</h3><i class="fa-solid fa-user-group" aria-hidden="true"></i></div><p class="ct-panel-caption">Duty status, job capacity, and parts chat</p><div id="officeRemainingMechanicBadge"></div><div id="messengerSidebarAvatars"></div><button class="ct-button ct-wide" type="button" onclick="CartechUI.openTeam()">View workshop team <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></section>
@@ -2054,11 +2078,13 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
       const stack = document.getElementById('liveAlertStack');
       if (!stack) return;
 
-      const iconClass = alertType === 'done'
-        ? 'fa-flag-checkered text-emerald-600 bg-emerald-100'
-        : alertType === 'parts'
-          ? 'fa-cart-shopping text-purple-600 bg-purple-100'
-          : 'fa-comment-dots text-indigo-600 bg-indigo-100';
+      const iconClass = alertType === 'inspection'
+        ? 'fa-clipboard-check text-rose-600 bg-rose-100'
+        : alertType === 'done'
+          ? 'fa-flag-checkered text-emerald-600 bg-emerald-100'
+          : alertType === 'parts'
+            ? 'fa-cart-shopping text-purple-600 bg-purple-100'
+            : 'fa-comment-dots text-indigo-600 bg-indigo-100';
 
       const alertEl = document.createElement('button');
       alertEl.type = 'button';
@@ -3131,7 +3157,7 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
         }
       });
 
-      if (flt === 'completed' && !isCompletedLoaded) {
+      if (['completed', 'inspections'].includes(flt) && !isCompletedLoaded) {
         await fetchCompletedJobsArchive();
       } else {
         render();
@@ -4110,6 +4136,14 @@ async function submitPartsRequest() {
       const inProg = state.filter(j => j.status === 'inprogress').length;
       const parts = state.filter(j => j.status === 'waiting_parts').length;
       const done = completedArchive.length;
+      const inspectionRecords = [...new Map([...state, ...completedArchive].map(job => [job.id, job])).values()].filter(job => {
+        const data = parsePartsInfo(job.auto_schedule_slot).diagData;
+        return data && typeof data === 'object' && Object.keys(data).length > 0;
+      });
+      const inspectionAttentionJobs = inspectionRecords.filter(job => {
+        const data = parsePartsInfo(job.auto_schedule_slot).diagData;
+        return Number(window.CartechDiagnostics?.summary?.(data)?.attention || 0) > 0;
+      });
 
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
@@ -4152,6 +4186,19 @@ async function submitPartsRequest() {
       if (sAct) sAct.innerText = inProg;
       if (sPart) sPart.innerText = parts;
       if (sDone) sDone.innerText = done;
+      const inspectionCount = document.getElementById('ctInspectionCount');
+      if (inspectionCount) inspectionCount.innerText = inspectionRecords.length;
+
+      const inspectionAttention = document.getElementById('ctInspectionAttention');
+      if (inspectionAttention) {
+        inspectionAttention.hidden = inspectionAttentionJobs.length === 0 || currentFilter === 'inspections';
+        const first = inspectionAttentionJobs[0];
+        const count = inspectionAttentionJobs.length;
+        const title = document.getElementById('ctInspectionAttentionTitle');
+        const text = document.getElementById('ctInspectionAttentionText');
+        if (title) title.textContent = `${count} inspection${count === 1 ? '' : 's'} need${count === 1 ? 's' : ''} office review`;
+        if (text) text.textContent = first ? `${first.vehicle} · ${resolveMechanicName(first) || 'Workshop'} · red findings recorded` : '';
+      }
 
       const officeBadge = document.getElementById('officeRemainingMechanicBadge');
       if (officeBadge) {
@@ -4228,10 +4275,18 @@ async function submitPartsRequest() {
       // OFFICE RENDERER
       const officeContainer = document.getElementById('officeQueueList');
       if (officeContainer) {
-        const officeSource = currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? state.filter(j => ['waiting', 'inprogress', 'waiting_parts'].includes(j.status)) : state.filter(j => j.status === currentFilter);
+        const officeSource = currentFilter === 'inspections' ? inspectionRecords : currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? state.filter(j => ['waiting', 'inprogress', 'waiting_parts'].includes(j.status)) : state.filter(j => j.status === currentFilter);
         const officeList = window.CartechUI ? window.CartechUI.filterJobs(officeSource) : officeSource;
 
-        if (officeList.length === 0) {
+        if (currentFilter === 'inspections') {
+          const inspectionItems = officeList.map(job => window.CartechInspections?.officeItem(job) || '').filter(Boolean).join('');
+          officeContainer.innerHTML = inspectionItems || `
+            <div class="ct-empty">
+              <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+              <strong>${window.CartechUI?.filterJobs(inspectionRecords).length ? 'No submitted inspections match your search' : 'No submitted inspections yet'}</strong>
+              <p>When a mechanic saves an inspection, it will appear here for office review.</p>
+            </div>`;
+        } else if (officeList.length === 0) {
           officeContainer.innerHTML = `
             <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
               <i class="fa-solid fa-car text-3xl mb-2 text-slate-300"></i>
@@ -4461,6 +4516,10 @@ window.CartechUI = (() => {
   const statusNames = { waiting: 'Pending', inprogress: 'In progress', waiting_parts: 'Waiting for parts', completed: 'Completed' };
   const dialogIds = ['ctDispatchDialog', 'ctJobDialog', 'ctTeamDialog', 'ctInboxDialog'];
   const allRecords = () => [...new Map([...state, ...completedArchive].map(job => [job.id, job])).values()];
+  const submittedInspections = () => allRecords().filter(job => {
+    const data = parsePartsInfo(job.auto_schedule_slot).diagData;
+    return data && typeof data === 'object' && Object.keys(data).length > 0;
+  });
   const findJob = id => state.find(job => job.id === id) || completedArchive.find(job => job.id === id);
   const names = () => [...new Set([...MECHANIC_LIST])];
   const isAssigned = job => resolveMechanicName(job)?.toLowerCase() === String(currentUser || '').toLowerCase();
@@ -4488,12 +4547,13 @@ window.CartechUI = (() => {
   async function selectFilter(value) {
     if (!active() || !officeViewer()) return;
     clearSearch();
-    const loading = value === 'completed' && !isCompletedLoaded;
-    if (loading) byId('officeQueueList').innerHTML = '<div class="ct-empty" role="status"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i><strong>Loading completed jobs…</strong></div>';
+    const loading = ['completed', 'inspections'].includes(value) && !isCompletedLoaded;
+    if (loading) byId('officeQueueList').innerHTML = `<div class="ct-empty" role="status"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i><strong>Loading ${value === 'inspections' ? 'submitted inspections' : 'completed jobs'}…</strong></div>`;
     await setFilter(value);
     refresh();
-    if (loading && currentFilter === 'completed' && !isCompletedLoaded) {
-      byId('officeQueueList').innerHTML = '<div class="ct-empty" role="status"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i><strong>The archive could not be loaded</strong><p>Check your connection and try again.</p><button class="ct-button" onclick="CartechUI.selectFilter(\'completed\')">Try again</button></div>';
+    if (loading && ['completed', 'inspections'].includes(currentFilter) && !isCompletedLoaded) {
+      const retryFilter = currentFilter;
+      byId('officeQueueList').innerHTML = `<div class="ct-empty" role="status"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i><strong>The archive could not be loaded</strong><p>Check your connection and try again.</p><button class="ct-button" onclick="CartechUI.selectFilter('${retryFilter}')">Try again</button></div>`;
     }
   }
 
@@ -4634,9 +4694,10 @@ window.CartechUI = (() => {
     setText('ctNavPartsCount', pendingParts.length);
     setText('ctAllCount', activeJobs.length);
     for (const [status, id] of [['waiting', 'ctPendingCount'], ['inprogress', 'ctWorkingCount'], ['waiting_parts', 'ctPartsCount']]) setText(id, activeJobs.filter(job => job.status === status).length);
+    setText('ctInspectionCount', submittedInspections().length);
     setText('ctDoneCount', isCompletedLoaded ? completedArchive.length : '—');
     setText('ctArchiveCaption', isCompletedLoaded ? 'latest loaded records' : 'tap to load archive');
-    byId('ctAttention').hidden = pendingParts.length === 0 || currentFilter === 'completed';
+    byId('ctAttention').hidden = pendingParts.length === 0 || ['completed', 'inspections'].includes(currentFilter);
     setText('ctAttentionTitle', `${pendingParts.length} job${pendingParts.length === 1 ? '' : 's'} need${pendingParts.length === 1 ? 's' : ''} parts`);
     setText('ctAttentionText', pendingParts[0] ? `${pendingParts[0].vehicle} · ${resolveMechanicName(pendingParts[0]) || 'Workshop'}` : '');
     const available = names().filter(name => countFor(name) < MAX_JOBS_PER_MECHANIC).length;
@@ -4645,12 +4706,15 @@ window.CartechUI = (() => {
     setText('ctCapacityNote', `Below the ${MAX_JOBS_PER_MECHANIC}-job limit`);
     byId('ctCapacityBars').innerHTML = names().map((_, i) => `<span class="${i < available ? 'ct-free' : ''}"></span>`).join('');
     for (const tab of document.querySelectorAll('[data-ct-filter]')) tab.setAttribute('aria-pressed', String(tab.dataset.ctFilter === currentFilter));
-    const source = currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? activeJobs : activeJobs.filter(job => job.status === currentFilter);
+    const source = currentFilter === 'inspections' ? submittedInspections() : currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? activeJobs : activeJobs.filter(job => job.status === currentFilter);
     const visible = filterJobs(source);
     setText('ctVisibleTotal', visible.length);
-    setText('ctJobsHeading', currentFilter === 'completed' ? 'Completed jobs' : 'Workshop jobs');
+    setText('ctJobsHeading', currentFilter === 'inspections' ? 'Submitted inspections' : currentFilter === 'completed' ? 'Completed jobs' : 'Workshop jobs');
+    byId('ctJobsHeading').classList.toggle('ct-inspection-heading', currentFilter === 'inspections');
     if (!visible.length && inOffice) {
-      byId('officeQueueList').innerHTML = `<div class="ct-empty"><i class="fa-solid ${ui.query ? 'fa-magnifying-glass' : 'fa-car-side'}" aria-hidden="true"></i><strong>${ui.query ? 'No matching vehicles' : 'No vehicles in this section'}</strong><p>${ui.query ? 'Try a vehicle, customer, or diagnostic number.' : 'Choose another status to view the other jobs.'}</p></div>`;
+      byId('officeQueueList').innerHTML = currentFilter === 'inspections'
+        ? `<div class="ct-empty"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><strong>${ui.query ? 'No submitted inspections match your search' : 'No submitted inspections yet'}</strong><p>When a mechanic saves an inspection, it will appear here for office review.</p></div>`
+        : `<div class="ct-empty"><i class="fa-solid ${ui.query ? 'fa-magnifying-glass' : 'fa-car-side'}" aria-hidden="true"></i><strong>${ui.query ? 'No matching vehicles' : 'No vehicles in this section'}</strong><p>${ui.query ? 'Try a vehicle, customer, or diagnostic number.' : 'Choose another status to view the other jobs.'}</p></div>`;
     }
     byId('ctRecentList').innerHTML = activeJobs.slice(0, 3).map(job => `<div class="ct-recent"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><p>${safe(job.vehicle)}<small>${safe(job.id)} · ${safe(job.time_created || 'Time not recorded')}</small></p></div>`).join('') || '<p class="ct-panel-caption">No active dispatches.</p>';
     const sidebar = byId('ctSidebar');
@@ -4740,8 +4804,8 @@ window.CartechDiagnostics = (() => {
   function canUse(job) {
     if (!job || !currentUser || (window.CartechAccess && !window.CartechAccess.sessionValid())) return false;
     if (currentRole === 'tester') return window.CartechAccess?.testerAllowed() === true;
-    if (!(launched() || currentRole === 'developer')) return false;
     if (['office', 'admin', 'developer'].includes(currentRole)) return true;
+    if (!(launched() || currentRole === 'developer')) return false;
     const mechanic = resolveMechanicName(job);
     return currentRole === 'workshop' && !!currentUser && !!mechanic &&
       currentUser.toLowerCase() === mechanic.toLowerCase() && job.status !== 'waiting';
@@ -4753,7 +4817,7 @@ window.CartechDiagnostics = (() => {
   const canEnterVin = job => canEditVin(job) || tester();
   function canPrint() {
     if (!currentUser || (window.CartechAccess && !window.CartechAccess.sessionValid())) return false;
-    return currentRole === 'developer' || (launched() && ['office', 'admin'].includes(currentRole));
+    return currentRole === 'developer' || ['office', 'admin'].includes(currentRole);
   }
   function canEditVin(job) {
     return canUse(job) && (currentRole === 'developer' || (currentRole === 'workshop' && ['inprogress', 'waiting_parts'].includes(job.status)));
@@ -5369,9 +5433,22 @@ window.CartechAccess = (() => {
   function hasCurrentAgreement(user, account) {
     return getAgreementStatus(user, account).accepted;
   }
+  function rememberedDeviceMatches(user, role) {
+    const rememberedUser = String(localStorage.getItem('cartech_remembered_device_user') || '').trim().toLowerCase();
+    const rememberedRole = String(localStorage.getItem('cartech_remembered_device_role') || '').trim().toLowerCase();
+    const expectedUser = String(user || '').trim().toLowerCase();
+    const expectedRole = String(role || '').trim().toLowerCase();
+    return !!rememberedUser && !!rememberedRole && rememberedUser === expectedUser && (!expectedRole || rememberedRole === expectedRole);
+  }
   function rememberedSignIn(user, role) {
-    try { const entry = JSON.parse(sessionStorage.getItem(signInKey) || 'null'); return entry?.user === user && entry?.role === role && entry?.revision === sessionRevision; }
-    catch (_) { return false; }
+    try {
+      const entry = JSON.parse(sessionStorage.getItem(signInKey) || 'null');
+      if (entry?.user === user && (!role || entry?.role === role) && entry?.revision === sessionRevision) return true;
+    } catch (_) {}
+    // sessionStorage is cleared when a tab/browser session ends. The separate
+    // remembered-device marker is intentionally only an account hint; the
+    // account registry, expiry, role, and agreement are still checked below.
+    return rememberedDeviceMatches(user, role);
   }
   function rememberSignIn(user, role) {
     try { sessionStorage.setItem(signInKey, JSON.stringify({ user, role, revision:sessionRevision })); } catch (_) {}
@@ -5446,21 +5523,26 @@ window.CartechAccess = (() => {
   async function authenticate(user, password, mode = 'password') {
     await window.CartechUpdates?.check();
     if (window.CartechUpdates?.pending()) return false;
-    if (mode !== 'password' && !rememberedSignIn(user, cachedCloudAccounts[user]?.role)) { signOut('updated'); return false; }
+    if (mode !== 'password' && !rememberedSignIn(user)) { signOut('updated'); return false; }
     const cloud = await readAccounts();
     receiveAccounts(cloud.parsed);
     const acc = cloud.accounts[user];
     if (!validAccount(acc) || (mode === 'password' && acc.pass !== password)) {
+      if (mode !== 'password') { clearRememberedDevice(); clearAuth(); }
       loginError('INVALID CREDENTIALS', 'Invalid username or password. Please try again.'); return false;
     }
-    if (acc.role === 'tester' && !Object.hasOwn(cloud.parsed, user)) {
-      loginError('TEST ACCESS EXPIRED', 'Ask the developer to create or renew your test account.'); return false;
+    if (mode !== 'password' && !rememberedSignIn(user, acc.role)) {
+      clearRememberedDevice(); clearAuth();
+      loginError('REMEMBERED SIGN-IN EXPIRED', 'Enter your password once to remember this device again.'); return false;
     }
-    if (mode === 'quick' && acc.role === 'tester') {
-      clearRememberedDevice(); loginError('TESTER SIGN-IN REQUIRED', 'Enter the username and password provided by the developer.'); return false;
+    if (acc.role === 'tester' && !Object.hasOwn(cloud.parsed, user)) {
+      clearRememberedDevice();
+      clearAuth();
+      loginError('TEST ACCESS EXPIRED', 'Ask the developer to create or renew your test account.'); return false;
     }
     if (!restrictions(user, acc)) { clearAuth(); return false; }
     if (ended(acc)) {
+      clearRememberedDevice();
       loginError(acc.role === 'tester' ? 'TEST ACCESS EXPIRED' : 'ACCESS EXPIRED', 'Your access has ended. Ask the developer to renew it.');
       clearAuth(); return false;
     }
@@ -5474,8 +5556,8 @@ window.CartechAccess = (() => {
     currentUser = user; currentRole = acc.role;
     verifiedUser = user; verifiedRole = acc.role; accountSnapshot = { ...acc }; lastVerified = lastPoll = now();
     localStorage.setItem('cartech_auth_user', user); localStorage.setItem('cartech_auth_role', acc.role);
-    if (acc.role === 'tester') clearRememberedDevice();
-    else { localStorage.setItem('cartech_remembered_device_user', user); localStorage.setItem('cartech_remembered_device_role', acc.role); }
+    localStorage.setItem('cartech_remembered_device_user', user);
+    localStorage.setItem('cartech_remembered_device_role', acc.role);
     byId('loginPassword').value = '';
     byId('loginAuthError').classList.add('hidden');
     byId('holidayLockoutModal')?.classList.add('hidden');
@@ -5524,7 +5606,9 @@ window.CartechAccess = (() => {
     if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
     if (realtimeChannel && supabaseClient) { supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; }
     clearAuth();
-    clearRememberedDevice();
+    // Keep the one-tap device marker for ordinary logout, session re-checks,
+    // and reconnects. Irreversible access changes remove it below.
+    if (['expired', 'revoked', 'program-ended'].includes(reason)) clearRememberedDevice();
     try { sessionStorage.removeItem(signInKey); } catch (_) {}
     currentUser = currentRole = verifiedUser = verifiedRole = null; accountSnapshot = null;
     previews.clear();
@@ -5539,11 +5623,12 @@ window.CartechAccess = (() => {
     byId('ctTesterFeedback').value = '';
     byId('loginPassword').value = '';
     refresh();
+    initRememberedDeviceUI();
     if (reason === 'expired') loginError('TEST ACCESS EXPIRED', 'Your testing time is finished. Ask the developer to extend or renew access.');
-    else if (reason === 'verification') loginError('ACCESS VERIFICATION PAUSED', 'The account could not be verified. Reconnect and sign in to continue.');
+    else if (reason === 'verification') loginError('ACCESS VERIFICATION PAUSED', 'Use 1-Tap Fast Login to restore this remembered device, or enter your password.');
     else if (reason === 'revoked') loginError('ACCESS ENDED', 'This account is expired or its access has changed. Please sign in again.');
     if (reason === 'declined') loginError('AGREEMENT REQUIRED', 'You left the agreement. Sign in and accept the terms before entering CARTECH.');
-    if (reason === 'updated') loginError('SYSTEM UPDATED — SIGN IN AGAIN', 'CARTECH has updated its program or terms. Enter your password, then read and accept the agreement to continue.');
+    if (reason === 'updated') loginError('SYSTEM UPDATED', 'Use 1-Tap Fast Login if this is your remembered device, then accept the current agreement if prompted.');
     if (reason === 'program-ended' || programClosed()) { showDevelopment(false); return; }
     byId('loginUsername').focus();
   }
@@ -6058,7 +6143,31 @@ window.CartechInspections = (() => {
   function card(job) {
     if (!available(job)) return '';
     const status = info(job);
-    return `<div class="ct-inspection-label ${status.saved ? 'ct-inspection-ready' : ''}"><div><div class="ct-inspection-caption"><strong><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> CARTECH Inspection</strong><span class="ct-inspection-status">${status.saved ? '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>' : ''}${safe(status.text)}</span></div>${status.saved ? `<div class="ct-inspection-meta">${safe(status.by)}${status.date ? ' · '+safe(status.date) : ''}${status.attention ? `<span class="ct-inspection-attention">${status.attention} need attention</span>` : ''}</div>` : ''}</div>${status.saved ? `<button type="button" class="ct-inspection-open" data-inspection-job="${safe(job.id)}">View inspection <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>` : ''}</div>`;
+    const needsReview = !status.saved || status.attention > 0;
+    const labelClass = `${status.saved ? 'ct-inspection-ready' : ''}${needsReview ? ' ct-inspection-attention-state' : ''}`;
+    const statusIcon = status.saved ? '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>' : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>';
+    const statusText = status.saved ? status.text : 'Inspection not submitted';
+    const detail = status.saved
+      ? `${safe(status.by)}${status.date ? ' · ' + safe(status.date) : ''}${status.attention ? `<span class="ct-inspection-attention">${status.attention} need attention</span>` : ''}`
+      : '<span class="ct-inspection-attention">Mechanic action required</span>';
+    return `<div class="ct-inspection-label ${labelClass}"><div><div class="ct-inspection-caption"><strong><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> CARTECH Inspection</strong><span class="ct-inspection-status">${statusIcon}${safe(statusText)}</span></div><div class="ct-inspection-meta">${detail}</div></div>${status.saved ? `<button type="button" class="ct-inspection-open" data-inspection-job="${safe(job.id)}">View inspection <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>` : ''}</div>`;
+  }
+  function officeItem(job) {
+    if (!available(job)) return '';
+    const status = info(job);
+    if (!status.saved) return '';
+    const needsReview = status.attention > 0;
+    const number = status.data?.diagnosticNumber || (job.phone && job.phone !== 'N/A' ? job.phone : String(job.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job.id);
+    const result = needsReview
+      ? `<span class="ct-office-inspection-issues"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>${status.attention} item${status.attention === 1 ? '' : 's'} need attention</span>`
+      : '<span class="ct-office-inspection-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Ready to review</span>';
+    return `<article class="ct-office-inspection-item${needsReview ? ' ct-inspection-attention-state' : ''}">
+      <div class="ct-office-inspection-main">
+        <div class="ct-office-inspection-title"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><strong>${safe(job.vehicle || 'Vehicle')}</strong><span class="ct-office-inspection-number">${safe(job.id)} · Diagnostic ${safe(number)}</span></div>
+        <div class="ct-office-inspection-meta"><span>Customer: <strong>${safe(job.customer || 'Not recorded')}</strong></span><span>Mechanic: <strong>${safe(status.by)}</strong></span><span>Submitted: ${safe(status.date || 'Date not recorded')}</span>${result}</div>
+      </div>
+      <div class="ct-office-inspection-action"><button type="button" class="ct-inspection-open" data-inspection-job="${safe(job.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i>View inspection</button></div>
+    </article>`;
   }
   function report() { const job = findJob(selected); return job && available(job) ? window.CartechDiagnostics.buildReport(job) : null; }
   function renderReport() {
@@ -6087,7 +6196,7 @@ window.CartechInspections = (() => {
       const data = dataOf(job), version = JSON.stringify(data || null), prior = snapshots.get(job.id);
       snapshots.set(job.id, version);
       if (prior !== undefined && prior !== version && data && available(job) && ['office','admin','developer'].includes(currentRole) && data.savedBy?.toLowerCase() !== currentUser?.toLowerCase()) {
-        deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} saved inspection findings. Ready for customer discussion.`, jobId:job.id, alertType:'inspection', sound:'message' });
+        deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'message' });
       }
     }
     if (dialog.open) {
@@ -6114,7 +6223,7 @@ window.CartechInspections = (() => {
   function reset() { snapshots.clear(); selected=null; reportVersion=''; if(dialog.open)dialog.close(); }
   document.addEventListener('click', event => { const button=event.target.closest('[data-inspection-job]'); if(button)open(button.dataset.inspectionJob); });
   dialog.addEventListener('close',()=>{selected=null;});
-  return { card, info, open, close, print, download, refresh, reset };
+  return { card, officeItem, info, open, close, print, download, refresh, reset };
 })();
 
 /* Same-origin deployment checks. HEAD requests avoid downloading embedded logos every minute.
