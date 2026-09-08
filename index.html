@@ -601,6 +601,10 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .df-brand { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 650; font-size: 13px; }
 .df-brand-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: #e6f3f2; color: var(--df-accent); }
 .df-brand small { display: block; color: var(--df-muted); font-weight: 400; font-size: 11px; }
+.df-form-logo { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 14px; color: #203d41; }
+.df-form-logo-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: #f16e36; color: white; font-size: 18px; font-weight: 800; letter-spacing: -.04em; box-shadow: 0 5px 12px #f16e3630; }
+.df-form-logo strong { display: block; font-size: 16px; letter-spacing: .06em; line-height: 1.1; }
+.df-form-logo small { display: block; margin-top: 3px; color: #789094; font-size: 8px; font-weight: 650; letter-spacing: .1em; }
 .df-tools { display: flex; align-items: center; gap: 8px; }
 .df-icon-button { border: 1px solid var(--df-line); border-radius: 7px; min-width: 38px; min-height: 38px; padding: 7px 10px; background: #fff; color: var(--df-muted); font: inherit; font-size: 12px; }
 .df-icon-button:hover { background: #f0f7f7; }
@@ -636,6 +640,11 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 #diagnosticSheetModal .df-input::placeholder { color: #7c9194; opacity: 1; }
 #diagnosticSheetModal .df-input[readonly] { color: #527275; background: #edf3f3; }
 #diagnosticSheetModal .df-input:disabled { opacity: .55; }
+.df-unit-input { display: flex; align-items: stretch; }
+.df-unit-input .df-input { min-width: 0; border-radius: 5px 0 0 5px; }
+.df-input-unit { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; padding: 0 10px; border: 1px solid #dce7e8; border-left: 0; border-radius: 0 5px 5px 0; background: #eaf2f2; color: #4a6a6d; font-size: 12px; font-weight: 650; }
+.df-target-badge { display:inline-flex; align-items:center; margin-left:6px; padding:3px 6px; border:1px solid #f0d4b8; border-radius:999px; background:#fff7ed; color:#ad5f2f; font-size:10px; font-weight:700; white-space:nowrap; }
+.df-signature-fields { margin-top: 4px; }
 .df-two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
 .df-reference { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 22px; padding: 16px; margin: 3px 0 22px; background: #f7fafa; border: 1px solid #e4ecec; border-radius: 7px; }
 .df-reference dt { font-size: 10px; color: #6c8487; margin-bottom: 4px; }
@@ -769,19 +778,36 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .ct-launch-heading h3 { font-size: 16px; }
 }
 @media print {
-  @page { size: A4; margin: 12mm; }
+  @page { size: Letter portrait; margin: 0.18in; }
   body.ct-print-diagnostic { background: white !important; height: auto !important; min-height: 0 !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
   body.ct-print-diagnostic > :not(#ctDiagnosticPrintHost) { display: none !important; }
   body.ct-print-diagnostic #ctDiagnosticPrintHost { display: block !important; position: static !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
   body.ct-print-diagnostic #ctDiagnosticPrintHost, body.ct-print-diagnostic #ctDiagnosticPrintHost * { visibility: visible !important; }
   body.ct-print-diagnostic dialog::backdrop { display: none !important; background: transparent !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report { width: 100% !important; font-size: 8px !important; line-height: 1.14 !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-header { padding-bottom: 4px !important; margin-bottom: 5px !important; border-bottom-width: 2px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-brand { gap: 5px !important; font-size: 12px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-brand-mark { width: 19px !important; height: 19px !important; font-size: 10px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-brand small { font-size: 5px !important; margin-top: 1px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report h1 { font-size: 11px !important; margin: 2px 0 !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-refs { gap: 3px 10px !important; padding: 5px !important; margin-bottom: 5px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-refs b { font-size: 6px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-columns { column-gap: 10px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report section { margin-bottom: 4px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report h2 { font-size: 8px !important; padding: 3px 4px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report table { font-size: 7px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report td { padding: 2px 4px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report p { margin: 3px 0 4px !important; }
+  body.ct-print-diagnostic #ctDiagnosticPrintHost .ct-report .report-signatures { gap: 10px !important; margin-top: 7px !important; padding-top: 4px !important; font-size: 7px !important; }
 }
 
 
 .ct-report { font: 11px/1.45 'Segoe UI', Arial, sans-serif; color: #233e43; background: white; margin: 0; padding: 0; }
 .ct-report * { box-sizing: border-box; }
 .ct-report .report-header { border-bottom: 3px solid #147a7f; padding-bottom: 10px; margin-bottom: 14px; }
-.ct-report .report-brand { font-size: 20px; font-weight: 750; letter-spacing: .04em; }
+.ct-report .report-brand { display:flex; align-items:center; gap:9px; font-size:20px; font-weight:750; letter-spacing:.04em; }
+.ct-report .report-brand-mark { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:9px; background:#f16e36; color:#fff; font-size:17px; font-weight:800; letter-spacing:-.04em; }
+.ct-report .report-brand small { display:block; margin-top:2px; color:#71888b; font-size:7px; font-weight:650; letter-spacing:.1em; }
 .ct-report h1 { font-size: 17px; line-height: 1.4; margin: 5px 0; font-weight: 650; }
 .ct-report .report-muted { color: #64797c; }
 .ct-report .report-refs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; border: 1px solid #dce6e6; padding: 12px; margin-bottom: 12px; }
@@ -844,6 +870,20 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ct-report-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; border-top:1px solid #e2e9ee; background:#fafcfd; flex-shrink:0; }
 .ct-report-footer > span { font-size:11px; color:#65788a; }
 .ct-report-footer > div { display:flex; gap:8px; }
+.ct-report-head-tools { display:flex; align-items:center; gap:8px; flex:none; }
+.ct-report-number-editor { display:flex; align-items:flex-end; gap:9px; padding:11px 20px; border-bottom:1px solid #e2e9ee; background:#f6fafb; }
+.ct-report-number-editor[hidden] { display:none!important; }
+.ct-report-number-editor > div { flex:1; min-width:0; }
+.ct-report-number-editor label { display:block; margin-bottom:5px; color:#526d78; font-size:11px; font-weight:650; }
+.ct-report-number-editor input { width:100%; min-height:38px; padding:8px 10px; border:1px solid #cbdcdf; border-radius:6px; background:#fff; color:#294d55; font:600 14px/1.3 inherit; text-transform:uppercase; }
+.ct-report-number-editor-actions { display:flex; gap:6px; flex:none; }
+.ct-report-number-editor-actions .ct-button { min-height:38px; padding:8px 11px; font-size:11px; }
+.ct-report-number-editor-error { flex-basis:100%; margin:0; color:#b13e43; font-size:11px; }
+.ct-diagnostic-number-dialog { width:min(460px,calc(100vw - 28px)); }
+.ct-diagnostic-number-dialog .df-label { display:block; margin-bottom:7px; font-size:12px; font-weight:650; color:#334155; }
+.ct-diagnostic-number-dialog .df-input { width:100%; min-height:43px; }
+.ct-diagnostic-number-dialog .df-help { margin:8px 0 0; }
+.ct-diagnostic-number-dialog .df-error { margin:12px 0 0; }
 .ct-tester-banner { position:sticky; top:0; z-index:51; display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 24px; color:#59419b; border-bottom:1px solid #ddd2f6; background:#f5f1ff; font-size:12px; }
 .ct-tester-banner[hidden],.ct-access-help[hidden],#ctCustomDurationField[hidden],#ctExpiryDateField[hidden],.ct-duration-shortcuts [hidden] { display:none!important; }
 .ct-tester-banner > div { display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; }
@@ -880,6 +920,11 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
  .ct-report-footer { flex-wrap:wrap; padding:10px 14px; }
  .ct-report-footer > span { flex-basis:100%; }
  .ct-report-footer > div { margin-left:auto; }
+ .ct-report-head-tools { gap:5px; }
+ .ct-report-head-tools .ct-button { min-height:36px; padding:7px 8px; font-size:10px; }
+ .ct-report-number-editor { align-items:stretch; flex-wrap:wrap; padding:10px 14px; }
+ .ct-report-number-editor > div { flex-basis:100%; }
+ .ct-report-number-editor-actions { justify-content:flex-end; }
  .ct-report-body .report-refs { grid-template-columns:1fr 1fr; }
  .ct-brand-logo { width:36px; height:36px; flex-basis:36px; }
  .ct-inspection-label { padding:9px 10px; }
@@ -1910,8 +1955,9 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     <div class="ct-tester-tools"><time id="ctTesterCountdown" aria-label="Time remaining">01:00:00</time><button id="ctAccessFeedbackButton" type="button" class="ct-button" onclick="CartechAccess.openFeedback()">Feedback notes</button><button id="ctAccessExitButton" type="button" class="ct-button" onclick="handleLogout()">Sign out</button></div>
   </aside>
   <dialog id="ctInspectionReport" class="ct-dialog ct-inspection-report" aria-labelledby="ctInspectionReportTitle">
-    <div class="ct-dialog-head"><div><h2 id="ctInspectionReportTitle">CARTECH Inspection</h2><p id="ctInspectionReportSubtitle">Saved mechanic findings</p></div><button type="button" class="ct-icon-button" onclick="CartechInspections.close()" aria-label="Close inspection report"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+    <div class="ct-dialog-head"><div><h2 id="ctInspectionReportTitle">CARTECH Inspection</h2><p id="ctInspectionReportSubtitle">Saved mechanic findings</p></div><div class="ct-report-head-tools"><button id="ctReportEditNumber" type="button" class="ct-button" onclick="CartechInspections.editNumber()" hidden><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit diagnostic #</button><button type="button" class="ct-icon-button" onclick="CartechInspections.close()" aria-label="Close inspection report"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div></div>
     <div id="ctInspectionReportBody" class="ct-report-body"></div>
+    <div id="ctReportNumberEditor" class="ct-report-number-editor" hidden><div><label for="ctReportNumberInput">Diagnostic Number</label><input id="ctReportNumberInput" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter the correct diagnostic number"><p id="ctReportNumberError" class="ct-report-number-editor-error" role="alert" hidden></p></div><div class="ct-report-number-editor-actions"><button id="ctReportNumberCancel" type="button" class="ct-button" onclick="CartechInspections.cancelNumberEdit()">Cancel</button><button id="ctReportNumberSave" type="button" class="ct-button ct-primary" onclick="CartechInspections.saveNumber()">Save number</button></div></div>
     <footer class="ct-report-footer"><span id="ctInspectionReportNotice" role="status">Use these findings to discuss recommended work with the customer.</span><div><button id="ctReportDownload" type="button" class="ct-button" onclick="CartechInspections.download()"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button><button id="ctReportPrint" type="button" class="ct-button ct-primary" onclick="CartechInspections.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> Print</button></div></footer>
   </dialog>
   <dialog id="ctEditAccessDialog" class="ct-dialog ct-access-dialog" aria-labelledby="ctEditAccessTitle">
@@ -1939,28 +1985,29 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       <div class="df-brand"><span class="df-brand-icon"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i></span><div><span id="ctDiagDialogTitle">CARTECH Inspection</span><small id="ctDiagModeLabel">Developer preview</small></div></div>
       <div class="df-tools"><button id="ctDiagDownload" type="button" class="df-icon-button hidden" onclick="CartechDiagnostics.downloadReport()" aria-label="Download saved report" title="Download saved report"><i class="fa-solid fa-download" aria-hidden="true"></i></button><button id="btnDiagModalPrint" type="button" class="df-icon-button hidden" onclick="printDiagnosticReport()" aria-label="Print saved inspection" title="Print saved inspection"><i class="fa-solid fa-print" aria-hidden="true"></i></button><button id="ctDiagClose" class="df-icon-button" type="button" onclick="closeDiagnosticSheetModal()" aria-label="Close inspection"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
     </header>
-    <div class="df-progress"><div class="df-progress-meta"><strong id="ctDiagStepLabel">1 / 8 · References</strong><span id="ctDiagAnswerCount">0 of 36 responses recorded</span></div><div id="ctDiagProgress" class="df-progress-track" role="progressbar" aria-label="Inspection responses" aria-valuemin="0" aria-valuemax="36" aria-valuenow="0"><div id="ctDiagProgressFill" class="df-progress-fill"></div></div><nav id="ctDiagSteps" class="df-steps" aria-label="Inspection sections"><button id="ctDiagStep0" type="button" class="df-step" onclick="CartechDiagnostics.goTo(0)" aria-controls="ctDiagSection0" aria-current="step"><span aria-hidden="true">1</span>References</button><button id="ctDiagStep1" type="button" class="df-step" onclick="CartechDiagnostics.goTo(1)" aria-controls="ctDiagSection1"><span aria-hidden="true">2</span>Diagnostics</button><button id="ctDiagStep2" type="button" class="df-step" onclick="CartechDiagnostics.goTo(2)" aria-controls="ctDiagSection2"><span aria-hidden="true">3</span>Lights</button><button id="ctDiagStep3" type="button" class="df-step" onclick="CartechDiagnostics.goTo(3)" aria-controls="ctDiagSection3"><span aria-hidden="true">4</span>Belts</button><button id="ctDiagStep4" type="button" class="df-step" onclick="CartechDiagnostics.goTo(4)" aria-controls="ctDiagSection4"><span aria-hidden="true">5</span>Filters & fluids</button><button id="ctDiagStep5" type="button" class="df-step" onclick="CartechDiagnostics.goTo(5)" aria-controls="ctDiagSection5"><span aria-hidden="true">6</span>Leaks & wear</button><button id="ctDiagStep6" type="button" class="df-step" onclick="CartechDiagnostics.goTo(6)" aria-controls="ctDiagSection6"><span aria-hidden="true">7</span>Battery</button><button id="ctDiagStep7" type="button" class="df-step" onclick="CartechDiagnostics.goTo(7)" aria-controls="ctDiagSection7"><span aria-hidden="true">8</span>Review</button></nav></div>
+    <div class="df-progress"><div class="df-progress-meta"><strong id="ctDiagStepLabel">1 / 8 · References</strong><span id="ctDiagAnswerCount">0 of 39 responses recorded</span></div><div id="ctDiagProgress" class="df-progress-track" role="progressbar" aria-label="Inspection responses" aria-valuemin="0" aria-valuemax="39" aria-valuenow="0"><div id="ctDiagProgressFill" class="df-progress-fill"></div></div><nav id="ctDiagSteps" class="df-steps" aria-label="Inspection sections"><button id="ctDiagStep0" type="button" class="df-step" onclick="CartechDiagnostics.goTo(0)" aria-controls="ctDiagSection0" aria-current="step"><span aria-hidden="true">1</span>References</button><button id="ctDiagStep1" type="button" class="df-step" onclick="CartechDiagnostics.goTo(1)" aria-controls="ctDiagSection1"><span aria-hidden="true">2</span>Basic Diagnostics</button><button id="ctDiagStep2" type="button" class="df-step" onclick="CartechDiagnostics.goTo(2)" aria-controls="ctDiagSection2"><span aria-hidden="true">3</span>Lighting</button><button id="ctDiagStep3" type="button" class="df-step" onclick="CartechDiagnostics.goTo(3)" aria-controls="ctDiagSection3"><span aria-hidden="true">4</span>Belts</button><button id="ctDiagStep4" type="button" class="df-step" onclick="CartechDiagnostics.goTo(4)" aria-controls="ctDiagSection4"><span aria-hidden="true">5</span>Filters & Fluids</button><button id="ctDiagStep5" type="button" class="df-step" onclick="CartechDiagnostics.goTo(5)" aria-controls="ctDiagSection5"><span aria-hidden="true">6</span>Leaks, Tires & Brakes</button><button id="ctDiagStep6" type="button" class="df-step" onclick="CartechDiagnostics.goTo(6)" aria-controls="ctDiagSection6"><span aria-hidden="true">7</span>Battery Check</button><button id="ctDiagStep7" type="button" class="df-step" onclick="CartechDiagnostics.goTo(7)" aria-controls="ctDiagSection7"><span aria-hidden="true">8</span>Review & Save</button></nav></div>
     <form id="diagnosticPaperForm" novalidate onsubmit="saveDiagnosticSheet(event); return false;">
       <input id="diagFormTargetJobId" type="hidden">
       <div id="ctDiagScroll" class="df-scroll">
         <div id="diagnosticPaperLayout">
-          <header id="ctDiagHero" class="df-form-head"><div class="df-eyebrow">CARTECH · WORKSHOP FORMS</div><h1>Safety Inspection Form — Mechanic</h1><p>Complete the vehicle inspection and record your findings accurately. Fields marked <span class="df-required">*</span> need an answer.</p><div class="df-context"><span id="paperDiagListHeader">Diagnostic list</span><span id="paperDiagDate"></span></div></header>
+          <header id="ctDiagHero" class="df-form-head"><div class="df-form-logo"><span class="df-form-logo-mark">C</span><span><strong>CARTECH</strong><small>HYBRID QUEUE · WORKSHOP INSPECTION</small></span></div><div class="df-eyebrow">CARTECH · WORKSHOP FORMS</div><h1>Safety Inspection Form — Mechanic</h1><p>Complete the vehicle inspection and record your findings accurately. Fields marked <span class="df-required">*</span> need an answer.</p><div class="df-context"><span id="paperDiagListHeader">Diagnostic list</span><span id="paperDiagDate"></span></div></header>
           <div id="ctDiagSectionLabel" class="df-section-bar">Section 1 of 8 · References</div>
           <section id="ctDiagSection0" class="df-section" aria-labelledby="ctDiagHeading0">
             <h2 id="ctDiagHeading0" tabindex="-1">References</h2><p class="df-section-intro">Confirm the vehicle and inspection date before you begin.</p>
-            <div class="df-two-col df-reference-inputs"><div class="df-field"><label for="ctDiagNumber">1. Diagnostic List # <span class="df-required">*</span></label><input id="ctDiagNumber" class="df-input" required readonly aria-describedby="ctDiagNumberHelp"><small id="ctDiagNumberHelp" class="df-help">Filled from this job’s diagnostic reference.</small></div><div class="df-field"><label for="ctDiagInspectionDate">2. Date of Inspection <span class="df-required">*</span></label><input id="ctDiagInspectionDate" class="df-input" type="date" required></div></div>
-            <dl class="df-reference"><div><dt>Customer</dt><dd id="paperClientName"></dd></div><div><dt>Vehicle / unit</dt><dd id="paperVehicleName"></dd></div><div><dt>VIN / chassis number</dt><dd id="paperVinNumber"></dd></div><div><dt>Assigned mechanic</dt><dd id="paperMechanicName"></dd></div><div class="df-reference-wide"><dt>Customer complaint / job instructions</dt><dd id="paperClientComment"></dd></div></dl>
+            <div class="df-two-col df-reference-inputs"><div class="df-field"><label for="ctDiagNumber">1. Diagnostic Number <span class="df-required">*</span></label><input id="ctDiagNumber" class="df-input" required readonly aria-describedby="ctDiagNumberHelp"><small id="ctDiagNumberHelp" class="df-help">Set by Office when the job is created; corrections are available from the Office inspection report.</small></div><div class="df-field"><label for="ctDiagInspectionDate">2. Date of Inspection <span class="df-required">*</span></label><input id="ctDiagInspectionDate" class="df-input" type="date" required></div></div>
+            <dl class="df-reference"><div><dt>Customer</dt><dd id="paperClientName"></dd></div><div><dt>Vehicle / unit</dt><dd id="paperVehicleName"></dd></div><div><dt>VIN / chassis number</dt><dd id="paperVinNumber"></dd></div><div><dt>Assigned mechanic</dt><dd id="paperMechanicName"></dd></div><div class="df-reference-wide"><dt>Customer Complaint / Job Instructions</dt><dd id="paperClientComment"></dd></div></dl>
             <div class="df-field"><label for="ctDiagVin">VIN / chassis number</label><input id="ctDiagVin" class="df-input df-vin-input" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Assigned mechanic can add the VIN" aria-describedby="ctDiagVinHelp"><small id="ctDiagVinHelp" class="df-help">Enter the VIN or chassis number from the vehicle. It will also update this job’s record.</small></div>
             <div class="df-two-col df-reference-inputs"><div class="df-field"><label for="paperPlateNumber">Plate number</label><input id="paperPlateNumber" class="df-input" maxlength="30" placeholder="Enter plate number" autocomplete="off"></div><div class="df-field"><label for="paperMileage">Odometer (km)</label><input id="paperMileage" class="df-input" type="number" min="0" max="99999999" step="any" inputmode="decimal" placeholder="Enter mileage"></div></div>
             <div class="df-field"><label for="paperPhoneNumber">Customer phone number <span class="df-help">Optional</span></label><input id="paperPhoneNumber" class="df-input" type="tel" maxlength="40" autocomplete="tel" placeholder="Enter contact number"></div>
           </section>
           <section id="ctDiagSection1" class="df-section" aria-labelledby="ctDiagHeading1" hidden>
-            <h2 id="ctDiagHeading1" tabindex="-1">Basic diagnostics</h2><p class="df-section-intro">Record one result for every item. Choose N/A for equipment the vehicle does not have, or Not inspected when you could not check it.</p>
+            <h2 id="ctDiagHeading1" tabindex="-1">Basic Diagnostics</h2><p class="df-section-intro">Record one result for every item. Fuel pressure has a 45 PSI target; choose Not measured when it was not tested.</p>
             <fieldset class="df-check"><legend>Front wipers <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_wiper_f" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_wiper_f" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_wiper_f" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_wiper_f" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Rear wipers <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_wiper_r" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_wiper_r" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_wiper_r" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_wiper_r" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Check-engine indicator / engine diagnostics <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_engine" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_engine" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_engine" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_engine" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>ABS indicator / diagnostics <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_abs" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_abs" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_abs" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_abs" value="uninspected"><span>Not inspected</span></label></div></fieldset>
-            <div class="df-field" style="margin-top:22px"><label for="chk_other_errors">Other errors / diagnostic trouble codes</label><textarea id="chk_other_errors" class="df-input" rows="3" maxlength="2000" placeholder="Record fault codes and related observations"></textarea></div>
+            <div class="df-field" style="margin-top:22px"><label for="chk_other_errors">Other Errors / Fault Codes</label><textarea id="chk_other_errors" class="df-input" rows="3" maxlength="2000" placeholder="Record fault codes and related observations"></textarea></div>
+            <div class="df-field df-measure"><label for="ctDiagFuelPressure">Fuel Pressure <span class="df-target-badge">45 PSI target</span></label><div class="df-unit-input"><input id="ctDiagFuelPressure" class="df-input" type="number" min="0" max="200" step="any" inputmode="decimal" placeholder="Enter measured pressure" aria-describedby="ctDiagFuelPressureHelp"><span class="df-input-unit">PSI</span></div><small id="ctDiagFuelPressureHelp" class="df-help">Enter the actual gauge reading. The reference target is 45 PSI.</small><label class="df-toggle"><input id="ctDiagFuelPressureUnknown" type="checkbox">Not measured</label></div>
           </section>
           <section id="ctDiagSection2" class="df-section" aria-labelledby="ctDiagHeading2" hidden>
             <h2 id="ctDiagHeading2" tabindex="-1">Lighting</h2><p class="df-section-intro">Check the left and right sides separately. Each side needs a result.</p>
@@ -1976,9 +2023,11 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
             <h2 id="ctDiagHeading3" tabindex="-1">Belts</h2><p class="df-section-intro">Choose Good, Monitor, or Replace for each belt. Use N/A if it is not fitted, or Not inspected if it was not checked.</p>
             <fieldset class="df-check"><legend>Drive belt <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_drive_belt" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_drive_belt" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_drive_belt" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_drive_belt" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_drive_belt" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Alternator belt <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_alternator_belt" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_alternator_belt" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_alternator_belt" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_alternator_belt" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_alternator_belt" value="uninspected"><span>Not inspected</span></label></div></fieldset>
+<fieldset class="df-check"><legend>Steering belt <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_steering_belt" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_steering_belt" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_steering_belt" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_steering_belt" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_steering_belt" value="uninspected"><span>Not inspected</span></label></div></fieldset>
+<fieldset class="df-check"><legend>Air-conditioning belt (A/C belt) <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_aircon_belt" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_aircon_belt" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_aircon_belt" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_aircon_belt" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_aircon_belt" value="uninspected"><span>Not inspected</span></label></div></fieldset>
           </section>
           <section id="ctDiagSection4" class="df-section" aria-labelledby="ctDiagHeading4" hidden>
-            <h2 id="ctDiagHeading4" tabindex="-1">Filters & fluids</h2><p class="df-section-intro">Record the condition observed during this inspection.</p>
+            <h2 id="ctDiagHeading4" tabindex="-1">Filters & Fluids</h2><p class="df-section-intro">Record the condition observed during this inspection.</p>
             <h3>Filters & spark plugs</h3><fieldset class="df-check"><legend>Air filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_air_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Cabin filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Fuel filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
@@ -1989,24 +2038,25 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 <fieldset class="df-check"><legend>Brake fluid <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_brake" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_brake" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_brake" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_brake" value="uninspected"><span>Not inspected</span></label></div></fieldset>
           </section>
           <section id="ctDiagSection5" class="df-section" aria-labelledby="ctDiagHeading5" hidden>
-            <h2 id="ctDiagHeading5" tabindex="-1">Leaks, tires & brakes</h2><p class="df-section-intro">Record leak findings and the remaining tire and brake life. Use Not measured where needed.</p>
+            <h2 id="ctDiagHeading5" tabindex="-1">Leaks, Tires & Brakes</h2><p class="df-section-intro">Record leak findings and the remaining tire and brake life. Use Not measured where needed.</p>
             <div class="df-field"><label for="leak_engine_oil">Engine oil leak <span class="df-required" aria-hidden="true">*</span></label><select class="df-input" id="leak_engine_oil"><option value="">Choose a result</option><option value="good">No leak</option><option value="not">Leak found</option><option value="na">N/A</option><option value="uninspected">Not inspected</option></select></div><div class="df-field"><label for="leak_trans_oil">Transmission oil leak <span class="df-required" aria-hidden="true">*</span></label><select class="df-input" id="leak_trans_oil"><option value="">Choose a result</option><option value="good">No leak</option><option value="not">Leak found</option><option value="na">N/A</option><option value="uninspected">Not inspected</option></select></div><div class="df-field"><label for="leak_diff_oil">Differential oil leak <span class="df-required" aria-hidden="true">*</span></label><select class="df-input" id="leak_diff_oil"><option value="">Choose a result</option><option value="good">No leak</option><option value="not">Leak found</option><option value="na">N/A</option><option value="uninspected">Not inspected</option></select></div>
-            <div class="df-field"><label for="paperLeakOrigin">Leak location / observations</label><textarea id="paperLeakOrigin" class="df-input" rows="2" maxlength="2000" placeholder="For example: valve cover gasket or oil pan"></textarea></div>
-            <h3>Tires & brakes — remaining life</h3><div class="df-two-col"><div class="df-measure"><div class="df-field"><label for="paperTiresFront">Front tires — remaining life (%)</label><input id="paperTiresFront" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperTiresFrontUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperTiresRear">Rear tires — remaining life (%)</label><input id="paperTiresRear" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperTiresRearUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperBrakesFront">Front brake pads — remaining life (%)</label><input id="paperBrakesFront" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperBrakesFrontUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperBrakesRear">Rear brake shoes — remaining life (%)</label><input id="paperBrakesRear" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperBrakesRearUnknown" type="checkbox">Not measured</label></div></div>
+            <div class="df-field"><label for="paperLeakOrigin">Leak Location / Observations</label><textarea id="paperLeakOrigin" class="df-input" rows="2" maxlength="2000" placeholder="For example: valve cover gasket or oil pan"></textarea></div>
+            <h3>Tires & Brakes — Remaining Life</h3><div class="df-two-col"><div class="df-measure"><div class="df-field"><label for="paperTiresFront">Front tires — remaining life (%)</label><input id="paperTiresFront" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperTiresFrontUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperTiresRear">Rear tires — remaining life (%)</label><input id="paperTiresRear" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperTiresRearUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperBrakesFront">Front brake pads — remaining life (%)</label><input id="paperBrakesFront" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperBrakesFrontUnknown" type="checkbox">Not measured</label></div><div class="df-measure"><div class="df-field"><label for="paperBrakesRear">Rear brake shoes — remaining life (%)</label><input id="paperBrakesRear" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="0–100"></div><label class="df-toggle"><input id="paperBrakesRearUnknown" type="checkbox">Not measured</label></div></div>
           </section>
           <section id="ctDiagSection6" class="df-section" aria-labelledby="ctDiagHeading6" hidden>
-            <h2 id="ctDiagHeading6" tabindex="-1">Battery check</h2><p class="df-section-intro">Record the battery test result and terminal condition. Enter readings only when measured.</p>
+            <h2 id="ctDiagHeading6" tabindex="-1">Battery Check</h2><p class="df-section-intro">Record the battery test result and terminal condition. Enter readings only when measured.</p>
             <fieldset class="df-check"><legend>Battery condition / test result <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_battery_condition" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Battery terminals &amp; connections <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="uninspected"><span>Not inspected</span></label></div></fieldset>
-            <h3>Measured voltage · optional</h3><div class="df-two-col"><div class="df-field"><label for="ctDiagBatteryResting">Engine off (V)</label><input id="ctDiagBatteryResting" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div><div class="df-field"><label for="ctDiagBatteryCharging">Engine running (V)</label><input id="ctDiagBatteryCharging" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div></div>
+            <h3>Battery Readings · optional</h3><div class="df-two-col"><div class="df-field"><label for="ctDiagBatteryResting">Engine off (V)</label><input id="ctDiagBatteryResting" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div><div class="df-field"><label for="ctDiagBatteryCharging">Engine running (V)</label><input id="ctDiagBatteryCharging" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div></div>
             <div class="df-field"><label for="ctDiagBatteryNotes">Battery test notes</label><textarea id="ctDiagBatteryNotes" class="df-input" rows="2" maxlength="2000" placeholder="Record the tester result and any observations"></textarea></div>
           </section>
           <section id="ctDiagSection7" class="df-section" aria-labelledby="ctDiagHeading7" hidden>
-            <h2 id="ctDiagHeading7" tabindex="-1">Review & save</h2><p class="df-section-intro">Check your results and add any work you recommend.</p>
+            <h2 id="ctDiagHeading7" tabindex="-1">Review & Save</h2><p class="df-section-intro">Check your results and add any work you recommend.</p>
             <div class="df-review-counts"><div class="df-review-count"><strong id="ctDiagGoodCount">0</strong><span>Good / no leak</span></div><div class="df-review-count df-attention"><strong id="ctDiagAttentionCount">0</strong><span>Needs attention</span></div><div class="df-review-count"><strong id="ctDiagUninspectedCount">0</strong><span>Uninspected / missing</span></div><div class="df-review-count"><strong id="ctDiagNaCount">0</strong><span>Not applicable</span></div></div>
             <div id="ctDiagReviewMissing" class="df-notice" hidden></div><div id="ctDiagFindings"></div>
             <details class="df-review-details"><summary>View all inspection results</summary><table class="df-review-table" aria-label="All inspection results"><tbody id="ctDiagReviewRows"></tbody></table></details>
-            <div class="df-field"><label for="ctDiagNotes">Mechanic findings & recommended work</label><textarea id="ctDiagNotes" class="df-input" rows="4" maxlength="4000" placeholder="Describe faults, work needed, and any checks that could not be completed"></textarea></div>
+            <div class="df-field"><label for="ctDiagNotes">Mechanic Findings & Recommended Work</label><textarea id="ctDiagNotes" class="df-input" rows="4" maxlength="4000" placeholder="Describe faults, work needed, and any checks that could not be completed"></textarea></div>
+            <div class="df-two-col df-signature-fields"><div class="df-field"><label for="ctDiagOfficeAdvisorSignature">Office Advisor Signature</label><input id="ctDiagOfficeAdvisorSignature" class="df-input" maxlength="120" placeholder="Type name or leave blank for handwritten signature"></div><div class="df-field"><label for="ctDiagCustomerSignature">Customer Signature</label><input id="ctDiagCustomerSignature" class="df-input" maxlength="120" placeholder="Type name or leave blank for handwritten signature"></div></div>
             <label class="df-toggle df-acknowledgement"><input id="ctDiagReviewed" type="checkbox"><span>I have reviewed these findings and marked any item I could not inspect. <span class="df-required">*</span></span></label><p class="df-help">Saving attaches this inspection to the current job.</p>
           </section>
         </div>
@@ -2017,6 +2067,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   </dialog>
   <div id="ctDiagSavedNotice" class="df-save-notice" role="status" hidden></div>
   <dialog id="ctVinDialog" class="ct-dialog" aria-labelledby="ctVinTitle"><form id="ctVinForm" onsubmit="CartechDiagnostics.saveVin(event); return false;" novalidate><div class="ct-dialog-head"><div><h2 id="ctVinTitle">Add or correct VIN</h2><p id="ctVinJobLabel"></p></div><button id="ctVinClose" type="button" class="ct-icon-button" onclick="CartechDiagnostics.closeVin()" aria-label="Close VIN editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><div class="ct-dialog-body"><label class="df-label" for="ctVinValue">VIN / chassis number</label><input id="ctVinValue" class="df-input df-vin-input" maxlength="40" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter VIN or chassis number"><p class="df-help">Save the number from the vehicle. The office will see it on this job.</p><p id="ctVinError" class="df-error" role="alert" hidden></p><div class="ct-detail-actions"><button id="ctVinSave" type="submit" class="ct-button ct-primary">Save VIN</button></div></div></form></dialog>
+  <dialog id="ctDiagnosticNumberDialog" class="ct-dialog ct-diagnostic-number-dialog" aria-labelledby="ctDiagnosticNumberTitle"><form id="ctDiagnosticNumberForm" onsubmit="CartechInspections.saveJobNumber(event); return false;" novalidate><div class="ct-dialog-head"><div><h2 id="ctDiagnosticNumberTitle">Edit Diagnostic Number</h2><p id="ctDiagnosticNumberJobLabel"></p></div><button id="ctDiagnosticNumberClose" type="button" class="ct-icon-button" onclick="CartechInspections.closeJobNumberEditor()" aria-label="Close diagnostic number editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><div class="ct-dialog-body"><label class="df-label" for="ctDiagnosticNumberInput">Diagnostic Number</label><input id="ctDiagnosticNumberInput" class="df-input" type="text" maxlength="40" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter the correct diagnostic number"><p class="df-help">This correction updates the queue, inspection, search, and printed report together.</p><p id="ctDiagnosticNumberError" class="df-error" role="alert" hidden></p><div class="ct-detail-actions"><button id="ctDiagnosticNumberCancel" type="button" class="ct-button" onclick="CartechInspections.closeJobNumberEditor()">Cancel</button><button id="ctDiagnosticNumberSave" type="submit" class="ct-button ct-primary">Save number</button></div></div></form></dialog>
   <div id="ctDiagnosticPrintHost" aria-hidden="true"></div>
 
   <!-- 7. LIGHTBOX -->
@@ -4765,6 +4816,7 @@ window.CartechUI = (() => {
     const parts = parsePartsInfo(job.auto_schedule_slot);
     const canChat = management() || isAssigned(job);
     const canDiag = window.CartechDiagnostics?.canSave(job);
+    const canEditDiagnosticNumber = window.CartechDiagnostics?.canPrint() === true;
     const inspectionLabel = window.CartechInspections?.card(job) || '';
     setText('ctJobTitle', job.vehicle);
     setText('ctJobSubtitle', `${job.id} · ${statusNames[job.status] || job.status}`);
@@ -4781,7 +4833,7 @@ window.CartechUI = (() => {
       </dl>
       <section class="ct-detail-section"><h3>Job instructions</h3><p>${safe(job.details || 'Standard intake')}</p></section>
       ${job.status === 'waiting_parts' ? `<section class="ct-detail-section"><h3>Parts requested${mech ? ' by ' + safe(mech) : ''}</h3><p>${safe(parts.text || 'Replacement parts required')}</p><p class="ct-panel-caption">${parts.images.length} attached photo${parts.images.length === 1 ? '' : 's'} · Photos are available on the vehicle’s queue card.</p></section>` : ''}
-      <div class="ct-detail-actions">${canChat ? action('chat', 'Open job chat', 'fa-comment-dots') : ''}${canDiag ? action('diagnostic', currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection', 'fa-clipboard-list') : ''}${window.CartechDiagnostics?.canEditVin(job) ? action('vin', 'Add / edit VIN', 'fa-pen') : ''}${job.status === 'waiting_parts' && management() ? action('parts-ready', 'Parts ready to pick up', 'fa-box-open', true) : ''}</div>`;
+      <div class="ct-detail-actions">${canChat ? action('chat', 'Open job chat', 'fa-comment-dots') : ''}${canDiag ? action('diagnostic', currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection', 'fa-clipboard-list') : ''}${canEditDiagnosticNumber ? action('diagnostic-number', 'Edit diagnostic #', 'fa-pen-to-square') : ''}${window.CartechDiagnostics?.canEditVin(job) ? action('vin', 'Add / edit VIN', 'fa-pen') : ''}${job.status === 'waiting_parts' && management() ? action('parts-ready', 'Parts ready to pick up', 'fa-box-open', true) : ''}</div>`;
   }
 
   function openJob(id) {
@@ -4889,6 +4941,7 @@ window.CartechUI = (() => {
     closeAll();
     if (action === 'chat' && currentRole !== 'tester') openMessengerChatForJob(job.id, resolveMechanicName(job) || 'Workshop');
     if (action === 'diagnostic') openDiagnosticSheetModal(job.id);
+    if (action === 'diagnostic-number') window.CartechInspections?.openJobNumberEditor(job.id);
     if (action === 'vin') window.CartechDiagnostics?.openVin(job.id);
     if (action === 'parts-ready' && management()) officePartsReadyToPickUp(job.id);
   });
@@ -4933,11 +4986,20 @@ CartechUI.refresh();
 /* Existing diagnostic entry points delegate to this form. No schema migration is needed. */
 window.CartechDiagnostics = (() => {
   const fields = {"checks": [{"key": "chk_wiper_f", "label": "Front wipers", "section": 1, "kind": "radio"}, {"key": "chk_wiper_r", "label": "Rear wipers", "section": 1, "kind": "radio"}, {"key": "chk_engine", "label": "Check-engine indicator / engine diagnostics", "section": 1, "kind": "radio"}, {"key": "chk_abs", "label": "ABS indicator / diagnostics", "section": 1, "kind": "radio"}, {"key": "front_l", "id": "light_front_l", "label": "Front lights — left", "section": 2, "kind": "light"}, {"key": "front_r", "id": "light_front_r", "label": "Front lights — right", "section": 2, "kind": "light"}, {"key": "sig_f_l", "id": "light_sig_f_l", "label": "Front signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_f_r", "id": "light_sig_f_r", "label": "Front signal lights — right", "section": 2, "kind": "light"}, {"key": "fog_f_l", "id": "light_fog_f_l", "label": "Front fog lights — left", "section": 2, "kind": "light"}, {"key": "fog_f_r", "id": "light_fog_f_r", "label": "Front fog lights — right", "section": 2, "kind": "light"}, {"key": "sig_r_l", "id": "light_sig_r_l", "label": "Rear signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_r_r", "id": "light_sig_r_r", "label": "Rear signal lights — right", "section": 2, "kind": "light"}, {"key": "stop_l", "id": "light_stop_l", "label": "Rear stop / brake lights — left", "section": 2, "kind": "light"}, {"key": "stop_r", "id": "light_stop_r", "label": "Rear stop / brake lights — right", "section": 2, "kind": "light"}, {"key": "rev_l", "id": "light_rev_l", "label": "Reverse & plate lights — left", "section": 2, "kind": "light"}, {"key": "rev_r", "id": "light_rev_r", "label": "Reverse & plate lights — right", "section": 2, "kind": "light"}, {"key": "chk_drive_belt", "label": "Drive belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_alternator_belt", "label": "Alternator belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_air_filter", "label": "Air filter", "section": 4, "kind": "radio"}, {"key": "chk_cabin_filter", "label": "Cabin filter", "section": 4, "kind": "radio"}, {"key": "chk_fuel_filter", "label": "Fuel filter", "section": 4, "kind": "radio"}, {"key": "chk_spark_plugs", "label": "Spark plugs", "section": 4, "kind": "radio"}, {"key": "chk_fluid_engine", "label": "Engine oil", "section": 4, "kind": "radio"}, {"key": "chk_fluid_trans", "label": "Transmission oil", "section": 4, "kind": "radio"}, {"key": "chk_fluid_coolant", "label": "Cooling system fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_steering", "label": "Power steering fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_brake", "label": "Brake fluid", "section": 4, "kind": "radio"}, {"key": "engine", "id": "leak_engine_oil", "label": "Engine oil leak", "section": 5, "kind": "leak"}, {"key": "trans", "id": "leak_trans_oil", "label": "Transmission oil leak", "section": 5, "kind": "leak"}, {"key": "diff", "id": "leak_diff_oil", "label": "Differential oil leak", "section": 5, "kind": "leak"}, {"key": "chk_battery_condition", "label": "Battery condition / test result", "section": 6, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_battery_terminals", "label": "Battery terminals & connections", "section": 6, "kind": "radio"}], "measures": [{"id": "paperTiresFront", "group": "tires", "key": "front", "label": "Front tires — remaining life"}, {"id": "paperTiresRear", "group": "tires", "key": "rear", "label": "Rear tires — remaining life"}, {"id": "paperBrakesFront", "group": "brakes", "key": "front", "label": "Front brake pads — remaining life"}, {"id": "paperBrakesRear", "group": "brakes", "key": "rear", "label": "Rear brake shoes — remaining life"}], "sections": ["References", "Basic diagnostics", "Lighting", "Belts", "Filters & fluids", "Leaks, tires & brakes", "Battery check", "Review & save"]};
-  const sectionNames = fields.sections;
+  const beltInsertAt = fields.checks.findIndex(field => field.key === 'chk_alternator_belt') + 1;
+  fields.checks.splice(beltInsertAt, 0,
+    { key: 'chk_steering_belt', label: 'Steering belt', section: 3, kind: 'radio', choices: [['good', 'Good'], ['monitor', 'Monitor'], ['replace', 'Replace'], ['na', 'N/A'], ['uninspected', 'Not inspected']] },
+    { key: 'chk_aircon_belt', label: 'Air-conditioning belt (A/C belt)', section: 3, kind: 'radio', choices: [['good', 'Good'], ['monitor', 'Monitor'], ['replace', 'Replace'], ['na', 'N/A'], ['uninspected', 'Not inspected']] }
+  );
+  const pressureField = { id: 'ctDiagFuelPressure', group: 'readings', key: 'fuelPressure', section: 1, label: 'Fuel pressure — target 45 PSI', unit: ' PSI', min: 0, max: 200 };
+  const measureFields = [...fields.measures.map(field => ({ ...field, section: field.section ?? 5 })), pressureField];
+  const sectionNames = ['References', 'Basic Diagnostics', 'Lighting', 'Belts', 'Filters & Fluids', 'Leaks, Tires & Brakes', 'Battery Check', 'Review & Save'];
   const reviewSection = sectionNames.length - 1;
-  const wearSection = sectionNames.indexOf('Leaks, tires & brakes');
+  const wearSection = sectionNames.indexOf('Leaks, Tires & Brakes');
   const releaseKey = 'diagnosticWorkshopV4Enabled';
   const reportStyles = ".ct-report { font: 11px/1.45 'Segoe UI', Arial, sans-serif; color: #233e43; background: white; margin: 0; padding: 0; }\n.ct-report * { box-sizing: border-box; }\n.ct-report .report-header { border-bottom: 3px solid #147a7f; padding-bottom: 10px; margin-bottom: 14px; }\n.ct-report .report-brand { font-size: 20px; font-weight: 750; letter-spacing: .04em; }\n.ct-report h1 { font-size: 17px; line-height: 1.4; margin: 5px 0; font-weight: 650; }\n.ct-report .report-muted { color: #64797c; }\n.ct-report .report-refs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; border: 1px solid #dce6e6; padding: 12px; margin-bottom: 12px; }\n.ct-report .report-refs div { overflow-wrap: anywhere; }\n.ct-report .report-refs b { display: block; font-size: 9px; text-transform: uppercase; color: #617b7e; }\n.ct-report .report-columns { column-count: 2; column-gap: 18px; }\n.ct-report section { break-inside: avoid; margin-bottom: 12px; }\n.ct-report h2 { font-size: 11px; font-weight: 650; padding: 6px 8px; margin: 0; background: #edf5f4; border: 1px solid #dae6e6; }\n.ct-report table { border-collapse: collapse; width: 100%; font-size: 10px; }\n.ct-report td { border: 1px solid #e0e8e8; padding: 5px 8px; overflow-wrap: anywhere; }\n.ct-report td:last-child { width: 36%; }\n.ct-report .report-attention { color: #935222; font-weight: 650; }\n.ct-report p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 7px 0 12px; }\n.ct-report .report-signatures { display: flex; gap: 30px; margin-top: 24px; padding-top: 12px; border-top: 1px solid #cedddd; font-size: 10px; }\n";
+  const reportExtraStyles = ".ct-report .report-brand { display: flex; align-items: center; gap: 9px; }\n.ct-report .report-brand-mark { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 9px; background: #f16e36; color: #fff; font-size: 17px; font-weight: 800; letter-spacing: -.04em; }\n.ct-report .report-brand strong { display: block; }\n.ct-report .report-brand small { display: block; margin-top: 2px; color: #71888b; font-size: 7px; font-weight: 650; letter-spacing: .1em; }\n.ct-report .report-signatures { flex-wrap: wrap; }\n";
+  const reportPrintStyles = ".ct-report { font-size: 8px !important; line-height: 1.14 !important; }\n.ct-report .report-header { padding-bottom: 4px !important; margin-bottom: 5px !important; border-bottom-width: 2px !important; }\n.ct-report .report-brand { gap: 5px !important; font-size: 12px !important; }\n.ct-report .report-brand-mark { width: 19px !important; height: 19px !important; font-size: 10px !important; }\n.ct-report .report-brand small { font-size: 5px !important; margin-top: 1px !important; }\n.ct-report h1 { font-size: 11px !important; margin: 2px 0 !important; }\n.ct-report .report-refs { gap: 3px 10px !important; padding: 5px !important; margin-bottom: 5px !important; }\n.ct-report .report-refs b { font-size: 6px !important; }\n.ct-report .report-columns { column-gap: 10px !important; }\n.ct-report section { margin-bottom: 4px !important; }\n.ct-report h2 { font-size: 8px !important; padding: 3px 4px !important; }\n.ct-report table { font-size: 7px !important; }\n.ct-report td { padding: 2px 4px !important; }\n.ct-report p { margin: 3px 0 4px !important; }\n.ct-report .report-signatures { gap: 10px !important; margin-top: 7px !important; padding-top: 4px !important; font-size: 7px !important; }\n";
   const byId = id => document.getElementById(id);
   const form = byId('diagnosticPaperForm');
   const modal = byId('diagnosticSheetModal');
@@ -5100,6 +5162,49 @@ window.CartechDiagnostics = (() => {
   function diagnosticNumber(job) {
     return job.phone && job.phone !== 'N/A' ? job.phone : (String(job.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job.id);
   }
+  function normalizeDiagnosticNumber(value) {
+    return String(value ?? '').trim().toUpperCase();
+  }
+  function validDiagnosticNumber(value) {
+    return /^[A-Z0-9][A-Z0-9 _./-]{0,39}$/.test(value);
+  }
+  async function updateDiagnosticNumber(jobId, rawValue) {
+    if (!currentUser || !window.CartechAccess?.sessionValid() || !['office', 'admin', 'developer'].includes(currentRole)) throw new Error('Only authorized office or developer accounts can edit the diagnostic number.');
+    const value = normalizeDiagnosticNumber(rawValue);
+    if (!validDiagnosticNumber(value)) throw new Error('Use 1–40 letters, numbers, spaces, dots, slashes, or hyphens.');
+    const rows = await requestJSON(`${API_URL}?id=eq.${encodeURIComponent(jobId)}&select=*`, { headers: HEADERS });
+    const fresh = Array.isArray(rows) ? rows.find(item => item.id === jobId) : null;
+    if (!fresh) throw new Error('The job could not be found. Refresh the queue and try again.');
+    const original = normalizeDiagnosticNumber(diagnosticNumber(fresh));
+    if (original !== value) {
+      const allRows = await requestJSON(`${API_URL}?select=id,phone,details&limit=1000`, { headers: HEADERS });
+      const duplicate = Array.isArray(allRows) && allRows.some(item => item.id !== jobId && normalizeDiagnosticNumber(diagnosticNumber(item)) === value);
+      if (duplicate) throw new Error(`Diagnostic number ${value} is already used by another job.`);
+    }
+    let details = String(fresh.details || '');
+    const tag = details.match(/\[DIAG:\s*[^\]]+\]/i);
+    details = tag ? details.replace(tag[0], `[DIAG: ${value}]`) : `[DIAG: ${value}] ${details}`.trim();
+    let slot = String(fresh.auto_schedule_slot || '');
+    const dataMatch = slot.match(/\[DIAG_DATA\]([\s\S]*?)\[\/DIAG_DATA\]/i);
+    if (dataMatch) {
+      try {
+        const data = JSON.parse(dataMatch[1]);
+        if (data && typeof data === 'object') {
+          data.diagnosticNumber = value;
+          slot = slot.replace(dataMatch[0], `[DIAG_DATA]${serialize(data)}[/DIAG_DATA]`);
+        }
+      } catch (_) { /* Keep the existing inspection payload if an older record is malformed. */ }
+    }
+    const updated = await requestJSON(`${API_URL}?id=eq.${encodeURIComponent(jobId)}`, {
+      method: 'PATCH', headers: { ...HEADERS, Prefer: 'return=representation' },
+      body: JSON.stringify({ phone: value, details, auto_schedule_slot: slot })
+    });
+    const confirmed = Array.isArray(updated) ? updated.find(item => item.id === jobId) : null;
+    if (!confirmed || normalizeDiagnosticNumber(confirmed.phone) !== value) throw new Error('The server did not confirm the diagnostic number update.');
+    state = state.map(item => item.id === jobId ? { ...item, ...confirmed } : item);
+    completedArchive = completedArchive.map(item => item.id === jobId ? { ...item, ...confirmed } : item);
+    return confirmed;
+  }
   function localDate() {
     const date = new Date();
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -5134,7 +5239,9 @@ window.CartechDiagnostics = (() => {
   }
   function measureRecorded(field) {
     const value = measureValue(field);
-    return value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0 && Number(value) <= 100 && byId(field.id).checkValidity();
+    const minimum = Number.isFinite(Number(field.min)) ? Number(field.min) : 0;
+    const maximum = Number.isFinite(Number(field.max)) ? Number(field.max) : 100;
+    return value !== '' && Number.isFinite(Number(value)) && Number(value) >= minimum && Number(value) <= maximum && byId(field.id).checkValidity();
   }
   function clearError() { byId('ctDiagError').hidden = true; byId('ctDiagError').textContent = ''; }
   function fail(message, control) {
@@ -5163,10 +5270,12 @@ window.CartechDiagnostics = (() => {
         return fail(`Choose a result for ${field.label}. Use Not inspected if it was not checked.`, field.kind === 'radio' ? form.querySelector(`input[name="${field.key}"]`) : byId(field.id));
       }
     }
-    if (index === wearSection) {
-      for (const field of fields.measures) {
+    if (measureFields.some(field => field.section === index)) {
+      for (const field of measureFields.filter(field => field.section === index)) {
         if (!byId(field.id + 'Unknown').checked && !measureRecorded(field)) {
-          return fail(`Enter 0–100% for ${field.label}, or select Not measured.`, byId(field.id));
+          const unit = field.unit?.trim() || '%';
+          const maximum = Number.isFinite(Number(field.max)) ? field.max : 100;
+          return fail(`Enter a value from ${field.min ?? 0}–${maximum}${unit} for ${field.label}, or select Not measured.`, byId(field.id));
         }
       }
     }
@@ -5205,10 +5314,10 @@ window.CartechDiagnostics = (() => {
       if (field.kind === 'leak' && value === 'good') label = 'No leak';
       if (field.kind === 'leak' && value === 'not') label = 'Leak found';
       return { label: field.label, value, result: label };
-    }).concat(fields.measures.map(field => ({
+    }).concat(measureFields.map(field => ({
       label: field.label,
       value: byId(field.id + 'Unknown').checked ? 'uninspected' : measureRecorded(field) ? 'measured' : '',
-      result: byId(field.id + 'Unknown').checked ? 'Not measured' : measureRecorded(field) ? measureValue(field) + '%' : 'Unanswered'
+      result: byId(field.id + 'Unknown').checked ? 'Not measured' : measureRecorded(field) ? measureValue(field) + (field.unit || '%') : 'Unanswered'
     })));
   }
   function renderReview() {
@@ -5251,7 +5360,7 @@ window.CartechDiagnostics = (() => {
     const number = data.diagnosticNumber || diagnosticNumber(job);
     byId('diagFormTargetJobId').value = jobId;
     byId('ctDiagNumber').value = number;
-    byId('paperDiagListHeader').textContent = `Diagnostic list #${number}`;
+    byId('paperDiagListHeader').textContent = `Diagnostic number #${number}`;
     // Legacy records have no reliable inspection date. Require a date instead of inventing one.
     byId('ctDiagInspectionDate').value = validDate(data.inspectionDate) ? data.inspectionDate : Object.keys(data).length ? '' : localDate();
     byId('paperClientName').textContent = job.customer || '—';
@@ -5273,13 +5382,15 @@ window.CartechDiagnostics = (() => {
     byId('ctDiagBatteryCharging').value = data.battery?.engineRunningVoltage ?? '';
     byId('ctDiagBatteryNotes').value = data.battery?.notes ?? '';
     fields.checks.forEach(field => setStatusField(field, savedStatus(data, field)));
-    fields.measures.forEach(field => {
+    measureFields.forEach(field => {
       const value = data[field.group]?.[field.key];
       const unknown = data.measurementStatus?.[field.id] === 'not_measured';
       byId(field.id).value = unknown ? '' : value ?? '';
       byId(field.id + 'Unknown').checked = unknown;
       byId(field.id).disabled = unknown;
     });
+    byId('ctDiagOfficeAdvisorSignature').value = data.officeAdvisorSignature ?? '';
+    byId('ctDiagCustomerSignature').value = data.customerSignature ?? '';
     byId('ctDiagReviewed').checked = false;
     byId('btnDiagModalPrint').classList.toggle('hidden', !canPrint());
     byId('btnDiagModalPrint').disabled = !Object.keys(data).length;
@@ -5306,7 +5417,7 @@ window.CartechDiagnostics = (() => {
   function buildPayload() {
     const existing = parsePartsInfo(currentJob()?.auto_schedule_slot).diagData || {};
     const data = {
-      ...existing, formVersion: 4,
+      ...existing, formVersion: 5,
       diagnosticNumber: byId('ctDiagNumber').value.trim(),
       inspectionDate: byId('ctDiagInspectionDate').value,
       phoneNumber: byId('paperPhoneNumber').value.trim(),
@@ -5314,9 +5425,11 @@ window.CartechDiagnostics = (() => {
       mileage: byId('paperMileage').value,
       other_errors: byId('chk_other_errors').value.trim(),
       inspectionNotes: byId('ctDiagNotes').value.trim(),
+      officeAdvisorSignature: byId('ctDiagOfficeAdvisorSignature').value.trim(),
+      customerSignature: byId('ctDiagCustomerSignature').value.trim(),
       battery: { engineOffVoltage: byId('ctDiagBatteryResting').value, engineRunningVoltage: byId('ctDiagBatteryCharging').value, notes: byId('ctDiagBatteryNotes').value.trim() },
       lights: {}, lightStatus: {}, leaks: { origin: byId('paperLeakOrigin').value.trim() }, leakStatus: {},
-      tires: {}, brakes: {}, measurementStatus: {}, reviewed: true,
+      tires: {}, brakes: {}, readings: {}, measurementStatus: {}, reviewed: true,
       savedAt: new Date().toLocaleString(), savedAtISO: new Date().toISOString(), savedBy: currentUser || 'mechanic'
     };
     fields.checks.forEach(field => {
@@ -5330,7 +5443,7 @@ window.CartechDiagnostics = (() => {
         data.leaks[field.key] = value === 'not' ? true : value === 'good' ? false : null;
       }
     });
-    fields.measures.forEach(field => {
+    measureFields.forEach(field => {
       data[field.group][field.key] = measureValue(field);
       data.measurementStatus[field.id] = byId(field.id + 'Unknown').checked ? 'not_measured' : 'recorded';
     });
@@ -5417,14 +5530,17 @@ window.CartechDiagnostics = (() => {
       const result = data.measurementStatus?.[field.id] === 'not_measured' ? 'Not measured' : value !== '' && value != null ? `${value}%` : 'Not recorded';
       return `<tr><td>${safe(field.label)}</td><td>${safe(result)}</td></tr>`;
     }).join('');
+    const pressureValue = data.readings?.fuelPressure;
+    const pressureResult = data.measurementStatus?.ctDiagFuelPressure === 'not_measured' ? 'Not measured' : pressureValue !== '' && pressureValue != null ? `${pressureValue} PSI` : 'Not recorded';
+    const signatureLine = value => value ? safe(value) : '____________________________';
     const voltage = value => value === '' || value == null ? 'Not measured' : `${text(value)} V`;
     const number = data.diagnosticNumber || diagnosticNumber(job);
-    const content = `<div class="ct-report"><header class="report-header"><div class="report-brand">CARTECH</div><h1>Vehicle Safety Inspection</h1><div class="report-muted">Diagnostic list #${safe(number)} · ${safe(dateLabel(data.inspectionDate))}</div></header>
+    const content = `<div class="ct-report"><header class="report-header"><div class="report-brand"><span class="report-brand-mark">C</span><span><strong>CARTECH</strong><small>HYBRID QUEUE · AUTOMOTIVE OPERATIONS</small></span></div><h1>Vehicle Safety Inspection</h1><div class="report-muted">Diagnostic number #${safe(number)} · ${safe(dateLabel(data.inspectionDate))}</div></header>
       <div class="report-refs"><div><b>Client</b>${text(job.customer)}</div><div><b>Phone number</b>${text(data.phoneNumber)}</div><div><b>Vehicle</b>${text(job.vehicle)}</div><div><b>Plate number</b>${text(data.numberPlate ?? job.plate)}</div><div><b>VIN / chassis</b>${text(jobVin(job))}</div><div><b>Mileage (km)</b>${text(data.mileage)}</div><div><b>Assigned mechanic</b>${text(resolveMechanicName(job))}</div><div><b>Recorded by</b>${text(data.savedBy)}</div></div>
-      <section><h2>Customer complaint / job instructions</h2><p>${text(String(job.details || '').replace(/\[DIAG:\s*[^\]]+\]/i, '').trim())}</p></section>
-      <div class="report-columns">${section('Basic diagnostics', 1)}<section><b>Other errors / fault codes</b><p>${text(data.other_errors)}</p></section>${section('Lighting', 2)}${section('Belts', 3)}${section('Filters & fluids', 4)}${section('Leaks', 5)}<section><b>Leak location / observations</b><p>${text(data.leaks?.origin)}</p></section><section><h2>Tires & brakes — remaining life</h2><table><tbody>${percentages}</tbody></table></section>${section('Battery check', 6)}<section><h2>Battery readings</h2><table><tbody><tr><td>Engine off</td><td>${voltage(data.battery?.engineOffVoltage)}</td></tr><tr><td>Engine running</td><td>${voltage(data.battery?.engineRunningVoltage)}</td></tr></tbody></table><p>${text(data.battery?.notes)}</p></section></div>
-      <section><h2>Mechanic findings & recommended work</h2><p>${text(data.inspectionNotes)}</p></section><div class="report-muted">Saved: ${text(data.savedAt)}</div><footer class="report-signatures"><div>Mechanic signature: ____________________</div><div>Customer signature: ____________________</div></footer></div>`;
-    return { number, content, html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CARTECH — Diagnostic list ${safe(number)}</title><style>@page { size: A4; margin: 12mm; } body { margin: 24px; } @media print { body { margin: 0; } } ${reportStyles}</style></head><body>${content}</body></html>` };
+      <section><h2>Customer Complaint / Job Instructions</h2><p>${text(String(job.details || '').replace(/\[DIAG:\s*[^\]]+\]/i, '').trim())}</p></section>
+      <div class="report-columns"><section><h2>Basic Diagnostics</h2><table><tbody>${rows(1)}<tr><td>Fuel Pressure — target 45 PSI</td><td>${safe(pressureResult)}</td></tr></tbody></table></section><section><h2>Other Errors / Fault Codes</h2><p>${text(data.other_errors)}</p></section>${section('Lighting', 2)}${section('Belts', 3)}${section('Filters & Fluids', 4)}${section('Leaks', 5)}<section><h2>Leak Location / Observations</h2><p>${text(data.leaks?.origin)}</p></section><section><h2>Tires & Brakes — Remaining Life</h2><table><tbody>${percentages}</tbody></table></section>${section('Battery Check', 6)}<section><h2>Battery Readings</h2><table><tbody><tr><td>Engine off</td><td>${voltage(data.battery?.engineOffVoltage)}</td></tr><tr><td>Engine running</td><td>${voltage(data.battery?.engineRunningVoltage)}</td></tr></tbody></table><p>${text(data.battery?.notes)}</p></section></div>
+      <section><h2>Mechanic Findings & Recommended Work</h2><p>${text(data.inspectionNotes)}</p></section><div class="report-muted">Saved: ${text(data.savedAt)}</div><footer class="report-signatures"><div>Mechanic Signature: ${signatureLine(data.mechanicSignature)}</div><div>Office Advisor Signature: ${signatureLine(data.officeAdvisorSignature)}</div><div>Customer Signature: ${signatureLine(data.customerSignature)}</div></footer></div>`;
+    return { number, content, html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CARTECH — Diagnostic number ${safe(number)}</title><style>@page { size: Letter portrait; margin: 0.18in; } body { margin: 24px; } @media print { body { margin: 0; } ${reportPrintStyles} } ${reportStyles}${reportExtraStyles}</style></head><body>${content}</body></html>` };
   }
   function clearPrintView() { document.body.classList.remove('ct-print-diagnostic'); }
   function print() {
@@ -5476,7 +5592,7 @@ window.CartechDiagnostics = (() => {
     updateProgress();
   });
   form.addEventListener('change', event => {
-    const field = fields.measures.find(field => field.id + 'Unknown' === event.target.id);
+    const field = measureFields.find(field => field.id + 'Unknown' === event.target.id);
     if (field) byId(field.id).disabled = event.target.checked;
     dirty = true;
     if (event.target.id !== 'ctDiagReviewed') byId('ctDiagReviewed').checked = false;
@@ -5492,7 +5608,7 @@ window.CartechDiagnostics = (() => {
   });
   window.addEventListener('afterprint', clearPrintView);
   refreshLaunch();
-  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview };
+  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, updateDiagnosticNumber, setLaunch, toggleLaunch, refreshLaunch, preview, showSavedNotice };
 })();
 
   </script>
@@ -6286,11 +6402,16 @@ window.CartechInspections = (() => {
   const byId = id => document.getElementById(id);
   const safe = value => escapeHTML(String(value ?? ''));
   const dialog = byId('ctInspectionReport');
+  const numberDialog = byId('ctDiagnosticNumberDialog');
   const snapshots = new Map();
-  let selected = null, reportVersion = '', returnFocus = null;
+  let selected = null, reportVersion = '', returnFocus = null, numberBusy = false, jobNumberId = null, jobNumberReturnFocus = null, jobNumberBusy = false;
   const findJob = id => state.find(job => job.id === id) || completedArchive.find(job => job.id === id);
   const available = job => window.CartechDiagnostics.canUse(job);
   const dataOf = job => parsePartsInfo(job?.auto_schedule_slot).diagData;
+  const jobDiagnosticNumber = job => job && job.phone && job.phone !== 'N/A'
+    ? job.phone
+    : String(job?.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job?.id || '';
+  const canEditJobNumber = () => ['office', 'admin', 'developer'].includes(currentRole) && window.CartechDiagnostics?.canPrint() === true;
   function info(job) {
     const data = dataOf(job);
     if (!data || typeof data !== 'object' || !Object.keys(data).length) return { saved:false, text:'Not submitted', attention:0 };
@@ -6326,25 +6447,28 @@ window.CartechInspections = (() => {
     </article>`;
   }
   function report() { const job = findJob(selected); return job && available(job) ? window.CartechDiagnostics.buildReport(job) : null; }
+  function canEditNumber() { return !!selected && ['office', 'admin', 'developer'].includes(currentRole) && window.CartechDiagnostics?.canPrint() === true; }
   function renderReport() {
     const job = findJob(selected), content = report();
     if (!content) { close(); return; }
-    byId('ctInspectionReportSubtitle').textContent = `${job.vehicle || 'Vehicle'} · ${job.customer || 'Customer'} · Read-only report`;
+    byId('ctInspectionReportSubtitle').textContent = `${job.vehicle || 'Vehicle'} · ${job.customer || 'Customer'} · ${['office', 'admin'].includes(currentRole) ? 'Office review' : 'Read-only report'}`;
     byId('ctInspectionReportBody').innerHTML = content.content;
     byId('ctReportDownload').hidden = !window.CartechDiagnostics.canPrint();
     byId('ctReportPrint').hidden = !window.CartechDiagnostics.canPrint();
+    byId('ctReportEditNumber').hidden = !canEditNumber();
+    if (!numberBusy) byId('ctReportNumberEditor').hidden = true;
     reportVersion = JSON.stringify(dataOf(job));
   }
   function open(id) {
     const job = findJob(id);
     if (!job || !available(job)) return;
     if (!info(job).saved) { alert('The mechanic has not submitted an inspection for this job yet.'); return; }
-    selected = id; returnFocus = document.activeElement;
+    selected = id; returnFocus = document.activeElement; numberBusy = false; cancelNumberEdit();
     byId('ctInspectionReportNotice').textContent = 'Use these findings to discuss recommended work with the customer.';
     renderReport();
     if (!dialog.open) dialog.showModal();
   }
-  function close() { dialog.close(); selected = null; returnFocus?.focus?.(); }
+  function close() { if (numberBusy) return; cancelNumberEdit(); dialog.close(); selected = null; returnFocus?.focus?.(); }
   function hash(value) { let h=2166136261; for (let i=0;i<value.length;i++) h=Math.imul(h^value.charCodeAt(i),16777619); return (h>>>0).toString(16); }
   function refresh() {
     const jobs = [...state, ...completedArchive];
@@ -6359,6 +6483,100 @@ window.CartechInspections = (() => {
       const job = findJob(selected);
       if (!job || !available(job) || !info(job).saved) { close(); return; }
       if (JSON.stringify(dataOf(job)) !== reportVersion) { const scroll=byId('ctInspectionReportBody').scrollTop; renderReport(); byId('ctInspectionReportBody').scrollTop=scroll; byId('ctInspectionReportNotice').textContent='Updated with the latest saved findings.'; }
+    }
+  }
+  function editNumber() {
+    if (!canEditNumber()) return;
+    const job = findJob(selected);
+    if (!job) return;
+    const editor = byId('ctReportNumberEditor'), input = byId('ctReportNumberInput'), error = byId('ctReportNumberError');
+    input.value = String(jobDiagnosticNumber(job)).trim().toUpperCase();
+    error.hidden = true; error.textContent = '';
+    editor.hidden = false;
+    byId('ctReportEditNumber').hidden = true;
+    input.focus(); input.select();
+  }
+  function cancelNumberEdit() {
+    if (numberBusy) return;
+    const editor = byId('ctReportNumberEditor'), error = byId('ctReportNumberError');
+    if (editor) editor.hidden = true;
+    if (error) { error.hidden = true; error.textContent = ''; }
+    const button = byId('ctReportEditNumber');
+    if (button) button.hidden = !canEditNumber();
+  }
+  async function saveNumber() {
+    if (numberBusy || !canEditNumber()) return;
+    const input = byId('ctReportNumberInput'), error = byId('ctReportNumberError');
+    error.hidden = true; error.textContent = '';
+    numberBusy = true;
+    byId('ctReportNumberSave').disabled = true;
+    byId('ctReportNumberCancel').disabled = true;
+    byId('ctReportNumberInput').disabled = true;
+    byId('ctReportNumberSave').textContent = 'Saving…';
+    try {
+      await window.CartechDiagnostics.updateDiagnosticNumber(selected, input.value);
+      numberBusy = false;
+      cancelNumberEdit();
+      render();
+      renderReport();
+      byId('ctInspectionReportNotice').textContent = 'Diagnostic number updated for this job.';
+    } catch (caught) {
+      error.textContent = caught.message || 'The diagnostic number could not be updated.';
+      error.hidden = false;
+      input.focus(); input.select();
+    } finally {
+      numberBusy = false;
+      byId('ctReportNumberSave').disabled = false;
+      byId('ctReportNumberCancel').disabled = false;
+      byId('ctReportNumberInput').disabled = false;
+      byId('ctReportNumberSave').textContent = 'Save number';
+    }
+  }
+  function openJobNumberEditor(id) {
+    if (!canEditJobNumber()) return;
+    const job = findJob(id);
+    if (!job || !numberDialog) return;
+    jobNumberId = id;
+    jobNumberReturnFocus = document.activeElement;
+    const input = byId('ctDiagnosticNumberInput');
+    input.value = String(jobDiagnosticNumber(job)).trim().toUpperCase();
+    byId('ctDiagnosticNumberJobLabel').textContent = `${job.vehicle || 'Vehicle'} · ${job.customer || 'Customer'}`;
+    byId('ctDiagnosticNumberError').hidden = true;
+    byId('ctDiagnosticNumberError').textContent = '';
+    if (!numberDialog.open) numberDialog.showModal();
+    input.focus(); input.select();
+  }
+  function closeJobNumberEditor() {
+    if (jobNumberBusy) return;
+    if (numberDialog?.open) numberDialog.close();
+    jobNumberId = null;
+    jobNumberReturnFocus?.focus?.();
+    jobNumberReturnFocus = null;
+  }
+  async function saveJobNumber(event) {
+    event?.preventDefault(); event?.stopPropagation();
+    if (jobNumberBusy || !jobNumberId || !canEditJobNumber()) return;
+    const input = byId('ctDiagnosticNumberInput'), error = byId('ctDiagnosticNumberError');
+    error.hidden = true; error.textContent = '';
+    jobNumberBusy = true;
+    ['ctDiagnosticNumberSave', 'ctDiagnosticNumberCancel', 'ctDiagnosticNumberClose', 'ctDiagnosticNumberInput'].forEach(id => { byId(id).disabled = true; });
+    byId('ctDiagnosticNumberSave').textContent = 'Saving…';
+    try {
+      const updatedId = jobNumberId;
+      await window.CartechDiagnostics.updateDiagnosticNumber(updatedId, input.value);
+      jobNumberBusy = false;
+      closeJobNumberEditor();
+      render();
+      if (selected === updatedId && dialog.open) renderReport();
+      window.CartechDiagnostics?.showSavedNotice?.('Diagnostic number saved to this job.');
+    } catch (caught) {
+      error.textContent = caught.message || 'The diagnostic number could not be updated.';
+      error.hidden = false;
+      input.focus(); input.select();
+    } finally {
+      jobNumberBusy = false;
+      ['ctDiagnosticNumberSave', 'ctDiagnosticNumberCancel', 'ctDiagnosticNumberClose', 'ctDiagnosticNumberInput'].forEach(id => { byId(id).disabled = false; });
+      byId('ctDiagnosticNumberSave').textContent = 'Save number';
     }
   }
   function print() {
@@ -6376,10 +6594,12 @@ window.CartechInspections = (() => {
     link.href=url; link.download=`CARTECH-inspection-${String(content.number).replace(/[^a-z0-9-]/gi,'-').slice(0,60)}.html`;
     document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
-  function reset() { snapshots.clear(); selected=null; reportVersion=''; if(dialog.open)dialog.close(); }
+  function reset() { snapshots.clear(); selected=null; reportVersion=''; if(dialog.open)dialog.close(); if(numberDialog?.open)numberDialog.close(); jobNumberId=null; jobNumberReturnFocus=null; }
   document.addEventListener('click', event => { const button=event.target.closest('[data-inspection-job]'); if(button)open(button.dataset.inspectionJob); });
-  dialog.addEventListener('close',()=>{selected=null;});
-  return { card, officeItem, info, open, close, print, download, refresh, reset };
+  dialog.addEventListener('close',()=>{ numberBusy = false; cancelNumberEdit(); selected=null; });
+  numberDialog?.addEventListener('cancel', event => { if (jobNumberBusy) event.preventDefault(); });
+  numberDialog?.addEventListener('close', () => { jobNumberBusy = false; jobNumberId = null; jobNumberReturnFocus = null; });
+  return { card, officeItem, info, open, close, print, download, refresh, reset, editNumber, cancelNumberEdit, saveNumber, openJobNumberEditor, closeJobNumberEditor, saveJobNumber };
 })();
 
 /* Same-origin deployment checks. HEAD requests avoid downloading embedded logos every minute.
