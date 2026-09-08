@@ -17,9 +17,12 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .full-screen-bg {
-      background-image: 
-        linear-gradient(to bottom, rgba(6, 16, 34, 0.65), rgba(6, 16, 34, 0.85)), 
-        url('team.jpg');
+      background-color: #162536;
+      background-image:
+        linear-gradient(to bottom, rgba(6, 16, 34, 0.58), rgba(6, 16, 34, 0.78)),
+        url('team.jpg'),
+        url('https://devcartech.github.io/cartech/team.jpg'),
+        linear-gradient(135deg, #2b4358 0%, #0d1b2d 100%);
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
@@ -362,7 +365,18 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #loginCardWrapper { border-radius: 17px; }
 #loginCardWrapper input { font-size: 16px; padding-top: 11px; padding-bottom: 11px; }
 #loginCardWrapper h2 { letter-spacing: .035em; }
+#loginCardWrapper {
+  background: rgba(255, 255, 255, .88) !important;
+  border: 1px solid rgba(255, 255, 255, .78) !important;
+  box-shadow: 0 24px 70px rgba(5, 15, 30, .32), 0 1px 0 rgba(255, 255, 255, .72) inset !important;
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  backdrop-filter: blur(16px) saturate(125%);
+}
+#loginScreen { background-color: #162536; }
 #btnLoginSubmit { background: #ed6e39; border-radius: 8px; box-shadow: 0 4px 14px #ed6e3925; }
+@media (max-width: 760px) {
+  .full-screen-bg { background-attachment: scroll; }
+}
 @media (min-width: 1600px) {
   #viewOffice { padding: 34px 40px; }
   .ct-body-grid { grid-template-columns: minmax(0, 1fr) 305px; gap: 25px; }
@@ -1734,7 +1748,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       <section class="ct-stats" aria-label="Vehicle workflow. Select a stage to view its current vehicles."><button type="button" id="card-waiting" class="ct-stat" onclick="CartechUI.selectFilter('waiting')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">01</span>In queue</span><i class="fa-regular fa-clock" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statWaiting">0</strong><small>awaiting a mechanic</small></span></button><button type="button" id="card-inprogress" class="ct-stat" onclick="CartechUI.selectFilter('inprogress')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">02</span>In progress</span><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statActive">0</strong><small>in the workshop</small></span></button><button type="button" id="card-inspections" class="ct-stat ct-stat-inspections" onclick="CartechUI.selectFilter('inspections')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">03</span>Inspections</span><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statInspections">0</strong><small>active reports</small></span></button><button type="button" id="card-waiting_parts" class="ct-stat" onclick="CartechUI.selectFilter('waiting_parts')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">04</span>Waiting for parts</span><i class="fa-solid fa-box-open" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statParts">0</strong><small>needs attention</small></span></button><button type="button" id="card-completed" class="ct-stat" onclick="CartechUI.selectFilter('completed')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">05</span>Completed</span><i class="fa-regular fa-circle-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statDone">0</strong><small id="ctArchiveCaption">tap to load archive</small></span></button></section>
       <div class="ct-body-grid"><section class="ct-queue-panel" aria-label="Vehicle jobs">
         <div id="ctAttention" class="ct-attention" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong id="ctAttentionTitle">Parts requested</strong><p id="ctAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('waiting_parts')" aria-label="Review parts requests"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
-        <div id="ctInspectionAttention" class="ct-attention ct-inspection-attention-banner" hidden><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><div><strong id="ctInspectionAttentionTitle">Inspection findings need review</strong><p id="ctInspectionAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('inspections')" aria-label="Review submitted inspections"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
         <div class="ct-queue-tools"><h3 id="ctJobsHeading" class="ct-visually-hidden">Workshop jobs</h3><label class="ct-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="ctSearch" type="search" placeholder="Vehicle or diagnostic no.…" aria-label="Search loaded vehicles, customers, or diagnostic numbers" oninput="CartechUI.search(this.value)" autocomplete="off"></label></div>
         <div id="officeQueueList" aria-live="polite"></div>
       </section><aside class="ct-rail" aria-label="Workshop overview">
@@ -4304,11 +4317,6 @@ async function submitPartsRequest() {
         const data = parsePartsInfo(job.auto_schedule_slot).diagData;
         return data && typeof data === 'object' && Object.keys(data).length > 0;
       });
-      const inspectionAttentionJobs = inspectionRecords.filter(job => {
-        const data = parsePartsInfo(job.auto_schedule_slot).diagData;
-        return Number(window.CartechDiagnostics?.summary?.(data)?.attention || 0) > 0;
-      });
-
       const hasUnassignedWaiting = state.some(j => j.status === 'waiting' && !j.auto_schedule_slot);
 
       if (currentRole === 'developer' || currentRole === 'admin') {
@@ -4352,17 +4360,6 @@ async function submitPartsRequest() {
       if (sDone) sDone.innerText = done;
       const sInspections = document.getElementById('statInspections');
       if (sInspections) sInspections.innerText = inspectionRecords.length;
-
-      const inspectionAttention = document.getElementById('ctInspectionAttention');
-      if (inspectionAttention) {
-        inspectionAttention.hidden = inspectionAttentionJobs.length === 0 || currentFilter !== 'inspections';
-        const first = inspectionAttentionJobs[0];
-        const count = inspectionAttentionJobs.length;
-        const title = document.getElementById('ctInspectionAttentionTitle');
-        const text = document.getElementById('ctInspectionAttentionText');
-        if (title) title.textContent = `${count} inspection${count === 1 ? '' : 's'} need${count === 1 ? 's' : ''} office review`;
-        if (text) text.textContent = first ? `${first.vehicle} · ${resolveMechanicName(first) || 'Workshop'} · red findings recorded` : '';
-      }
 
       const officeBadge = document.getElementById('officeRemainingMechanicBadge');
       if (officeBadge) {
