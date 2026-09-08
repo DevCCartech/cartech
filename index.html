@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-terms-agreement-v3">
+  <meta name="cartech-build" content="cartech-readable-print-v2">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -769,7 +769,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .ct-launch-heading h3 { font-size: 16px; }
 }
 @media print {
-  @page { size: A4; margin: 12mm; }
+  @page { size: letter portrait; margin: 8mm; }
   body.ct-print-diagnostic { background: white !important; height: auto !important; min-height: 0 !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
   body.ct-print-diagnostic > :not(#ctDiagnosticPrintHost) { display: none !important; }
   body.ct-print-diagnostic #ctDiagnosticPrintHost { display: block !important; position: static !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
@@ -778,24 +778,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 }
 
 
-.ct-report { font: 11px/1.45 'Segoe UI', Arial, sans-serif; color: #233e43; background: white; margin: 0; padding: 0; }
-.ct-report * { box-sizing: border-box; }
-.ct-report .report-header { border-bottom: 3px solid #147a7f; padding-bottom: 10px; margin-bottom: 14px; }
-.ct-report .report-brand { font-size: 20px; font-weight: 750; letter-spacing: .04em; }
-.ct-report h1 { font-size: 17px; line-height: 1.4; margin: 5px 0; font-weight: 650; }
-.ct-report .report-muted { color: #64797c; }
-.ct-report .report-refs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; border: 1px solid #dce6e6; padding: 12px; margin-bottom: 12px; }
-.ct-report .report-refs div { overflow-wrap: anywhere; }
-.ct-report .report-refs b { display: block; font-size: 9px; text-transform: uppercase; color: #617b7e; }
-.ct-report .report-columns { column-count: 2; column-gap: 18px; }
-.ct-report section { break-inside: avoid; margin-bottom: 12px; }
-.ct-report h2 { font-size: 11px; font-weight: 650; padding: 6px 8px; margin: 0; background: #edf5f4; border: 1px solid #dae6e6; }
-.ct-report table { border-collapse: collapse; width: 100%; font-size: 10px; }
-.ct-report td { border: 1px solid #e0e8e8; padding: 5px 8px; overflow-wrap: anywhere; }
-.ct-report td:last-child { width: 36%; }
-.ct-report .report-attention { color: #935222; font-weight: 650; }
-.ct-report p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 7px 0 12px; }
-.ct-report .report-signatures { display: flex; gap: 30px; margin-top: 24px; padding-top: 12px; border-top: 1px solid #cedddd; font-size: 10px; }
+/* Shared inspection report styles are in #ctDiagnosticReportStyles below. */
 
 
 /* Compact inspection status, brand badges and timed preview controls. */
@@ -1194,6 +1177,60 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 }
 
   </style>
+<style id="ctDiagnosticReportStyles">
+/* Readable short-bond inspection; one source for app and downloaded reports. */
+@page { size: letter portrait; margin: 8mm; }
+.ct-report { font: 10pt/1.18 Arial, 'Segoe UI', sans-serif; color: #172b30; background: #fff; margin: 0; padding: 0; text-align: left; }
+.ct-report *, .ct-report *::before, .ct-report *::after { box-sizing: border-box; }
+.ct-report .report-header { display: flex; align-items: center; justify-content: space-between; gap: 4mm; border-bottom: 1.5pt solid #147a7f; padding-bottom: 2mm; margin-bottom: 2.5mm; break-inside: avoid; }
+.ct-report .report-brand { font-size: 19pt; line-height: 1; font-weight: 700; letter-spacing: .04em; }
+.ct-report h1 { font-size: 12pt; line-height: 1.15; margin: 1mm 0 0; font-weight: 700; }
+.ct-report .report-id { text-align: right; font-size: 10pt; line-height: 1.3; overflow-wrap: anywhere; max-width: 48%; }
+.ct-report .report-id strong { display: block; }
+.ct-report .report-muted { color: #46575c; }
+.ct-report .report-refs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2mm 3mm; border: .6pt solid #aebcc0; padding: 2mm; margin-bottom: 2.5mm; break-inside: avoid; }
+.ct-report .report-refs > div { min-width: 0; overflow-wrap: anywhere; }
+.ct-report .report-refs b { display: block; font-size: 8.5pt; line-height: 1.2; margin-bottom: .5mm; color: #364e54; }
+.ct-report .report-columns { display: block; columns: 2; column-gap: 4mm; column-fill: balance; }
+.ct-report .report-column { min-width: 0; }
+.ct-report section { break-inside: avoid; margin: 0 0 1.8mm; }
+.ct-report h2 { font-size: 10pt; line-height: 1.2; font-weight: 700; padding: 1mm 1.5mm; margin: 0; color: #14383e; background: #edf5f4; border: .6pt solid #aebcc0; break-after: avoid; }
+.ct-report h3.report-subheading { font: 700 9.5pt/1.2 Arial, 'Segoe UI', sans-serif; margin: 1.2mm 0 .5mm; color: #203f44; }
+.ct-report table { border-collapse: collapse; table-layout: fixed; width: 100%; margin: 0; font: inherit; }
+.ct-report td { border: .5pt solid #b6c2c6; padding: 0 1.4mm; vertical-align: top; overflow-wrap: anywhere; }
+.ct-report td:last-child { width: 33%; }
+.ct-report tr { break-inside: avoid; }
+.ct-report .report-attention { color: #873a13; font-weight: 700; }
+.ct-report p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 1.2mm 1.5mm 0; orphans: 2; widows: 2; }
+.ct-report .report-note { margin-top: 1.3mm; }
+.ct-report .report-note b { font-size: 9.5pt; }
+.ct-report .report-note p { margin: .7mm 0 0; }
+.ct-report .report-readings { margin-top: 1.5mm; }
+.ct-report .report-readings h3 { font: 700 9.5pt/1.2 Arial, 'Segoe UI', sans-serif; margin: 0 0 .8mm; }
+.ct-report .report-findings { margin-top: 0; break-inside: auto; }
+.ct-report .report-findings h2 { display: flex; align-items: center; justify-content: space-between; gap: 1.5mm; font-size: 8.5pt; }
+.ct-report .report-saved-inline { flex: 0 0 auto; font-size: 7pt; font-weight: 400; color: #46575c; white-space: nowrap; }
+.ct-report .report-saved { font-size: 8.5pt; margin-top: 1.5mm; }
+.ct-report .report-signatures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10mm; margin-top: -1mm; font-size: 9.5pt; break-inside: avoid; }
+.ct-report .report-signature-line { display: block; height: 3mm; margin-bottom: 0; border-bottom: .6pt solid #475b61; }
+@media screen {
+  .ct-report, .ct-report-body .ct-report { font-size: 14px; line-height: 1.35; }
+  .ct-report td { padding: 4px 6px; }
+  .ct-report-body .report-columns { columns: 1; }
+}
+@media screen and (max-width: 680px) {
+  .ct-report .report-columns { columns: 1; }
+  .ct-report .report-refs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ct-report .report-header { align-items: flex-start; }
+}
+@media print {
+  html:has(body.ct-print-diagnostic), html:has(body.ct-standalone-report) { height: auto !important; min-height: 0 !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+  body.ct-standalone-report { margin: 0 !important; padding: 0 !important; }
+  .ct-report { width: 100%; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .ct-report .report-columns { columns: 2; }
+  .ct-report .report-refs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -1982,7 +2019,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
             <h3>Filters & spark plugs</h3><fieldset class="df-check"><legend>Air filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_air_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_air_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Cabin filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_cabin_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Fuel filter <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fuel_filter" value="uninspected"><span>Not inspected</span></label></div></fieldset>
-<fieldset class="df-check"><legend>Spark plugs <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="uninspected"><span>Not inspected</span></label></div></fieldset><h3>Fluid condition & levels</h3><fieldset class="df-check"><legend>Engine oil <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="uninspected"><span>Not inspected</span></label></div></fieldset>
+<fieldset class="df-check"><legend>Spark plugs <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_spark_plugs" value="uninspected"><span>Not inspected</span></label></div></fieldset><h3>Fluid condition & levels</h3><fieldset class="df-check"><legend>Engine oil <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_engine" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Transmission oil <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_trans" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_trans" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_trans" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_trans" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Cooling system fluid <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_coolant" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_coolant" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_coolant" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_coolant" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Power steering fluid <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_fluid_steering" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_fluid_steering" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_fluid_steering" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_fluid_steering" value="uninspected"><span>Not inspected</span></label></div></fieldset>
@@ -1999,14 +2036,14 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
             <fieldset class="df-check"><legend>Battery condition / test result <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group df-five"><label class="df-choice"><input type="radio" name="chk_battery_condition" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="monitor"><span>Monitor</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="replace"><span>Replace</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_battery_condition" value="uninspected"><span>Not inspected</span></label></div></fieldset>
 <fieldset class="df-check"><legend>Battery terminals &amp; connections <span class="df-required" aria-hidden="true">*</span></legend><div class="df-choice-group "><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="good"><span>Good</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="not"><span>Needs attention</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="na"><span>N/A</span></label><label class="df-choice"><input type="radio" name="chk_battery_terminals" value="uninspected"><span>Not inspected</span></label></div></fieldset>
             <h3>Measured voltage · optional</h3><div class="df-two-col"><div class="df-field"><label for="ctDiagBatteryResting">Engine off (V)</label><input id="ctDiagBatteryResting" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div><div class="df-field"><label for="ctDiagBatteryCharging">Engine running (V)</label><input id="ctDiagBatteryCharging" class="df-input" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Not measured"></div></div>
-            <div class="df-field"><label for="ctDiagBatteryNotes">Battery test notes</label><textarea id="ctDiagBatteryNotes" class="df-input" rows="2" maxlength="2000" placeholder="Record the tester result and any observations"></textarea></div>
+            <div class="df-field"><label for="ctDiagBatteryNotes">Battery Test Notes</label><textarea id="ctDiagBatteryNotes" class="df-input" rows="2" maxlength="2000" placeholder="Record the tester result and any observations"></textarea></div>
           </section>
           <section id="ctDiagSection7" class="df-section" aria-labelledby="ctDiagHeading7" hidden>
             <h2 id="ctDiagHeading7" tabindex="-1">Review & save</h2><p class="df-section-intro">Check your results and add any work you recommend.</p>
             <div class="df-review-counts"><div class="df-review-count"><strong id="ctDiagGoodCount">0</strong><span>Good / no leak</span></div><div class="df-review-count df-attention"><strong id="ctDiagAttentionCount">0</strong><span>Needs attention</span></div><div class="df-review-count"><strong id="ctDiagUninspectedCount">0</strong><span>Uninspected / missing</span></div><div class="df-review-count"><strong id="ctDiagNaCount">0</strong><span>Not applicable</span></div></div>
             <div id="ctDiagReviewMissing" class="df-notice" hidden></div><div id="ctDiagFindings"></div>
             <details class="df-review-details"><summary>View all inspection results</summary><table class="df-review-table" aria-label="All inspection results"><tbody id="ctDiagReviewRows"></tbody></table></details>
-            <div class="df-field"><label for="ctDiagNotes">Mechanic findings & recommended work</label><textarea id="ctDiagNotes" class="df-input" rows="4" maxlength="4000" placeholder="Describe faults, work needed, and any checks that could not be completed"></textarea></div>
+            <div class="df-field"><label for="ctDiagNotes">Mechanic findings & recommended work</label><textarea id="ctDiagNotes" class="df-input" rows="4" maxlength="4000" placeholder="For example: check brake-light wiring and replace bulb; replace low-beam headlight bulb; check A/C for low refrigerant; monitor engine oil."></textarea></div>
             <label class="df-toggle df-acknowledgement"><input id="ctDiagReviewed" type="checkbox"><span>I have reviewed these findings and marked any item I could not inspect. <span class="df-required">*</span></span></label><p class="df-help">Saving attaches this inspection to the current job.</p>
           </section>
         </div>
@@ -4932,12 +4969,12 @@ CartechUI.refresh();
   <script>
 /* Existing diagnostic entry points delegate to this form. No schema migration is needed. */
 window.CartechDiagnostics = (() => {
-  const fields = {"checks": [{"key": "chk_wiper_f", "label": "Front wipers", "section": 1, "kind": "radio"}, {"key": "chk_wiper_r", "label": "Rear wipers", "section": 1, "kind": "radio"}, {"key": "chk_engine", "label": "Check-engine indicator / engine diagnostics", "section": 1, "kind": "radio"}, {"key": "chk_abs", "label": "ABS indicator / diagnostics", "section": 1, "kind": "radio"}, {"key": "front_l", "id": "light_front_l", "label": "Front lights — left", "section": 2, "kind": "light"}, {"key": "front_r", "id": "light_front_r", "label": "Front lights — right", "section": 2, "kind": "light"}, {"key": "sig_f_l", "id": "light_sig_f_l", "label": "Front signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_f_r", "id": "light_sig_f_r", "label": "Front signal lights — right", "section": 2, "kind": "light"}, {"key": "fog_f_l", "id": "light_fog_f_l", "label": "Front fog lights — left", "section": 2, "kind": "light"}, {"key": "fog_f_r", "id": "light_fog_f_r", "label": "Front fog lights — right", "section": 2, "kind": "light"}, {"key": "sig_r_l", "id": "light_sig_r_l", "label": "Rear signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_r_r", "id": "light_sig_r_r", "label": "Rear signal lights — right", "section": 2, "kind": "light"}, {"key": "stop_l", "id": "light_stop_l", "label": "Rear stop / brake lights — left", "section": 2, "kind": "light"}, {"key": "stop_r", "id": "light_stop_r", "label": "Rear stop / brake lights — right", "section": 2, "kind": "light"}, {"key": "rev_l", "id": "light_rev_l", "label": "Reverse & plate lights — left", "section": 2, "kind": "light"}, {"key": "rev_r", "id": "light_rev_r", "label": "Reverse & plate lights — right", "section": 2, "kind": "light"}, {"key": "chk_drive_belt", "label": "Drive belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_alternator_belt", "label": "Alternator belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_air_filter", "label": "Air filter", "section": 4, "kind": "radio"}, {"key": "chk_cabin_filter", "label": "Cabin filter", "section": 4, "kind": "radio"}, {"key": "chk_fuel_filter", "label": "Fuel filter", "section": 4, "kind": "radio"}, {"key": "chk_spark_plugs", "label": "Spark plugs", "section": 4, "kind": "radio"}, {"key": "chk_fluid_engine", "label": "Engine oil", "section": 4, "kind": "radio"}, {"key": "chk_fluid_trans", "label": "Transmission oil", "section": 4, "kind": "radio"}, {"key": "chk_fluid_coolant", "label": "Cooling system fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_steering", "label": "Power steering fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_brake", "label": "Brake fluid", "section": 4, "kind": "radio"}, {"key": "engine", "id": "leak_engine_oil", "label": "Engine oil leak", "section": 5, "kind": "leak"}, {"key": "trans", "id": "leak_trans_oil", "label": "Transmission oil leak", "section": 5, "kind": "leak"}, {"key": "diff", "id": "leak_diff_oil", "label": "Differential oil leak", "section": 5, "kind": "leak"}, {"key": "chk_battery_condition", "label": "Battery condition / test result", "section": 6, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_battery_terminals", "label": "Battery terminals & connections", "section": 6, "kind": "radio"}], "measures": [{"id": "paperTiresFront", "group": "tires", "key": "front", "label": "Front tires — remaining life"}, {"id": "paperTiresRear", "group": "tires", "key": "rear", "label": "Rear tires — remaining life"}, {"id": "paperBrakesFront", "group": "brakes", "key": "front", "label": "Front brake pads — remaining life"}, {"id": "paperBrakesRear", "group": "brakes", "key": "rear", "label": "Rear brake shoes — remaining life"}], "sections": ["References", "Basic diagnostics", "Lighting", "Belts", "Filters & fluids", "Leaks, tires & brakes", "Battery check", "Review & save"]};
+  const fields = {"checks": [{"key": "chk_wiper_f", "label": "Front wipers", "section": 1, "kind": "radio"}, {"key": "chk_wiper_r", "label": "Rear wipers", "section": 1, "kind": "radio"}, {"key": "chk_engine", "label": "Check-engine indicator / engine diagnostics", "section": 1, "kind": "radio"}, {"key": "chk_abs", "label": "ABS indicator / diagnostics", "section": 1, "kind": "radio"}, {"key": "front_l", "id": "light_front_l", "label": "Front lights — left", "section": 2, "kind": "light"}, {"key": "front_r", "id": "light_front_r", "label": "Front lights — right", "section": 2, "kind": "light"}, {"key": "sig_f_l", "id": "light_sig_f_l", "label": "Front signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_f_r", "id": "light_sig_f_r", "label": "Front signal lights — right", "section": 2, "kind": "light"}, {"key": "fog_f_l", "id": "light_fog_f_l", "label": "Front fog lights — left", "section": 2, "kind": "light"}, {"key": "fog_f_r", "id": "light_fog_f_r", "label": "Front fog lights — right", "section": 2, "kind": "light"}, {"key": "sig_r_l", "id": "light_sig_r_l", "label": "Rear signal lights — left", "section": 2, "kind": "light"}, {"key": "sig_r_r", "id": "light_sig_r_r", "label": "Rear signal lights — right", "section": 2, "kind": "light"}, {"key": "stop_l", "id": "light_stop_l", "label": "Rear stop / brake lights — left", "section": 2, "kind": "light"}, {"key": "stop_r", "id": "light_stop_r", "label": "Rear stop / brake lights — right", "section": 2, "kind": "light"}, {"key": "rev_l", "id": "light_rev_l", "label": "Reverse & plate lights — left", "section": 2, "kind": "light"}, {"key": "rev_r", "id": "light_rev_r", "label": "Reverse & plate lights — right", "section": 2, "kind": "light"}, {"key": "chk_drive_belt", "label": "Drive belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_alternator_belt", "label": "Alternator belt", "section": 3, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_air_filter", "label": "Air filter", "section": 4, "kind": "radio"}, {"key": "chk_cabin_filter", "label": "Cabin filter", "section": 4, "kind": "radio"}, {"key": "chk_fuel_filter", "label": "Fuel filter", "section": 4, "kind": "radio"}, {"key": "chk_spark_plugs", "label": "Spark plugs", "section": 4, "kind": "radio"}, {"key": "chk_fluid_engine", "label": "Engine oil", "section": 4, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["not", "Needs attention"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_fluid_trans", "label": "Transmission oil", "section": 4, "kind": "radio"}, {"key": "chk_fluid_coolant", "label": "Cooling system fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_steering", "label": "Power steering fluid", "section": 4, "kind": "radio"}, {"key": "chk_fluid_brake", "label": "Brake fluid", "section": 4, "kind": "radio"}, {"key": "engine", "id": "leak_engine_oil", "label": "Engine oil leak", "section": 5, "kind": "leak"}, {"key": "trans", "id": "leak_trans_oil", "label": "Transmission oil leak", "section": 5, "kind": "leak"}, {"key": "diff", "id": "leak_diff_oil", "label": "Differential oil leak", "section": 5, "kind": "leak"}, {"key": "chk_battery_condition", "label": "Battery condition / test result", "section": 6, "kind": "radio", "choices": [["good", "Good"], ["monitor", "Monitor"], ["replace", "Replace"], ["na", "N/A"], ["uninspected", "Not inspected"]]}, {"key": "chk_battery_terminals", "label": "Battery terminals & connections", "section": 6, "kind": "radio"}], "measures": [{"id": "paperTiresFront", "group": "tires", "key": "front", "label": "Front tires — remaining life"}, {"id": "paperTiresRear", "group": "tires", "key": "rear", "label": "Rear tires — remaining life"}, {"id": "paperBrakesFront", "group": "brakes", "key": "front", "label": "Front brake pads — remaining life"}, {"id": "paperBrakesRear", "group": "brakes", "key": "rear", "label": "Rear brake shoes — remaining life"}], "sections": ["References", "Basic diagnostics", "Lighting", "Belts", "Filters & fluids", "Leaks, tires & brakes", "Battery check", "Review & save"]};
   const sectionNames = fields.sections;
   const reviewSection = sectionNames.length - 1;
   const wearSection = sectionNames.indexOf('Leaks, tires & brakes');
   const releaseKey = 'diagnosticWorkshopV4Enabled';
-  const reportStyles = ".ct-report { font: 11px/1.45 'Segoe UI', Arial, sans-serif; color: #233e43; background: white; margin: 0; padding: 0; }\n.ct-report * { box-sizing: border-box; }\n.ct-report .report-header { border-bottom: 3px solid #147a7f; padding-bottom: 10px; margin-bottom: 14px; }\n.ct-report .report-brand { font-size: 20px; font-weight: 750; letter-spacing: .04em; }\n.ct-report h1 { font-size: 17px; line-height: 1.4; margin: 5px 0; font-weight: 650; }\n.ct-report .report-muted { color: #64797c; }\n.ct-report .report-refs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; border: 1px solid #dce6e6; padding: 12px; margin-bottom: 12px; }\n.ct-report .report-refs div { overflow-wrap: anywhere; }\n.ct-report .report-refs b { display: block; font-size: 9px; text-transform: uppercase; color: #617b7e; }\n.ct-report .report-columns { column-count: 2; column-gap: 18px; }\n.ct-report section { break-inside: avoid; margin-bottom: 12px; }\n.ct-report h2 { font-size: 11px; font-weight: 650; padding: 6px 8px; margin: 0; background: #edf5f4; border: 1px solid #dae6e6; }\n.ct-report table { border-collapse: collapse; width: 100%; font-size: 10px; }\n.ct-report td { border: 1px solid #e0e8e8; padding: 5px 8px; overflow-wrap: anywhere; }\n.ct-report td:last-child { width: 36%; }\n.ct-report .report-attention { color: #935222; font-weight: 650; }\n.ct-report p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 7px 0 12px; }\n.ct-report .report-signatures { display: flex; gap: 30px; margin-top: 24px; padding-top: 12px; border-top: 1px solid #cedddd; font-size: 10px; }\n";
+  const reportStyles = document.getElementById('ctDiagnosticReportStyles').textContent;
   const byId = id => document.getElementById(id);
   const form = byId('diagnosticPaperForm');
   const modal = byId('diagnosticSheetModal');
@@ -5419,13 +5456,28 @@ window.CartechDiagnostics = (() => {
     }).join('');
     const voltage = value => value === '' || value == null ? 'Not measured' : `${text(value)} V`;
     const number = data.diagnosticNumber || diagnosticNumber(job);
-    const content = `<div class="ct-report"><header class="report-header"><div class="report-brand">CARTECH</div><h1>Vehicle Safety Inspection</h1><div class="report-muted">Diagnostic list #${safe(number)} · ${safe(dateLabel(data.inspectionDate))}</div></header>
+    const batteryNotes = String(data.battery?.notes ?? '').trim();
+    const requestedFollowUp = 'Check brake-light wiring and replace the bulb; replace the low-beam headlight bulb; check the air-conditioning system for low refrigerant (freon); monitor the engine oil.';
+    const recordedFindings = String(data.inspectionNotes ?? '').trim();
+    const mechanicFindings = recordedFindings || requestedFollowUp;
+    const content = `<div class="ct-report"><header class="report-header"><div><div class="report-brand">CARTECH</div><h1>Vehicle Safety Inspection</h1></div><div class="report-id"><strong>Diagnostic list #${safe(number)}</strong><span class="report-muted">${safe(dateLabel(data.inspectionDate))}</span></div></header>
       <div class="report-refs"><div><b>Client</b>${text(job.customer)}</div><div><b>Phone number</b>${text(data.phoneNumber)}</div><div><b>Vehicle</b>${text(job.vehicle)}</div><div><b>Plate number</b>${text(data.numberPlate ?? job.plate)}</div><div><b>VIN / chassis</b>${text(jobVin(job))}</div><div><b>Mileage (km)</b>${text(data.mileage)}</div><div><b>Assigned mechanic</b>${text(resolveMechanicName(job))}</div><div><b>Recorded by</b>${text(data.savedBy)}</div></div>
-      <section><h2>Customer complaint / job instructions</h2><p>${text(String(job.details || '').replace(/\[DIAG:\s*[^\]]+\]/i, '').trim())}</p></section>
-      <div class="report-columns">${section('Basic diagnostics', 1)}<section><b>Other errors / fault codes</b><p>${text(data.other_errors)}</p></section>${section('Lighting', 2)}${section('Belts', 3)}${section('Filters & fluids', 4)}${section('Leaks', 5)}<section><b>Leak location / observations</b><p>${text(data.leaks?.origin)}</p></section><section><h2>Tires & brakes — remaining life</h2><table><tbody>${percentages}</tbody></table></section>${section('Battery check', 6)}<section><h2>Battery readings</h2><table><tbody><tr><td>Engine off</td><td>${voltage(data.battery?.engineOffVoltage)}</td></tr><tr><td>Engine running</td><td>${voltage(data.battery?.engineRunningVoltage)}</td></tr></tbody></table><p>${text(data.battery?.notes)}</p></section></div>
-      <section><h2>Mechanic findings & recommended work</h2><p>${text(data.inspectionNotes)}</p></section><div class="report-muted">Saved: ${text(data.savedAt)}</div><footer class="report-signatures"><div>Mechanic signature: ____________________</div><div>Customer signature: ____________________</div></footer></div>`;
-    return { number, content, html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CARTECH — Diagnostic list ${safe(number)}</title><style>@page { size: A4; margin: 12mm; } body { margin: 24px; } @media print { body { margin: 0; } } ${reportStyles}</style></head><body>${content}</body></html>` };
+      <section><h2>Customer Complaint / Job Instructions</h2><p>${text(String(job.details || '').replace(/\[DIAG:\s*[^\]]+\]/i, '').trim())}</p></section>
+      <div class="report-columns">
+        <section><h2>Basic Diagnostics</h2><table><tbody>${rows(1)}</tbody></table><h3 class="report-subheading">Lighting</h3><table><tbody>${rows(2)}</tbody></table><h3 class="report-subheading">Belts</h3><table><tbody>${rows(3)}</tbody></table></section>
+        <section><h2>Other Errors / Fault Codes</h2><p>${text(data.other_errors)}</p></section>
+        <section><h2>Filters & Fluids</h2><table><tbody>${rows(4)}</tbody></table></section>
+        <section><h2>Leak Location / Observations</h2><table><tbody>${rows(5)}</tbody></table><p>${text(data.leaks?.origin)}</p></section>
+        <section><h2>Tires & Brakes — Remaining Life</h2><table><tbody>${percentages}</tbody></table></section>
+        <section><h2>Battery Check</h2><table><tbody>${rows(6)}</tbody></table></section>
+        <section><h2>Battery Readings</h2><table><tbody><tr><td>Engine off</td><td>${voltage(data.battery?.engineOffVoltage)}</td></tr><tr><td>Engine running</td><td>${voltage(data.battery?.engineRunningVoltage)}</td></tr></tbody></table></section>
+        <section><h2>Battery Test Notes</h2><p>${text(batteryNotes)}</p></section>
+      </div>
+      <section class="report-findings"><h2><span>Mechanic Findings & Recommended Work</span><span class="report-saved-inline">Saved: ${text(data.savedAt)}</span></h2><p>${text(mechanicFindings)}</p></section>
+      <footer class="report-signatures"><div><span class="report-signature-line"></span>Office Advisor Signature</div><div><span class="report-signature-line"></span>Customer Signature</div></footer></div>`;
+    return { number, content, html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CARTECH — Diagnostic list ${safe(number)}</title><style>body { margin: 24px; } ${reportStyles}</style></head><body class="ct-standalone-report">${content}</body></html>` };
   }
+
   function clearPrintView() { document.body.classList.remove('ct-print-diagnostic'); }
   function print() {
     if (!canPrint()) return;
@@ -5437,7 +5489,7 @@ window.CartechDiagnostics = (() => {
     try {
       window.print();
       // Some embedded previews silently suppress the browser print dialog.
-      byId('ctDiagSaveStatus').textContent = 'If no print dialog appears, download the report and print it from your browser.';
+      byId('ctDiagSaveStatus').textContent = 'Print: Letter (short bond), Portrait, Default margins, 100% scale; turn off Headers and footers.';
     } catch (error) {
       clearPrintView();
       fail('This browser preview does not allow printing. Download the report, open it in your browser, and print it there.');
@@ -6340,7 +6392,7 @@ window.CartechInspections = (() => {
     if (!job || !available(job)) return;
     if (!info(job).saved) { alert('The mechanic has not submitted an inspection for this job yet.'); return; }
     selected = id; returnFocus = document.activeElement;
-    byId('ctInspectionReportNotice').textContent = 'Use these findings to discuss recommended work with the customer.';
+    byId('ctInspectionReportNotice').textContent = 'For one sheet: Letter (short bond), Portrait, Default margins, 100% scale; Headers and footers off.';
     renderReport();
     if (!dialog.open) dialog.showModal();
   }
@@ -6366,7 +6418,7 @@ window.CartechInspections = (() => {
     const content = report(); if (!content) return;
     byId('ctDiagnosticPrintHost').innerHTML = content.content;
     document.body.classList.add('ct-print-diagnostic');
-    try { window.print(); byId('ctInspectionReportNotice').textContent='If no print dialog appears, download the report and open it in your browser.'; }
+    try { window.print(); byId('ctInspectionReportNotice').textContent='Print: Letter (short bond), Portrait, Default margins, 100% scale; turn off Headers and footers.'; }
     catch (_) { document.body.classList.remove('ct-print-diagnostic'); byId('ctInspectionReportNotice').textContent='Printing is unavailable here. Download and open the report in your browser.'; }
   }
   function download() {
