@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-readable-print-v3">
+  <meta name="cartech-build" content="cartech-access-controls-v4-20260909">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -2957,7 +2957,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     function printDiagnosticReport() { return window.CartechDiagnostics.print(); }
 
     function handleProfilePhotoUpload(event) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) return;
       const file = event.target.files[0];
       if (!file) return;
 
@@ -3020,7 +3020,13 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 
     async function devChangeStaffPassword(username) { return window.CartechAccess.changePassword(username); }
 
-    async function devDeleteStaffAccount(username) { return window.CartechAccess.revoke(username); }
+    async function devDeleteStaffAccount(username) { return window.CartechAccess.deleteAccount(username); }
+
+    async function devToggleStaffAccount(username) { return window.CartechAccess.toggleAccount(username); }
+
+    async function devToggleReadOnly(username) { return window.CartechAccess.toggleReadOnly(username); }
+
+    async function devToggleDispatch(username) { return window.CartechAccess.toggleDispatch(username); }
 
     async function restoreInitialShopRecords() {
       if (!window.CartechAccess?.sessionValid() || currentRole !== 'developer') return;
@@ -3497,7 +3503,8 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     }
 
     async function handleDispatch(e) {
-      e?.preventDefault(); if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      e?.preventDefault();
+      if (!window.CartechAccess?.can('dispatch')) { alert('Dispatch is OFF for this account. Ask the developer to enable it.'); return; }
       if (e) { e.preventDefault(); e.stopPropagation(); }
       const custVal = document.getElementById('inCust').value.trim();
       const diagVal = document.getElementById('inDiag').value.trim();
@@ -3675,7 +3682,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     }
 
     async function setStatus(id, newStatus, customSlot = null) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) { alert('This account is read only.'); return; }
       const currentItem = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
       let slot = customSlot;
 
@@ -3734,7 +3741,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     }
 
     async function officePartsReadyToPickUp(jobId) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) { alert('This account is read only.'); return; }
       const job = state.find(j => j.id === jobId);
       if (!job) return;
 
@@ -3766,7 +3773,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     }
 
     function openPartsModal(jobId) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) { alert('This account is read only.'); return; }
       const modal = document.getElementById('partsModal');
       const inputId = document.getElementById('partJobId');
       const inputText = document.getElementById('partText');
@@ -3802,7 +3809,10 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     async function saveDiagnosticSheet(e) { return window.CartechDiagnostics.save(e); }
 
     async function deleteSingleRecord(id) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('deleteJob')) {
+        alert('Only the developer can delete a job record. Office accounts can still dispatch vehicles.');
+        return;
+      }
       if (!confirm("Delete record? (A copy will be backed up in the Developer Recovery Bin)")) return;
       const targetJob = state.find(j => j.id === id) || completedArchive.find(j => j.id === id);
 
@@ -3906,7 +3916,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     }
 
 async function submitPartsRequest() {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) { alert('This account is read only.'); return; }
       const jobId = document.getElementById('partJobId').value;
       const partDesc = document.getElementById('partText').value.trim();
       if (!partDesc) { alert('Please describe the replacement parts required.'); return; }
@@ -4159,7 +4169,7 @@ async function submitPartsRequest() {
     }
 
     async function handleModalChatSubmit(event) {
-      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return;
+      if (!window.CartechAccess?.can('write')) { alert('This account is read only.'); return; }
       if (event) { event.preventDefault(); event.stopPropagation(); }
       if (!activeModalChatJobId) return;
 
@@ -4225,7 +4235,7 @@ async function submitPartsRequest() {
 
       if (window.CartechDiagnostics) window.CartechDiagnostics.refreshLaunch();
 
-      const accountsList = Object.keys(cachedCloudAccounts);
+      const accountsList = Object.keys(cachedCloudAccounts).filter(user => cachedCloudAccounts[user] && typeof cachedCloudAccounts[user].pass === 'string');
       const now = Date.now();
 
       let subCount = 0;
@@ -4326,7 +4336,8 @@ async function submitPartsRequest() {
           const timeLeftMs = effectiveExpiry - window.CartechAccess.now();
           const agreement = window.CartechAccess.getAgreementStatus(u, acc);
           let timerBadge = `<span class="ct-account-timer">Developer maintenance access</span>`;
-          if (acc.revoked || timeLeftMs <= 0) timerBadge = `<span class="ct-account-timer ct-account-ended">EXPIRED / REVOKED</span>`;
+          if (acc.disabled) timerBadge = `<span class="ct-account-timer ct-account-ended">ACCOUNT OFF</span>`;
+          else if (acc.revoked || timeLeftMs <= 0) timerBadge = `<span class="ct-account-timer ct-account-ended">EXPIRED / REVOKED</span>`;
           else if (Number.isFinite(effectiveExpiry)) {
             const h = Math.floor(timeLeftMs / 3600000), m = Math.floor(timeLeftMs % 3600000 / 60000);
             const label = !acc.expiresAt ? `Program deadline · ${window.CartechAccess.programDeadlineShort()}` : 'Individual timer';
@@ -4352,6 +4363,7 @@ async function submitPartsRequest() {
                   </div>
                   <div class="mt-0.5">${timerBadge}</div>
                   <div class="mt-1">${agreementBadge}</div>
+                  ${!isPermanentAdmin ? `<div class="mt-1 flex flex-wrap gap-1"><span class="ct-account-timer">${acc.readOnly ? 'READ ONLY' : 'FULL ACCESS'}</span>${acc.role === 'office' ? `<span class="ct-account-timer">DISPATCH ${acc.allowDispatch === false ? 'OFF' : 'ON'}</span>` : ''}</div>` : ''}
                   ${currentRole === 'developer' ? `<button type="button" class="ct-edit-access" data-edit-access="${escapeHTML(u)}">Edit access <i class="fa-regular fa-clock" aria-hidden="true"></i></button>` : ''}
                 </div>
               </div>
@@ -4362,6 +4374,9 @@ async function submitPartsRequest() {
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
                 ${!isPermanentAdmin ? `
+                  <button onclick="devToggleStaffAccount('${u}')" class="${acc.disabled ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} p-1.5 rounded-lg text-xs font-bold border" title="${acc.disabled ? 'Turn account ON' : 'Turn account OFF'}"><i class="fa-solid fa-power-off"></i></button>
+                  <button onclick="devToggleReadOnly('${u}')" class="bg-slate-50 hover:bg-slate-100 text-slate-700 p-1.5 rounded-lg text-xs font-bold border border-slate-200" title="Toggle read-only access"><i class="fa-solid fa-eye"></i></button>
+                  ${acc.role === 'office' ? `<button onclick="devToggleDispatch('${u}')" class="bg-orange-50 hover:bg-orange-100 text-orange-700 p-1.5 rounded-lg text-xs font-bold border border-orange-200" title="Toggle office dispatch"><i class="fa-solid fa-truck-fast"></i></button>` : ''}
                   <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
                     <i class="fa-solid fa-user-xmark"></i>
                   </button>
@@ -4537,7 +4552,7 @@ async function submitPartsRequest() {
             if (j.status === 'completed') badge = `<span class="px-2.5 py-0.5 text-[10px] font-bold rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center"><i class="fa-regular fa-circle-check mr-1"></i> Done</span>`;
 
             let deleteBtn = "";
-            if (j.status === 'completed' && currentRole !== 'tester') {
+            if (j.status === 'completed' && currentRole === 'developer') {
               deleteBtn = `
                 <button onclick="deleteSingleRecord('${j.id}')" class="text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition cursor-pointer" title="Delete Log Record (Sent to Dev Bin)">
                   <i class="fa-solid fa-trash-can"></i>
@@ -4820,7 +4835,10 @@ window.CartechUI = (() => {
     if (ui.menuOpen) sidebar?.querySelector('button:not([hidden])')?.focus();
   }
 
-  function openDispatch() { if (active() && management()) show('ctDispatchDialog'); }
+  function openDispatch() {
+    if (active() && window.CartechAccess?.can('dispatch')) show('ctDispatchDialog');
+    else if (active()) alert('Dispatch is OFF for this account. Ask the developer to enable it.');
+  }
   function closeDispatch() { close('ctDispatchDialog'); }
 
   function renderJobDetails() {
@@ -5037,7 +5055,7 @@ window.CartechDiagnostics = (() => {
       currentUser.toLowerCase() === mechanic.toLowerCase() && job.status !== 'waiting';
   }
   function canSave(job) {
-    return canUse(job) && (currentRole === 'developer' || currentRole === 'tester' || (currentRole === 'workshop' && ['inprogress','waiting_parts'].includes(job.status)));
+    return canUse(job) && (currentRole === 'tester' || (window.CartechAccess?.can('write') && (currentRole === 'developer' || (currentRole === 'workshop' && ['inprogress','waiting_parts'].includes(job.status)))));
   }
   const tester = () => currentRole === 'tester' && window.CartechAccess?.testerAllowed();
   const canEnterVin = job => canEditVin(job) || tester();
@@ -5046,7 +5064,7 @@ window.CartechDiagnostics = (() => {
     return currentRole === 'developer' || ['office', 'admin'].includes(currentRole);
   }
   function canEditVin(job) {
-    return canUse(job) && (currentRole === 'developer' || (currentRole === 'workshop' && ['inprogress', 'waiting_parts'].includes(job.status)));
+    return canUse(job) && window.CartechAccess?.can('write') && (currentRole === 'developer' || (currentRole === 'workshop' && ['inprogress', 'waiting_parts'].includes(job.status)));
   }
   function replaceVin(slot, value) {
     const base = String(slot || '').replace(/\[VIN:[^\]]*\]/gi, '').trim();
@@ -5639,7 +5657,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-readable-print-v3';
+  const buildId = 'cartech-access-controls-v4-20260909';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -5695,7 +5713,7 @@ window.CartechAccess = (() => {
     return acc?.role === 'developer' ? individual : Math.min(individual, programEndsAt);
   }
   function ended(acc) {
-    return !validAccount(acc) || acc.revoked === true || (acc.expiresAt != null && acc.expiresAt !== 0 && !finiteExpiry(acc)) || effectiveExpiry(acc) <= now();
+    return !validAccount(acc) || acc.revoked === true || acc.disabled === true || (acc.expiresAt != null && acc.expiresAt !== 0 && !finiteExpiry(acc)) || effectiveExpiry(acc) <= now();
   }
   function getAgreementStatus(user, account = cachedCloudAccounts[user]) {
     const record = account?.termsAgreement && typeof account.termsAgreement === 'object' ? account.termsAgreement : null;
@@ -5792,6 +5810,18 @@ window.CartechAccess = (() => {
     return true;
   }
   function sessionValid() { return identityValid() && agreementAccepted && !window.CartechUpdates?.pending(); }
+  function can(action = 'write') {
+    if (!sessionValid() || !currentUser) return false;
+    const account = cachedCloudAccounts[currentUser];
+    if (!validAccount(account) || account.revoked || account.disabled) return false;
+    if (action === 'deleteJob' || action === 'manageAccounts') return currentRole === 'developer';
+    if (action === 'dispatch') {
+      if (!['office','admin','developer'].includes(currentRole)) return false;
+      return account.allowDispatch !== false;
+    }
+    if (action === 'view') return true;
+    return currentRole !== 'tester' && account.readOnly !== true;
+  }
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid() && now() - lastVerified < 65000;
   }
@@ -6374,6 +6404,69 @@ window.CartechAccess = (() => {
     } catch (error) { message(editing === user ? 'ctEditAccessMessage' : 'ctAccountMessage', error.message, true); }
     finally { accountBusy = false; }
   }
+  async function toggleAccount(user) {
+    if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
+    const current = cachedCloudAccounts[user];
+    if (!validAccount(current)) return;
+    const disabling = !current.disabled;
+    if (!confirm(`${disabling ? 'Turn OFF' : 'Turn ON'} account ${user}?${disabling ? ' Their active session will be blocked on its next check.' : ''}`)) return;
+    accountBusy = true;
+    try {
+      await mutateAccounts(accounts => {
+        if (!validAccount(accounts[user])) throw new Error('Account no longer exists.');
+        accounts[user] = { ...accounts[user], disabled: disabling, accessUpdatedAt: now(), accessUpdatedBy: currentUser };
+        return accounts;
+      });
+      message('ctAccountMessage', `${user} is now ${disabling ? 'OFF' : 'ON'}.`);
+    } catch (error) { message('ctAccountMessage', error.message, true); }
+    finally { accountBusy = false; }
+  }
+  async function toggleReadOnly(user) {
+    if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
+    accountBusy = true;
+    try {
+      let nextValue = false;
+      await mutateAccounts(accounts => {
+        if (!validAccount(accounts[user])) throw new Error('Account no longer exists.');
+        nextValue = !accounts[user].readOnly;
+        accounts[user] = { ...accounts[user], readOnly: nextValue, accessUpdatedAt: now(), accessUpdatedBy: currentUser };
+        return accounts;
+      });
+      message('ctAccountMessage', `${user} is now ${nextValue ? 'READ ONLY' : 'FULL ACCESS'}.`);
+    } catch (error) { message('ctAccountMessage', error.message, true); }
+    finally { accountBusy = false; }
+  }
+  async function toggleDispatch(user) {
+    if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
+    accountBusy = true;
+    try {
+      let nextValue = true;
+      await mutateAccounts(accounts => {
+        if (!validAccount(accounts[user])) throw new Error('Account no longer exists.');
+        nextValue = accounts[user].allowDispatch === false;
+        accounts[user] = { ...accounts[user], allowDispatch: nextValue, accessUpdatedAt: now(), accessUpdatedBy: currentUser };
+        return accounts;
+      });
+      message('ctAccountMessage', `Dispatch is now ${nextValue ? 'ON' : 'OFF'} for ${user}.`);
+    } catch (error) { message('ctAccountMessage', error.message, true); }
+    finally { accountBusy = false; }
+  }
+  async function deleteAccount(user) {
+    if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
+    if (!confirm(`Permanently delete account ${user}? This removes its login and cannot be undone.`)) return;
+    accountBusy = true;
+    try {
+      await mutateAccounts(accounts => {
+        if (!validAccount(accounts[user])) throw new Error('Account no longer exists.');
+        if (Object.hasOwn(defaults, user)) accounts[user] = { deleted:true, deletedAt:now(), deletedBy:currentUser };
+        else delete accounts[user];
+        return accounts;
+      });
+      message('ctAccountMessage', `Account ${user} was deleted.`);
+      if (editing === user) { byId('ctEditAccessDialog').close(); editing = null; }
+    } catch (error) { message('ctAccountMessage', error.message, true); }
+    finally { accountBusy = false; }
+  }
   function previewData(id) { return testerAllowed() ? previews.get(id) || null : null; }
   function savePreview(id, data) {
     if (!testerAllowed()) { checkExpiry(); throw new Error('Your test session has ended.'); }
@@ -6406,7 +6499,7 @@ window.CartechAccess = (() => {
   // already loaded into the shared featureFlags object during module startup.
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
-  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
@@ -6620,8 +6713,18 @@ window.CartechUpdates = (() => {
       return {build:meta['cartech-build'],signature:stamp(response),modified:Date.parse(response.headers.get('last-modified')||'')};
     } finally { clearTimeout(timeout); }
   }
-  function reload() {
+  async function reload() {
     if(!updatePending || !eligible())return;
+    try {
+      if('serviceWorker' in navigator) {
+        const registrations=await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(registration=>registration.unregister()));
+      }
+      if('caches' in window) {
+        const keys=await caches.keys();
+        await Promise.all(keys.filter(key=>/cartech/i.test(key)).map(key=>caches.delete(key)));
+      }
+    } catch (_) {}
     const url=new URL(location.href);url.hash='';url.searchParams.delete('_ct_check');
     url.searchParams.set('_ct_release',Date.now().toString(36));location.replace(url.href);
   }
@@ -6666,6 +6769,7 @@ window.CartechUpdates = (() => {
     return busy;
   }
   setInterval(()=>void check(),60000);
+  setTimeout(()=>void check(true),1500);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void check(true);});
   window.addEventListener('focus',()=>void check());
   window.addEventListener('online',()=>void check(true));
