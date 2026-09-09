@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-readable-print-v2">
+  <meta name="cartech-build" content="cartech-readable-print-v3">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -1231,6 +1231,29 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-report .report-refs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 </style>
+<style id="ctDiagnosticNumberStyles">
+.ct-report-head-tools { display:flex; align-items:center; gap:8px; }
+.ct-report-head-tools .ct-button { min-height:36px; padding:7px 10px; font-size:11px; }
+.ct-report-number-editor { display:flex; align-items:flex-end; gap:12px; padding:12px 20px; border-top:1px solid #e2e9ee; background:#fbfcfd; }
+.ct-report-number-editor > div:first-child { min-width:0; flex:1; }
+.ct-report-number-editor label { display:block; margin-bottom:6px; color:#334155; font-size:11px; font-weight:650; }
+.ct-report-number-editor input { width:100%; min-height:38px; padding:8px 10px; border:1px solid #cbd9df; border-radius:7px; color:#1f3d45; font-size:14px; }
+.ct-report-number-editor input:focus { outline:2px solid #79acb0; outline-offset:1px; }
+.ct-report-number-editor-actions { display:flex; gap:6px; flex:none; }
+.ct-report-number-editor-actions .ct-button { min-height:38px; padding:8px 11px; font-size:11px; }
+.ct-report-number-editor-error { flex-basis:100%; margin:0; color:#b13e43; font-size:11px; }
+.ct-diagnostic-number-dialog { width:min(460px,calc(100vw - 28px)); }
+.ct-diagnostic-number-dialog .df-label { display:block; margin-bottom:7px; font-size:12px; font-weight:650; color:#334155; }
+.ct-diagnostic-number-dialog .df-input { width:100%; min-height:43px; }
+.ct-diagnostic-number-dialog .df-help { margin:8px 0 0; }
+.ct-diagnostic-number-dialog .df-error { margin:12px 0 0; }
+.ct-edit-diagnostic-number { color:#4b6670; }
+.ct-edit-diagnostic-number:hover { color:#147a7f; background:#eff8f7; }
+@media screen and (max-width:560px) {
+  .ct-report-number-editor { align-items:stretch; flex-direction:column; }
+  .ct-report-number-editor-actions { justify-content:flex-end; }
+}
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -1947,9 +1970,10 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     <div class="ct-tester-tools"><time id="ctTesterCountdown" aria-label="Time remaining">01:00:00</time><button id="ctAccessFeedbackButton" type="button" class="ct-button" onclick="CartechAccess.openFeedback()">Feedback notes</button><button id="ctAccessExitButton" type="button" class="ct-button" onclick="handleLogout()">Sign out</button></div>
   </aside>
   <dialog id="ctInspectionReport" class="ct-dialog ct-inspection-report" aria-labelledby="ctInspectionReportTitle">
-    <div class="ct-dialog-head"><div><h2 id="ctInspectionReportTitle">CARTECH Inspection</h2><p id="ctInspectionReportSubtitle">Saved mechanic findings</p></div><button type="button" class="ct-icon-button" onclick="CartechInspections.close()" aria-label="Close inspection report"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+    <div class="ct-dialog-head"><div><h2 id="ctInspectionReportTitle">CARTECH Inspection</h2><p id="ctInspectionReportSubtitle">Saved mechanic findings</p></div><div class="ct-report-head-tools"><button id="ctReportEditNumber" type="button" class="ct-button" onclick="CartechInspections.editNumber()" hidden><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit diagnostic #</button><button type="button" class="ct-icon-button" onclick="CartechInspections.close()" aria-label="Close inspection report"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div></div>
     <div id="ctInspectionReportBody" class="ct-report-body"></div>
-    <footer class="ct-report-footer"><span id="ctInspectionReportNotice" role="status">Use these findings to discuss recommended work with the customer.</span><div><button id="ctReportDownload" type="button" class="ct-button" onclick="CartechInspections.download()"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button><button id="ctReportPrint" type="button" class="ct-button ct-primary" onclick="CartechInspections.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> Print</button></div></footer>
+    <div id="ctReportNumberEditor" class="ct-report-number-editor" hidden><div><label for="ctReportNumberInput">Diagnostic Number</label><input id="ctReportNumberInput" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter the correct diagnostic number"><p id="ctReportNumberError" class="ct-report-number-editor-error" role="alert" hidden></p></div><div class="ct-report-number-editor-actions"><button id="ctReportNumberCancel" type="button" class="ct-button" onclick="CartechInspections.cancelNumberEdit()">Cancel</button><button id="ctReportNumberSave" type="button" class="ct-button ct-primary" onclick="CartechInspections.saveNumber()">Save number</button></div></div>
+        <footer class="ct-report-footer"><span id="ctInspectionReportNotice" role="status">For one sheet: Letter (short bond), Portrait, Default margins, 100% scale; Headers and footers off.</span><div><button id="ctReportDownload" type="button" class="ct-button" onclick="CartechInspections.download()"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button><button id="ctReportPrint" type="button" class="ct-button ct-primary" onclick="CartechInspections.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> Print</button></div></footer>
   </dialog>
   <dialog id="ctEditAccessDialog" class="ct-dialog ct-access-dialog" aria-labelledby="ctEditAccessTitle">
     <form id="ctEditAccessForm" onsubmit="CartechAccess.editExpiry(event); return false;">
@@ -2054,6 +2078,12 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   </dialog>
   <div id="ctDiagSavedNotice" class="df-save-notice" role="status" hidden></div>
   <dialog id="ctVinDialog" class="ct-dialog" aria-labelledby="ctVinTitle"><form id="ctVinForm" onsubmit="CartechDiagnostics.saveVin(event); return false;" novalidate><div class="ct-dialog-head"><div><h2 id="ctVinTitle">Add or correct VIN</h2><p id="ctVinJobLabel"></p></div><button id="ctVinClose" type="button" class="ct-icon-button" onclick="CartechDiagnostics.closeVin()" aria-label="Close VIN editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><div class="ct-dialog-body"><label class="df-label" for="ctVinValue">VIN / chassis number</label><input id="ctVinValue" class="df-input df-vin-input" maxlength="40" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter VIN or chassis number"><p class="df-help">Save the number from the vehicle. The office will see it on this job.</p><p id="ctVinError" class="df-error" role="alert" hidden></p><div class="ct-detail-actions"><button id="ctVinSave" type="submit" class="ct-button ct-primary">Save VIN</button></div></div></form></dialog>
+  <dialog id="ctDiagnosticNumberDialog" class="ct-dialog ct-diagnostic-number-dialog" aria-labelledby="ctDiagnosticNumberTitle">
+    <form id="ctDiagnosticNumberForm" onsubmit="CartechInspections.saveJobNumber(event); return false;" novalidate>
+      <div class="ct-dialog-head"><div><h2 id="ctDiagnosticNumberTitle">Edit Diagnostic Number</h2><p id="ctDiagnosticNumberJobLabel"></p></div><button id="ctDiagnosticNumberClose" type="button" class="ct-icon-button" onclick="CartechInspections.closeJobNumberEditor()" aria-label="Close diagnostic number editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+      <div class="ct-dialog-body"><label class="df-label" for="ctDiagnosticNumberInput">Diagnostic Number</label><input id="ctDiagnosticNumberInput" class="df-input" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="Enter the correct diagnostic number"><p class="df-help">This correction updates the queue, inspection, search, and printed report together.</p><p id="ctDiagnosticNumberError" class="df-error" role="alert" hidden></p><div class="ct-detail-actions"><button id="ctDiagnosticNumberCancel" type="button" class="ct-button" onclick="CartechInspections.closeJobNumberEditor()">Cancel</button><button id="ctDiagnosticNumberSave" type="submit" class="ct-button ct-primary">Save number</button></div></div>
+    </form>
+  </dialog>
   <div id="ctDiagnosticPrintHost" aria-hidden="true"></div>
 
   <!-- 7. LIGHTBOX -->
@@ -4515,6 +4545,7 @@ async function submitPartsRequest() {
             }
 
             const printDiagBtn = (currentRole === 'developer' || (currentRole === 'tester' && window.CartechAccess?.testerAllowed())) ? `<button type="button" class="ct-button ct-inspect-preview" data-preview-job="${escapeHTML(j.id)}"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>${currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection'}</button>` : '';
+            const editDiagnosticNumberBtn = ['office','admin','developer'].includes(currentRole) ? `<button type="button" class="ct-button ct-edit-diagnostic-number" data-diagnostic-number-job="${escapeHTML(j.id)}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edit #</button>` : '';
 
             let partsSection = "";
             if (j.status === 'waiting_parts') {
@@ -4557,7 +4588,7 @@ async function submitPartsRequest() {
                   ${window.CartechInspections?.card(j) || ''}
                   <div class="ct-job-parts">${partsSection}</div>
                 </div>
-                <div class="ct-job-footer"><div class="ct-assigned"><span class="ct-avatar" aria-hidden="true">${assignedMechanic ? escapeHTML(assignedMechanic.slice(0, 2)) : '–'}</span><span>${assignedMechanic ? `Handled by <b>${escapeHTML(assignedMechanic)}</b>` : 'Awaiting assignment'}</span></div><div class="ct-job-actions">${printDiagBtn}${deleteBtn}<button type="button" class="ct-job-open" data-job-id="${escapeHTML(j.id)}" onclick="CartechUI.openJob(this.dataset.jobId)">View job <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>
+                <div class="ct-job-footer"><div class="ct-assigned"><span class="ct-avatar" aria-hidden="true">${assignedMechanic ? escapeHTML(assignedMechanic.slice(0, 2)) : '–'}</span><span>${assignedMechanic ? `Handled by <b>${escapeHTML(assignedMechanic)}</b>` : 'Awaiting assignment'}</span></div><div class="ct-job-actions">${editDiagnosticNumberBtn}${printDiagBtn}${deleteBtn}<button type="button" class="ct-job-open" data-job-id="${escapeHTML(j.id)}" onclick="CartechUI.openJob(this.dataset.jobId)">View job <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>
               </article>`;
           }).join('');
         }
@@ -4802,6 +4833,7 @@ window.CartechUI = (() => {
     const parts = parsePartsInfo(job.auto_schedule_slot);
     const canChat = management() || isAssigned(job);
     const canDiag = window.CartechDiagnostics?.canSave(job);
+    const canEditDiagnosticNumber = window.CartechDiagnostics?.canPrint() === true;
     const inspectionLabel = window.CartechInspections?.card(job) || '';
     setText('ctJobTitle', job.vehicle);
     setText('ctJobSubtitle', `${job.id} · ${statusNames[job.status] || job.status}`);
@@ -4818,7 +4850,7 @@ window.CartechUI = (() => {
       </dl>
       <section class="ct-detail-section"><h3>Job instructions</h3><p>${safe(job.details || 'Standard intake')}</p></section>
       ${job.status === 'waiting_parts' ? `<section class="ct-detail-section"><h3>Parts requested${mech ? ' by ' + safe(mech) : ''}</h3><p>${safe(parts.text || 'Replacement parts required')}</p><p class="ct-panel-caption">${parts.images.length} attached photo${parts.images.length === 1 ? '' : 's'} · Photos are available on the vehicle’s queue card.</p></section>` : ''}
-      <div class="ct-detail-actions">${canChat ? action('chat', 'Open job chat', 'fa-comment-dots') : ''}${canDiag ? action('diagnostic', currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection', 'fa-clipboard-list') : ''}${window.CartechDiagnostics?.canEditVin(job) ? action('vin', 'Add / edit VIN', 'fa-pen') : ''}${job.status === 'waiting_parts' && management() ? action('parts-ready', 'Parts ready to pick up', 'fa-box-open', true) : ''}</div>`;
+      <div class="ct-detail-actions">${canChat ? action('chat', 'Open job chat', 'fa-comment-dots') : ''}${canDiag ? action('diagnostic', currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection', 'fa-clipboard-list') : ''}${canEditDiagnosticNumber ? action('diagnostic-number', 'Edit diagnostic #', 'fa-pen-to-square') : ''}${window.CartechDiagnostics?.canEditVin(job) ? action('vin', 'Add / edit VIN', 'fa-pen') : ''}${job.status === 'waiting_parts' && management() ? action('parts-ready', 'Parts ready to pick up', 'fa-box-open', true) : ''}</div>`;
   }
 
   function openJob(id) {
@@ -4926,6 +4958,7 @@ window.CartechUI = (() => {
     closeAll();
     if (action === 'chat' && currentRole !== 'tester') openMessengerChatForJob(job.id, resolveMechanicName(job) || 'Workshop');
     if (action === 'diagnostic') openDiagnosticSheetModal(job.id);
+    if (action === 'diagnostic-number') window.CartechInspections?.openJobNumberEditor(job.id);
     if (action === 'vin') window.CartechDiagnostics?.openVin(job.id);
     if (action === 'parts-ready' && management()) officePartsReadyToPickUp(job.id);
   });
@@ -5137,6 +5170,50 @@ window.CartechDiagnostics = (() => {
   function diagnosticNumber(job) {
     return job.phone && job.phone !== 'N/A' ? job.phone : (String(job.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job.id);
   }
+  async function updateDiagnosticNumber(jobId, rawValue) {
+    if (!currentUser || !window.CartechAccess?.sessionValid() || !['office', 'admin', 'developer'].includes(currentRole)) {
+      throw new Error('Only authorized office or developer accounts can edit the diagnostic number.');
+    }
+    const value = String(rawValue ?? '').trim().toUpperCase();
+    if (!/^[A-Z0-9][A-Z0-9 _./-]{0,39}$/.test(value)) {
+      throw new Error('Use 1–40 letters, numbers, spaces, dots, slashes, or hyphens.');
+    }
+    const rows = await requestJSON(`${API_URL}?id=eq.${encodeURIComponent(jobId)}&select=*`, { headers: HEADERS });
+    const fresh = Array.isArray(rows) ? rows.find(item => item.id === jobId) : null;
+    if (!fresh) throw new Error('The job could not be found. Refresh the queue and try again.');
+    const original = String(diagnosticNumber(fresh) ?? '').trim().toUpperCase();
+    if (original !== value) {
+      const allRows = await requestJSON(`${API_URL}?select=id,phone,details&limit=1000`, { headers: HEADERS });
+      const duplicate = Array.isArray(allRows) && allRows.some(item => item.id !== jobId && String(diagnosticNumber(item) ?? '').trim().toUpperCase() === value);
+      if (duplicate) throw new Error(`Diagnostic number ${value} is already used by another job.`);
+    }
+    let details = String(fresh.details || '');
+    const tag = details.match(/\[DIAG:\s*[^\]]+\]/i);
+    details = tag ? details.replace(tag[0], `[DIAG: ${value}]`) : `[DIAG: ${value}] ${details}`.trim();
+    let slot = String(fresh.auto_schedule_slot || '');
+    const dataMatch = slot.match(/\[DIAG_DATA\]([\s\S]*?)\[\/DIAG_DATA\]/i);
+    if (dataMatch) {
+      try {
+        const data = JSON.parse(dataMatch[1]);
+        if (data && typeof data === 'object') {
+          data.diagnosticNumber = value;
+          slot = slot.replace(dataMatch[0], `[DIAG_DATA]${serialize(data)}[/DIAG_DATA]`);
+        }
+      } catch (_) { /* Keep an existing malformed payload unchanged. */ }
+    }
+    const updated = await requestJSON(`${API_URL}?id=eq.${encodeURIComponent(jobId)}`, {
+      method: 'PATCH', headers: { ...HEADERS, Prefer: 'return=representation' },
+      body: JSON.stringify({ phone: value, details, auto_schedule_slot: slot })
+    });
+    const confirmed = Array.isArray(updated) ? updated.find(item => item.id === jobId) : null;
+    if (!confirmed || String(confirmed.phone ?? '').trim().toUpperCase() !== value) {
+      throw new Error('The server did not confirm the diagnostic number update.');
+    }
+    state = state.map(item => item.id === jobId ? { ...item, ...confirmed } : item);
+    completedArchive = completedArchive.map(item => item.id === jobId ? { ...item, ...confirmed } : item);
+    return confirmed;
+  }
+
   function localDate() {
     const date = new Date();
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -5544,7 +5621,7 @@ window.CartechDiagnostics = (() => {
   });
   window.addEventListener('afterprint', clearPrintView);
   refreshLaunch();
-  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview };
+  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview, updateDiagnosticNumber, showSavedNotice };
 })();
 
   </script>
@@ -5562,7 +5639,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-terms-agreement-v3';
+  const buildId = 'cartech-readable-print-v3';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -6338,11 +6415,18 @@ window.CartechInspections = (() => {
   const byId = id => document.getElementById(id);
   const safe = value => escapeHTML(String(value ?? ''));
   const dialog = byId('ctInspectionReport');
+  const numberDialog = byId('ctDiagnosticNumberDialog');
   const snapshots = new Map();
   let selected = null, reportVersion = '', returnFocus = null;
+  let numberBusy = false, jobNumberId = null, jobNumberReturnFocus = null, jobNumberBusy = false;
   const findJob = id => state.find(job => job.id === id) || completedArchive.find(job => job.id === id);
   const available = job => window.CartechDiagnostics.canUse(job);
   const dataOf = job => parsePartsInfo(job?.auto_schedule_slot).diagData;
+  const jobDiagnosticNumber = job => job && job.phone && job.phone !== 'N/A'
+    ? job.phone
+    : String(job?.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job?.id || '';
+  const canEditJobNumber = () => ['office', 'admin', 'developer'].includes(currentRole) && window.CartechDiagnostics?.canPrint() === true;
+  const reportVersionFor = job => JSON.stringify({ data: dataOf(job) || null, number: jobDiagnosticNumber(job) });
   function info(job) {
     const data = dataOf(job);
     if (!data || typeof data !== 'object' || !Object.keys(data).length) return { saved:false, text:'Not submitted', attention:0 };
@@ -6365,16 +6449,17 @@ window.CartechInspections = (() => {
     const status = info(job);
     if (!status.saved) return '';
     const needsReview = status.attention > 0;
-    const number = status.data?.diagnosticNumber || (job.phone && job.phone !== 'N/A' ? job.phone : String(job.details || '').match(/\[DIAG:\s*([^\]]+)\]/i)?.[1] || job.id);
+    const number = status.data?.diagnosticNumber || jobDiagnosticNumber(job);
     const result = needsReview
       ? `<span class="ct-office-inspection-issues"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>${status.attention} item${status.attention === 1 ? '' : 's'} need attention</span>`
       : '<span class="ct-office-inspection-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Ready to review</span>';
+    const edit = canEditJobNumber() ? `<button type="button" class="ct-inspection-open ct-edit-diagnostic-number" data-diagnostic-number-job="${safe(job.id)}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edit #</button>` : '';
     return `<article class="ct-office-inspection-item${needsReview ? ' ct-inspection-attention-state' : ''}">
       <div class="ct-office-inspection-main">
         <div class="ct-office-inspection-title"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><strong>${safe(job.vehicle || 'Vehicle')}</strong><span class="ct-office-inspection-number">${safe(job.id)} · Diagnostic ${safe(number)}</span></div>
         <div class="ct-office-inspection-meta"><span>Customer: <strong>${safe(job.customer || 'Not recorded')}</strong></span><span>Mechanic: <strong>${safe(status.by)}</strong></span><span>Submitted: ${safe(status.date || 'Date not recorded')}</span>${result}</div>
       </div>
-      <div class="ct-office-inspection-action"><button type="button" class="ct-inspection-open" data-inspection-job="${safe(job.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i>View inspection</button></div>
+      <div class="ct-office-inspection-action"><button type="button" class="ct-inspection-open" data-inspection-job="${safe(job.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i>View inspection</button>${edit}</div>
     </article>`;
   }
   function report() { const job = findJob(selected); return job && available(job) ? window.CartechDiagnostics.buildReport(job) : null; }
@@ -6385,7 +6470,9 @@ window.CartechInspections = (() => {
     byId('ctInspectionReportBody').innerHTML = content.content;
     byId('ctReportDownload').hidden = !window.CartechDiagnostics.canPrint();
     byId('ctReportPrint').hidden = !window.CartechDiagnostics.canPrint();
-    reportVersion = JSON.stringify(dataOf(job));
+    const editButton = byId('ctReportEditNumber');
+    if (editButton) editButton.hidden = !canEditJobNumber();
+    reportVersion = reportVersionFor(job);
   }
   function open(id) {
     const job = findJob(id);
@@ -6393,15 +6480,16 @@ window.CartechInspections = (() => {
     if (!info(job).saved) { alert('The mechanic has not submitted an inspection for this job yet.'); return; }
     selected = id; returnFocus = document.activeElement;
     byId('ctInspectionReportNotice').textContent = 'For one sheet: Letter (short bond), Portrait, Default margins, 100% scale; Headers and footers off.';
+    cancelNumberEdit();
     renderReport();
     if (!dialog.open) dialog.showModal();
   }
-  function close() { dialog.close(); selected = null; returnFocus?.focus?.(); }
+  function close() { if (numberBusy) return; if (dialog.open) dialog.close(); selected = null; cancelNumberEdit(); returnFocus?.focus?.(); }
   function hash(value) { let h=2166136261; for (let i=0;i<value.length;i++) h=Math.imul(h^value.charCodeAt(i),16777619); return (h>>>0).toString(16); }
   function refresh() {
     const jobs = [...state, ...completedArchive];
     for (const job of jobs) {
-      const data = dataOf(job), version = JSON.stringify(data || null), prior = snapshots.get(job.id);
+      const data = dataOf(job), version = JSON.stringify({ data: data || null, number: jobDiagnosticNumber(job) }), prior = snapshots.get(job.id);
       snapshots.set(job.id, version);
       if (prior !== undefined && prior !== version && data && available(job) && ['office','admin','developer'].includes(currentRole) && data.savedBy?.toLowerCase() !== currentUser?.toLowerCase()) {
         deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'message' });
@@ -6410,7 +6498,7 @@ window.CartechInspections = (() => {
     if (dialog.open) {
       const job = findJob(selected);
       if (!job || !available(job) || !info(job).saved) { close(); return; }
-      if (JSON.stringify(dataOf(job)) !== reportVersion) { const scroll=byId('ctInspectionReportBody').scrollTop; renderReport(); byId('ctInspectionReportBody').scrollTop=scroll; byId('ctInspectionReportNotice').textContent='Updated with the latest saved findings.'; }
+      if (reportVersionFor(job) !== reportVersion) { const scroll=byId('ctInspectionReportBody').scrollTop; renderReport(); byId('ctInspectionReportBody').scrollTop=scroll; byId('ctInspectionReportNotice').textContent='Updated with the latest saved findings.'; }
     }
   }
   function print() {
@@ -6418,7 +6506,7 @@ window.CartechInspections = (() => {
     const content = report(); if (!content) return;
     byId('ctDiagnosticPrintHost').innerHTML = content.content;
     document.body.classList.add('ct-print-diagnostic');
-    try { window.print(); byId('ctInspectionReportNotice').textContent='Print: Letter (short bond), Portrait, Default margins, 100% scale; turn off Headers and footers.'; }
+    try { window.print(); byId('ctInspectionReportNotice').textContent='If no print dialog appears, download the report and open it in your browser.'; }
     catch (_) { document.body.classList.remove('ct-print-diagnostic'); byId('ctInspectionReportNotice').textContent='Printing is unavailable here. Download and open the report in your browser.'; }
   }
   function download() {
@@ -6428,10 +6516,72 @@ window.CartechInspections = (() => {
     link.href=url; link.download=`CARTECH-inspection-${String(content.number).replace(/[^a-z0-9-]/gi,'-').slice(0,60)}.html`;
     document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
-  function reset() { snapshots.clear(); selected=null; reportVersion=''; if(dialog.open)dialog.close(); }
-  document.addEventListener('click', event => { const button=event.target.closest('[data-inspection-job]'); if(button)open(button.dataset.inspectionJob); });
-  dialog.addEventListener('close',()=>{selected=null;});
-  return { card, officeItem, info, open, close, print, download, refresh, reset };
+  function editNumber() {
+    if (!canEditJobNumber()) return;
+    const job = findJob(selected); if (!job) return;
+    const editor = byId('ctReportNumberEditor'), input = byId('ctReportNumberInput'), error = byId('ctReportNumberError');
+    input.value = String(jobDiagnosticNumber(job)).trim().toUpperCase(); error.hidden = true; error.textContent = '';
+    editor.hidden = false; byId('ctReportEditNumber').hidden = true; input.focus(); input.select();
+  }
+  function cancelNumberEdit() {
+    if (numberBusy) return;
+    const editor = byId('ctReportNumberEditor'), error = byId('ctReportNumberError');
+    if (editor) editor.hidden = true; if (error) { error.hidden = true; error.textContent = ''; }
+    const button = byId('ctReportEditNumber'); if (button) button.hidden = !canEditJobNumber();
+  }
+  async function saveNumber() {
+    if (numberBusy || !canEditJobNumber() || !selected) return;
+    const input = byId('ctReportNumberInput'), error = byId('ctReportNumberError'), saveButton = byId('ctReportNumberSave'), cancelButton = byId('ctReportNumberCancel');
+    error.hidden = true; error.textContent = ''; numberBusy = true;
+    [saveButton, cancelButton, input].forEach(node => { if (node) node.disabled = true; }); saveButton.textContent = 'Saving…';
+    try {
+      await window.CartechDiagnostics.updateDiagnosticNumber(selected, input.value);
+      numberBusy = false; cancelNumberEdit(); render(); renderReport(); byId('ctInspectionReportNotice').textContent = 'Diagnostic number updated for this job.';
+    } catch (caught) { error.textContent = caught?.message || 'Could not save the diagnostic number.'; error.hidden = false; input.focus(); input.select(); }
+    finally { numberBusy = false; [saveButton, cancelButton, input].forEach(node => { if (node) node.disabled = false; }); saveButton.textContent = 'Save number'; }
+  }
+  function openJobNumberEditor(id) {
+    if (!canEditJobNumber()) return;
+    const job = findJob(id); if (!job || !numberDialog) return;
+    jobNumberId = id; jobNumberReturnFocus = document.activeElement;
+    const input = byId('ctDiagnosticNumberInput'), error = byId('ctDiagnosticNumberError');
+    input.value = String(jobDiagnosticNumber(job)).trim().toUpperCase();
+    byId('ctDiagnosticNumberJobLabel').textContent = `${job.vehicle || 'Vehicle'} · ${job.customer || 'Customer'}`;
+    error.hidden = true; error.textContent = '';
+    if (!numberDialog.open) numberDialog.showModal();
+    input.focus(); input.select();
+  }
+  function closeJobNumberEditor() {
+    if (jobNumberBusy) return;
+    if (numberDialog?.open) numberDialog.close();
+    const focus = jobNumberReturnFocus; jobNumberId = null; jobNumberReturnFocus = null; focus?.focus?.();
+  }
+  async function saveJobNumber(event) {
+    event?.preventDefault(); event?.stopPropagation();
+    if (jobNumberBusy || !jobNumberId || !canEditJobNumber()) return;
+    const input = byId('ctDiagnosticNumberInput'), error = byId('ctDiagnosticNumberError'), saveButton = byId('ctDiagnosticNumberSave'), cancelButton = byId('ctDiagnosticNumberCancel'), closeButton = byId('ctDiagnosticNumberClose');
+    error.hidden = true; error.textContent = ''; jobNumberBusy = true;
+    [saveButton, cancelButton, closeButton, input].forEach(node => { if (node) node.disabled = true; }); saveButton.textContent = 'Saving…';
+    try {
+      const updatedId = jobNumberId;
+      await window.CartechDiagnostics.updateDiagnosticNumber(updatedId, input.value);
+      jobNumberBusy = false; closeJobNumberEditor(); render();
+      if (selected === updatedId && dialog.open) renderReport();
+      window.CartechDiagnostics?.showSavedNotice?.('Diagnostic number saved to this job.');
+    } catch (caught) { error.textContent = caught?.message || 'Could not save the diagnostic number.'; error.hidden = false; input.focus(); input.select(); }
+    finally { jobNumberBusy = false; [saveButton, cancelButton, closeButton, input].forEach(node => { if (node) node.disabled = false; }); saveButton.textContent = 'Save number'; }
+  }
+  function reset() { snapshots.clear(); selected=null; reportVersion=''; cancelNumberEdit(); if(dialog.open)dialog.close(); if(numberDialog?.open)numberDialog.close(); jobNumberId=null; jobNumberReturnFocus=null; }
+  document.addEventListener('click', event => {
+    const numberButton = event.target.closest('[data-diagnostic-number-job]');
+    if (numberButton) { event.preventDefault(); event.stopPropagation(); openJobNumberEditor(numberButton.dataset.diagnosticNumberJob); return; }
+    const button=event.target.closest('[data-inspection-job]'); if(button)open(button.dataset.inspectionJob);
+  });
+  dialog?.addEventListener('cancel', event => { if (numberBusy) event.preventDefault(); });
+  dialog?.addEventListener('close',()=>{ selected=null; cancelNumberEdit(); });
+  numberDialog?.addEventListener('cancel', event => { if (jobNumberBusy) event.preventDefault(); });
+  numberDialog?.addEventListener('close',()=>{ jobNumberBusy=false; jobNumberId=null; jobNumberReturnFocus=null; });
+  return { card, officeItem, info, open, close, print, download, refresh, reset, editNumber, cancelNumberEdit, saveNumber, openJobNumberEditor, closeJobNumberEditor, saveJobNumber };
 })();
 
 /* Same-origin deployment checks. HEAD requests avoid downloading embedded logos every minute.
