@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-login-editor-v5-20260909">
+  <meta name="cartech-build" content="cartech-transparent-login-v6-20260909">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -366,14 +366,19 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #loginCardWrapper input { font-size: 16px; padding-top: 11px; padding-bottom: 11px; }
 #loginCardWrapper h2 { letter-spacing: .035em; }
 #loginCardWrapper {
-  background: rgba(255, 255, 255, .72) !important;
-  border: 1px solid rgba(255, 255, 255, .84) !important;
-  box-shadow: 0 24px 70px rgba(5, 15, 30, .32), 0 1px 0 rgba(255, 255, 255, .72) inset !important;
-  -webkit-backdrop-filter: blur(7px) saturate(112%);
-  backdrop-filter: blur(7px) saturate(112%);
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
-#loginCardWrapper input { background:rgba(255,255,255,.88)!important; }
-#loginNotice { background:rgba(255,248,225,.78)!important; }
+#loginCardWrapper input { background:rgba(255,255,255,.94)!important; box-shadow:0 8px 24px rgba(9,19,35,.18)!important; }
+#loginCardWrapper > div:first-child,
+#authBoxLogin > div:first-child,
+#authBoxLogin > div:last-child { text-shadow:0 1px 4px rgba(255,255,255,.95); }
+#loginNotice { background:rgba(255,248,225,.90)!important; box-shadow:0 10px 30px rgba(9,19,35,.16)!important; }
+#quickLoginCard { background:rgba(255,250,239,.92)!important; box-shadow:0 10px 30px rgba(9,19,35,.18)!important; }
+#btnLoginSubmit { box-shadow:0 10px 28px rgba(154,55,20,.30)!important; }
 #loginScreen { background-color: #162536; }
 #btnLoginSubmit { background: #ed6e39; border-radius: 8px; box-shadow: 0 4px 14px #ed6e3925; }
 @media (max-width: 760px) {
@@ -5691,7 +5696,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-login-editor-v5-20260909';
+  const buildId = 'cartech-transparent-login-v6-20260909';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
