@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-access-controls-v4-20260909">
+  <meta name="cartech-build" content="cartech-login-editor-v5-20260909">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -19,7 +19,7 @@
     .full-screen-bg {
       background-color: #162536;
       background-image:
-        linear-gradient(to bottom, rgba(6, 16, 34, 0.58), rgba(6, 16, 34, 0.78)),
+        linear-gradient(to bottom, rgba(6, 16, 34, 0.24), rgba(6, 16, 34, 0.46)),
         url('team.jpg'),
         url('https://devcartech.github.io/cartech/team.jpg'),
         linear-gradient(135deg, #2b4358 0%, #0d1b2d 100%);
@@ -366,12 +366,14 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #loginCardWrapper input { font-size: 16px; padding-top: 11px; padding-bottom: 11px; }
 #loginCardWrapper h2 { letter-spacing: .035em; }
 #loginCardWrapper {
-  background: rgba(255, 255, 255, .88) !important;
-  border: 1px solid rgba(255, 255, 255, .78) !important;
+  background: rgba(255, 255, 255, .72) !important;
+  border: 1px solid rgba(255, 255, 255, .84) !important;
   box-shadow: 0 24px 70px rgba(5, 15, 30, .32), 0 1px 0 rgba(255, 255, 255, .72) inset !important;
-  -webkit-backdrop-filter: blur(16px) saturate(125%);
-  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(7px) saturate(112%);
+  backdrop-filter: blur(7px) saturate(112%);
 }
+#loginCardWrapper input { background:rgba(255,255,255,.88)!important; }
+#loginNotice { background:rgba(255,248,225,.78)!important; }
 #loginScreen { background-color: #162536; }
 #btnLoginSubmit { background: #ed6e39; border-radius: 8px; box-shadow: 0 4px 14px #ed6e3925; }
 @media (max-width: 760px) {
@@ -1319,19 +1321,17 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       </div>
 
       <!-- SYSTEM NOTICE: UNDER DEVELOPMENT & BETA NOTICE -->
-      <div class="p-3.5 bg-amber-500/10 border-2 border-amber-500/60 rounded-2xl space-y-1.5 text-center shadow-inner">
+      <div id="loginNotice" class="p-3.5 bg-amber-500/10 border-2 border-amber-500/60 rounded-2xl space-y-1.5 text-center shadow-inner">
         <div class="flex items-center justify-center gap-1.5 text-amber-700 font-black text-xs uppercase tracking-wider">
           <i class="fa-solid fa-triangle-exclamation text-sm text-amber-600 animate-pulse"></i>
-          <span>UNDER DEVELOPMENT</span>
+          <span id="loginNoticeTitle">UNDER DEVELOPMENT</span>
         </div>
-        <p class="text-[11px] font-bold text-slate-800 leading-snug">
+        <p id="loginNoticeMessage" class="text-[11px] font-bold text-slate-800 leading-snug">
           CARTECH Hybrid Queue System is currently under development.
         </p>
         <div class="pt-1 border-t border-amber-200/60">
-          <p class="text-[10px] font-black uppercase text-amber-800 tracking-tight leading-relaxed">
-            More updates and features will be added.<br>
-            <span class="text-rose-700 font-black">SEPTEMBER 19 BETA TEST IS ENDED</span>
-          </p>
+          <p id="loginNoticeFooter" class="text-[10px] font-black uppercase text-amber-800 tracking-tight leading-relaxed whitespace-pre-line">More updates and features will be added.
+SEPTEMBER 19 BETA TEST IS ENDED</p>
         </div>
       </div>
 
@@ -1624,6 +1624,15 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
           <button id="ctSaveProgramSchedule" type="button" class="ct-button ct-primary w-full sm:w-auto" onclick="CartechAccess.saveProgramSchedule(event)"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i> Save schedule</button>
         </div>
         <p id="ctProgramScheduleMessage" class="ct-access-help" role="status" hidden></p>
+        <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+          <div class="flex items-center justify-between gap-3"><div><strong class="text-xs text-slate-900">Login announcement</strong><p class="text-[10px] text-slate-500">Edit or remove the highlighted notice shown above Sign In.</p></div><label class="ct-diag-switch" for="ctLoginNoticeEnabled"><input id="ctLoginNoticeEnabled" type="checkbox" role="switch" checked><span class="ct-diag-switch-track" aria-hidden="true"><span class="ct-diag-switch-knob"></span></span><span>Show</span></label></div>
+          <input id="ctLoginNoticeTitleInput" class="df-input w-full" maxlength="60" value="UNDER DEVELOPMENT" placeholder="Announcement title">
+          <textarea id="ctLoginNoticeMessageInput" class="df-input w-full" rows="2" maxlength="240" placeholder="Announcement message">CARTECH Hybrid Queue System is currently under development.</textarea>
+          <textarea id="ctLoginNoticeFooterInput" class="df-input w-full" rows="2" maxlength="180" placeholder="Small notice below">More updates and features will be added.
+SEPTEMBER 19 BETA TEST IS ENDED</textarea>
+          <button id="ctSaveLoginNotice" type="button" class="ct-button ct-primary" onclick="CartechAccess.saveLoginNotice(event)"><i class="fa-solid fa-floppy-disk"></i> Save login announcement</button>
+          <p id="ctLoginNoticeStatus" class="ct-access-help" role="status" hidden></p>
+        </div>
         <p id="ctAgreementSummary" class="ct-access-help">Agreement status will appear here after the account list loads.</p>
         <div class="ct-trial-controls-actions"><button type="button" class="ct-button" onclick="CartechAccess.previewAgreement()"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Preview user agreement</button><button type="button" class="ct-button" onclick="CartechAccess.previewDevelopment()"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Preview Under Development</button><button type="button" class="ct-button" onclick="CartechUpdates.check(true)">Check for update</button></div><small id="ctUpdateStatus" role="status">Automatic update checks are enabled for the hosted website.</small>
       </section>
@@ -2201,9 +2210,33 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     let featureFlags = {
       diagnosticV2Enabled: false,
       diagnosticWorkshopV4Enabled: false,
+      loginNoticeEnabled: true,
+      loginNoticeTitle: 'UNDER DEVELOPMENT',
+      loginNoticeMessage: 'CARTECH Hybrid Queue System is currently under development.',
+      loginNoticeFooter: 'More updates and features will be added.\nSEPTEMBER 19 BETA TEST IS ENDED',
       // Shared dry-run close time. Stored as a Unix timestamp in the config record.
       dryRunEndsAt: Date.parse('2026-09-20T00:00:00+08:00')
     };
+    function applyLoginNoticeConfig(config = featureFlags) {
+      const notice = document.getElementById('loginNotice');
+      const title = document.getElementById('loginNoticeTitle');
+      const message = document.getElementById('loginNoticeMessage');
+      const footer = document.getElementById('loginNoticeFooter');
+      const enabled = config.loginNoticeEnabled !== false;
+      if (notice) notice.hidden = !enabled;
+      if (title) title.textContent = String(config.loginNoticeTitle || 'UNDER DEVELOPMENT').slice(0, 60);
+      if (message) message.textContent = String(config.loginNoticeMessage || '').slice(0, 240);
+      if (footer) footer.textContent = String(config.loginNoticeFooter || '').slice(0, 180);
+      const toggle = document.getElementById('ctLoginNoticeEnabled');
+      const titleInput = document.getElementById('ctLoginNoticeTitleInput');
+      const messageInput = document.getElementById('ctLoginNoticeMessageInput');
+      const footerInput = document.getElementById('ctLoginNoticeFooterInput');
+      if (toggle) toggle.checked = enabled;
+      if (titleInput && document.activeElement !== titleInput) titleInput.value = String(config.loginNoticeTitle || 'UNDER DEVELOPMENT').slice(0, 60);
+      if (messageInput && document.activeElement !== messageInput) messageInput.value = String(config.loginNoticeMessage || '').slice(0, 240);
+      if (footerInput && document.activeElement !== footerInput) footerInput.value = String(config.loginNoticeFooter || '').slice(0, 180);
+    }
+    applyLoginNoticeConfig(featureFlags);
     let activeAnnouncement = null;
     let manualDutyOverrides = { "josh": "holiday", "shiela": "holiday" };
 
@@ -2695,6 +2728,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
               ? parsedEnd
               : (featureFlags.dryRunEndsAt || Date.parse('2026-09-20T00:00:00+08:00'))
           };
+          applyLoginNoticeConfig(featureFlags);
           const afterConfigSignature = [featureFlags.diagnosticV2Enabled === true, featureFlags.diagnosticWorkshopV4Enabled === true, featureFlags.dryRunEndsAt || ''].join('|');
           if (beforeConfigSignature !== afterConfigSignature) {
             if (window.CartechAccess?.receiveConfig) window.CartechAccess.receiveConfig(config);
@@ -5657,7 +5691,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-access-controls-v4-20260909';
+  const buildId = 'cartech-login-editor-v5-20260909';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -6035,6 +6069,7 @@ window.CartechAccess = (() => {
   function receiveConfig(config) {
     if (!config || typeof config !== 'object' || Array.isArray(config)) return;
     applyProgramEnd(config.dryRunEndsAt);
+    applyLoginNoticeConfig(config);
     refresh();
   }
   function clearConsent() { try { sessionStorage.removeItem(consentKey); } catch (_) {} }
@@ -6262,6 +6297,23 @@ window.CartechAccess = (() => {
       accountBusy = false;
       if (button) button.disabled = false;
     }
+  }
+  async function saveLoginNotice(event) {
+    event?.preventDefault?.(); event?.stopPropagation?.();
+    if (currentRole !== 'developer' || accountBusy || !sessionValid()) return;
+    const enabled = byId('ctLoginNoticeEnabled')?.checked !== false;
+    const title = String(byId('ctLoginNoticeTitleInput')?.value || '').trim().slice(0, 60);
+    const noticeMessage = String(byId('ctLoginNoticeMessageInput')?.value || '').trim().slice(0, 240);
+    const noticeFooter = String(byId('ctLoginNoticeFooterInput')?.value || '').trim().slice(0, 180);
+    if (enabled && (!title || !noticeMessage)) { message('ctLoginNoticeStatus', 'Add a title and message, or turn Show OFF to remove the notice.', true); return; }
+    accountBusy = true;
+    const button = byId('ctSaveLoginNotice'); if (button) button.disabled = true;
+    try {
+      const confirmed = await updateConfig({ loginNoticeEnabled:enabled, loginNoticeTitle:title, loginNoticeMessage:noticeMessage, loginNoticeFooter:noticeFooter });
+      applyLoginNoticeConfig(confirmed);
+      message('ctLoginNoticeStatus', enabled ? 'Login announcement updated.' : 'Login announcement removed from Sign In.', false);
+    } catch (error) { message('ctLoginNoticeStatus', `Could not save the login announcement. ${error.message}`, true); }
+    finally { accountBusy = false; if (button) button.disabled = false; }
   }
   async function mutateAccounts(compose, requireDev = true) {
     const actor = currentUser;
@@ -6499,7 +6551,7 @@ window.CartechAccess = (() => {
   // already loaded into the shared featureFlags object during module startup.
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
-  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
