@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-roster-cleanup-v10-20260910">
+  <meta name="cartech-build" content="cartech-returning-customer-v11-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -303,6 +303,15 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #ctDispatchDialog #intakeForm { display: grid; grid-template-columns: 1fr 1fr; gap: 19px 16px; padding: 24px; }
 #ctDispatchDialog #intakeForm > * { margin-top: 0; }
 #ctDispatchDialog #intakeForm > div:nth-child(3), #ctDispatchDialog #intakeForm > div:nth-child(5), #ctDispatchDialog #btnDispatch { grid-column: 1 / -1; }
+.ct-customer-matches { margin-top:7px; border:1px solid #dbe4ee; border-radius:12px; background:#fff; box-shadow:0 12px 28px rgba(25,45,72,.14); overflow:hidden; }
+.ct-customer-matches[hidden] { display:none!important; }
+.ct-customer-match { display:flex; width:100%; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; text-align:left; border-bottom:1px solid #edf1f5; }
+.ct-customer-match:last-child { border-bottom:0; }
+.ct-customer-match:hover,.ct-customer-match:focus-visible { background:#fff7ed; }
+.ct-customer-match strong { display:block; font-size:12px; color:#1f2937; }
+.ct-customer-match small { display:block; margin-top:2px; font-size:10px; color:#718096; }
+.ct-customer-match span { flex:none; font-size:9px; font-weight:800; color:#c45c24; background:#fff0e6; padding:4px 6px; border-radius:6px; }
+.ct-returning-customer { margin-top:7px; padding:9px 11px; border:1px solid #a7e3cf; border-radius:10px; background:#ecfdf5; color:#176b55; font-size:10px; line-height:1.5; }
 #ctDispatchDialog label { font-size: 14px; text-transform: none; font-weight: 550; color: #56667c; margin-bottom: 8px; }
 #ctDispatchDialog input, #ctDispatchDialog textarea { font-size: 16px; padding-top: 11px; padding-bottom: 11px; border-radius: 7px; font-weight: 400; line-height: 1.5; }
 #ctDispatchDialog input:focus, #ctDispatchDialog textarea:focus { border-color: #e99c74; box-shadow: 0 0 0 3px #fce9dd; outline: none; }
@@ -2134,8 +2143,10 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
             <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1" for="inCust">Customer name *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-regular fa-user text-xs"></i></span>
-              <input id="inCust" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
+              <input id="inCust" required autocomplete="off" oninput="lookupReturningCustomer(this.value)" placeholder="Start typing a returning customer…" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs md:text-sm focus:outline-none focus:border-orange-500 focus:bg-white font-medium text-slate-800">
             </div>
+            <div id="ctCustomerMatches" class="ct-customer-matches" role="listbox" aria-label="Returning customer matches" hidden></div>
+            <div id="ctReturningCustomerStatus" class="ct-returning-customer" role="status" hidden></div>
           </div>
 
           <div>
@@ -3563,6 +3574,109 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         return pNum === clean || dNum === clean;
       });
     }
+
+    let customerLookupTimer = null;
+    let customerLookupSequence = 0;
+    const returningCustomerMatches = new Map();
+    function customerRecordTime(job) {
+      const saved = parsePartsInfo(job?.auto_schedule_slot).diagData?.savedAtISO;
+      const parsed = Date.parse(saved || '');
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    function nextDiagnosticNumber(previous, records = []) {
+      const prior = String(previous || '').trim().toUpperCase();
+      const match = prior.match(/^(.*?)(\d+)$/);
+      if (!match) return `B${String(Date.now()).slice(-6)}`;
+      const prefix = match[1];
+      const width = match[2].length;
+      let highest = Number(match[2]);
+      records.forEach(job => {
+        const value = String(job?.phone || '').trim().toUpperCase();
+        const candidate = value.match(/^(.*?)(\d+)$/);
+        if (candidate && candidate[1] === prefix) highest = Math.max(highest, Number(candidate[2]));
+      });
+      let next = highest + 1;
+      let value = prefix + String(next).padStart(width, '0');
+      while (isDiagnosticNumberDuplicate(value)) value = prefix + String(++next).padStart(width, '0');
+      return value;
+    }
+    function returningCustomerProfile(job, records) {
+      return {
+        key: `${String(job.customer || '').toLowerCase()}|${String(job.vehicle || '').toLowerCase()}|${resolveVinNumber(job)}`,
+        customer: String(job.customer || '').trim(),
+        vehicle: String(job.vehicle || '').trim(),
+        vin: resolveVinNumber(job) === '-' ? '' : resolveVinNumber(job),
+        previousDiagnostic: String(job.phone || '').trim(),
+        nextDiagnostic: nextDiagnosticNumber(job.phone, records),
+        time: customerRecordTime(job)
+      };
+    }
+    function applyReturningCustomer(key) {
+      const profile = returningCustomerMatches.get(key);
+      if (!profile) return;
+      document.getElementById('inCust').value = profile.customer;
+      document.getElementById('inVeh').value = profile.vehicle;
+      document.getElementById('inVin').value = profile.vin;
+      document.getElementById('inDiag').value = profile.nextDiagnostic;
+      const matches = document.getElementById('ctCustomerMatches');
+      matches.hidden = true; matches.innerHTML = '';
+      const status = document.getElementById('ctReturningCustomerStatus');
+      status.hidden = false;
+      status.innerHTML = `<i class="fa-solid fa-user-check"></i> Returning customer loaded: <strong>${escapeHTML(profile.vehicle || 'vehicle')}</strong>${profile.vin ? ` · VIN ${escapeHTML(profile.vin)}` : ''}. New diagnostic <strong>${escapeHTML(profile.nextDiagnostic)}</strong> was suggested from previous ${escapeHTML(profile.previousDiagnostic || 'record')}. Enter only the new complaint below.`;
+      document.getElementById('inDetails').focus();
+    }
+    function renderReturningCustomerMatches(records, query) {
+      const grouped = new Map();
+      records.filter(job => job && job.status !== 'system_record' && String(job.customer || '').trim()).forEach(job => {
+        const profile = returningCustomerProfile(job, records);
+        const existing = grouped.get(profile.key);
+        if (!existing || profile.time >= existing.time) grouped.set(profile.key, profile);
+      });
+      const profiles = [...grouped.values()].sort((a,b) => b.time - a.time).slice(0, 8);
+      returningCustomerMatches.clear(); profiles.forEach(profile => returningCustomerMatches.set(profile.key, profile));
+      const container = document.getElementById('ctCustomerMatches');
+      const status = document.getElementById('ctReturningCustomerStatus');
+      if (!profiles.length) { container.hidden = true; container.innerHTML = ''; return; }
+      container.innerHTML = profiles.map(profile => `<button type="button" class="ct-customer-match" role="option" data-returning-customer="${escapeHTML(profile.key)}"><div><strong>${escapeHTML(profile.customer)}</strong><small>${escapeHTML(profile.vehicle || 'Vehicle not recorded')}${profile.vin ? ` · VIN ${escapeHTML(profile.vin)}` : ''}</small></div><span>Previous ${escapeHTML(profile.previousDiagnostic || 'record')}</span></button>`).join('');
+      container.hidden = false; status.hidden = true;
+      const exact = profiles.filter(profile => profile.customer.toLowerCase() === query.toLowerCase());
+      if (exact.length === 1) applyReturningCustomer(exact[0].key);
+    }
+    function lookupReturningCustomer(value) {
+      clearTimeout(customerLookupTimer);
+      const query = String(value || '').trim();
+      const container = document.getElementById('ctCustomerMatches');
+      const status = document.getElementById('ctReturningCustomerStatus');
+      status.hidden = true;
+      if (query.length < 2) { container.hidden = true; container.innerHTML = ''; return; }
+      const sequence = ++customerLookupSequence;
+      customerLookupTimer = setTimeout(async () => {
+        const local = [...state, ...completedArchive].filter(job => String(job.customer || '').toLowerCase().includes(query.toLowerCase()));
+        let remote = [];
+        try {
+          const url = new URL(API_URL);
+          url.searchParams.set('select', 'id,customer,vehicle,phone,details,auto_schedule_slot,status,time_created');
+          url.searchParams.set('customer', `ilike.*${query.replace(/[%_*]/g, '')}*`);
+          url.searchParams.set('status', 'neq.system_record');
+          url.searchParams.set('limit', '20');
+          const response = await fetch(url.href, { headers:HEADERS, cache:'no-store' });
+          if (response.ok) remote = await response.json();
+        } catch (_) {}
+        if (sequence !== customerLookupSequence) return;
+        const records = [...new Map([...local, ...(Array.isArray(remote) ? remote : [])].map(job => [job.id, job])).values()];
+        renderReturningCustomerMatches(records, query);
+      }, 350);
+    }
+
+    document.getElementById('intakeForm')?.addEventListener('reset', () => {
+      returningCustomerMatches.clear();
+      const matches = document.getElementById('ctCustomerMatches'); if (matches) { matches.hidden = true; matches.innerHTML = ''; }
+      const status = document.getElementById('ctReturningCustomerStatus'); if (status) status.hidden = true;
+    });
+    document.getElementById('ctCustomerMatches')?.addEventListener('click', event => {
+      const button = event.target.closest('[data-returning-customer]');
+      if (button) applyReturningCustomer(button.dataset.returningCustomer);
+    });
 
     async function handleDispatch(e) {
       e?.preventDefault();
@@ -5720,7 +5834,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-roster-cleanup-v10-20260910';
+  const buildId = 'cartech-returning-customer-v11-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
