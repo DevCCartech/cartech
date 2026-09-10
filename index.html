@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-readable-glass-login-v7-20260909">
+  <meta name="cartech-build" content="cartech-blank-recommendation-v8-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -5606,9 +5606,8 @@ window.CartechDiagnostics = (() => {
     const voltage = value => value === '' || value == null ? 'Not measured' : `${text(value)} V`;
     const number = data.diagnosticNumber || diagnosticNumber(job);
     const batteryNotes = String(data.battery?.notes ?? '').trim();
-    const requestedFollowUp = 'Check brake-light wiring and replace the bulb; replace the low-beam headlight bulb; check the air-conditioning system for low refrigerant (freon); monitor the engine oil.';
     const recordedFindings = String(data.inspectionNotes ?? '').trim();
-    const mechanicFindings = recordedFindings || requestedFollowUp;
+    const mechanicFindings = recordedFindings;
     const content = `<div class="ct-report"><header class="report-header"><div><div class="report-brand">CARTECH</div><h1>Vehicle Safety Inspection</h1></div><div class="report-id"><strong>Diagnostic list #${safe(number)}</strong><span class="report-muted">${safe(dateLabel(data.inspectionDate))}</span></div></header>
       <div class="report-refs"><div><b>Client</b>${text(job.customer)}</div><div><b>Phone number</b>${text(data.phoneNumber)}</div><div><b>Vehicle</b>${text(job.vehicle)}</div><div><b>Plate number</b>${text(data.numberPlate ?? job.plate)}</div><div><b>VIN / chassis</b>${text(jobVin(job))}</div><div><b>Mileage (km)</b>${text(data.mileage)}</div><div><b>Assigned mechanic</b>${text(resolveMechanicName(job))}</div><div><b>Recorded by</b>${text(data.savedBy)}</div></div>
       <section><h2>Customer Complaint / Job Instructions</h2><p>${text(String(job.details || '').replace(/\[DIAG:\s*[^\]]+\]/i, '').trim())}</p></section>
@@ -5622,7 +5621,7 @@ window.CartechDiagnostics = (() => {
         <section><h2>Battery Readings</h2><table><tbody><tr><td>Engine off</td><td>${voltage(data.battery?.engineOffVoltage)}</td></tr><tr><td>Engine running</td><td>${voltage(data.battery?.engineRunningVoltage)}</td></tr></tbody></table></section>
         <section><h2>Battery Test Notes</h2><p>${text(batteryNotes)}</p></section>
       </div>
-      <section class="report-findings"><h2><span>Mechanic Findings & Recommended Work</span><span class="report-saved-inline">Saved: ${text(data.savedAt)}</span></h2><p>${text(mechanicFindings)}</p></section>
+      <section class="report-findings"><h2><span>Mechanic Findings & Recommended Work</span><span class="report-saved-inline">Saved: ${text(data.savedAt)}</span></h2><p>${mechanicFindings ? safe(mechanicFindings) : ''}</p></section>
       <footer class="report-signatures"><div><span class="report-signature-line"></span>Office Advisor Signature</div><div><span class="report-signature-line"></span>Customer Signature</div></footer></div>`;
     return { number, content, html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CARTECH — Diagnostic list ${safe(number)}</title><style>body { margin: 24px; } ${reportStyles}</style></head><body class="ct-standalone-report">${content}</body></html>` };
   }
@@ -5711,7 +5710,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-readable-glass-login-v7-20260909';
+  const buildId = 'cartech-blank-recommendation-v8-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
