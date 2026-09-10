@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-heart-reveal-support-v22-20260911">
+  <meta name="cartech-build" content="cartech-gear-freeze-fix-v23-20260911">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -5900,7 +5900,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-heart-reveal-support-v22-20260911';
+  const buildId = 'cartech-gear-freeze-fix-v23-20260911';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
@@ -6183,6 +6183,7 @@ window.CartechAccess = (() => {
     ['partsModal','announcementBroadcastModal','photoViewerModal','fbFloatingChatWindow','fbFloatingBubble','holidayLockoutModal'].forEach(id => byId(id)?.classList.add('hidden'));
     activeModalChatJobId = null;
     byId('appShell').classList.add('hidden'); byId('appShell').inert = false; byId('loginScreen').classList.remove('hidden');
+    window.CartechShopHours?.refresh?.();
     ['officeQueueList','workshopFeedList','ctJobBody','ctInspectionReportBody','ctDiagnosticPrintHost','devRegisteredAccountsContainer'].forEach(id => { byId(id).innerHTML = ''; });
     byId('ctTesterFeedback').value = '';
     byId('loginPassword').value = '';
@@ -7207,13 +7208,18 @@ window.CartechShopHours = (() => {
   details.insertAdjacentHTML('beforeend', '<p class="ct-closed-recipient">GCash recipient: CH**L J** V.</p><button type="button" class="ct-button ct-primary" onclick="document.getElementById(\'ctDeveloperSupport\').showModal()"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Read the full story</button><small>Donations are optional and do not affect account access. The regular login returns automatically at 8:00 AM Philippine time.</small>');
   card.append(panel);
   const heart = panel.querySelector('.ct-closed-heart');
+  function setExpanded(expanded) {
+    const value = String(expanded);
+    if (heart.getAttribute('aria-expanded') !== value) heart.setAttribute('aria-expanded', value);
+    const label = expanded ? 'Hide developer support details' : 'Show developer support details';
+    if (heart.getAttribute('aria-label') !== label) heart.setAttribute('aria-label', label);
+    if (details.hidden === expanded) details.hidden = !expanded;
+    if (panel.classList.contains('is-expanded') !== expanded) panel.classList.toggle('is-expanded', expanded);
+    if (screen.classList.contains('ct-support-expanded') !== expanded) screen.classList.toggle('ct-support-expanded', expanded);
+  }
   heart.addEventListener('click', () => {
     const expanded = heart.getAttribute('aria-expanded') !== 'true';
-    heart.setAttribute('aria-expanded', String(expanded));
-    heart.setAttribute('aria-label', expanded ? 'Hide developer support details' : 'Show developer support details');
-    details.hidden = !expanded;
-    panel.classList.toggle('is-expanded', expanded);
-    screen.classList.toggle('ct-support-expanded', expanded);
+    setExpanded(expanded);
     if (expanded) panel.scrollIntoView({block:'start', behavior:'smooth'});
   });
   const button = document.createElement('button');
@@ -7235,21 +7241,22 @@ window.CartechShopHours = (() => {
   function refresh() {
     const open = isOpen();
     if (open || screen.classList.contains('hidden')) developerReveal = false;
-    if (open || developerReveal || screen.classList.contains('hidden')) {
-      details.hidden = true; heart.setAttribute('aria-expanded','false'); panel.classList.remove('is-expanded'); screen.classList.remove('ct-support-expanded');
-    }
+    if (open || developerReveal || screen.classList.contains('hidden')) setExpanded(false);
     const closedView = !open && !developerReveal;
     if (screen.classList.contains('ct-after-hours') !== closedView) screen.classList.toggle('ct-after-hours', closedView);
-    panel.hidden = !closedView;
-    button.hidden = open;
-    note.hidden = open || !developerReveal;
-    supportButton.hidden = !open;
+    if (panel.hidden === closedView) panel.hidden = !closedView;
+    if (button.hidden !== open) button.hidden = open;
+    const noteHidden = open || !developerReveal;
+    if (note.hidden !== noteHidden) note.hidden = noteHidden;
+    const supportHidden = !open;
+    if (supportButton.hidden !== supportHidden) supportButton.hidden = supportHidden;
   }
   refresh();
-  setInterval(refresh, 1000);
+  setInterval(refresh, 30000);
   document.addEventListener('visibilitychange', refresh);
-  new MutationObserver(refresh).observe(screen, {attributes:true, attributeFilter:['class']});
-  return {isOpen};
+  window.addEventListener('focus', refresh);
+  window.addEventListener('pageshow', refresh);
+  return {isOpen, refresh};
 })();
 </script>
 </body>
