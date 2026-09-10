@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-transparent-login-v6-20260909">
+  <meta name="cartech-build" content="cartech-readable-glass-login-v7-20260909">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -372,12 +372,27 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
-#loginCardWrapper input { background:rgba(255,255,255,.94)!important; box-shadow:0 8px 24px rgba(9,19,35,.18)!important; }
-#loginCardWrapper > div:first-child,
-#authBoxLogin > div:first-child,
-#authBoxLogin > div:last-child { text-shadow:0 1px 4px rgba(255,255,255,.95); }
-#loginNotice { background:rgba(255,248,225,.90)!important; box-shadow:0 10px 30px rgba(9,19,35,.16)!important; }
-#quickLoginCard { background:rgba(255,250,239,.92)!important; box-shadow:0 10px 30px rgba(9,19,35,.18)!important; }
+#loginCardWrapper input { background:rgba(255,255,255,.96)!important; color:#101827!important; box-shadow:0 8px 24px rgba(9,19,35,.25)!important; }
+#loginCardWrapper > div:first-child { background:rgba(8,20,34,.70); border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:12px 14px!important; box-shadow:0 10px 28px rgba(4,12,24,.22); }
+#loginCardWrapper > div:first-child h2 { color:#fff!important; }
+#loginCardWrapper > div:first-child p { color:#ffb27d!important; }
+#authBoxLogin { background:rgba(8,20,34,.68); border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:17px 16px; box-shadow:0 14px 38px rgba(4,12,24,.30); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); }
+#authBoxLogin h3 { color:#fff!important; text-shadow:0 2px 5px rgba(0,0,0,.42); }
+#authBoxLogin > div:first-child p { color:#d9e3ef!important; }
+#authBoxLogin label { color:#f5f8fc!important; text-shadow:0 1px 3px rgba(0,0,0,.55); }
+#authBoxLogin > div:last-child { border-color:rgba(255,255,255,.25)!important; }
+#authBoxLogin > div:last-child button:last-child { color:#dce6f2!important; }
+#authBoxRegister,#authBoxForgot { background:rgba(8,20,34,.72); border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:17px 16px; box-shadow:0 14px 38px rgba(4,12,24,.30); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); }
+#authBoxRegister h3,#authBoxForgot h3 { color:#fff!important; }
+#authBoxRegister p,#authBoxForgot p { color:#d9e3ef!important; }
+#authBoxRegister label,#authBoxForgot label { color:#f5f8fc!important; text-shadow:0 1px 3px rgba(0,0,0,.55); }
+#loginCardWrapper > p:last-child { color:#fff!important; text-shadow:0 2px 5px rgba(0,0,0,.75); }
+#loginNotice { background:rgba(44,31,9,.78)!important; border-color:rgba(251,191,36,.80)!important; color:#fff!important; box-shadow:0 10px 30px rgba(9,19,35,.24)!important; }
+#loginNotice p { color:#fff4ce!important; }
+#loginNotice > div:first-child { color:#ffd365!important; }
+#quickLoginCard { background:rgba(8,20,34,.82)!important; border-color:rgba(249,115,22,.82)!important; color:#fff!important; box-shadow:0 10px 30px rgba(9,19,35,.28)!important; }
+#quickLoginCard strong { color:#fff!important; }
+#quickLoginCard span { color:#ffb27d!important; }
 #btnLoginSubmit { box-shadow:0 10px 28px rgba(154,55,20,.30)!important; }
 #loginScreen { background-color: #162536; }
 #btnLoginSubmit { background: #ed6e39; border-radius: 8px; box-shadow: 0 4px 14px #ed6e3925; }
@@ -5696,7 +5711,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-transparent-login-v6-20260909';
+  const buildId = 'cartech-readable-glass-login-v7-20260909';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
