@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-blank-recommendation-v8-20260910">
+  <meta name="cartech-build" content="cartech-roster-visibility-v9-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -2260,6 +2260,12 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let activeAnnouncement = null;
     let manualDutyOverrides = { "josh": "holiday", "shiela": "holiday" };
 
+    function staffVisibleInOffice(username) {
+      const user = String(username || '').toLowerCase();
+      const account = cachedCloudAccounts[user];
+      return !(account?.deleted === true || account?.disabled === true || account?.revoked === true || account?.visibleInRoster === false);
+    }
+
     const CORE_INITIAL_JOBS = [
       {
         id: "JB-408",
@@ -3081,6 +3087,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     async function devToggleReadOnly(username) { return window.CartechAccess.toggleReadOnly(username); }
 
     async function devToggleDispatch(username) { return window.CartechAccess.toggleDispatch(username); }
+
+    async function devToggleRosterVisibility(username) { return window.CartechAccess.toggleRosterVisibility(username); }
 
     async function restoreInitialShopRecords() {
       if (!window.CartechAccess?.sessionValid() || currentRole !== 'developer') return;
@@ -4417,7 +4425,7 @@ async function submitPartsRequest() {
                   </div>
                   <div class="mt-0.5">${timerBadge}</div>
                   <div class="mt-1">${agreementBadge}</div>
-                  ${!isPermanentAdmin ? `<div class="mt-1 flex flex-wrap gap-1"><span class="ct-account-timer">${acc.readOnly ? 'READ ONLY' : 'FULL ACCESS'}</span>${acc.role === 'office' ? `<span class="ct-account-timer">DISPATCH ${acc.allowDispatch === false ? 'OFF' : 'ON'}</span>` : ''}</div>` : ''}
+                  ${!isPermanentAdmin ? `<div class="mt-1 flex flex-wrap gap-1"><span class="ct-account-timer">${acc.readOnly ? 'READ ONLY' : 'FULL ACCESS'}</span><span class="ct-account-timer ${acc.visibleInRoster === false ? 'ct-account-ended' : ''}">${acc.visibleInRoster === false ? 'HIDDEN FROM OFFICE' : 'SHOWN IN OFFICE'}</span>${acc.role === 'office' ? `<span class="ct-account-timer">DISPATCH ${acc.allowDispatch === false ? 'OFF' : 'ON'}</span>` : ''}</div>` : ''}
                   ${currentRole === 'developer' ? `<button type="button" class="ct-edit-access" data-edit-access="${escapeHTML(u)}">Edit access <i class="fa-regular fa-clock" aria-hidden="true"></i></button>` : ''}
                 </div>
               </div>
@@ -4430,6 +4438,7 @@ async function submitPartsRequest() {
                 ${!isPermanentAdmin ? `
                   <button onclick="devToggleStaffAccount('${u}')" class="${acc.disabled ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} p-1.5 rounded-lg text-xs font-bold border" title="${acc.disabled ? 'Turn account ON' : 'Turn account OFF'}"><i class="fa-solid fa-power-off"></i></button>
                   <button onclick="devToggleReadOnly('${u}')" class="bg-slate-50 hover:bg-slate-100 text-slate-700 p-1.5 rounded-lg text-xs font-bold border border-slate-200" title="Toggle read-only access"><i class="fa-solid fa-eye"></i></button>
+                  <button onclick="devToggleRosterVisibility('${u}')" class="${acc.visibleInRoster === false ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-violet-50 text-violet-700 border-violet-200'} p-1.5 rounded-lg text-xs font-bold border" title="${acc.visibleInRoster === false ? 'Restore name to Office panel' : 'Hide name from Office panel'}"><i class="fa-solid ${acc.visibleInRoster === false ? 'fa-eye' : 'fa-eye-slash'}"></i></button>
                   ${acc.role === 'office' ? `<button onclick="devToggleDispatch('${u}')" class="bg-orange-50 hover:bg-orange-100 text-orange-700 p-1.5 rounded-lg text-xs font-bold border border-orange-200" title="Toggle office dispatch"><i class="fa-solid fa-truck-fast"></i></button>` : ''}
                   <button onclick="devDeleteStaffAccount('${u}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 p-1.5 rounded-lg text-xs font-bold border border-rose-200 transition" title="Kick Out / Delete Account">
                     <i class="fa-solid fa-user-xmark"></i>
@@ -4461,8 +4470,9 @@ async function submitPartsRequest() {
 
       renderTopFloatingAnnouncement();
 
+      const visibleMechanics = MECHANIC_LIST.filter(staffVisibleInOffice);
       const mechanicLoads = {};
-      MECHANIC_LIST.forEach(m => { mechanicLoads[m] = 0; });
+      visibleMechanics.forEach(m => { mechanicLoads[m] = 0; });
 
       state.forEach(j => {
         if (j.status === 'inprogress' || j.status === 'waiting_parts') {
@@ -4473,7 +4483,7 @@ async function submitPartsRequest() {
         }
       });
 
-      const availableMechanics = MECHANIC_LIST.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
+      const availableMechanics = visibleMechanics.filter(m => mechanicLoads[m] < MAX_JOBS_PER_MECHANIC);
       const availableMechanicsCount = availableMechanics.length;
 
       const wsBell = document.getElementById('wsBellIcon');
@@ -4819,7 +4829,7 @@ window.CartechUI = (() => {
     return data && typeof data === 'object' && Object.keys(data).length > 0;
   });
   const findJob = id => state.find(job => job.id === id) || completedArchive.find(job => job.id === id);
-  const names = () => [...new Set([...MECHANIC_LIST])];
+  const names = () => [...new Set([...MECHANIC_LIST.filter(staffVisibleInOffice)])];
   const isAssigned = job => resolveMechanicName(job)?.toLowerCase() === String(currentUser || '').toLowerCase();
   const countFor = name => state.filter(job => ['inprogress', 'waiting_parts'].includes(job.status) && resolveMechanicName(job)?.toLowerCase() === String(name).toLowerCase()).length;
 
@@ -5710,7 +5720,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-blank-recommendation-v8-20260910';
+  const buildId = 'cartech-roster-visibility-v9-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -6522,6 +6532,21 @@ window.CartechAccess = (() => {
     } catch (error) { message('ctAccountMessage', error.message, true); }
     finally { accountBusy = false; }
   }
+  async function toggleRosterVisibility(user) {
+    if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
+    accountBusy = true;
+    try {
+      let visible = true;
+      await mutateAccounts(accounts => {
+        if (!validAccount(accounts[user])) throw new Error('Account no longer exists.');
+        visible = accounts[user].visibleInRoster === false;
+        accounts[user] = { ...accounts[user], visibleInRoster:visible, accessUpdatedAt:now(), accessUpdatedBy:currentUser };
+        return accounts;
+      });
+      message('ctAccountMessage', `${user} is now ${visible ? 'shown' : 'hidden'} in the Office mechanic list.`);
+    } catch (error) { message('ctAccountMessage', error.message, true); }
+    finally { accountBusy = false; }
+  }
   async function deleteAccount(user) {
     if (currentRole !== 'developer' || accountBusy || ['dev','admin'].includes(user)) return;
     if (!confirm(`Permanently delete account ${user}? This removes its login and cannot be undone.`)) return;
@@ -6570,7 +6595,7 @@ window.CartechAccess = (() => {
   // already loaded into the shared featureFlags object during module startup.
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
-  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { buildId, sessionRevision, agreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
