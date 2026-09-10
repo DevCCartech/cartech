@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shop-hours-v18-20260910">
+  <meta name="cartech-build" content="cartech-gcash-support-v17-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -5895,7 +5895,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-shop-hours-v18-20260910';
+  const buildId = 'cartech-gcash-support-v17-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -6067,7 +6067,7 @@ window.CartechAccess = (() => {
     if (programClosed() && acc.role !== 'developer') { signOut('program-ended'); return false; }
     if (acc.role === 'tester') return true;
     if (isUserOnHoliday(user)) { triggerHolidayLockout(); return false; }
-    const hour = Number(new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Manila', hour:'2-digit', hourCycle:'h23'}).format(new Date()));
+    const hour = new Date().getHours();
     if (!['developer', 'admin'].includes(acc.role) && user !== 'bot' && (hour < 8 || hour >= 17)) {
       loginError('SHOP IS CLOSED (8:00 AM – 5:00 PM)', 'Please sign in during shop hours.'); return false;
     }
@@ -6083,11 +6083,6 @@ window.CartechAccess = (() => {
     if (!validAccount(acc) || (mode === 'password' && acc.pass !== password)) {
       if (mode !== 'password') { clearRememberedDevice(); clearAuth(); }
       loginError('INVALID CREDENTIALS', 'Invalid username or password. Please try again.'); return false;
-    }
-    if (window.CartechShopHours && !window.CartechShopHours.isOpen() && acc.role !== 'developer') {
-      clearAuth();
-      loginError('SHOP IS CLOSED', 'Staff sign-in is available from 8:00 AM to 5:00 PM Philippine time. Only developer accounts can sign in after hours.');
-      return false;
     }
     if (mode !== 'password' && !rememberedSignIn(user, acc.role)) {
       clearRememberedDevice(); clearAuth();
@@ -7154,64 +7149,5 @@ window.CartechBrands = (() => {
     </div>
   </div>
 </dialog>
-<style>
-#loginScreen.ct-after-hours { align-items:flex-start; background-attachment:fixed; }
-#loginScreen.ct-after-hours #loginCardWrapper { display:none!important; }
-#ctClosedSupport { width:min(1100px,100%); margin:20px auto 60px; background:#f6f8fb; border-radius:20px; color:#203049; box-shadow:0 16px 60px #0005; }
-#ctClosedSupport[hidden], #ctHoursDevButton[hidden] { display:none!important; }
-.ct-hours-message { padding:20px 22px; background:#172a42; color:#fff; border-radius:20px 20px 0 0; }
-.ct-hours-message p { margin-top:6px; font-size:14px; }
-#ctHoursDevButton { position:fixed; right:18px; bottom:14px; z-index:55; border:1px solid #ffffff66; border-radius:50%; width:34px; height:34px; background:#172a42; color:white; cursor:pointer; }
-#ctHoursDevNote { padding:12px; background:#172a42; color:#fff; border-radius:10px; font-size:13px; }
-</style>
-<script>
-window.CartechShopHours = (() => {
-  const clock = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Manila', hour:'2-digit', minute:'2-digit', hourCycle:'h23'});
-  function isOpen(date = new Date()) {
-    const parts = clock.formatToParts(date);
-    const hour = Number(parts.find(p => p.type === 'hour').value);
-    return hour >= 8 && hour < 17;
-  }
-  const screen = document.getElementById('loginScreen');
-  const card = document.getElementById('loginCardWrapper');
-  const panel = document.createElement('section');
-  panel.id = 'ctClosedSupport'; panel.hidden = true;
-  panel.innerHTML = '<header class="ct-hours-message"><strong>Workshop sign-in opens at 8:00 AM</strong><p>Daily login hours: 8:00 AM–5:00 PM · Philippine time</p><p>While we’re closed, you can read the developer’s story below. Donating is optional.</p></header>';
-  const story = document.querySelector('#ctDeveloperSupport .ct-support-wrap').cloneNode(true);
-  story.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
-  story.querySelectorAll('button').forEach(el => el.remove());
-  panel.append(story); screen.append(panel);
-  const button = document.createElement('button');
-  button.id = 'ctHoursDevButton'; button.type = 'button'; button.textContent = '⚙';
-  button.title = 'Developer sign-in'; button.setAttribute('aria-label', 'Developer sign-in');
-  screen.append(button);
-  const note = document.createElement('p'); note.id='ctHoursDevNote'; note.hidden=true;
-  note.textContent='After-hours access · Sign in with your developer account.';
-  card.prepend(note);
-  let developerReveal = false;
-  button.addEventListener('click', () => {
-    developerReveal = !developerReveal;
-    document.getElementById('authBoxRegister').classList.add('hidden');
-    document.getElementById('authBoxForgot').classList.add('hidden');
-    document.getElementById('authBoxLogin').classList.remove('hidden');
-    refresh();
-    if (developerReveal) document.getElementById('loginUsername').focus();
-  });
-  function refresh() {
-    const open = isOpen();
-    if (open || screen.classList.contains('hidden')) developerReveal = false;
-    const closedView = !open && !developerReveal;
-    if (screen.classList.contains('ct-after-hours') !== closedView) screen.classList.toggle('ct-after-hours', closedView);
-    panel.hidden = !closedView;
-    button.hidden = open;
-    note.hidden = open || !developerReveal;
-  }
-  refresh();
-  setInterval(refresh, 1000);
-  document.addEventListener('visibilitychange', refresh);
-  new MutationObserver(refresh).observe(screen, {attributes:true, attributeFilter:['class']});
-  return {isOpen};
-})();
-</script>
 </body>
 </html>
