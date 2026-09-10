@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-clean-topbar-dispatch-v14-20260910">
+  <meta name="cartech-build" content="cartech-aligned-dispatch-v15-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -276,18 +276,20 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #messengerSidebarAvatars > div > div:nth-child(2) > div:first-child > span:first-child { font-weight: 600; font-size: 14px; text-transform: capitalize; }
 #messengerSidebarAvatars > div > div:nth-child(2) > div:first-child > span:nth-child(2) { font-size: 10px; font-weight: 550; text-transform: none; padding: 2px 5px; }
 #messengerSidebarAvatars > div > div:nth-child(2) > div:last-child { font-size: 12px; font-weight: 400; max-width: 100%; margin-top: 5px; }
-.ct-team-strip { margin:0 0 18px; padding:14px 16px 12px; border:1px solid #e1e7ee; border-radius:14px; background:#fff; box-shadow:0 5px 16px rgba(24,48,76,.05); }
+.ct-team-strip { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px 16px; margin:0 0 18px; padding:16px; border:1px solid #e1e7ee; border-radius:14px; background:#fff; box-shadow:0 5px 16px rgba(24,48,76,.05); }
 .ct-team-strip-head { display:flex; align-items:center; justify-content:space-between; gap:14px; }
 .ct-team-strip-head h3 { display:flex; align-items:center; gap:8px; color:#243247; font-size:14px; font-weight:750; }
 .ct-team-strip-head h3 i { color:#ef713d; }
 .ct-team-strip-head p { margin-top:3px; color:#8290a1; font-size:11px; }
-.ct-team-strip #messengerSidebarAvatars { display:grid; grid-template-columns:repeat(6,minmax(125px,1fr)); gap:8px; margin:11px 0 0; overflow-x:auto; padding-bottom:2px; }
+.ct-team-strip #messengerSidebarAvatars { grid-column:1; display:grid; grid-template-columns:repeat(auto-fit,minmax(125px,1fr)); gap:8px; margin:0; min-width:0; }
 .ct-team-strip #messengerSidebarAvatars > div { min-width:125px; padding:9px 10px; border:1px solid #e8edf3; border-radius:10px; background:#fbfcfd; }
 .ct-team-strip #messengerSidebarAvatars > div.ct-inspection-pop { border-color:#f0a8a8; background:#fff5f5; box-shadow:0 0 0 2px rgba(220,65,65,.08); }
-.ct-team-strip-actions { display:flex; justify-content:flex-end; margin-top:10px; padding-top:10px; border-top:1px solid #edf1f5; }
+.ct-team-strip-actions { grid-column:2; grid-row:1 / 3; display:flex; flex-direction:column; justify-content:space-between; align-items:stretch; gap:12px; padding-left:16px; border-left:1px solid #edf1f5; }
+.ct-team-strip-actions .ct-button { width:100%; min-height:44px; justify-content:center; }
+.ct-team-strip-actions #officeRemainingMechanicBadge { text-align:center; }
 .ct-team-inspection-badge { display:inline-flex; align-items:center; gap:4px; margin-top:5px; padding:3px 6px; border-radius:5px; background:#c83232; color:#fff; font-size:9px; font-weight:800; animation:ct-inspection-pulse 1.4s ease-in-out infinite; }
 @keyframes ct-inspection-pulse { 50% { transform:scale(1.035); box-shadow:0 0 0 4px rgba(200,50,50,.13); } }
-@media (max-width:760px) { .ct-team-strip-head { align-items:flex-start; flex-direction:column; } .ct-team-strip #messengerSidebarAvatars { grid-template-columns:repeat(6,145px); } }
+@media (max-width:760px) { .ct-team-strip { grid-template-columns:minmax(0,1fr); } .ct-team-strip-head { align-items:flex-start; } .ct-team-strip #messengerSidebarAvatars { grid-template-columns:repeat(auto-fit,minmax(125px,1fr)); } .ct-team-strip-actions { grid-column:1; grid-row:auto; flex-direction:row; flex-wrap:wrap; align-items:center; padding:12px 0 0; border-left:0; border-top:1px solid #edf1f5; } .ct-team-strip-actions .ct-button { width:auto; flex:1; } }
 .ct-panel .ct-button { margin-top: 4px; font-size: 13px; min-height: 37px; }
 .ct-recent-list { display: flex; flex-direction: column; gap: 17px; margin-top: 19px; }
 .ct-recent { display: flex; gap: 10px; align-items: flex-start; }
@@ -1866,7 +1868,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden" tabindex="-1">
       <div class="ct-page-heading"><div><h2>Vehicle queue</h2></div></div>
-      <section class="ct-team-strip" aria-label="Workshop team status"><div class="ct-team-strip-head"><div><h3><i class="fa-solid fa-user-group"></i> Workshop team</h3><p>Tap an inspection-ready mechanic to open the submitted report.</p></div><div id="officeRemainingMechanicBadge"></div></div><div id="messengerSidebarAvatars"></div><div class="ct-team-strip-actions"><button type="button" class="ct-button ct-primary" onclick="CartechUI.openDispatch()"><i class="fa-solid fa-plus" aria-hidden="true"></i>New dispatch</button></div></section>
+      <section class="ct-team-strip" aria-label="Workshop team status"><div class="ct-team-strip-head"><div><h3><i class="fa-solid fa-user-group"></i> Workshop team</h3><p>Tap an inspection-ready mechanic to open the submitted report.</p></div></div><div id="messengerSidebarAvatars"></div><div class="ct-team-strip-actions"><div id="officeRemainingMechanicBadge"></div><button type="button" class="ct-button ct-primary" onclick="CartechUI.openDispatch()"><i class="fa-solid fa-plus" aria-hidden="true"></i>New dispatch</button></div></section>
       <section class="ct-stats" aria-label="Vehicle workflow. Select a stage to view its current vehicles."><button type="button" id="card-waiting" class="ct-stat" onclick="CartechUI.selectFilter('waiting')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">01</span>In queue</span><i class="fa-regular fa-clock" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statWaiting">0</strong><small>awaiting a mechanic</small></span></button><button type="button" id="card-inprogress" class="ct-stat" onclick="CartechUI.selectFilter('inprogress')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">02</span>In progress</span><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statActive">0</strong><small>in the workshop</small></span></button><button type="button" id="card-inspections" class="ct-stat ct-stat-inspections" onclick="CartechUI.selectFilter('inspections')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">03</span>Inspections</span><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statInspections">0</strong><small>active reports</small></span></button><button type="button" id="card-waiting_parts" class="ct-stat" onclick="CartechUI.selectFilter('waiting_parts')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">04</span>Waiting for parts</span><i class="fa-solid fa-box-open" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statParts">0</strong><small>needs attention</small></span></button><button type="button" id="card-completed" class="ct-stat" onclick="CartechUI.selectFilter('completed')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">05</span>Completed</span><i class="fa-regular fa-circle-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statDone">0</strong><small id="ctArchiveCaption">tap to load archive</small></span></button></section>
       <div class="ct-body-grid"><section class="ct-queue-panel" aria-label="Vehicle jobs">
         <div id="ctAttention" class="ct-attention" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong id="ctAttentionTitle">Parts requested</strong><p id="ctAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('waiting_parts')" aria-label="Review parts requests"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
@@ -5893,7 +5895,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-clean-topbar-dispatch-v14-20260910';
+  const buildId = 'cartech-aligned-dispatch-v15-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
