@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-permanent-customer-number-v12-20260910">
+  <meta name="cartech-build" content="cartech-inspection-team-alert-v13-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -276,6 +276,17 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 #messengerSidebarAvatars > div > div:nth-child(2) > div:first-child > span:first-child { font-weight: 600; font-size: 14px; text-transform: capitalize; }
 #messengerSidebarAvatars > div > div:nth-child(2) > div:first-child > span:nth-child(2) { font-size: 10px; font-weight: 550; text-transform: none; padding: 2px 5px; }
 #messengerSidebarAvatars > div > div:nth-child(2) > div:last-child { font-size: 12px; font-weight: 400; max-width: 100%; margin-top: 5px; }
+.ct-team-strip { margin:0 0 18px; padding:14px 16px 12px; border:1px solid #e1e7ee; border-radius:14px; background:#fff; box-shadow:0 5px 16px rgba(24,48,76,.05); }
+.ct-team-strip-head { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.ct-team-strip-head h3 { display:flex; align-items:center; gap:8px; color:#243247; font-size:14px; font-weight:750; }
+.ct-team-strip-head h3 i { color:#ef713d; }
+.ct-team-strip-head p { margin-top:3px; color:#8290a1; font-size:11px; }
+.ct-team-strip #messengerSidebarAvatars { display:grid; grid-template-columns:repeat(6,minmax(125px,1fr)); gap:8px; margin:11px 0 0; overflow-x:auto; padding-bottom:2px; }
+.ct-team-strip #messengerSidebarAvatars > div { min-width:125px; padding:9px 10px; border:1px solid #e8edf3; border-radius:10px; background:#fbfcfd; }
+.ct-team-strip #messengerSidebarAvatars > div.ct-inspection-pop { border-color:#f0a8a8; background:#fff5f5; box-shadow:0 0 0 2px rgba(220,65,65,.08); }
+.ct-team-inspection-badge { display:inline-flex; align-items:center; gap:4px; margin-top:5px; padding:3px 6px; border-radius:5px; background:#c83232; color:#fff; font-size:9px; font-weight:800; animation:ct-inspection-pulse 1.4s ease-in-out infinite; }
+@keyframes ct-inspection-pulse { 50% { transform:scale(1.035); box-shadow:0 0 0 4px rgba(200,50,50,.13); } }
+@media (max-width:760px) { .ct-team-strip-head { align-items:flex-start; flex-direction:column; } .ct-team-strip #messengerSidebarAvatars { grid-template-columns:repeat(6,145px); } }
 .ct-panel .ct-button { margin-top: 4px; font-size: 13px; min-height: 37px; }
 .ct-recent-list { display: flex; flex-direction: column; gap: 17px; margin-top: 19px; }
 .ct-recent { display: flex; gap: 10px; align-items: flex-start; }
@@ -1843,13 +1854,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     <!-- OFFICE VIEW -->
     <main id="viewOffice" class="hidden" tabindex="-1">
       <div class="ct-page-heading"><div><h2>Vehicle queue</h2></div><div class="ct-page-heading-actions"><button type="button" class="ct-button ct-primary" onclick="CartechUI.openDispatch()"><i class="fa-solid fa-plus" aria-hidden="true"></i>New dispatch</button></div></div>
+      <section class="ct-team-strip" aria-label="Workshop team status"><div class="ct-team-strip-head"><div><h3><i class="fa-solid fa-user-group"></i> Workshop team</h3><p>Tap an inspection-ready mechanic to open the submitted report.</p></div><div id="officeRemainingMechanicBadge"></div></div><div id="messengerSidebarAvatars"></div></section>
       <section class="ct-stats" aria-label="Vehicle workflow. Select a stage to view its current vehicles."><button type="button" id="card-waiting" class="ct-stat" onclick="CartechUI.selectFilter('waiting')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">01</span>In queue</span><i class="fa-regular fa-clock" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statWaiting">0</strong><small>awaiting a mechanic</small></span></button><button type="button" id="card-inprogress" class="ct-stat" onclick="CartechUI.selectFilter('inprogress')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">02</span>In progress</span><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statActive">0</strong><small>in the workshop</small></span></button><button type="button" id="card-inspections" class="ct-stat ct-stat-inspections" onclick="CartechUI.selectFilter('inspections')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">03</span>Inspections</span><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statInspections">0</strong><small>active reports</small></span></button><button type="button" id="card-waiting_parts" class="ct-stat" onclick="CartechUI.selectFilter('waiting_parts')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">04</span>Waiting for parts</span><i class="fa-solid fa-box-open" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statParts">0</strong><small>needs attention</small></span></button><button type="button" id="card-completed" class="ct-stat" onclick="CartechUI.selectFilter('completed')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">05</span>Completed</span><i class="fa-regular fa-circle-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statDone">0</strong><small id="ctArchiveCaption">tap to load archive</small></span></button></section>
       <div class="ct-body-grid"><section class="ct-queue-panel" aria-label="Vehicle jobs">
         <div id="ctAttention" class="ct-attention" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong id="ctAttentionTitle">Parts requested</strong><p id="ctAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('waiting_parts')" aria-label="Review parts requests"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
         <div class="ct-queue-tools"><h3 id="ctJobsHeading" class="ct-visually-hidden">Workshop jobs</h3><label class="ct-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="ctSearch" type="search" placeholder="Vehicle or diagnostic no.…" aria-label="Search loaded vehicles, customers, or diagnostic numbers" oninput="CartechUI.search(this.value)" autocomplete="off"></label></div>
         <div id="officeQueueList" aria-live="polite"></div>
       </section><aside class="ct-rail" aria-label="Workshop overview">
-        <section class="ct-panel ct-team-panel"><div class="ct-panel-title"><h3>Workshop team</h3><i class="fa-solid fa-user-group" aria-hidden="true"></i></div><p class="ct-panel-caption">Duty status, job capacity, and parts chat</p><div id="officeRemainingMechanicBadge"></div><div id="messengerSidebarAvatars"></div><button class="ct-button ct-wide" type="button" onclick="CartechUI.openTeam()">View workshop team <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></section>
         <section class="ct-panel"><div class="ct-panel-title"><h3>Recent dispatches</h3><i class="fa-regular fa-clock" aria-hidden="true"></i></div><div id="ctRecentList" class="ct-recent-list"></div></section>
         <section class="ct-panel ct-archive"><div class="pt-3 border-t border-slate-200 space-y-2">
           <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -2457,6 +2468,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     function deliverCartechAlert({ eventKey, title, body, jobId, alertType = 'message', sound = 'message' }) {
       if (!claimAlertDelivery(eventKey)) return;
       if (sound === 'horn') playLoudVehicleHorn();
+      else if (sound === 'inspection') triggerFastDoorbellSound();
       else playMessengerBeep();
 
       showLiveAlert({ title, body, jobId, alertType });
@@ -4668,6 +4680,12 @@ async function submitPartsRequest() {
             const res = resolveMechanicName(j);
             return res && res.toLowerCase() === m;
           });
+          const inspectionJob = state.find(j => {
+            if (j.status === 'completed') return false;
+            const res = resolveMechanicName(j);
+            return res && res.toLowerCase() === m && !!parsePartsInfo(j.auto_schedule_slot).diagData;
+          });
+          const hasInspection = !!inspectionJob;
 
           const duty = getMechanicDutyStatus(m);
           const info = activeMechJob ? parsePartsInfo(activeMechJob.auto_schedule_slot) : { chatList: [], text: '', images: [] };
@@ -4679,8 +4697,8 @@ async function submitPartsRequest() {
           else if (activeMechJob) ringColor = "ring-2 ring-blue-500";
 
           return `
-            <div onclick="${activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
-                 class="flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
+            <div onclick="${hasInspection ? `window.CartechInspections.open('${inspectionJob.id}')` : activeMechJob ? `openMessengerChatForJob('${activeMechJob.id}', '${m}')` : `alert('${m.toUpperCase()} currently has no active car dispatched.')`}" 
+                 class="${hasInspection ? 'ct-inspection-pop' : ''} flex flex-col items-center xl:flex-row xl:items-center xl:gap-3 p-2 rounded-2xl hover:bg-slate-50 cursor-pointer transition flex-shrink-0 group">
               <div class="relative">
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center uppercase shadow-md ${ringColor}">
                   ${cachedCloudAvatars[m] ? `<img src="${cachedCloudAvatars[m]}" class="w-full h-full object-cover">` : m.charAt(0)}
@@ -4700,6 +4718,7 @@ async function submitPartsRequest() {
                     ${duty.label}
                   </span>
                 </div>
+                ${hasInspection ? '<span class="ct-team-inspection-badge"><i class="fa-solid fa-clipboard-check"></i> Inspection ready</span>' : ''}
                 <div class="text-[9px] text-slate-400 font-bold mt-1 truncate max-w-[100px]">
                   ${activeMechJob ? (hasWaitingParts ? '<span class="text-rose-600 font-black">Needs Parts</span>' : activeMechJob.vehicle) : 'Idle'}
                 </div>
@@ -5862,7 +5881,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-permanent-customer-number-v12-20260910';
+  const buildId = 'cartech-inspection-team-alert-v13-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
@@ -6823,7 +6842,7 @@ window.CartechInspections = (() => {
       const data = dataOf(job), version = JSON.stringify({ data: data || null, number: jobDiagnosticNumber(job) }), prior = snapshots.get(job.id);
       snapshots.set(job.id, version);
       if (prior !== undefined && prior !== version && data && available(job) && ['office','admin','developer'].includes(currentRole) && data.savedBy?.toLowerCase() !== currentUser?.toLowerCase()) {
-        deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'message' });
+        deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection Ready • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap the mechanic’s red Inspection ready badge or View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'inspection' });
       }
     }
     if (dialog.open) {
