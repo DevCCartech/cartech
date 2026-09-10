@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-returning-customer-v11-20260910">
+  <meta name="cartech-build" content="cartech-permanent-customer-number-v12-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -2150,7 +2150,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1" for="inDiag">Diagnostic Number (Unique) *</label>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1" for="inDiag">Customer Diagnostic Number *</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-hashtag text-xs"></i></span>
               <input id="inDiag" required placeholder="e.g. B1148, B786" class="w-full pl-8 pr-3 py-2 text-xs md:text-sm rounded-xl font-bold diag-glowing-badge focus:outline-none">
@@ -3574,6 +3574,22 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         return pNum === clean || dNum === clean;
       });
     }
+    const normalizedCustomerName = value => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    async function diagnosticNumberHasDifferentOwner(diagNum, customerName) {
+      const diag = String(diagNum || '').trim().toLowerCase();
+      const customer = normalizedCustomerName(customerName);
+      let records = [...state, ...completedArchive].filter(job => String(job.phone || '').trim().toLowerCase() === diag);
+      try {
+        const url = new URL(API_URL);
+        url.searchParams.set('select', 'id,customer,phone,status');
+        url.searchParams.set('phone', `eq.${diagNum}`);
+        url.searchParams.set('status', 'neq.system_record');
+        url.searchParams.set('limit', '20');
+        const response = await fetch(url.href, { headers:HEADERS, cache:'no-store' });
+        if (response.ok) records = [...records, ...await response.json()];
+      } catch (_) {}
+      return records.some(job => normalizedCustomerName(job.customer) !== customer);
+    }
 
     let customerLookupTimer = null;
     let customerLookupSequence = 0;
@@ -3600,14 +3616,14 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       while (isDiagnosticNumberDuplicate(value)) value = prefix + String(++next).padStart(width, '0');
       return value;
     }
-    function returningCustomerProfile(job, records) {
+    function returningCustomerProfile(job, records, permanentDiagnostic = '') {
       return {
         key: `${String(job.customer || '').toLowerCase()}|${String(job.vehicle || '').toLowerCase()}|${resolveVinNumber(job)}`,
         customer: String(job.customer || '').trim(),
         vehicle: String(job.vehicle || '').trim(),
         vin: resolveVinNumber(job) === '-' ? '' : resolveVinNumber(job),
-        previousDiagnostic: String(job.phone || '').trim(),
-        nextDiagnostic: nextDiagnosticNumber(job.phone, records),
+        previousDiagnostic: permanentDiagnostic || String(job.phone || '').trim(),
+        nextDiagnostic: permanentDiagnostic || String(job.phone || '').trim() || nextDiagnosticNumber('', records),
         time: customerRecordTime(job)
       };
     }
@@ -3622,13 +3638,23 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       matches.hidden = true; matches.innerHTML = '';
       const status = document.getElementById('ctReturningCustomerStatus');
       status.hidden = false;
-      status.innerHTML = `<i class="fa-solid fa-user-check"></i> Returning customer loaded: <strong>${escapeHTML(profile.vehicle || 'vehicle')}</strong>${profile.vin ? ` · VIN ${escapeHTML(profile.vin)}` : ''}. New diagnostic <strong>${escapeHTML(profile.nextDiagnostic)}</strong> was suggested from previous ${escapeHTML(profile.previousDiagnostic || 'record')}. Enter only the new complaint below.`;
+      status.innerHTML = `<i class="fa-solid fa-user-check"></i> Returning customer loaded: <strong>${escapeHTML(profile.vehicle || 'vehicle')}</strong>${profile.vin ? ` · VIN ${escapeHTML(profile.vin)}` : ''}. Permanent customer diagnostic number: <strong>${escapeHTML(profile.nextDiagnostic)}</strong>. Enter only the new complaint below.`;
       document.getElementById('inDetails').focus();
     }
-    function renderReturningCustomerMatches(records, query) {
+    function renderReturningCustomerMatches(records, query, autoFill = true) {
       const grouped = new Map();
+      const permanentNumbers = new Map();
+      records.forEach((job, index) => {
+        const customerKey = normalizedCustomerName(job?.customer);
+        const diagnostic = String(job?.phone || '').trim();
+        if (!customerKey || !diagnostic) return;
+        const candidate = { diagnostic, time:customerRecordTime(job), index };
+        const current = permanentNumbers.get(customerKey);
+        if (!current || candidate.time > current.time || (candidate.time === current.time && candidate.index > current.index)) permanentNumbers.set(customerKey, candidate);
+      });
       records.filter(job => job && job.status !== 'system_record' && String(job.customer || '').trim()).forEach(job => {
-        const profile = returningCustomerProfile(job, records);
+        const permanentDiagnostic = permanentNumbers.get(normalizedCustomerName(job.customer))?.diagnostic || '';
+        const profile = returningCustomerProfile(job, records, permanentDiagnostic);
         const existing = grouped.get(profile.key);
         if (!existing || profile.time >= existing.time) grouped.set(profile.key, profile);
       });
@@ -3640,7 +3666,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       container.innerHTML = profiles.map(profile => `<button type="button" class="ct-customer-match" role="option" data-returning-customer="${escapeHTML(profile.key)}"><div><strong>${escapeHTML(profile.customer)}</strong><small>${escapeHTML(profile.vehicle || 'Vehicle not recorded')}${profile.vin ? ` · VIN ${escapeHTML(profile.vin)}` : ''}</small></div><span>Previous ${escapeHTML(profile.previousDiagnostic || 'record')}</span></button>`).join('');
       container.hidden = false; status.hidden = true;
       const exact = profiles.filter(profile => profile.customer.toLowerCase() === query.toLowerCase());
-      if (exact.length === 1) applyReturningCustomer(exact[0].key);
+      if (autoFill && exact.length === 1) applyReturningCustomer(exact[0].key);
     }
     function lookupReturningCustomer(value) {
       clearTimeout(customerLookupTimer);
@@ -3650,8 +3676,9 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       status.hidden = true;
       if (query.length < 2) { container.hidden = true; container.innerHTML = ''; return; }
       const sequence = ++customerLookupSequence;
+      const local = [...state, ...completedArchive].filter(job => String(job.customer || '').toLowerCase().includes(query.toLowerCase()));
+      if (local.length) renderReturningCustomerMatches(local, query, true);
       customerLookupTimer = setTimeout(async () => {
-        const local = [...state, ...completedArchive].filter(job => String(job.customer || '').toLowerCase().includes(query.toLowerCase()));
         let remote = [];
         try {
           const url = new URL(API_URL);
@@ -3664,8 +3691,9 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         } catch (_) {}
         if (sequence !== customerLookupSequence) return;
         const records = [...new Map([...local, ...(Array.isArray(remote) ? remote : [])].map(job => [job.id, job])).values()];
-        renderReturningCustomerMatches(records, query);
-      }, 350);
+        const alreadyAutoFilled = !document.getElementById('ctReturningCustomerStatus').hidden;
+        renderReturningCustomerMatches(records, query, !alreadyAutoFilled);
+      }, 120);
     }
 
     document.getElementById('intakeForm')?.addEventListener('reset', () => {
@@ -3694,8 +3722,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         return;
       }
 
-      if (isDiagnosticNumberDuplicate(diagVal)) {
-        alert(`⚠️ Diagnostic Number [${diagVal}] already exists in the system records! Please use a unique diagnostic number.`);
+      if (await diagnosticNumberHasDifferentOwner(diagVal, custVal)) {
+        alert(`⚠️ Diagnostic Number [${diagVal}] belongs to a different customer. Choose the returning customer from the suggestions or use another number.`);
         document.getElementById('inDiag').focus();
         if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
         return;
@@ -5834,7 +5862,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-returning-customer-v11-20260910';
+  const buildId = 'cartech-permanent-customer-number-v12-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
