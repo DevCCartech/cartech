@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-roster-visibility-v9-20260910">
+  <meta name="cartech-build" content="cartech-roster-cleanup-v10-20260910">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -4520,7 +4520,7 @@ async function submitPartsRequest() {
 
       const sidebarContainer = document.getElementById('messengerSidebarAvatars');
       if (sidebarContainer) {
-        sidebarContainer.innerHTML = MECHANIC_ORDER.map(m => {
+        sidebarContainer.innerHTML = MECHANIC_ORDER.filter(staffVisibleInOffice).map(m => {
           const activeMechJob = state.find(j => {
             if (j.status === 'completed') return false;
             const res = resolveMechanicName(j);
@@ -5720,7 +5720,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-roster-visibility-v9-20260910';
+  const buildId = 'cartech-roster-cleanup-v10-20260910';
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
   const consentKey = 'cartech_terms_agreement_session';
