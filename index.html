@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-compact-closed-support-v21-20260911">
+  <meta name="cartech-build" content="cartech-heart-reveal-support-v22-20260911">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -5900,7 +5900,7 @@ window.CartechAccess = (() => {
   const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-20T00:00:00+08:00');
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const buildId = 'cartech-compact-closed-support-v21-20260911';
+  const buildId = 'cartech-heart-reveal-support-v22-20260911';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const sessionRevision = buildId + ':' + (document.lastModified || 'local');
   const signInKey = 'cartech_verified_signin_session';
@@ -7163,14 +7163,22 @@ window.CartechBrands = (() => {
 </dialog>
 <style>
 #loginScreen.ct-after-hours { align-items:center; background-attachment:fixed; }
+#loginScreen.ct-support-expanded { align-items:flex-start; }
+#loginScreen.ct-support-expanded #loginCardWrapper { margin-top:16px!important; margin-bottom:58px!important; }
 #loginScreen.ct-after-hours #loginCardWrapper { display:block!important; max-width:400px; }
 #loginScreen.ct-after-hours :is(#loginNotice,#quickLoginCard,#authBoxLogin,#authBoxRegister,#authBoxForgot,#ctLoginSupportButton,#ctHoursDevNote) { display:none!important; }
 #ctClosedSupport { padding:18px; background:rgba(8,20,34,.78); border:1px solid rgba(255,255,255,.22); border-radius:18px; color:#fff; text-align:center; box-shadow:0 14px 38px rgba(4,12,24,.32); }
 #ctClosedSupport[hidden], #ctHoursDevButton[hidden] { display:none!important; }
-.ct-closed-heart { display:grid; place-items:center; width:44px; height:44px; margin:0 auto 10px; border-radius:14px; background:#f46532; color:#fff; font-size:19px; box-shadow:0 8px 20px #f4653255; }
+.ct-closed-heart { display:grid; place-items:center; width:48px; height:48px; margin:0 auto 10px; border:0; border-radius:15px; background:#f46532; color:#fff; font-size:20px; box-shadow:0 8px 20px #f4653255; cursor:pointer; transition:transform .18s ease,box-shadow .18s ease; }
+.ct-closed-heart:hover,.ct-closed-heart:focus-visible { transform:scale(1.08); box-shadow:0 10px 25px #f4653277; }
+.ct-closed-heart[aria-expanded="true"] { background:#df4d25; }
 #ctClosedSupport h3 { margin:4px 0 7px; font-size:21px; font-weight:850; }
 #ctClosedSupport p { margin:0; color:#dce7f4; font-size:13px; line-height:1.55; }
 #ctClosedSupport .ct-closed-hours { margin-bottom:12px; color:#ffb27d; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+#ctClosedSupport .ct-closed-tap { color:#c7d7e8; font-size:12px; }
+#ctClosedSupport .ct-closed-details { margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.18); }
+#ctClosedSupport .ct-closed-details[hidden] { display:none!important; }
+#ctClosedSupport .ct-closed-message { margin-bottom:12px; }
 #ctClosedSupport .ct-gcash-image { max-width:225px; margin:15px auto 10px; border:3px solid #fff; }
 #ctClosedSupport .ct-closed-recipient { margin-bottom:12px; color:#fff; font-weight:750; }
 #ctClosedSupport .ct-button { width:100%; min-height:43px; justify-content:center; margin-top:12px; }
@@ -7191,12 +7199,23 @@ window.CartechShopHours = (() => {
   const supportButton = document.getElementById('ctLoginSupportButton');
   const panel = document.createElement('section');
   panel.id = 'ctClosedSupport'; panel.hidden = true;
-  panel.innerHTML = '<div class="ct-closed-heart"><i class="fa-solid fa-heart" aria-hidden="true"></i></div><p class="ct-closed-hours">Workshop closed · Login opens at 8:00 AM</p><h3>Support the developer</h3><p>I’m keeping CARTECH online through cloud services after my mini PC broke. Your optional support helps with hosting, storage, repairs, and future improvements.</p>';
+  panel.innerHTML = '<button type="button" class="ct-closed-heart" aria-expanded="false" aria-label="Show developer support details"><i class="fa-solid fa-heart" aria-hidden="true"></i></button><p class="ct-closed-hours">Workshop closed · Login opens at 8:00 AM</p><h3>Support the developer</h3><p class="ct-closed-tap">Tap the heart to view the message and GCash QR code.</p><div class="ct-closed-details" hidden><p class="ct-closed-message">I’m keeping CARTECH online through cloud services after my mini PC broke. Your optional support helps with hosting, storage, repairs, and future improvements.</p></div>';
+  const details = panel.querySelector('.ct-closed-details');
   const qr = document.querySelector('#ctDeveloperSupport .ct-gcash-image').cloneNode(true);
   qr.querySelector('img').alt = 'Developer GCash donation QR code';
-  panel.append(qr);
-  panel.insertAdjacentHTML('beforeend', '<p class="ct-closed-recipient">GCash recipient: CH**L J** V.</p><button type="button" class="ct-button ct-primary" onclick="document.getElementById(\'ctDeveloperSupport\').showModal()"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Read the full story</button><small>Donations are optional and do not affect account access. The regular login returns automatically at 8:00 AM Philippine time.</small>');
+  details.append(qr);
+  details.insertAdjacentHTML('beforeend', '<p class="ct-closed-recipient">GCash recipient: CH**L J** V.</p><button type="button" class="ct-button ct-primary" onclick="document.getElementById(\'ctDeveloperSupport\').showModal()"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Read the full story</button><small>Donations are optional and do not affect account access. The regular login returns automatically at 8:00 AM Philippine time.</small>');
   card.append(panel);
+  const heart = panel.querySelector('.ct-closed-heart');
+  heart.addEventListener('click', () => {
+    const expanded = heart.getAttribute('aria-expanded') !== 'true';
+    heart.setAttribute('aria-expanded', String(expanded));
+    heart.setAttribute('aria-label', expanded ? 'Hide developer support details' : 'Show developer support details');
+    details.hidden = !expanded;
+    panel.classList.toggle('is-expanded', expanded);
+    screen.classList.toggle('ct-support-expanded', expanded);
+    if (expanded) panel.scrollIntoView({block:'start', behavior:'smooth'});
+  });
   const button = document.createElement('button');
   button.id = 'ctHoursDevButton'; button.type = 'button'; button.textContent = '⚙';
   button.title = 'Developer sign-in'; button.setAttribute('aria-label', 'Developer sign-in');
@@ -7216,6 +7235,9 @@ window.CartechShopHours = (() => {
   function refresh() {
     const open = isOpen();
     if (open || screen.classList.contains('hidden')) developerReveal = false;
+    if (open || developerReveal || screen.classList.contains('hidden')) {
+      details.hidden = true; heart.setAttribute('aria-expanded','false'); panel.classList.remove('is-expanded'); screen.classList.remove('ct-support-expanded');
+    }
     const closedView = !open && !developerReveal;
     if (screen.classList.contains('ct-after-hours') !== closedView) screen.classList.toggle('ct-after-hours', closedView);
     panel.hidden = !closedView;
