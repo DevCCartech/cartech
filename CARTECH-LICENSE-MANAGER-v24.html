@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>CARTECH License Manager</title>
+  <style>
+    :root{color-scheme:light;--navy:#12243a;--navy2:#1c3551;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}.shell{min-height:100vh;display:grid;grid-template-columns:260px minmax(0,1fr)}
+    aside{background:var(--navy);color:#fff;padding:28px 22px;display:flex;flex-direction:column;gap:24px}.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--orange);font-size:20px;font-weight:900}.brand strong{display:block;font-size:17px;letter-spacing:.04em}.brand small{color:#9fb0c3;font-size:10px;letter-spacing:.13em}.side-note{border:1px solid #ffffff1c;background:#ffffff0b;border-radius:14px;padding:16px}.side-note strong{font-size:12px}.side-note p{font-size:11px;color:#b7c5d4;margin:7px 0 0}.secure{margin-top:auto;color:#91a6b9;font-size:10px}
+    main{padding:30px;max-width:1240px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.top h1{font-size:28px;margin:0;letter-spacing:-.03em}.top p{color:var(--muted);margin:6px 0 0}.badge{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:11px;font-weight:750}
+    .grid{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:20px;align-items:start}.card{background:var(--white);border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 34px #23384d0c;overflow:hidden}.card-head{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.card-head h2{font-size:16px;margin:0}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.card-body{padding:21px 22px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:11px;font-weight:750;color:#3d5065;text-transform:uppercase;letter-spacing:.05em}.input{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:10px;padding:11px 12px;color:var(--ink);background:#fbfcfd;outline:none}.input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.help{font-size:11px;color:var(--muted);margin:-6px 0 15px}.secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.btn{border:1px solid #cfd9e4;background:#fff;color:#31465d;border-radius:9px;padding:10px 13px;font-weight:700}.btn:hover{background:#f5f8fa}.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}.btn.primary:hover{background:#df5d27}.btn.danger{color:var(--red);border-color:#f0cbd2}.btn:disabled{opacity:.55;cursor:wait}.actions{display:flex;gap:9px;flex-wrap:wrap}.status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f2f7f7;color:#37686d;font-size:12px}.status.error{background:#fff1f2;color:var(--red)}
+    .result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}
+    .license-list{display:grid;gap:10px}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.license{border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}.license h3{font-size:13px;margin:0}.license p{font-size:11px;color:var(--muted);margin:4px 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.active{background:#e4f7ef;color:var(--green)}.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}.pill.not_started{background:#fff7e8;color:#936018}.license-side{text-align:right}.license-side .btn{margin-top:8px;font-size:11px;padding:7px 9px}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:180px}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
+    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.grid{grid-template-columns:1fr}.top{flex-direction:column}.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span class="mark">C</span><div><strong>CARTECH</strong><small>LICENSE CONTROL</small></div></div>
+      <div class="side-note"><strong>Developer-only utility</strong><p>Create licenses for independent shops. The raw key appears once; give it only to the shop owner.</p></div>
+      <div class="side-note"><strong>Tenant isolation</strong><p>Every key belongs to one workshop. Supabase Row Level Security keeps its accounts, customers, jobs, and inspections separate.</p></div>
+      <p class="secure">Do not upload your private manager secret to GitHub. This page does not save it.</p>
+    </aside>
+    <main>
+      <header class="top"><div><h1>Workshop license manager</h1><p>Issue, review, and revoke CARTECH access without exposing the Supabase service-role key.</p></div><span class="badge">Secure RPC manager</span></header>
+      <div class="grid">
+        <section class="card">
+          <div class="card-head"><h2>Issue a license</h2><p>The duration starts when the owner activates the key for the first time.</p></div>
+          <div class="card-body">
+            <form id="issueForm">
+              <div class="field"><label for="adminSecret">Private manager secret</label><input id="adminSecret" class="input secret" type="password" autocomplete="current-password" placeholder="Enter the secret set in Supabase" required></div>
+              <div class="field"><label for="shopName">Workshop / company name</label><input id="shopName" class="input" maxlength="100" placeholder="Example Auto Service" required></div>
+              <div class="field"><label for="existingShop">Existing shop ID (renewal only)</label><input id="existingShop" class="input secret" maxlength="64" placeholder="Leave blank for a new shop"></div>
+              <p class="help">For a renewal, copy the exact shop ID from the license list. The owner password below will also be updated.</p>
+              <div class="row">
+                <div class="field"><label for="ownerUser">Owner username</label><input id="ownerUser" class="input" maxlength="40" autocomplete="off" placeholder="shopowner" required></div>
+                <div class="field"><label for="ownerPass">Temporary password</label><input id="ownerPass" class="input secret" type="text" maxlength="128" autocomplete="off" placeholder="At least 4 characters" required></div>
+              </div>
+              <div class="field"><label for="duration">License duration</label><select id="duration" class="input" required><option value="7_days">7 days</option><option value="15_days">15 days</option><option value="30_days">30 days</option><option value="1_month">1 calendar month</option><option value="3_months">3 calendar months</option></select></div>
+              <div class="field"><label for="notes">Private note</label><textarea id="notes" class="input" rows="3" maxlength="500" placeholder="Payment reference, contact, or reminder"></textarea></div>
+              <div class="actions"><button id="issueButton" class="btn primary" type="submit">Generate license</button><button class="btn" type="reset">Clear</button></div>
+              <p id="issueStatus" class="status">Enter your private manager secret and the shop details.</p>
+            </form>
+            <article id="result" class="result" hidden>
+              <h3>License created — copy it now</h3>
+              <div class="key-box"><code id="resultKey"></code><button id="copyKey" class="btn" type="button">Copy</button></div>
+              <dl><dt>Shop</dt><dd id="resultShop"></dd><dt>Shop ID</dt><dd id="resultShopId"></dd><dt>Owner login</dt><dd id="resultOwner"></dd><dt>Duration</dt><dd id="resultDuration"></dd></dl>
+              <p class="warning">The complete key is returned only when it is generated. Save it securely and send it privately to the shop owner.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h2>Issued licenses</h2><p>Use the same private secret to load current status or revoke a license.</p></div>
+          <div class="card-body">
+            <div class="toolbar"><input id="listSecret" class="input secret" type="password" autocomplete="current-password" placeholder="Private manager secret"><button id="loadButton" class="btn" type="button">Load licenses</button></div>
+            <p id="listStatus" class="status">No license records loaded.</p>
+            <div id="licenseList" class="license-list"><div class="empty">Enter the secret and choose Load licenses.</div></div>
+          </div>
+        </section>
+      </div>
+      <p class="footer">CARTECH License Manager v24 · Keep this utility and its manager secret private.</p>
+    </main>
+  </div>
+  <script>
+    (() => {
+      'use strict';
+      const PROJECT_URL = 'https://thqoydzuthttyybwijgq.supabase.co';
+      const PUBLISHABLE_KEY = 'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK';
+      const byId = id => document.getElementById(id);
+      const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+      const durationName = code => ({'7_days':'7 days','15_days':'15 days','30_days':'30 days','1_month':'1 calendar month','3_months':'3 calendar months'}[code] || code);
+      const date = value => value ? new Date(value).toLocaleString('en-PH', {timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'}) + ' PHT' : 'Starts on first activation';
+
+      async function rpc(name, body) {
+        const response = await fetch(`${PROJECT_URL}/rest/v1/rpc/${name}`, {
+          method:'POST',
+          headers:{apikey:PUBLISHABLE_KEY,Authorization:`Bearer ${PUBLISHABLE_KEY}`,'Content-Type':'application/json'},
+          body:JSON.stringify(body)
+        });
+        const raw = await response.text();
+        let data = null;
+        try { data = raw ? JSON.parse(raw) : null; } catch (_) {}
+        if (!response.ok) throw new Error(data?.message || data?.hint || `Server returned ${response.status}`);
+        return data;
+      }
+      function status(id, text, error = false) { const node=byId(id); node.textContent=text; node.classList.toggle('error', error); }
+
+      byId('issueForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = byId('issueButton'); button.disabled = true; byId('result').hidden = true;
+        status('issueStatus','Creating the isolated workshop and license…');
+        try {
+          const rows = await rpc('cartech_issue_license', {
+            p_admin_secret:byId('adminSecret').value,
+            p_shop_name:byId('shopName').value.trim(),
+            p_duration_code:byId('duration').value,
+            p_owner_username:byId('ownerUser').value.trim().toLowerCase(),
+            p_owner_password:byId('ownerPass').value,
+            p_notes:byId('notes').value.trim(),
+            p_existing_shop_id:byId('existingShop').value.trim() || null
+          });
+          const item = Array.isArray(rows) ? rows[0] : rows;
+          if (!item?.license_key) throw new Error('The server did not return a license key.');
+          byId('resultKey').textContent = item.license_key;
+          byId('resultShop').textContent = item.shop_name;
+          byId('resultShopId').textContent = item.shop_id;
+          byId('resultOwner').textContent = `${byId('ownerUser').value.trim().toLowerCase()} / ${byId('ownerPass').value}`;
+          byId('resultDuration').textContent = durationName(item.duration_code) + ' from first activation';
+          byId('result').hidden = false;
+          status('issueStatus','License created successfully. Copy the key before leaving this page.');
+          byId('listSecret').value = byId('adminSecret').value;
+        } catch (error) { status('issueStatus', error.message || 'Could not create the license.', true); }
+        finally { button.disabled = false; }
+      });
+
+      byId('copyKey').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(byId('resultKey').textContent); byId('copyKey').textContent='Copied'; setTimeout(()=>byId('copyKey').textContent='Copy',1500); }
+        catch (_) { window.getSelection()?.selectAllChildren(byId('resultKey')); }
+      });
+
+      async function loadLicenses() {
+        const secret = byId('listSecret').value || byId('adminSecret').value;
+        if (!secret) { status('listStatus','Enter your private manager secret.',true); return; }
+        const button=byId('loadButton'); button.disabled=true; status('listStatus','Loading licenses…');
+        try {
+          const rows = await rpc('cartech_list_licenses',{p_admin_secret:secret});
+          const list = Array.isArray(rows) ? rows : [];
+          byId('licenseList').innerHTML = list.length ? list.map(item => `<article class="license"><div><h3>${escapeHTML(item.shop_name)}</h3><p><strong>${escapeHTML(item.shop_id)}</strong> · ${escapeHTML(item.key_prefix)} · ${escapeHTML(durationName(item.duration_code))}</p><p>Issued ${escapeHTML(date(item.issued_at))} · ${item.starts_at ? 'Started '+escapeHTML(date(item.starts_at)) : 'Not activated'} · Expires ${escapeHTML(date(item.expires_at))}</p><p>${Number(item.activated_devices)||0} activated device(s)${item.notes ? ' · '+escapeHTML(item.notes) : ''}</p></div><div class="license-side"><span class="pill ${escapeHTML(item.status)}">${escapeHTML(item.status.replace('_',' '))}</span>${item.status !== 'revoked' ? `<br><button class="btn danger" type="button" data-revoke="${escapeHTML(item.license_id)}">Revoke</button>` : ''}</div></article>`).join('') : '<div class="empty">No paid licenses have been issued.</div>';
+          status('listStatus',`${list.length} license${list.length===1?'':'s'} loaded.`);
+        } catch (error) { status('listStatus',error.message || 'Could not load licenses.',true); }
+        finally { button.disabled=false; }
+      }
+      byId('loadButton').addEventListener('click',loadLicenses);
+      byId('licenseList').addEventListener('click',async event=>{
+        const button=event.target.closest('[data-revoke]'); if(!button) return;
+        if(!confirm('Revoke this license now? Activated office and mechanic devices will be locked on their next verification.')) return;
+        const secret=byId('listSecret').value || byId('adminSecret').value; button.disabled=true;
+        try { await rpc('cartech_revoke_license',{p_admin_secret:secret,p_license_id:button.dataset.revoke}); await loadLicenses(); }
+        catch(error){status('listStatus',error.message || 'Could not revoke the license.',true);button.disabled=false;}
+      });
+    })();
+  </script>
+</body>
+</html>
