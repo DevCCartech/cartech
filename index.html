@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shopwide-license-v27-20260911">
+  <meta name="cartech-build" content="cartech-shopwide-license-v28-20260911">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -1698,13 +1698,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</p>
         <p id="ctTrialScheduleCopy">All registered users must accept the current agreement before entering. Use the device-only test time below to check the license screen without changing the official workshop deadline.</p>
         <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-end p-3 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="flex-1 w-full">
-            <label for="ctDryRunEndsAt" class="df-label">License test time · Philippine time · this browser only</label>
+            <label for="ctDryRunEndsAt" class="df-label">Shop-wide license expiry · Philippine time</label>
             <input id="ctDryRunEndsAt" class="df-input w-full" type="datetime-local" step="60" aria-describedby="ctDryRunEndsAtHelp">
-            <small id="ctDryRunEndsAtHelp" class="block text-[10px] text-slate-500 mt-1">Choose a past time to open the license screen on this PC. This does not change the official Sep 26 deadline. Activating a key starts its real duration.</small>
+            <small id="ctDryRunEndsAtHelp" class="block text-[10px] text-slate-500 mt-1">Developer-only test control. Saving this date changes the server license expiry and signs out every connected web/app installation when it next verifies.</small>
           </div>
           <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <button id="ctSaveProgramSchedule" type="button" class="ct-button ct-primary w-full sm:w-auto" onclick="CartechAccess.saveProgramSchedule(event)"><i class="fa-solid fa-key" aria-hidden="true"></i> Start license test</button>
-            <button id="ctResetProgramSchedule" type="button" class="ct-button w-full sm:w-auto" onclick="CartechAccess.resetLicenseTest(event)"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Official deadline</button>
+            <button id="ctSaveProgramSchedule" type="button" class="ct-button ct-primary w-full sm:w-auto" onclick="CartechAccess.saveProgramSchedule(event)"><i class="fa-solid fa-lock" aria-hidden="true"></i> Set shop-wide expiry</button>
+            <button id="ctResetProgramSchedule" type="button" class="ct-button w-full sm:w-auto" hidden onclick="CartechAccess.resetLicenseTest(event)">Reset</button>
           </div>
         </div>
         <p id="ctProgramScheduleMessage" class="ct-access-help" role="status" hidden></p>
@@ -2437,7 +2437,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       loginNoticeMessage: 'CARTECH Hybrid Queue System is currently under development.',
       loginNoticeFooter: 'More updates and features will be added.\nSEPTEMBER 19 BETA TEST IS ENDED',
       // Shared dry-run close time. Stored as a Unix timestamp in the config record.
-      dryRunEndsAt: Date.parse('2026-09-26T17:00:00+08:00')
+      dryRunEndsAt: Date.parse('2026-09-12T07:00:00+08:00')
     };
     function applyLoginNoticeConfig(config = featureFlags) {
       const notice = document.getElementById('loginNotice');
@@ -2965,7 +2965,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
               : {}),
             dryRunEndsAt: Number.isFinite(parsedEnd) && parsedEnd > 0
               ? parsedEnd
-              : (featureFlags.dryRunEndsAt || Date.parse('2026-09-26T17:00:00+08:00'))
+              : (featureFlags.dryRunEndsAt || Date.parse('2026-09-12T07:00:00+08:00'))
           };
           applyLoginNoticeConfig(featureFlags);
           const afterConfigSignature = [featureFlags.diagnosticV2Enabled === true, featureFlags.diagnosticWorkshopV4Enabled === true, featureFlags.dryRunEndsAt || ''].join('|');
@@ -3084,7 +3084,17 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
               completedArchive = completedArchive.filter(j => j.id !== oldRecord.id);
               render();
               updateAlarmState();
-            }
+            } 
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'cartech_license_signals', filter: `shop_id=eq.${currentShopId}` },
+          () => {
+            // The signal is intentionally membership-based, so an already-open
+            // phone still receives the expiry/revoke event after access closes.
+            tenantLastCheckedAt = 0;
+            void window.CartechAccess?.refreshLicenseStatus?.(true);
           }
         )
         .subscribe();
@@ -6082,11 +6092,14 @@ window.CartechAccess = (() => {
   }
   const previews = new Map();
   // Existing CARTECH devices share this trial deadline. A paid shop license takes over afterward.
-  const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-26T17:00:00+08:00');
+  const DEFAULT_PROGRAM_ENDS_AT = Date.parse('2026-09-12T07:00:00+08:00');
   const LICENSE_TEST_PREVIEW_KEY = 'cartech_license_test_preview_v2';
   // Remove the v25 simulated-deadline flag. It could leave a browser trapped
   // on the license screen after a reload even though the official trial was open.
-  try { sessionStorage.removeItem('cartech_license_test_ends_at_v1'); } catch (_) {}
+  try {
+    sessionStorage.removeItem(LICENSE_TEST_PREVIEW_KEY);
+    sessionStorage.removeItem('cartech_license_test_ends_at_v1');
+  } catch (_) {}
   function storedLicenseTestTime() {
     try {
       const parsed = Number(sessionStorage.getItem(LICENSE_TEST_PREVIEW_KEY));
@@ -6097,7 +6110,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v27-20260911';
+  const buildId = 'cartech-shopwide-license-v28-20260911';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -6254,19 +6267,19 @@ window.CartechAccess = (() => {
       const access = await ensureTenantSession(force, !programClosed());
       syncAccountScope();
       updateLicenseGate(access);
-      if (programClosed() && !paidLicenseActive()) {
+      if (!workshopAccessActive()) {
         if (verifiedUser) signOut('license-expired');
         else if (!underDevPreview) showDevelopment(false);
         return false;
       }
-      if (programClosed() && paidLicenseActive() && !verifiedUser && !underDevPreview) {
+      if (workshopAccessActive() && !verifiedUser && !underDevPreview) {
         byId('ctUnderDevelopment').hidden = true;
         byId('loginScreen').classList.remove('hidden');
       }
       return workshopAccessActive();
     } catch (error) {
       updateLicenseGate(null);
-      if (programClosed() && !underDevPreview) showDevelopment(false);
+      if (!workshopAccessActive() && !underDevPreview) showDevelopment(false);
       return false;
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
   }
@@ -6293,7 +6306,7 @@ window.CartechAccess = (() => {
       });
       if (result.error) {
         if (result.error.code === '42883' || /cartech_activate_shop_license/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v27 Supabase upgrade first, then try this key again.');
+          throw new Error('Install the CARTECH v28 Supabase upgrade first, then try this key again.');
         }
         throw result.error;
       }
@@ -6380,7 +6393,7 @@ window.CartechAccess = (() => {
       });
       if (result.error) {
         if (result.error.code === '42883' || /cartech_set_shop_license_start/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v27 Supabase upgrade first.');
+          throw new Error('Install the CARTECH v28 Supabase upgrade first.');
         }
         throw result.error;
       }
@@ -6433,7 +6446,7 @@ window.CartechAccess = (() => {
   }
   function identityValid() {
     if (!currentUser || !currentRole || verifiedUser !== currentUser || verifiedRole !== currentRole) return false;
-    if (!workshopAccessActive()) { signOut(programClosed() ? 'license-expired' : 'verification'); return false; }
+    if (!workshopAccessActive()) { signOut('license-expired'); return false; }
     if (ended(accountSnapshot)) { signOut(currentRole === 'tester' ? 'expired' : 'revoked'); return false; }
     return true;
   }
@@ -6455,7 +6468,7 @@ window.CartechAccess = (() => {
     return currentRole === 'tester' && sessionValid();
   }
   function restrictions(user, acc) {
-    if (!workshopAccessActive()) { signOut(programClosed() ? 'license-expired' : 'verification'); return false; }
+    if (!workshopAccessActive()) { signOut('license-expired'); return false; }
     if (acc.role === 'tester') return true;
     if (isUserOnHoliday(user)) { triggerHolidayLockout(); return false; }
     const hour = Number(new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Manila', hour:'2-digit', hourCycle:'h23'}).format(new Date()));
@@ -6585,7 +6598,7 @@ window.CartechAccess = (() => {
     else if (reason === 'license-expired' || reason === 'license-required') loginError('WORKSHOP LICENSE REQUIRED', 'The shop owner must activate or renew the CARTECH license once. Every connected installation will then unlock automatically.');
     if (reason === 'declined') loginError('AGREEMENT REQUIRED', 'You left the agreement. Sign in and accept the terms before entering CARTECH.');
     if (reason === 'updated') loginError('SYSTEM UPDATED', 'Use 1-Tap Fast Login if this is your remembered device, then accept the current agreement if prompted.');
-    if (['program-ended', 'license-expired', 'license-required'].includes(reason) || (programClosed() && !paidLicenseActive())) { showDevelopment(false); return; }
+    if (['program-ended', 'license-expired', 'license-required'].includes(reason) || !workshopAccessActive()) { showDevelopment(false); return; }
     byId('loginUsername').focus();
   }
   async function verifyActive(force = false) {
@@ -6604,7 +6617,7 @@ window.CartechAccess = (() => {
   }
   function checkExpiry() {
     refreshProgramStatus();
-    if (programClosed() && !paidLicenseActive()) {
+    if (!workshopAccessActive()) {
       if (verifiedUser) signOut('license-expired');
       else if (!developerLoginOpen) showDevelopment(false);
       if (!document.hidden && Date.now() - lastGatePoll >= LICENSE_GATE_POLL_INTERVAL_MS) {
@@ -6675,24 +6688,22 @@ window.CartechAccess = (() => {
   function setText(id, value) { const node = byId(id); if (node) node.textContent = String(value ?? ''); }
   function refreshProgramCopy() {
     const deadline = philippineDate(DEFAULT_PROGRAM_ENDS_AT);
-    const testTime = storedLicenseTestTime();
-    const testingLicense = testTime !== null;
+    const testingLicense = false;
     const input = byId('ctDryRunEndsAt');
-    if (input && !scheduleInputDirty && document.activeElement !== input) input.value = manilaDateTimeInput(testTime || (now() - 60000));
-    setText('ctTrialScheduleCopy', testingLicense
-      ? `License-screen preview is active only in this browser. The test time is ${philippineDate(testTime)}; the official workshop deadline is still ${deadline}.`
-      : `Official free-trial deadline: ${deadline}. The test below previews the license screen without ending your session or changing Supabase.`);
+    const activeExpiry = licenseExpiry();
+    if (input && !scheduleInputDirty && document.activeElement !== input) input.value = manilaDateTimeInput(paidLicenseActive() ? activeExpiry : DEFAULT_PROGRAM_ENDS_AT);
+    setText('ctTrialScheduleCopy', paidLicenseActive()
+      ? `Active shop license ends ${philippineDate(activeExpiry)}. This control changes the real server expiry for every connected device.`
+      : `The free-trial deadline is ${deadline}. Activate a paid license first, then use this control to test a shop-wide expiry.`);
     setText('ctDryRunEndsAtHelp', testingLicense
-      ? 'License-screen preview is active. Use Exit license test to return. Activating a key starts its real duration.'
-      : 'Choose a past time to open the license screen on this PC. This does not change the official Sep 26 deadline. Activating a key starts its real duration.');
+      ? 'License-screen preview is active. Use Preview license screen to return.'
+      : 'Enter the real server expiry in Philippine time. Every connected phone, PC, web tab, and installed app will lock after its next license check. A manager secret is required.');
     const resetButton = byId('ctResetProgramSchedule');
     if (resetButton) resetButton.disabled = !testingLicense;
-    setText('ctWelcomeDeadlineTitle', `Dry run closes ${deadline}`);
-    setText('ctWelcomeDeadlineCopy', `The free trial closes at ${deadline}. After that time, every account is signed out until the shop owner activates a valid CARTECH license.`);
+    setText('ctWelcomeDeadlineTitle', `Free trial closes ${deadline}`);
+    setText('ctWelcomeDeadlineCopy', `After the free trial closes, every account is signed out until the shop owner activates a valid CARTECH license.`);
     setText('ctWelcomeAccessRule', `Access ends when the account timer expires, access is revoked, the free trial closes, or the workshop license expires—whichever happens first. After the trial, the shop owner activates one workshop license; all connected office and mechanic installations then synchronize automatically. You only need to accept this user agreement once per version. Unsaved work may be lost when a session ends.`);
-    setText('ctDevelopmentMessage', testingLicense
-      ? `Developer license test for ${philippineDate(testTime)}. The official free trial remains open until ${deadline}. Activating a key is real and starts its duration.`
-      : `The CARTECH free trial ended at ${deadline}. The shop owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
+    setText('ctDevelopmentMessage', `This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
     setText('ctTermsVersionLabel', `CARTECH HYBRID QUEUE · Limited developer dry run · Terms version ${agreementVersion}`);
     setText('ctProgramDurationOption', paidLicenseActive() ? `Use workshop license expiry · ${philippineDate(licenseExpiry())}` : `Use free-trial deadline · ${deadline}`);
     setText('ctTesterAccountHelp', `All users accept the agreement once per version. The default follows ${paidLicenseActive() ? 'the active workshop license' : 'the free-trial deadline (' + deadline + ')'}. Choose a shorter account timer only when needed.`);
@@ -6765,7 +6776,7 @@ window.CartechAccess = (() => {
   function declineAgreement() { if (!agreementPreview && verifiedUser) signOut('declined'); }
   function showDevelopment(preview = false) {
     if (preview && (currentRole !== 'developer' || !identityValid())) return;
-    if (!preview && (!programClosed() || paidLicenseActive())) return;
+    if (!preview && workshopAccessActive()) return;
     const wasHidden = byId('ctUnderDevelopment').hidden;
     const testingLicense = licenseTestActive();
     underDevPreview = preview; agreementPreview = false;
@@ -6927,20 +6938,36 @@ window.CartechAccess = (() => {
     if (currentRole !== 'developer' || !sessionValid() || accountBusy) return;
     const input = byId('ctDryRunEndsAt');
     const selected = parseManilaDateTimeInput(input?.value);
-    if (!Number.isFinite(selected)) { message('ctProgramScheduleMessage', 'Choose a valid date and time in Philippine time.', true); return; }
-    if (selected > now()) { message('ctProgramScheduleMessage', 'For an immediate test, choose a time earlier than the current Philippine time.', true); return; }
-    if (!confirm('Open the license screen on this browser now? The official trial deadline will not change. Important: entering a license key will activate it and start its real duration.')) return;
+    const secret = String(byId('ctLicenseManagerSecret')?.value || '');
+    if (!Number.isFinite(selected)) { message('ctProgramScheduleMessage', 'Choose a valid Philippine expiry date and time.', true); return; }
+    if (secret.length < 8) { message('ctProgramScheduleMessage', 'Enter the private manager secret in the license date controls first.', true); return; }
+    if (!paidLicenseActive()) { message('ctProgramScheduleMessage', 'Activate a paid workshop license before changing its expiry.', true); return; }
+    if (!confirm(`Set the real workshop license expiry to ${philippineDate(selected)}? Every connected device will be locked when it verifies the new server date.`)) return;
     accountBusy = true;
     const button = byId('ctSaveProgramSchedule');
     if (button) button.disabled = true;
     try {
-      sessionStorage.setItem(LICENSE_TEST_PREVIEW_KEY, String(selected));
+      const result = await supabaseClient.rpc('cartech_set_shop_license_expiry', {
+        p_admin_secret:secret,
+        p_shop_id:currentShopId,
+        p_expires_at:new Date(selected).toISOString()
+      });
+      if (result.error) {
+        if (result.error.code === '42883' || /cartech_set_shop_license_expiry/i.test(result.error.message || '')) {
+          throw new Error('Install the CARTECH v28 Supabase upgrade first.');
+        }
+        throw result.error;
+      }
+      const dates = tenantResult(result.data);
+      if (!dates?.expires_at) throw new Error('The server did not return the updated expiry date.');
+      byId('ctLicenseManagerSecret').value = '';
       scheduleInputDirty = false;
-      message('ctProgramScheduleMessage', 'License test opened on this browser. Your real trial deadline and signed-in session are unchanged.', false);
+      message('ctProgramScheduleMessage', `Server expiry updated to ${philippineDate(dates.expires_at)}. Connected devices will sign out automatically on their next check.`, false);
+      tenantLastCheckedAt = 0;
       refreshProgramCopy();
-      showDevelopment(true);
+      await refreshLicenseStatus(true);
     } catch (error) {
-      message('ctProgramScheduleMessage', `Could not start the license test. ${error.message}`, true);
+      message('ctProgramScheduleMessage', `Could not update the shop-wide expiry. ${error.message}`, true);
     } finally {
       accountBusy = false;
       if (button) button.disabled = false;
@@ -6948,32 +6975,8 @@ window.CartechAccess = (() => {
   }
   function resetLicenseTest(event) {
     event?.preventDefault?.(); event?.stopPropagation?.();
-    try {
-      sessionStorage.removeItem(LICENSE_TEST_PREVIEW_KEY);
-      sessionStorage.removeItem('cartech_license_test_ends_at_v1');
-    } catch (_) {}
-    programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
     scheduleInputDirty = false;
-    byId('ctLicenseTestReset').hidden = true;
     refreshProgramCopy();
-    message('ctProgramScheduleMessage', `License test ended. Official deadline restored: ${philippineDate(DEFAULT_PROGRAM_ENDS_AT)}.`, false);
-    if (underDevPreview && currentRole === 'developer' && identityValid()) {
-      underDevPreview = agreementPreview = false;
-      byId('ctUnderDevelopment').hidden = true;
-      byId('loginScreen').classList.add('hidden');
-      byId('appShell').inert = false;
-      byId('appShell').classList.remove('hidden');
-      refresh();
-      window.CartechUI?.navigate?.('control');
-      return;
-    }
-    underDevPreview = agreementPreview = false;
-    developerLoginOpen = false;
-    byId('ctUnderDevelopment').hidden = true;
-    byId('loginScreen').classList.remove('hidden');
-    byId('appShell').inert = false;
-    window.CartechShopHours?.refresh?.();
-    void refreshLicenseStatus(true).then(() => refresh());
   }
   async function saveLoginNotice(event) {
     event?.preventDefault?.(); event?.stopPropagation?.();
@@ -7240,7 +7243,7 @@ window.CartechAccess = (() => {
   });
   function refreshAfterReturn() {
     checkExpiry();
-    if (!byId('ctUnderDevelopment').hidden || (paidLicenseActive() && licenseExpiry() - now() <= LICENSE_EXPIRY_REFRESH_WINDOW_MS)) {
+    if (!document.hidden) {
       lastGatePoll = Date.now();
       void refreshLicenseStatus(true);
     }
