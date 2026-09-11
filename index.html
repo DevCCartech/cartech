@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shopwide-license-v28-20260911">
+  <meta name="cartech-build" content="cartech-shopwide-license-v29-20260911">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -6110,7 +6110,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v28-20260911';
+  const buildId = 'cartech-shopwide-license-v29-20260911';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -6306,7 +6306,7 @@ window.CartechAccess = (() => {
       });
       if (result.error) {
         if (result.error.code === '42883' || /cartech_activate_shop_license/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v28 Supabase upgrade first, then try this key again.');
+          throw new Error('Install the CARTECH v29 Supabase upgrade first, then try this key again.');
         }
         throw result.error;
       }
@@ -6393,7 +6393,7 @@ window.CartechAccess = (() => {
       });
       if (result.error) {
         if (result.error.code === '42883' || /cartech_set_shop_license_start/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v28 Supabase upgrade first.');
+          throw new Error('Install the CARTECH v29 Supabase upgrade first.');
         }
         throw result.error;
       }
@@ -6954,7 +6954,7 @@ window.CartechAccess = (() => {
       });
       if (result.error) {
         if (result.error.code === '42883' || /cartech_set_shop_license_expiry/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v28 Supabase upgrade first.');
+          throw new Error('Install the CARTECH v29 Supabase upgrade first.');
         }
         throw result.error;
       }
