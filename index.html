@@ -339,6 +339,18 @@ button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline: 
 .ct-detail-section { border-top: 1px solid var(--ct-line); padding: 21px 0; }
 .ct-detail-section h3 { font-size: 14px; font-weight: 650; margin-bottom: 12px; }
 .ct-detail-section p { font-size: 16px; line-height: 1.65; color: #718096; overflow-wrap: anywhere; }
+.ct-work-history-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.ct-work-history-head h3 { margin-bottom:0; }
+.ct-work-history-count { flex:none; color:#7a899b; font-size:11px; font-weight:700; }
+.ct-work-history { display:grid; gap:10px; }
+.ct-work-entry { border:1px solid #e2eaf0; border-radius:11px; padding:12px; background:#fbfdfe; }
+.ct-work-entry-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.ct-work-entry-title { color:#334155; font-size:13px; font-weight:750; }
+.ct-work-entry-time { flex:none; color:#718096; font-size:11px; text-align:right; }
+.ct-work-entry p { margin:6px 0 0; font-size:13px; line-height:1.55; }
+.ct-work-entry-by { display:block; margin-top:7px; color:#8a98aa; font-size:11px; }
+.ct-work-entry-photos { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.ct-work-entry-photo { width:74px; height:58px; object-fit:cover; border:1px solid #dbe7ec; border-radius:7px; cursor:zoom-in; background:#fff; }
 .ct-detail-actions { display: flex; flex-wrap: wrap; gap: 9px; }
 .ct-detail-actions .ct-button { flex: 1; }
 .ct-team-row { border-bottom: 1px solid var(--ct-line); padding: 17px 0; display: flex; gap: 12px; align-items: flex-start; }
@@ -712,6 +724,28 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .df-review-list li { margin: 6px 0; }
 .df-review-details { border: 1px solid #e2ebeb; border-radius: 6px; font-size: 12px; margin-bottom: 22px; }
 .df-review-details summary { padding: 11px 13px; color: #386367; cursor: pointer; font-weight: 500; }
+.df-parts-log { margin: 20px 0 22px; padding: 15px; border: 1px solid #dce9e9; border-radius: 8px; background: #f8fbfb; }
+.df-parts-log-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px; }
+.df-parts-log-head h3 { margin:0; padding:0; border:0; }
+.df-parts-log-head button { flex:none; border:1px solid #2c888d; border-radius:6px; padding:7px 10px; background:#fff; color:#1b7074; font-size:11px; font-weight:650; cursor:pointer; }
+.df-parts-log-head button:hover { background:#eaf6f5; }
+.df-parts-log-intro { margin:0 0 12px; color:var(--df-muted); font-size:11px; line-height:1.5; }
+.df-parts-log-list { display:grid; gap:10px; }
+.df-part-card { padding:11px; border:1px solid #dfe9e9; border-radius:7px; background:#fff; }
+.df-part-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+.df-part-card-title { color:#376368; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+.df-part-remove { border:0; background:transparent; color:#a85a51; font-size:11px; cursor:pointer; }
+.df-part-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.df-part-grid .df-field { margin-bottom:0; }
+.df-part-grid .df-field-wide { grid-column:1 / -1; }
+.df-part-input { width:100%; min-height:36px; padding:8px 9px; border:1px solid #e2e9e9; border-bottom-color:#b9cbcd; border-radius:5px; background:#f8fafa; color:#243f43; font-size:12px; }
+.df-part-input:focus { outline:none; background:#fff; border-color:#278a8e; }
+.df-part-upload { display:block; width:100%; color:#607d80; font-size:11px; }
+.df-part-photos { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+.df-part-photo-wrap { position:relative; width:58px; height:48px; }
+.df-part-photo { width:100%; height:100%; object-fit:cover; border:1px solid #d5e2e2; border-radius:5px; background:#f5f7f7; }
+.df-part-photo-remove { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border:0; border-radius:50%; background:#a85a51; color:#fff; font-size:10px; line-height:18px; cursor:pointer; }
+.df-parts-empty { padding:10px; border:1px dashed #cddddd; border-radius:6px; color:#718789; font-size:11px; text-align:center; }
 .df-review-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .df-review-table td { padding: 7px 12px; border-top: 1px solid #ebf0f0; overflow-wrap: anywhere; }
 .df-review-table td:last-child { text-align: right; color: #52777a; }
@@ -739,6 +773,8 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .df-section-bar { padding: 8px 16px; font-size: 10px; }
   .df-section { padding: 18px 16px 22px; }
   .df-section h2 { font-size: 17px; }
+  .df-part-grid { grid-template-columns: 1fr; }
+  .df-part-grid .df-field-wide { grid-column: auto; }
   .df-section-intro { margin-bottom: 18px; font-size: 12px; }
   .df-reference { padding: 12px; gap: 11px; }
   .df-reference dd { font-size: 12px; }
@@ -2177,6 +2213,12 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
             <div id="ctDiagReviewMissing" class="df-notice" hidden></div><div id="ctDiagFindings"></div>
             <details class="df-review-details"><summary>View all inspection results</summary><table class="df-review-table" aria-label="All inspection results"><tbody id="ctDiagReviewRows"></tbody></table></details>
             <div class="df-field"><label for="ctDiagNotes">Mechanic findings & recommended work</label><textarea id="ctDiagNotes" class="df-input" rows="4" maxlength="4000" placeholder="For example: check brake-light wiring and replace bulb; replace low-beam headlight bulb; check A/C for low refrigerant; monitor engine oil."></textarea></div>
+            <div class="df-field"><label for="ctDiagWorkDone">Work completed / parts replaced</label><textarea id="ctDiagWorkDone" class="df-input" rows="3" maxlength="4000" placeholder="Example: replaced engine oil and filter; repaired brake-light wiring; replaced front brake pads."></textarea></div>
+            <section class="df-parts-log" aria-labelledby="ctReplacedPartsHeading">
+              <div class="df-parts-log-head"><h3 id="ctReplacedPartsHeading">Replaced parts &amp; reference photos</h3><button type="button" onclick="CartechDiagnostics.addReplacedPart()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add part</button></div>
+              <p class="df-parts-log-intro">Add one row for every part installed. Write the number printed on the filter or box and upload a clear label photo so Office can verify it on the next visit.</p>
+              <div id="ctReplacedPartsList" class="df-parts-log-list"></div>
+            </section>
             <label class="df-toggle df-acknowledgement"><input id="ctDiagReviewed" type="checkbox"><span>I have reviewed these findings and marked any item I could not inspect. <span class="df-required">*</span></span></label><p class="df-help">Saving attaches this inspection to the current job.</p>
           </section>
         </div>
@@ -2495,6 +2537,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let state = currentShopId === CARTECH_MAIN_SHOP_ID ? [...CORE_INITIAL_JOBS] : [];
     let completedArchive = [];
     let isCompletedLoaded = false;
+    let completedArchiveLoading = null;
 
     let currentFilter = 'inprogress';
     let currentUser = localStorage.getItem('cartech_auth_user') || null;
@@ -3708,22 +3751,29 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
     async function fetchCompletedJobsArchive() {
       if (!window.CartechAccess?.sessionValid()) return;
-      try {
-        const res = await cartechFetch(`${API_URL}?status=eq.completed&order=created_at.desc&limit=100`, {
-          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            if (!window.CartechAccess?.sessionValid()) return;
-            completedArchive = data;
-            isCompletedLoaded = true;
-            render();
+      if (isCompletedLoaded) return;
+      if (completedArchiveLoading) return completedArchiveLoading;
+      completedArchiveLoading = (async () => {
+        try {
+          const res = await cartechFetch(`${API_URL}?status=eq.completed&order=created_at.desc&limit=100`, {
+            headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              if (!window.CartechAccess?.sessionValid()) return;
+              completedArchive = data;
+              isCompletedLoaded = true;
+              render();
+            }
           }
+        } catch (err) {
+          console.error("Failed to load completed archive:", err);
+        } finally {
+          completedArchiveLoading = null;
         }
-      } catch (err) {
-        console.error("Failed to load completed archive:", err);
-      }
+      })();
+      return completedArchiveLoading;
     }
 
     let heartbeatTick = 0;
@@ -4111,6 +4161,11 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
       const info = parsePartsInfo(currentItem ? currentItem.auto_schedule_slot : '');
       const mech = resolveMechanicName(currentItem) || currentUser || 'MECHANIC';
+      const now = new Date();
+      const workLog = Array.isArray(info.workLog) ? [...info.workLog] : [];
+      const addLog = entry => {
+        if (!workLog.some(item => item.kind === entry.kind && item.action === entry.action && String(item.text || '') === String(entry.text || ''))) workLog.push(entry);
+      };
 
       if (newStatus === 'inprogress' && !slot) {
         const myActiveJobCount = getMechanicActiveCount(currentUser);
@@ -4125,7 +4180,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         if (info.diagData) tags += ` [DIAG_DATA]${window.CartechDiagnostics.serialize(info.diagData)}[/DIAG_DATA]`;
         if (info.vin) tags += ` [VIN:${info.vin}]`;
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
-        slot = tags;
+        addLog(createWorkLogEntry('status', 'Work started', 'Vehicle accepted and work started.', [], mech, now));
+        slot = appendWorkLogTag(tags, workLog);
       } else if (newStatus === 'completed') {
         let tags = `Completed Service [MECH:${mech.toLowerCase()}]`;
         if (info.images && info.images.length > 0) tags += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
@@ -4133,7 +4189,11 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         if (info.diagData) tags += ` [DIAG_DATA]${window.CartechDiagnostics.serialize(info.diagData)}[/DIAG_DATA]`;
         if (info.vin) tags += ` [VIN:${info.vin}]`;
         if (info.text) tags += ` [PARTS_LOGGED]${info.text}[/PARTS_LOGGED]`;
-        slot = tags;
+        const workText = String(info.diagData?.workCompleted || '').trim();
+        if (info.text) addLog(createWorkLogEntry('parts', 'Parts replaced / completed', info.text, info.images || [], mech, now));
+        if (workText) addLog(createWorkLogEntry('work', 'Work completed', workText, [], mech, now));
+        addLog(createWorkLogEntry('status', 'Job completed', 'Mechanic marked the job complete.', [], mech, now));
+        slot = appendWorkLogTag(tags, workLog);
         playLoudVehicleHorn();
       }
 
@@ -4186,10 +4246,12 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       lastSeenChatCounts[jobId] = updatedChatList.length;
       saveLastSeenChats();
 
+      const readyLog = [...(info.workLog || []), createWorkLogEntry('parts', 'Parts ready for pick-up', 'Office marked the requested parts ready at the front desk.', info.images || [], 'OFFICE', new Date())];
       let slot = `Bay Floor [MECH:${resolvedMech.toLowerCase()}] [CHAT]${window.CartechDiagnostics.serialize(updatedChatList)}[/CHAT]`;
       if (info.images && info.images.length > 0) slot += ` [IMGS]${JSON.stringify(info.images)}[/IMGS]`;
       if (info.diagData) slot += ` [DIAG_DATA]${window.CartechDiagnostics.serialize(info.diagData)}[/DIAG_DATA]`;
       if (info.vin) slot += ` [VIN:${info.vin}]`;
+      slot = appendWorkLogTag(slot, readyLog);
 
       await setStatus(jobId, 'inprogress', slot);
       alert(`Vehicle ${job.vehicle} returned to bay. Notification sent.`);
@@ -4367,6 +4429,8 @@ async function submitPartsRequest() {
         if (info.diagData) slot += ` [DIAG_DATA]${encode(info.diagData)}[/DIAG_DATA]`;
         const vin = resolveVinNumber(job);
         if (vin && vin !== '-') slot += ` [VIN:${vin}]`;
+        const partLog = [...(info.workLog || []), createWorkLogEntry('parts', 'Parts requested', partDesc, photos, assigned || actor, new Date())];
+        slot = appendWorkLogTag(slot, partLog);
         const saved = await cartechFetch(`${API_URL}?id=eq.${encodeURIComponent(jobId)}`, { method: 'PATCH', headers: { ...HEADERS, Prefer: 'return=representation' }, signal: controller.signal, body: JSON.stringify({ status: 'waiting_parts', auto_schedule_slot: slot }) });
         if (!saved.ok) throw new Error('The parts request was not accepted.');
         const result = await saved.json();
@@ -4394,12 +4458,34 @@ async function submitPartsRequest() {
       return mMatch ? mMatch[1].toUpperCase() : null;
     }
 
+    function createWorkLogEntry(kind, action, text = '', images = [], by = currentUser || 'staff', stamp = new Date()) {
+      const date = stamp instanceof Date ? stamp : new Date(stamp);
+      return {
+        id: `WL-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+        kind, action, text: String(text || '').trim(), images: Array.isArray(images) ? images : [],
+        by: String(by || 'staff'), atISO: date.toISOString(), at: date.toLocaleString()
+      };
+    }
+
+    function encodeWorkLog(entries) {
+      const safeEntries = Array.isArray(entries) ? entries : [];
+      if (window.CartechDiagnostics?.serialize) return window.CartechDiagnostics.serialize(safeEntries);
+      return JSON.stringify(safeEntries).replace(/[<>&\[\]]/g, char => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`);
+    }
+
+    function appendWorkLogTag(slot, entries) {
+      const base = String(slot || '').replace(/\[WORK_LOG\][\s\S]*?\[\/WORK_LOG\]/gi, '').trim();
+      return entries?.length ? `${base} [WORK_LOG]${encodeWorkLog(entries)}[/WORK_LOG]`.trim() : base;
+    }
+
     function parsePartsInfo(rawStr) {
-      if (!rawStr) return { text: '', images: [], chatList: [], diagData: null, vin: null };
+      if (!rawStr) return { text: '', images: [], chatList: [], diagData: null, vin: null, workLog: [] };
       let images = [];
       let chatList = [];
       let diagData = null;
       let vin = null;
+      let workLog = [];
+      let partsLogged = '';
       let targetStr = String(rawStr);
 
       const multiMatch = targetStr.match(/\[IMGS\]([\s\S]*?)\[\/IMGS\]/);
@@ -4422,10 +4508,23 @@ async function submitPartsRequest() {
         vin = vinMatch[1].toUpperCase();
       }
 
+      const workLogMatch = targetStr.match(/\[WORK_LOG\]([\s\S]*?)\[\/WORK_LOG\]/i);
+      if (workLogMatch) {
+        try {
+          const parsed = JSON.parse(workLogMatch[1]);
+          if (Array.isArray(parsed)) workLog = parsed;
+        } catch(e){}
+      }
+
+      const partsLoggedMatch = targetStr.match(/\[PARTS_LOGGED\]([\s\S]*?)\[\/PARTS_LOGGED\]/i);
+      if (partsLoggedMatch) partsLogged = partsLoggedMatch[1].trim();
+
       const text = targetStr
         .replace(/\[IMGS\][\s\S]*?\[\/IMGS\]/gi, '')
         .replace(/\[CHAT\][\s\S]*?\[\/CHAT\]/gi, '')
         .replace(/\[DIAG_DATA\][\s\S]*?\[\/DIAG_DATA\]/gi, '')
+        .replace(/\[WORK_LOG\][\s\S]*?\[\/WORK_LOG\]/gi, '')
+        .replace(/\[PARTS_LOGGED\][\s\S]*?\[\/PARTS_LOGGED\]/gi, '')
         .replace(/\[VIN:.*?\]/gi, '')
         .replace(/\[MECH:.*?\]/gi, '')
         .replace(/Waiting for Car Parts:/gi, '')
@@ -4433,7 +4532,7 @@ async function submitPartsRequest() {
         .replace(/Completed Service/gi, '')
         .trim();
 
-      return { text, images, chatList, diagData, vin };
+      return { text: text || partsLogged, images, chatList, diagData, vin, workLog };
     }
 
     function openMessengerChatForJob(jobId, mechName) {
@@ -5218,9 +5317,18 @@ window.CartechUI = (() => {
   function filterJobs(jobs) {
     const term = ui.query.trim().toLowerCase();
     if (!term) return jobs;
-    return jobs.filter(job => [job.id, job.phone, job.customer, job.vehicle, job.plate, job.details, resolveMechanicName(job), resolveVinNumber(job)].some(value => String(value || '').toLowerCase().includes(term)));
+    return jobs.filter(job => {
+      const parts = parsePartsInfo(job.auto_schedule_slot);
+      const historyText = (parts.workLog || []).flatMap(item => [item.action, item.text, item.by]);
+      const replacedPartText = (parts.diagData?.replacedParts || []).flatMap(part => [part.name, part.partNumber, part.notes]);
+      return [job.id, job.phone, job.customer, job.vehicle, job.plate, job.details, resolveMechanicName(job), resolveVinNumber(job), parts.text, parts.diagData?.workCompleted, ...replacedPartText, ...historyText].some(value => String(value || '').toLowerCase().includes(term));
+    });
   }
-  function search(value) { ui.query = value; render(); }
+  async function search(value) {
+    ui.query = value;
+    if (ui.query.trim() && officeViewer() && !isCompletedLoaded) await fetchCompletedJobsArchive();
+    render();
+  }
   function clearSearch() { ui.query = ''; const input = byId('ctSearch'); if (input) input.value = ''; }
 
   async function selectFilter(value) {
@@ -5276,6 +5384,55 @@ window.CartechUI = (() => {
   }
   function closeDispatch() { close('ctDispatchDialog'); }
 
+  function workEntryTime(entry) {
+    if (entry?.at) return String(entry.at);
+    if (entry?.atISO && Number.isFinite(Date.parse(entry.atISO))) return new Date(entry.atISO).toLocaleString();
+    return 'Date/time not recorded';
+  }
+
+  function workHistoryFor(job, parts) {
+    const entries = Array.isArray(parts.workLog) ? parts.workLog.map(item => ({ ...item })) : [];
+    const mechanic = resolveMechanicName(job) || parts.diagData?.savedBy || 'Mechanic';
+    const has = (kind, text) => entries.some(item => item.kind === kind && (!text || String(item.text || '') === text));
+    const savedAtISO = parts.diagData?.savedAtISO;
+    const savedAt = parts.diagData?.savedAt;
+    const savedBy = parts.diagData?.savedBy || mechanic;
+    const inspectionText = String(parts.diagData?.workCompleted || '').trim();
+    if (inspectionText && !has('work', inspectionText)) {
+      entries.push({ kind: 'work', action: 'Work completed', text: inspectionText, images: [], by: savedBy, atISO: savedAtISO, at: savedAt });
+    }
+    const replacedParts = Array.isArray(parts.diagData?.replacedParts) ? parts.diagData.replacedParts : [];
+    replacedParts.forEach((part, index) => {
+      const partId = String(part?.id || `replaced-part-${index}`);
+      if (entries.some(item => item.partId === partId)) return;
+      const details = [part?.name, part?.partNumber ? `#${part.partNumber}` : '', part?.notes].filter(Boolean).join(' · ');
+      if (!details && !(Array.isArray(part?.images) && part.images.length)) return;
+      entries.push({ kind: 'part', partId, action: 'Replaced part', text: details || 'Part replaced', images: Array.isArray(part?.images) ? part.images : [], by: part?.recordedBy || savedBy, atISO: part?.recordedAtISO || savedAtISO, at: part?.recordedAt || savedAt });
+    });
+    const partText = String(parts.text || '').trim();
+    if (partText && !entries.some(item => item.kind === 'parts')) {
+      entries.push({ kind: 'parts', action: job.status === 'completed' ? 'Parts recorded at completion' : 'Parts requested', text: partText, images: parts.images || [], by: mechanic, atISO: savedAtISO, at: savedAt || job.time_created });
+    }
+    if (job.status === 'completed' && !entries.some(item => item.kind === 'status' && /completed/i.test(String(item.action || '')))) {
+      entries.push({ kind: 'status', action: 'Job completed', text: 'Completion time was not recorded in this older job record.', images: [], by: mechanic, atISO: savedAtISO, at: savedAt || job.time_created });
+    }
+    return entries.sort((a, b) => {
+      const aTime = Date.parse(a.atISO || '') || 0;
+      const bTime = Date.parse(b.atISO || '') || 0;
+      return aTime - bTime;
+    });
+  }
+
+  function workHistoryMarkup(entries) {
+    if (!entries.length) return '<section class="ct-detail-section"><div class="ct-work-history-head"><h3>Work &amp; parts history</h3><span class="ct-work-history-count">No records yet</span></div><p>No mechanic work or parts have been recorded yet.</p></section>';
+    const cards = entries.map(entry => {
+      const photos = Array.isArray(entry.images) ? entry.images.filter(Boolean) : [];
+      const photoMarkup = photos.length ? `<div class="ct-work-entry-photos">${photos.map(src => `<img class="ct-work-entry-photo" src="${safe(src)}" alt="Reference photo for ${safe(entry.action || 'work record')}" onclick="openPhotoViewer('${src}')">`).join('')}</div>` : '';
+      return `<article class="ct-work-entry"><div class="ct-work-entry-head"><strong class="ct-work-entry-title">${safe(entry.action || 'Work update')}</strong><time class="ct-work-entry-time">${safe(workEntryTime(entry))}</time></div>${entry.text ? `<p>${safe(entry.text)}</p>` : ''}<small class="ct-work-entry-by">Recorded by ${safe(entry.by || 'staff')}${photos.length ? ` · ${photos.length} reference photo${photos.length === 1 ? '' : 's'}` : ''}</small>${photoMarkup}</article>`;
+    }).join('');
+    return `<section class="ct-detail-section"><div class="ct-work-history-head"><h3>Work &amp; parts history</h3><span class="ct-work-history-count">${entries.length} record${entries.length === 1 ? '' : 's'}</span></div><div class="ct-work-history">${cards}</div></section>`;
+  }
+
   function renderJobDetails() {
     const job = findJob(ui.selectedJob);
     if (!job) {
@@ -5284,6 +5441,7 @@ window.CartechUI = (() => {
     }
     const mech = resolveMechanicName(job);
     const parts = parsePartsInfo(job.auto_schedule_slot);
+    const workHistory = workHistoryFor(job, parts);
     const canChat = management() || isAssigned(job);
     const canDiag = window.CartechDiagnostics?.canSave(job);
     const canEditDiagnosticNumber = window.CartechDiagnostics?.canPrint() === true;
@@ -5303,6 +5461,7 @@ window.CartechUI = (() => {
       </dl>
       <section class="ct-detail-section"><h3>Job instructions</h3><p>${safe(job.details || 'Standard intake')}</p></section>
       ${job.status === 'waiting_parts' ? `<section class="ct-detail-section"><h3>Parts requested${mech ? ' by ' + safe(mech) : ''}</h3><p>${safe(parts.text || 'Replacement parts required')}</p><p class="ct-panel-caption">${parts.images.length} attached photo${parts.images.length === 1 ? '' : 's'} · Photos are available on the vehicle’s queue card.</p></section>` : ''}
+      ${workHistoryMarkup(workHistory)}
       <div class="ct-detail-actions">${canChat ? action('chat', 'Open job chat', 'fa-comment-dots') : ''}${canDiag ? action('diagnostic', currentRole === 'tester' ? 'Try diagnostics' : 'Edit inspection', 'fa-clipboard-list') : ''}${canEditDiagnosticNumber ? action('diagnostic-number', 'Edit diagnostic #', 'fa-pen-to-square') : ''}${window.CartechDiagnostics?.canEditVin(job) ? action('vin', 'Add / edit VIN', 'fa-pen') : ''}${job.status === 'waiting_parts' && management() ? action('parts-ready', 'Parts ready to pick up', 'fa-box-open', true) : ''}</div>`;
   }
 
@@ -5385,9 +5544,12 @@ window.CartechUI = (() => {
     setText('ctCapacityTotal', `/ ${names().length} mechanics`);
     setText('ctCapacityNote', `Below the ${MAX_JOBS_PER_MECHANIC}-job limit`);
     byId('ctCapacityBars').innerHTML = names().map((_, i) => `<span class="${i < available ? 'ct-free' : ''}"></span>`).join('');
-    const source = currentFilter === 'inspections' ? submittedInspections() : currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? activeJobs : activeJobs.filter(job => job.status === currentFilter);
+    const currentSource = currentFilter === 'inspections' ? submittedInspections() : currentFilter === 'completed' ? completedArchive : currentFilter === 'all' ? activeJobs : activeJobs.filter(job => job.status === currentFilter);
+    const source = ui.query.trim() && isCompletedLoaded && currentFilter !== 'completed'
+      ? [...new Map([...activeJobs, ...completedArchive].map(job => [job.id, job])).values()]
+      : currentSource;
     const visible = filterJobs(source);
-    setText('ctJobsHeading', currentFilter === 'inspections' ? 'Submitted inspections' : currentFilter === 'completed' ? 'Completed jobs' : 'Workshop jobs');
+    setText('ctJobsHeading', ui.query.trim() ? 'Search results' : currentFilter === 'inspections' ? 'Submitted inspections' : currentFilter === 'completed' ? 'Completed jobs' : 'Workshop jobs');
     byId('ctJobsHeading').classList.toggle('ct-inspection-heading', currentFilter === 'inspections');
     if (!visible.length && inOffice) {
       byId('officeQueueList').innerHTML = currentFilter === 'inspections'
@@ -5468,6 +5630,7 @@ window.CartechDiagnostics = (() => {
   const allowedStatus = (value, field) => (field?.choices ? field.choices.some(choice => choice[0] === value) : ['good', 'not', 'na', 'uninspected'].includes(value)) ? value : '';
   const needsAttention = value => ['not', 'monitor', 'replace'].includes(value);
   let step = 0, dirty = false, saving = false, returnFocus = null, noticeTimer;
+  let replacedPartDrafts = [];
   let openedVin = '', openedInspection = 'null', vinJobId = null, vinOriginal = '', vinSaving = false, vinReturnFocus = null, launchBusy = false, launchTarget = null;
   const launched = () => featureFlags[releaseKey] === true;
   const normalizeVin = value => String(value ?? '').trim().toUpperCase().replace(/\s+/g, '');
@@ -5475,6 +5638,128 @@ window.CartechDiagnostics = (() => {
   const validVin = value => /^[A-Z0-9][A-Z0-9-]{2,39}$/.test(value);
   const vinMessage = 'Use 3–40 letters, numbers, or hyphens for the VIN / chassis number.';
   const serialize = data => JSON.stringify(data).replace(/"(?:\\.|[^"\\])*"/g, literal => literal.replace(/[<>&\[\]]/g, char => '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0')));
+
+  function normalizeReplacedParts(value) {
+    if (!Array.isArray(value)) return [];
+    return value.slice(0, 20).map((part, index) => ({
+      id: String(part?.id || `part-${index + 1}-${Math.random().toString(36).slice(2, 7)}`),
+      name: String(part?.name || part?.partName || '').trim(),
+      partNumber: String(part?.partNumber || part?.number || part?.code || '').trim(),
+      notes: String(part?.notes || '').trim(),
+      images: Array.isArray(part?.images) ? part.images.filter(Boolean).slice(0, 6) : [],
+      recordedAtISO: String(part?.recordedAtISO || part?.addedAtISO || '').trim(),
+      recordedAt: String(part?.recordedAt || part?.addedAt || '').trim(),
+      recordedBy: String(part?.recordedBy || part?.by || '').trim()
+    })).filter(part => part.name || part.partNumber || part.notes || part.images.length);
+  }
+
+  function markReplacedPartsDirty() {
+    if (saving) return;
+    dirty = true;
+    byId('ctDiagReviewed').checked = false;
+    byId('ctDiagSaveStatus').textContent = 'Unsaved changes';
+    clearError();
+    updateProgress();
+  }
+
+  function renderReplacedParts() {
+    const host = byId('ctReplacedPartsList');
+    if (!host) return;
+    if (!replacedPartDrafts.length) {
+      host.innerHTML = '<div class="df-parts-empty">No replaced parts added yet. Add a row after installing a filter, fluid, belt, brake part, or other component.</div>';
+      return;
+    }
+    host.innerHTML = replacedPartDrafts.map((part, index) => {
+      const photos = Array.isArray(part.images) ? part.images : [];
+      const photoMarkup = photos.length ? `<div class="df-part-photos">${photos.map((src, photoIndex) => `<div class="df-part-photo-wrap"><img class="df-part-photo" src="${escapeHTML(src)}" alt="Reference photo for ${escapeHTML(part.name || 'replaced part')}"><button type="button" class="df-part-photo-remove" onclick="CartechDiagnostics.removeReplacedPartPhoto(${index},${photoIndex})" aria-label="Remove photo">×</button></div>`).join('')}</div>` : '';
+      return `<article class="df-part-card"><div class="df-part-card-head"><span class="df-part-card-title">Part ${index + 1}</span><button type="button" class="df-part-remove" onclick="CartechDiagnostics.removeReplacedPart(${index})"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Remove</button></div><div class="df-part-grid"><div class="df-field"><label for="ctReplacedPartName${index}">Part name</label><input id="ctReplacedPartName${index}" class="df-part-input" type="text" maxlength="120" value="${escapeHTML(part.name)}" placeholder="Oil filter, fuel filter, brake pad" oninput="CartechDiagnostics.updateReplacedPart(${index},'name',this.value)"></div><div class="df-field"><label for="ctReplacedPartNumber${index}">Part / filter number</label><input id="ctReplacedPartNumber${index}" class="df-part-input" type="text" maxlength="80" value="${escapeHTML(part.partNumber)}" placeholder="Number printed on the part" oninput="CartechDiagnostics.updateReplacedPart(${index},'partNumber',this.value)"></div><div class="df-field df-field-wide"><label for="ctReplacedPartNotes${index}">Notes (optional)</label><input id="ctReplacedPartNotes${index}" class="df-part-input" type="text" maxlength="240" value="${escapeHTML(part.notes)}" placeholder="Brand, size, location, or reason for replacement" oninput="CartechDiagnostics.updateReplacedPart(${index},'notes',this.value)"></div><div class="df-field df-field-wide"><label for="ctReplacedPartPhoto${index}">Photo of label / installed part</label><input id="ctReplacedPartPhoto${index}" class="df-part-upload" type="file" accept="image/*" multiple onchange="CartechDiagnostics.addReplacedPartPhotos(event,${index})"><small class="df-help">Up to 6 compressed photos for this part.</small>${photoMarkup}</div></div></article>`;
+    }).join('');
+  }
+
+  function addReplacedPart() {
+    if (replacedPartDrafts.length >= 20) { alert('You can add up to 20 replaced parts per inspection.'); return; }
+    replacedPartDrafts.push({ id: `part-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, name: '', partNumber: '', notes: '', images: [], recordedAtISO: '', recordedAt: '', recordedBy: '' });
+    renderReplacedParts();
+    markReplacedPartsDirty();
+    setTimeout(() => byId(`ctReplacedPartName${replacedPartDrafts.length - 1}`)?.focus(), 0);
+  }
+
+  function updateReplacedPart(index, field, value) {
+    const part = replacedPartDrafts[index];
+    if (!part || !['name', 'partNumber', 'notes'].includes(field)) return;
+    part[field] = String(value || '');
+  }
+
+  function removeReplacedPart(index) {
+    if (!replacedPartDrafts[index]) return;
+    replacedPartDrafts.splice(index, 1);
+    renderReplacedParts();
+    markReplacedPartsDirty();
+  }
+
+  function removeReplacedPartPhoto(index, photoIndex) {
+    const part = replacedPartDrafts[index];
+    if (!part?.images?.[photoIndex]) return;
+    part.images.splice(photoIndex, 1);
+    renderReplacedParts();
+    markReplacedPartsDirty();
+  }
+
+  function readReplacedPartPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Could not read that photo.'));
+      reader.onload = event => {
+        const image = new Image();
+        image.onerror = () => reject(new Error('That file is not a readable image.'));
+        image.onload = () => {
+          const maxDim = 900;
+          let width = image.width, height = image.height;
+          if (width > maxDim || height > maxDim) {
+            const scale = maxDim / Math.max(width, height);
+            width = Math.max(1, Math.round(width * scale)); height = Math.max(1, Math.round(height * scale));
+          }
+          const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        };
+        image.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function addReplacedPartPhotos(event, index) {
+    const part = replacedPartDrafts[index];
+    const files = Array.from(event?.target?.files || []);
+    if (event?.target) event.target.value = '';
+    if (!part || !files.length) return;
+    const remaining = Math.max(0, 6 - part.images.length);
+    if (!remaining) { alert('This part already has the maximum of 6 photos.'); return; }
+    try {
+      for (const file of files.slice(0, remaining)) {
+        const image = await readReplacedPartPhoto(file);
+        if (!part.images.includes(image)) part.images.push(image);
+      }
+      if (files.length > remaining) alert('Only 6 photos can be saved for each part.');
+      renderReplacedParts();
+      markReplacedPartsDirty();
+    } catch (error) { alert(error.message || 'Could not add the photo.'); }
+  }
+
+  function collectReplacedParts() {
+    const stamp = new Date();
+    return replacedPartDrafts.filter(part => part.name.trim() || part.partNumber.trim() || part.notes.trim() || part.images.length).map(part => ({
+      id: part.id,
+      name: part.name.trim(),
+      partNumber: part.partNumber.trim(),
+      notes: part.notes.trim(),
+      images: Array.isArray(part.images) ? part.images.slice(0, 6) : [],
+      recordedAtISO: part.recordedAtISO || stamp.toISOString(),
+      recordedAt: part.recordedAt || stamp.toLocaleString(),
+      recordedBy: part.recordedBy || currentUser || 'mechanic'
+    }));
+  }
 
   function currentJob() {
     const id = byId('diagFormTargetJobId').value;
@@ -5758,7 +6043,7 @@ window.CartechDiagnostics = (() => {
     byId('ctDiagSave').hidden = step !== sectionNames.length - 1;
     byId('ctDiagHero').hidden = step !== 0;
     byId('ctDiagScroll').scrollTop = 0;
-    if (step === reviewSection) renderReview();
+    if (step === reviewSection) { renderReview(); renderReplacedParts(); }
     if (focus) byId('ctDiagHeading' + step).focus({ preventScroll: true });
     const nav = byId('ctDiagSteps'), active = byId('ctDiagStep' + step);
     if (active.offsetLeft < nav.scrollLeft || active.offsetLeft + active.offsetWidth > nav.scrollLeft + nav.clientWidth) {
@@ -5813,6 +6098,7 @@ window.CartechDiagnostics = (() => {
     returnFocus = document.activeElement;
     form.reset();
     const data = window.CartechAccess?.previewData(jobId) || parsePartsInfo(job.auto_schedule_slot).diagData || {};
+    replacedPartDrafts = normalizeReplacedParts(data.replacedParts);
     openedInspection = JSON.stringify(parsePartsInfo(job.auto_schedule_slot).diagData);
     openedVin = jobVin(job);
     const number = data.diagnosticNumber || diagnosticNumber(job);
@@ -5836,6 +6122,7 @@ window.CartechDiagnostics = (() => {
     byId('chk_other_errors').value = data.other_errors ?? '';
     byId('paperLeakOrigin').value = data.leaks?.origin ?? '';
     byId('ctDiagNotes').value = data.inspectionNotes ?? '';
+    byId('ctDiagWorkDone').value = data.workCompleted ?? '';
     byId('ctDiagBatteryResting').value = data.battery?.engineOffVoltage ?? '';
     byId('ctDiagBatteryCharging').value = data.battery?.engineRunningVoltage ?? '';
     byId('ctDiagBatteryNotes').value = data.battery?.notes ?? '';
@@ -5861,6 +6148,7 @@ window.CartechDiagnostics = (() => {
     if (!modal.open) modal.showModal();
     goTo(0, false);
     updateProgress();
+    renderReplacedParts();
   }
   function close(force = false) {
     if (saving) return;
@@ -5873,7 +6161,7 @@ window.CartechDiagnostics = (() => {
   function buildPayload() {
     const existing = parsePartsInfo(currentJob()?.auto_schedule_slot).diagData || {};
     const data = {
-      ...existing, formVersion: 4,
+      ...existing, formVersion: 5,
       diagnosticNumber: byId('ctDiagNumber').value.trim(),
       inspectionDate: byId('ctDiagInspectionDate').value,
       phoneNumber: byId('paperPhoneNumber').value.trim(),
@@ -5881,6 +6169,8 @@ window.CartechDiagnostics = (() => {
       mileage: byId('paperMileage').value,
       other_errors: byId('chk_other_errors').value.trim(),
       inspectionNotes: byId('ctDiagNotes').value.trim(),
+      workCompleted: byId('ctDiagWorkDone').value.trim(),
+      replacedParts: collectReplacedParts(),
       battery: { engineOffVoltage: byId('ctDiagBatteryResting').value, engineRunningVoltage: byId('ctDiagBatteryCharging').value, notes: byId('ctDiagBatteryNotes').value.trim() },
       lights: {}, lightStatus: {}, leaks: { origin: byId('paperLeakOrigin').value.trim() }, leakStatus: {},
       tires: {}, brakes: {}, measurementStatus: {}, reviewed: true,
@@ -6044,6 +6334,7 @@ window.CartechDiagnostics = (() => {
   }
   function resetSession() {
     dirty = false; saving = false; vinSaving = false;
+    replacedPartDrafts = [];
     form.reset(); byId('diagFormTargetJobId').value = ''; setBusy(false);
     if (modal.open) modal.close(); modal.classList.add('hidden');
     if (byId('ctVinDialog').open) byId('ctVinDialog').close();
@@ -6074,7 +6365,7 @@ window.CartechDiagnostics = (() => {
   });
   window.addEventListener('afterprint', clearPrintView);
   refreshLaunch();
-  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview, updateDiagnosticNumber, showSavedNotice };
+  return { serialize, canUse, canPrint, canSave, summary, buildReport, resetSession, open, close, save, print, downloadReport, goTo, next: () => goTo(step + 1), back: () => goTo(step - 1), canEditVin, openVin, closeVin, saveVin, setLaunch, toggleLaunch, refreshLaunch, preview, updateDiagnosticNumber, showSavedNotice, addReplacedPart, updateReplacedPart, removeReplacedPart, addReplacedPartPhotos, removeReplacedPartPhoto };
 })();
 
   </script>
