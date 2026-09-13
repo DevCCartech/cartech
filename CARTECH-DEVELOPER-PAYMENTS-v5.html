@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review v5</title>
+  <title>CARTECH Payment Review v6 Clean</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
     .shell{min-height:100vh;display:grid;grid-template-columns:255px minmax(0,1fr)}aside{background:var(--navy);color:#fff;padding:28px 22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--orange);font-size:20px;font-weight:900}.brand strong{display:block;font-size:17px;letter-spacing:.04em}.brand small{color:#9fb0c3;font-size:10px;letter-spacing:.13em}.side-note{border:1px solid #ffffff1c;background:#ffffff0b;border-radius:14px;padding:15px}.side-note strong{font-size:12px}.side-note p{font-size:11px;color:#b7c5d4;margin:7px 0 0}.secure{margin-top:auto;color:#91a6b9;font-size:10px}
     main{padding:30px;max-width:1320px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.top h1{font-size:28px;margin:0;letter-spacing:-.03em}.top p{color:var(--muted);margin:6px 0 0}.badge{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:11px;font-weight:750}
-    .card{background:var(--white);border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 34px #23384d0c;overflow:hidden}.card-head{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.card-head h2{font-size:16px;margin:0}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.card-body{padding:21px 22px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:11px;font-weight:750;color:#3d5065;text-transform:uppercase;letter-spacing:.05em}.input{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:10px;padding:11px 12px;color:var(--ink);background:#fbfcfd;outline:none}.input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #cfd9e4;background:#fff;color:#31465d;border-radius:9px;padding:10px 13px;font-weight:700}.btn:hover{background:#f5f8fa}.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}.btn.primary:hover{background:#df5d27}.btn.danger{color:var(--red);border-color:#f0cbd2}.btn:disabled{opacity:.55;cursor:wait}.status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f2f7f7;color:#37686d;font-size:12px}.status.error{background:#fff1f2;color:var(--red)}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 34px #23384d0c;overflow:hidden}.card-head{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.card-head h2{font-size:16px;margin:0}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.card-body{padding:21px 22px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:11px;font-weight:750;color:#3d5065;text-transform:uppercase;letter-spacing:.05em}.input{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:10px;padding:11px 12px;color:var(--ink);background:#fbfcfd;outline:none}.input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #cfd9e4;background:#fff;color:#31465d;border-radius:9px;padding:10px 13px;font-weight:700}.btn:hover{background:#f5f8fa}.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}.btn.primary:hover{background:#df5d27}.btn.danger{color:var(--red);border-color:#f0cbd2}.btn.quiet{background:#f7f9fb;color:#52657a;border-color:#dce4ed}.btn:disabled{opacity:.55;cursor:wait}.status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f2f7f7;color:#37686d;font-size:12px}.status.error{background:#fff1f2;color:var(--red)}
     .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:220px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.pending,.pill.not_started{background:#fff7e8;color:var(--gold)}.pill.approved,.pill.active{background:#e4f7ef;color:var(--green)}.pill.rejected,.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}
-    .section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-badge{white-space:nowrap;padding:5px 8px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.license-toolbar-note{font-size:11px;color:var(--muted)}.license-control-card{border-color:#b7dfd5;box-shadow:0 12px 34px #087f8012}.requests{display:grid;gap:12px;margin-top:16px}.request{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:17px;background:#fff}.request.pending{border-color:#ebd29f;background:#fffdf8}.request h3{margin:0;font-size:15px}.request-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 15px;margin-top:10px;font-size:12px}.request-meta dt{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.request-meta dd{margin:0;font-weight:700;overflow-wrap:anywhere}.receipt{width:100%;height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#f7f9fb}.request-side{display:grid;align-content:start;gap:9px}.request-side .actions{display:grid}.request-side .btn{width:100%}.request-note{font-size:11px;color:var(--muted);margin:0}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}.license-list{display:grid;gap:12px;margin-top:14px}.license-row{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:18px;background:#fff;align-items:start}.license-row.current{border-color:#35b98b;background:#f4fffa;box-shadow:0 0 0 2px #35b98b22}.license-row h3{margin:0;font-size:14px;line-height:1.35}.license-row p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.license-side{display:grid;align-content:start;gap:8px;border-left:1px solid #edf1f5;padding-left:16px}.license-side .btn{width:100%;font-size:11px;padding:9px 10px;min-height:38px}.license-side .pill{justify-self:start}.license-help{font-size:11px;color:var(--muted);margin:12px 0 0}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
-    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.section-heading{flex-direction:column}}
+    .section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-badge{white-space:nowrap;padding:5px 8px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.license-toolbar-note{font-size:11px;color:var(--muted)}.license-control-card{border-color:#b7dfd5;box-shadow:0 12px 34px #087f8012}.requests{display:grid;gap:12px;margin-top:16px}.request{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:17px;background:#fff}.request.pending{border-color:#ebd29f;background:#fffdf8}.request h3{margin:0;font-size:15px}.request-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 15px;margin-top:10px;font-size:12px}.request-meta dt{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.request-meta dd{margin:0;font-weight:700;overflow-wrap:anywhere}.receipt{width:100%;height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#f7f9fb}.request-side{display:grid;align-content:start;gap:9px}.request-side .actions{display:grid}.request-side .btn{width:100%}.request-note{font-size:11px;color:var(--muted);margin:0}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}.license-list{display:grid;gap:12px;margin-top:14px}.license-row{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:18px;background:#fff;align-items:start}.license-row.current{border-color:#35b98b;background:#f4fffa;box-shadow:0 0 0 2px #35b98b22}.license-row h3{margin:0;font-size:14px;line-height:1.35}.license-row p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.license-side{display:grid;align-content:start;gap:8px;border-left:1px solid #edf1f5;padding-left:16px}.license-side .btn{width:100%;font-size:11px;padding:9px 10px;min-height:38px}.license-side .pill{justify-self:start}.license-help{font-size:11px;color:var(--muted);margin:12px 0 0}.cleanup-actions{display:grid;grid-template-columns:1fr;gap:8px}.cleanup-actions .btn{font-size:11px;padding:9px 10px;min-height:38px}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
+    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.cleanup-actions{grid-template-columns:1fr 1fr}.section-heading{flex-direction:column}}
   </style>
 </head>
 <body>
@@ -26,7 +26,7 @@
       <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><span class="badge">Manual verification required</span></header>
+      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><span class="badge">v6 clean build</span></header>
       <section class="card">
         <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call and is not saved.</p></div>
         <div class="card-body">
@@ -37,10 +37,10 @@
       </section>
       <section class="card license-control-card" style="margin-top:20px">
         <div class="card-head"><div class="section-heading"><div><h2>License key control</h2><p>Every issued key is listed here. Revoke running access or permanently delete a key record.</p></div><span class="section-badge">Developer only</span></div></div>
-        <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Delete is shown for every row. A running key must be revoked first; a current shop key may need a replacement activated before it can be removed. Jobs and account data are never deleted.</p></div>
+        <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Delete is shown for every row. Revoke a running key first. If it is the shop’s only current key, deletion pauses shop access until another key is activated—no trial fallback. Jobs, customers, and account data remain safe.</p></div>
       </section>
-      <section class="card" style="margin-top:20px">
-        <div class="card-head"><h2>Incoming GCash requests</h2><p>Receipt images are visible only after the developer secret is accepted by Supabase.</p></div>
+      <section id="incomingRequestsCard" class="card" style="margin-top:20px" hidden>
+        <div class="card-head"><h2>Incoming GCash requests</h2><p>New pending payment requests appear here after the developer secret is accepted.</p></div>
         <div class="card-body"><div id="requests" class="requests"><div class="empty">No requests loaded yet.</div></div><div id="result" class="result" hidden></div></div>
       </section>
       <p class="footer">CARTECH developer utility · verification should be completed in the official GCash app.</p>
@@ -116,10 +116,12 @@
     }
     async function deleteLicense(licenseId, button) {
       const state = String(button?.dataset.licenseState || '').toLowerCase();
-      const prompt = state === 'active'
-        ? 'This is a running license. Revoke it first, then delete it. Continue?'
-        : 'Delete this license record permanently?';
-      if (!confirm(`${prompt}\nWorkshop jobs and account data will remain.`)) return;
+      if (state === 'active') {
+        alert('This running license cannot be deleted yet. Click Revoke key first, then delete it after the status changes to revoked.');
+        return;
+      }
+      const prompt = 'Delete this license record permanently?';
+      if (!confirm(`${prompt}\nIf it is the shop's only current key, access will pause until another key is activated.\nWorkshop jobs and account data will remain.`)) return;
       button.disabled = true;
       try {
         const result = await client.rpc('cartech_delete_license', { p_admin_secret: secret(), p_license_id: licenseId });
@@ -128,27 +130,67 @@
         byId('licenseStatus').textContent = 'Old license record deleted. Reloading license records…';
         await loadLicenses();
       } catch (error) {
-        byId('licenseStatus').textContent = error?.message || 'Could not delete the license record.';
+        const message = error?.message || '';
+        byId('licenseStatus').textContent = message.includes('Activate or issue a replacement license')
+          ? 'Supabase is still using the old delete function. Run the updated v30 cleanup SQL, then reload this page.'
+          : (message || 'Could not delete the license record.');
         byId('licenseStatus').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function clearReceipt(requestId, button) {
+      if (!confirm('Remove only the uploaded receipt image? The payment record and license will remain.')) return;
+      button.disabled = true;
+      try {
+        const result = await client.rpc('cartech_clear_payment_receipt', { p_admin_secret: secret(), p_request_id: requestId });
+        if (result.error) throw result.error;
+        byId('status').classList.remove('error');
+        byId('status').textContent = 'Receipt image removed. Reloading payment requests…';
+        await loadRequests();
+      } catch (error) {
+        byId('status').textContent = error?.message || 'Could not remove the receipt image.';
+        byId('status').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function deletePaymentRequest(requestId, button) {
+      const approved = button?.dataset.requestStatus === 'approved';
+      const prompt = approved
+        ? 'Delete this payment record and its receipt? The issued license stays, but this request will no longer be available for buyer handoff.'
+        : 'Delete this payment record and its uploaded receipt?';
+      if (!confirm(`${prompt}\nWorkshop jobs and account data will remain.`)) return;
+      button.disabled = true;
+      try {
+        const result = await client.rpc('cartech_delete_payment_request', { p_admin_secret: secret(), p_request_id: requestId });
+        if (result.error) throw result.error;
+        byId('status').classList.remove('error');
+        byId('status').textContent = 'Payment record deleted. Reloading requests…';
+        await loadRequests();
+      } catch (error) {
+        byId('status').textContent = error?.message || 'Could not delete the payment record.';
+        byId('status').classList.add('error');
         button.disabled = false;
       }
     }
 
     function render() {
       const root = byId('requests');
-      const pending = requests.filter(row => row.status === 'pending').length;
+      const visibleRequests = requests.filter(row => !(row.status === 'approved' && !row.license_id));
+      byId('incomingRequestsCard').hidden = visibleRequests.length === 0;
+      const pending = visibleRequests.filter(row => row.status === 'pending').length;
       byId('pendingCount').textContent = `${pending} pending`;
-      byId('totalCount').textContent = `${requests.length} total`;
-      byId('lastLoaded').textContent = requests.length ? `Loaded ${new Date().toLocaleTimeString()}` : 'No requests';
-      if (!requests.length) { root.innerHTML = '<div class="empty">No payment requests found.</div>'; return; }
-      root.innerHTML = requests.map(row => {
+      byId('totalCount').textContent = `${visibleRequests.length} total`;
+      byId('lastLoaded').textContent = visibleRequests.length ? `Loaded ${new Date().toLocaleTimeString()}` : 'No active requests';
+      if (!visibleRequests.length) { root.innerHTML = ''; return; }
+      root.innerHTML = visibleRequests.map(row => {
         const status = ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
         const receipt = row.receipt_data && /^data:image\//i.test(row.receipt_data) ? row.receipt_data : '';
+        const cleanup = `<div class="cleanup-actions">${receipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
         const action = status === 'pending'
-          ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button></div>`
+          ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
           : status === 'approved'
-            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
-            : `<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
+            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
+            : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
         return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receipt ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>` : '<div class="empty">No receipt image</div>'}${action}</div></article>`;
       }).join('');
     }
@@ -291,7 +333,7 @@
     byId('loadLicensesButton').addEventListener('click', () => void loadLicenses(false));
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
     byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { void loadRequests(false); void loadLicenses(false); } });
-    byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); });
+    byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
     byId('licenseList').addEventListener('click', event => { const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke); const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove); });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
     setInterval(() => { if (secret()) { void loadRequests(true); void loadLicenses(true); } }, 30000);
