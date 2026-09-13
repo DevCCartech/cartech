@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review v6.3 Sold Slots</title>
+  <title>CARTECH Payment Review v6.4 Low Egress</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
@@ -26,7 +26,7 @@
       <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">v6.3 sold slots</span></div></header>
+      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">v6.4 low egress</span></div></header>
       <section class="card">
         <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
         <div class="card-body">
@@ -61,6 +61,7 @@
     let previousPending = null;
     let loadBusy = false;
     let licenseLoadBusy = false;
+    const receiptLoading = {};
     const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
     const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
     const SECRET_STORAGE_KEY = 'cartech_manager_secret_v1';
@@ -302,14 +303,43 @@
       root.innerHTML = visibleRequests.map(row => {
         const status = ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
         const receipt = row.receipt_data && /^data:image\//i.test(row.receipt_data) ? row.receipt_data : '';
-        const cleanup = `<div class="cleanup-actions">${receipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
+        const hasReceipt = Boolean(receipt || row.has_receipt);
+        const cleanup = `<div class="cleanup-actions">${hasReceipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
         const action = status === 'pending'
           ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
           : status === 'approved'
             ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
             : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
-        return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receipt ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>` : '<div class="empty">No receipt image</div>'}${action}</div></article>`;
+        const receiptView = receipt
+          ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>`
+          : hasReceipt
+            ? `<button class="btn quiet" type="button" data-load-receipt="${esc(row.request_id)}" ${receiptLoading[row.request_id] ? 'disabled' : ''}>${receiptLoading[row.request_id] ? 'Loading receipt…' : 'View receipt'}</button>`
+            : '<div class="empty">No receipt image</div>';
+        return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receiptView}${action}</div></article>`;
       }).join('');
+    }
+
+    async function loadReceipt(requestId, button) {
+      if (!requestId || receiptLoading[requestId]) return;
+      const adminSecret = secret();
+      if (!adminSecret) { setStatus('Enter the private manager secret first.', true); return; }
+      receiptLoading[requestId] = true;
+      if (button) button.disabled = true;
+      render();
+      try {
+        const result = await client.rpc('cartech_get_license_payment_receipt', { p_admin_secret: adminSecret, p_request_id: requestId });
+        if (result.error) throw result.error;
+        const row = Array.isArray(result.data) ? result.data[0] : result.data;
+        const current = requests.find(item => item.request_id === requestId);
+        if (!row?.receipt_data || !current) throw new Error('Receipt image is not available.');
+        current.receipt_data = row.receipt_data;
+        render();
+      } catch (error) {
+        setStatus(error?.message || 'Could not load the receipt image.', true);
+      } finally {
+        delete receiptLoading[requestId];
+        render();
+      }
     }
 
     async function loadRequests(silent = false) {
@@ -319,7 +349,7 @@
       loadBusy = true;
       if (!silent) setStatus('Loading payment requests…');
       try {
-        const result = await client.rpc('cartech_list_license_payment_requests', { p_admin_secret: adminSecret });
+        const result = await client.rpc('cartech_list_license_payment_request_meta', { p_admin_secret: adminSecret });
         if (result.error) throw result.error;
         const next = Array.isArray(result.data) ? result.data : [];
         const nextPending = next.filter(row => row.status === 'pending').length;
@@ -463,10 +493,13 @@
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
     byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); } });
     window.addEventListener('beforeunload', saveRememberedSecret);
-    byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
+    byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
     byId('licenseList').addEventListener('click', event => { const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke); const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove); });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
-    setInterval(() => { if (secret()) { void loadRequests(true); void loadLicenses(true); } }, 30000);
+    // Deliberately no background polling. Payment-list RPC responses previously
+    // included receipt images, so refreshing every 30 seconds caused avoidable
+    // PostgREST egress. Use the visible Load buttons, and open a receipt only
+    // when it is needed.
   </script>
 </body>
 </html>
