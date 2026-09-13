@@ -51,6 +51,8 @@
     let requests = [];
     let previousPending = null;
     let loadBusy = false;
+    const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
+    const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
 
     function setStatus(text, error = false) { const node = byId('status'); node.textContent = text; node.classList.toggle('error', error); }
     function amount(value) { return `₱${Number(value || 0).toLocaleString('en-PH')}`; }
@@ -68,7 +70,11 @@
       root.innerHTML = requests.map(row => {
         const status = ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
         const receipt = row.receipt_data && /^data:image\//i.test(row.receipt_data) ? row.receipt_data : '';
-        const action = status === 'pending' ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button></div>` : `<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
+        const action = status === 'pending'
+          ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button></div>`
+          : status === 'approved'
+            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
+            : `<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
         return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receipt ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>` : '<div class="empty">No receipt image</div>'}${action}</div></article>`;
       }).join('');
     }
@@ -121,13 +127,28 @@
       box.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
 
-    async function publishDelivery(requestId) {
-      const box = byId('result');
-      const button = box.querySelector('[data-publish-delivery]');
+    function notifyOpenBuyerTabs(token) {
+      const message = { token: String(token || '').trim().toLowerCase(), nonce: `${Date.now()}-${Math.random().toString(36).slice(2)}` };
+      let notified = false;
+      try {
+        if ('BroadcastChannel' in window) {
+          const channel = new BroadcastChannel(BUYER_HANDOFF_CHANNEL);
+          channel.postMessage(message);
+          channel.close();
+          notified = true;
+        }
+      } catch (_) {}
+      try {
+        localStorage.setItem(BUYER_HANDOFF_SIGNAL_KEY, JSON.stringify(message));
+        setTimeout(() => { try { localStorage.removeItem(BUYER_HANDOFF_SIGNAL_KEY); } catch (_) {} }, 1500);
+        notified = true;
+      } catch (_) {}
+      return notified;
+    }
+
+    async function sendBuyerHandoff(requestId, button = null) {
       if (button) button.disabled = true;
       try {
-        const result = await client.rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
-        if (result.error) throw result.error;
         const handoffResult = await client.rpc('cartech_create_buyer_handoff', { p_admin_secret: secret(), p_request_id: requestId });
         if (handoffResult.error) throw handoffResult.error;
         const handoff = rowData(handoffResult.data);
@@ -136,16 +157,32 @@
         const buyerUrl = new URL('index.html', location.href);
         buyerUrl.searchParams.set('cartech_handoff', token);
         const link = buyerUrl.href;
+        const notified = notifyOpenBuyerTabs(token);
         let copied = false;
         try { await navigator.clipboard.writeText(link); copied = true; } catch (_) {}
         const popup = window.open(link, '_blank');
         const opened = Boolean(popup);
         if (popup) { try { popup.opener = null; } catch (_) {} }
         setStatus(opened
-          ? `Sent to buyer page. The buyer page was opened${copied ? ' and the secure link was copied.' : '.'}`
-          : `The buyer-page popup was blocked.${copied ? ' The secure link was copied; paste it into a new tab.' : ' Allow popups and click again.'}`,
-          !opened && !copied);
-        if (button) { button.textContent = opened ? 'Buyer page opened' : (copied ? 'Buyer link copied' : 'Try again'); button.disabled = opened || copied; }
+          ? `Sent to buyer page. ${notified ? 'The open buyer tab was notified and the new buyer page was opened.' : 'The buyer page was opened.'}${copied ? ' The secure link was copied.' : ''}`
+          : `${notified ? 'The open buyer tab was notified. ' : ''}${copied ? 'The secure link was copied; paste it into a new tab.' : 'Allow popups and click again.'}`,
+          !opened && !copied && !notified);
+        if (button) { button.textContent = opened ? 'Open buyer page again' : (copied ? 'Buyer link copied — open again' : 'Try again'); button.disabled = false; }
+        return true;
+      } catch (error) {
+        setStatus(error?.message || 'Could not send the key to the buyer page.', true);
+        if (button) { button.textContent = 'Send to buyer page'; button.disabled = false; }
+        return false;
+      }
+    }
+    async function publishDelivery(requestId) {
+      const box = byId('result');
+      const button = box.querySelector('[data-publish-delivery]');
+      if (button) button.disabled = true;
+      try {
+        const result = await client.rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
+        if (result.error) throw result.error;
+        await sendBuyerHandoff(requestId, button);
       } catch (error) { setStatus(error?.message || 'Could not send the key to the buyer page.', true); if (button) button.disabled = false; }
     }
     async function reissueDelivery(requestId) {
@@ -178,7 +215,7 @@
     byId('loadButton').addEventListener('click', () => void loadRequests(false));
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
     byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') void loadRequests(false); });
-    byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); });
+    byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
     setInterval(() => { if (secret()) void loadRequests(true); }, 30000);
   </script>
