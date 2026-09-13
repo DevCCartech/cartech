@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shopwide-license-v36-20260913-buyer-handoff">
+  <meta name="cartech-build" content="cartech-shopwide-license-v37-20260913-handoff-fill-fix">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -6601,7 +6601,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v36-20260913-buyer-handoff';
+  const buildId = 'cartech-shopwide-license-v37-20260913-handoff-fill-fix';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -6958,7 +6958,9 @@ window.CartechAccess = (() => {
       return;
     }
     if (status !== 'approved' || !result.license_key) return;
-    if (paymentDeliveryAlreadyConsumed()) {
+    // A fresh developer handoff must be shown even when this shop already has
+    // an active older license. The handoff is cleared after this key is used.
+    if (!localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) && paymentDeliveryAlreadyConsumed()) {
       clearPaymentDelivery();
       return;
     }
