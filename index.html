@@ -3159,8 +3159,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         : { isOnline: false, label: 'Off Duty', badgeClass: 'bg-rose-50 text-rose-600 border-rose-200' };
     }
 
-    async function syncSystemCloudRecords() {
-      if (document.hidden) return;
+    async function syncSystemCloudRecords(force = false) {
+      if (document.hidden || ((!currentUser || !currentRole) && !force)) return;
 
       if (currentUser && currentRole) {
         cachedCloudPresence[currentUser] = {
@@ -3818,7 +3818,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       const successElem = document.getElementById('regSuccess');
 
       try {
-        await syncSystemCloudRecords();
+        await syncSystemCloudRecords(forceTelemetry);
       } catch (err) {}
 
       if (!AUTHORIZED_ROSTER[exactName] && !cachedCloudAccounts[exactName]) {
@@ -5457,16 +5457,17 @@ async function submitPartsRequest() {
 
     initRememberedDeviceUI();
 
-    // 5-MINUTE EMERGENCY OFFLINE FALLBACK TIMER (PROTECTS EGRESS QUOTA)
+    // Realtime is the normal live path. Only poll when no realtime channel is
+    // available; this prevents repeated full queue downloads and egress spikes.
     setInterval(() => {
-      if (!document.hidden && currentUser) {
+      if (!document.hidden && currentUser && !realtimeChannel) {
         pullData(false);
       }
-    }, 300000);
+    }, 900000);
 
     // Keep the developer's ON/OFF diagnostic release visible to every active mechanic
     // even when realtime is unavailable. Realtime remains the fast path.
-    setInterval(() => { if (!document.hidden && currentUser) void syncFeatureConfig(); }, 15000);
+    setInterval(() => { if (!document.hidden && currentUser && !realtimeChannel) void syncFeatureConfig(); }, 60000);
 
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
