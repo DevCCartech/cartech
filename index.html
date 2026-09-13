@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shopwide-license-v35-20260913-payment-cleanup">
+  <meta name="cartech-build" content="cartech-shopwide-license-v36-20260913-buyer-handoff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - Hybrid Queue</title>
@@ -2492,6 +2492,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let selectedLicensePlanId = '';
     const CARTECH_PAYMENT_REQUEST_KEY = 'cartech_license_payment_request_v1';
     const CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY = 'cartech_license_payment_delivery_blocked_v1';
+    const CARTECH_PAYMENT_HANDOFF_KEY = 'cartech_license_payment_handoff_v1';
     let paymentResultTimer = 0;
     const storedShopId = String(localStorage.getItem(CARTECH_SHOP_ID_KEY) || '').trim().toLowerCase();
     let currentShopId = /^[a-z0-9][a-z0-9-]{2,63}$/.test(storedShopId) ? storedShopId : CARTECH_MAIN_SHOP_ID;
@@ -6600,7 +6601,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v35-20260913-payment-cleanup';
+  const buildId = 'cartech-shopwide-license-v36-20260913-buyer-handoff';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -6911,7 +6912,23 @@ window.CartechAccess = (() => {
       delete panel.dataset.shopName;
     }
     try { localStorage.removeItem(CARTECH_PAYMENT_REQUEST_KEY); } catch (_) {}
+    try { localStorage.removeItem(CARTECH_PAYMENT_HANDOFF_KEY); } catch (_) {}
     if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+  }
+  function adoptPaymentHandoffFromUrl() {
+    const raw = new URLSearchParams(window.location.search).get('cartech_handoff');
+    const token = String(raw || '').trim().toLowerCase();
+    if (!/^[a-f0-9]{48}$/.test(token)) return false;
+    try {
+      localStorage.setItem(CARTECH_PAYMENT_HANDOFF_KEY, token);
+      localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY);
+    } catch (_) {}
+    try {
+      const clean = new URL(window.location.href);
+      clean.searchParams.delete('cartech_handoff');
+      window.history.replaceState({}, document.title, clean.href);
+    } catch (_) {}
+    return true;
   }
   function blockPaymentDelivery() {
     try { localStorage.setItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY, '1'); } catch (_) {}
@@ -6965,14 +6982,17 @@ window.CartechAccess = (() => {
     catch (_) { byId('ctLicensePaymentStatus').textContent = text; }
   }
   async function checkPaymentResult(silent = false) {
+    const handoffToken = String(localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || '').trim();
     const requestId = String(localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || '').trim();
-    if (!requestId || !supabaseClient) return null;
+    if ((!handoffToken && !requestId) || !supabaseClient) return null;
     try {
-      await ensureDeviceAuth();
-      const result = await supabaseClient.rpc('cartech_get_license_payment_result', { p_request_id: requestId });
+      if (!handoffToken) await ensureDeviceAuth();
+      const result = handoffToken
+        ? await supabaseClient.rpc('cartech_get_buyer_handoff', { p_handoff_token: handoffToken })
+        : await supabaseClient.rpc('cartech_get_license_payment_result', { p_request_id: requestId });
       if (result.error) {
-        if (result.error.code === '42883' || /cartech_get_license_payment_result/i.test(result.error.message || '')) {
-          if (!silent) byId('ctLicensePaymentStatus').innerHTML = '<strong>Delivery setup needed:</strong> run the CARTECH-GCASH-QR-PAYMENTS-v2.sql migration in Supabase.';
+        if (result.error.code === '42883' || /cartech_(get_license_payment_result|get_buyer_handoff)/i.test(result.error.message || '')) {
+          if (!silent) byId('ctLicensePaymentStatus').innerHTML = '<strong>Delivery setup needed:</strong> run the CARTECH-GCASH-QR-PAYMENTS-v5-HANDOFF.sql migration in Supabase.';
           return null;
         }
         throw result.error;
@@ -7000,7 +7020,7 @@ window.CartechAccess = (() => {
     resetPaymentFields();
     byId('ctLicenseQrPanel').hidden = true;
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.hidden = false;
-    if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+    if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
   }
   function closeLicenseStore() {
     const dialog = byId('ctLicenseStoreDialog');
@@ -7032,7 +7052,7 @@ window.CartechAccess = (() => {
     byId('ctLicensePaymentStatus').innerHTML = configured
       ? '<strong>Payment verification:</strong> after paying, enter the GCash reference and upload the receipt. The developer verifies it before issuing a license key.'
       : '<strong>Developer setup needed:</strong> set the GCash number in the editable CARTECH settings before publishing this purchase screen.';
-    if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+    if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
   }
   async function copyGcashNumber() {
     if (!CARTECH_GCASH_NUMBER || /^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim())) return;
@@ -7125,6 +7145,7 @@ window.CartechAccess = (() => {
       status.innerHTML = `<strong>Payment request submitted.</strong> Request <strong>${escapeHTML(request?.request_id || 'received')}</strong> is waiting for developer verification. Keep this page open or save the receipt; the developer will provide the real license key after checking GCash.`;
       if (request?.request_id) {
         try { localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY); } catch (_) {}
+        try { localStorage.removeItem(CARTECH_PAYMENT_HANDOFF_KEY); } catch (_) {}
         localStorage.setItem(CARTECH_PAYMENT_REQUEST_KEY, request.request_id);
         renderPaymentDelivery({ status:'pending' });
         startPaymentPolling();
@@ -8119,11 +8140,12 @@ window.CartechAccess = (() => {
   setInterval(checkExpiry, 1000);
   // The first telemetry sync runs before this module is created, so apply any schedule
   // already loaded into the shared featureFlags object during module startup.
+  adoptPaymentHandoffFromUrl();
   configurePaymentFlowUi();
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
   void refreshLicenseStatus(true).then(() => refresh());
-  if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) {
+  if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) {
     renderPaymentDelivery({ status:'pending' });
     void checkPaymentResult(true);
     startPaymentPolling();
