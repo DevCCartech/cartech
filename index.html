@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-shopwide-license-v48-open-buyer-no-support-low-egress">
+  <meta name="cartech-build" content="cartech-shopwide-license-v49-stable-low-egress">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - Hybrid Queue v48</title>
+  <title>CARTECH - Hybrid Queue v49</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -6637,7 +6637,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v47-encoding-fix-low-egress';
+  const buildId = 'cartech-shopwide-license-v49-stable-low-egress';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -8558,9 +8558,11 @@ window.CartechUpdates = (() => {
         const page=await fetchPage('GET');lastBodyCheck=Date.now();
         const nextSignature=page.signature||head?.signature||null;
         const modified=Number.isFinite(page.modified)?page.modified:head?.modified;
-        const changed=page.build!==window.CartechAccess.buildId ||
-          (initialized && !!nextSignature && !!signature && nextSignature!==signature) ||
-          (!initialized && Number.isFinite(loadedModified) && Number.isFinite(modified) && modified>loadedModified+1000);
+        const currentMetaBuild=document.querySelector('meta[name="cartech-build"]')?.content || '';
+        /* Only a different release build is an update. GitHub Pages can return
+           different ETag/Last-Modified values for cache-busting query strings;
+           treating those headers as releases causes an endless reload loop. */
+        const changed=(page.build!==window.CartechAccess.buildId && page.build!==currentMetaBuild);
         if(changed){beginUpdate(page.build+':'+(nextSignature||modified||''));return true;}
         signature=nextSignature;initialized=true;status('Up to date · checks every minute while active');return false;
       } catch (_) {status('Update check unavailable · will retry when connected');return false;}
