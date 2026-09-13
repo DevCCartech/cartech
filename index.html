@@ -1005,14 +1005,31 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 .ct-button.ct-welcome-primary:hover { background:#116a6b; }
 .ct-welcome-error { color:#ae3445; font-size:12px; margin-top:12px; }
 .ct-welcome-footnote { text-align:center; margin:17px 0 5px; font-size:10px; color:#8592a2; }
-.ct-development-screen { display:grid; place-items:center; }
-.ct-development-card { max-width:680px; padding:36px 34px; text-align:center; border:1px solid #e2e8f0; border-radius:18px; background:white; box-shadow:0 7px 28px #293c5610; }
-.ct-development-icon { display:grid; place-items:center; width:68px; height:68px; border-radius:18px; color:#d7723c; background:#fff3e8; margin:0 auto 20px; font-size:29px; }
-.ct-development-brand { color:#76859a; font-size:10px; letter-spacing:.15em; margin-bottom:15px; }
-.ct-development-card h1 { font-size:27px; letter-spacing:.02em; font-weight:700; margin:14px 0; line-height:1.3; }
-.ct-development-card p { font-size:14px; line-height:1.8; color:#6d7e8d; }
+.ct-development-screen { display:grid; place-items:start center; overflow:auto; background:radial-gradient(circle at 12% 0%,#e9f7f8 0,transparent 33%),radial-gradient(circle at 90% 8%,#fff1e8 0,transparent 28%),#f3f6fa; }
+.ct-development-card { width:min(100%,860px); padding:0; text-align:left; border:1px solid #dbe5ec; border-radius:22px; background:white; box-shadow:0 20px 54px rgba(32,57,82,.12); overflow:hidden; }
+.ct-license-hero { padding:28px 34px 25px; background:linear-gradient(135deg,#fff 0%,#f5fbfb 100%); border-top:5px solid #177e80; }
+.ct-license-hero-top { display:flex; align-items:center; gap:12px; }
+.ct-license-hero-top .ct-development-icon { margin:0; }
+.ct-license-hero-top .ct-development-brand { margin:0; }
+.ct-license-hero-top .ct-welcome-chip { margin-left:auto; }
+.ct-development-icon { display:grid; place-items:center; width:48px; height:48px; border-radius:14px; color:#d7723c; background:#fff3e8; font-size:20px; box-shadow:inset 0 0 0 1px #f7dfcb; }
+.ct-development-brand { color:#6c8192; font-size:10px; letter-spacing:.14em; font-weight:700; }
+.ct-license-hero-copy { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:26px; align-items:end; margin-top:25px; }
+.ct-license-kicker { display:block; color:#177e80; font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.ct-development-card h1 { font-size:30px; letter-spacing:-.025em; font-weight:750; margin:9px 0 9px; line-height:1.18; color:#16324b; }
+.ct-development-card p { font-size:14px; line-height:1.75; color:#627688; }
+.ct-license-state { min-width:180px; padding:12px 14px; border:1px solid #d6e6e8; border-radius:12px; background:#fff; box-shadow:0 6px 16px rgba(25,68,76,.05); }
+.ct-license-state-label { display:block; color:#7b8d9c; font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.ct-license-state strong { display:block; margin-top:6px; color:#b45a28; font-size:13px; line-height:1.45; }
+.ct-license-state.ct-license-state-active { border-color:#c8e7db; background:#f4fbf7; }
+.ct-license-state.ct-license-state-active strong { color:#19735f; }
+.ct-license-state.ct-license-state-required { border-color:#f0dfbd; background:#fffaf1; }
+.ct-license-state.ct-license-state-required strong { color:#9a6a29; }
+.ct-license-state.ct-license-state-blocked { border-color:#f0ccd1; background:#fff7f8; }
+.ct-license-state.ct-license-state-blocked strong { color:#b23f4f; }
+.ct-license-body { padding:23px 34px 29px; }
 .ct-development-release { font-size:13px; padding:12px; margin:20px 0; background:#f1f7f7; color:#347c7d; border-radius:8px; }
-.ct-development-card .ct-development-note { font-size:12px; margin-bottom:25px; }
+.ct-development-card .ct-development-note { font-size:12px; margin:18px 0 0; padding:13px 15px; border:1px solid #e3ebef; border-radius:11px; background:#fbfcfd; }
 .ct-license-form { display:grid; gap:10px; margin:22px 0 14px; text-align:left; }
 .ct-license-form label { font-size:11px; font-weight:750; letter-spacing:.07em; color:#42566b; text-transform:uppercase; }
 .ct-license-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:9px; }
@@ -1020,19 +1037,106 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
 .ct-license-input:focus { border-color:#16787a; box-shadow:0 0 0 3px #16787a1c; }
 .ct-license-message { min-height:20px; margin:0!important; color:#447078!important; font-size:12px!important; text-align:left; }
 .ct-license-message[data-error="true"] { color:#b42338!important; }
-.ct-license-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; }
-.ct-license-meta span { padding:9px; border-radius:8px; background:#f8fafc; border:1px solid #e6ebf1; font-size:11px; color:#65788b; }
-.ct-license-meta strong { display:block; margin-top:3px; color:#25394e; overflow-wrap:anywhere; }
-.ct-license-agreement { margin:18px 0 14px; padding:16px; border:1px solid #dce5ed; border-radius:12px; background:#f8fafc; text-align:left; }
-.ct-license-agreement h2 { margin:0 0 6px; color:#23384c; font-size:15px; font-weight:750; }
-.ct-license-agreement > p { margin:0 0 12px; color:#65798d; font-size:12px; line-height:1.65; }
-.ct-license-agreement ul { display:grid; gap:8px; margin:0 0 14px; padding-left:20px; color:#3f556a; font-size:12px; line-height:1.55; }
+.ct-license-meta { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin:0 0 14px; }
+.ct-license-meta span { padding:13px 14px; border-radius:11px; background:#f8fafc; border:1px solid #e2eaf0; font-size:10px; font-weight:750; letter-spacing:.05em; color:#738596; text-transform:uppercase; }
+.ct-license-meta strong { display:block; margin-top:6px; color:#25394e; font-size:13px; letter-spacing:0; text-transform:none; overflow-wrap:anywhere; }
+.ct-license-sync { display:flex; align-items:flex-start; gap:11px; margin:0 0 18px!important; padding:14px 15px; border:1px solid #cfe9e2; border-radius:12px; background:linear-gradient(120deg,#eefaf6,#f5fbfb); color:#246b67!important; text-align:left; }
+.ct-license-sync i { flex:none; margin-top:4px; color:#1b8a7d; }
+.ct-license-sync strong { display:block; color:#174f4f; margin-bottom:3px; }
+.ct-license-flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 20px; }
+.ct-license-flow > div { display:flex; gap:9px; padding:12px; border:1px solid #e2eaf0; border-radius:11px; background:#fff; }
+.ct-license-flow b { display:grid; place-items:center; width:22px; height:22px; flex:none; border-radius:7px; background:#eaf5f5; color:#177e80; font-size:11px; }
+.ct-license-flow span { color:#597083; font-size:11px; line-height:1.5; }
+.ct-license-agreement { margin:0 0 16px; padding:18px; border:1px solid #dce5ed; border-radius:14px; background:#f8fafc; text-align:left; }
+.ct-license-agreement-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:13px; }
+.ct-license-agreement h2 { margin:0 0 5px; color:#23384c; font-size:16px; font-weight:750; }
+.ct-license-agreement-head p { margin:0; color:#65798d; font-size:12px; line-height:1.6; }
+.ct-license-agreement-version { flex:none; padding:5px 8px; border-radius:6px; background:#eaf1f5; color:#688092; font-size:10px; font-weight:750; white-space:nowrap; }
+.ct-license-agreement ul { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:0 0 15px; padding:0; list-style:none; color:#3f556a; font-size:12px; line-height:1.55; }
+.ct-license-agreement li { padding:11px 12px 11px 33px; border:1px solid #e2eaf0; border-radius:10px; background:#fff; position:relative; }
+.ct-license-agreement li:before { content:'✓'; position:absolute; left:12px; top:11px; display:grid; place-items:center; width:15px; height:15px; border-radius:50%; background:#e8f5f1; color:#178375; font-size:10px; font-weight:800; }
 .ct-license-agreement strong { color:#203448; }
 .ct-license-agreement .ct-welcome-check { padding:12px; border:1px solid #cbd9e4; border-radius:10px; background:#fff; }
-.ct-license-owner { display:grid; gap:6px; margin-top:12px; }
-.ct-license-owner input { text-transform:none; font-family:inherit; letter-spacing:0; }
-.ct-license-sync { display:flex; align-items:flex-start; gap:9px; margin:12px 0 0!important; padding:11px 12px; border-radius:10px; background:#edf8f6; color:#24706b!important; text-align:left; }
-.ct-license-sync i { flex:none; margin-top:4px; }
+.ct-license-authorization-note { display:flex; align-items:flex-start; gap:8px; margin:11px 0 0!important; color:#718594!important; font-size:11px!important; line-height:1.55!important; }
+.ct-license-authorization-note i { flex:none; margin-top:3px; color:#568b8d; }
+.ct-license-key-panel { padding-top:3px; }
+.ct-license-key-panel > label { display:block; margin-bottom:7px; }
+.ct-license-key-panel .ct-license-message { margin-top:9px!important; }
+.ct-license-buy-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:13px; padding-top:13px; border-top:1px solid #e6edf1; }
+.ct-license-buy-row > span { color:#718394; font-size:11px; }
+.ct-license-buy { min-height:37px!important; padding:8px 12px!important; color:#176f72!important; border-color:#b7dfe0!important; background:#f1fbfb!important; font-size:12px!important; }
+.ct-license-buy:hover { background:#e4f5f5!important; }
+.ct-license-success { margin:0 0 18px; padding:28px 22px 23px; border:1px solid #c9e8db; border-radius:15px; background:linear-gradient(135deg,#f3fcf8,#f7fbfc); text-align:center; opacity:1; transform:translateY(0); transition:opacity .55s ease,transform .55s ease,max-height .55s ease,padding .55s ease,margin .55s ease; overflow:hidden; }
+.ct-license-success.ct-license-success-exit { opacity:0; transform:translateY(-10px); max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; }
+.ct-license-success-icon { display:grid; place-items:center; width:48px; height:48px; margin:0 auto 12px; border-radius:50%; background:#dff5e9; color:#13805d; font-size:21px; box-shadow:0 0 0 7px #eaf9f1; }
+.ct-license-success h2 { margin:0 0 6px; color:#174e43; font-size:21px; letter-spacing:-.015em; }
+.ct-license-success p { margin:0 auto; max-width:530px; color:#5f7c78; font-size:13px; line-height:1.65; }
+.ct-license-success-time { display:inline-flex; flex-direction:column; gap:3px; margin:17px auto 15px; padding:10px 16px; border:1px solid #cce6dd; border-radius:10px; background:#fff; }
+.ct-license-success-time span { color:#7a948f; font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.ct-license-success-time strong { color:#176552; font-size:14px; }
+.ct-license-success-time small { color:#7a948f; font-size:10px; }
+.ct-license-success-countdown { display:block; color:#5d8179; font-size:11px; font-weight:700; }
+.ct-license-success-progress { height:5px; margin:10px auto 0; max-width:360px; border-radius:99px; background:#dcefe7; overflow:hidden; }
+.ct-license-success-progress span { display:block; width:100%; height:100%; border-radius:inherit; background:#28a47c; transform-origin:left center; transition:transform .25s linear; }
+.ct-license-store-dialog { width:min(760px,calc(100% - 28px)); }
+.ct-license-store-body { padding:24px; }
+.ct-license-store-intro { margin-bottom:17px; }
+.ct-license-store-intro h3 { margin:0 0 5px; color:#203b52; font-size:17px; }
+.ct-license-store-intro p { margin:0; color:#6a7f8f; font-size:12px; line-height:1.65; }
+.ct-license-plans { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.ct-license-plan { position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:134px; padding:15px; border:1px solid #dbe6ec; border-radius:13px; background:#fff; color:#263e52; text-align:left; cursor:pointer; transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease; }
+.ct-license-plan:hover,.ct-license-plan:focus-visible { border-color:#59a6a4; box-shadow:0 8px 20px rgba(32,102,103,.12); transform:translateY(-1px); outline:none; }
+.ct-license-plan.is-selected { border-color:#16817f; box-shadow:0 0 0 3px #16817f18; background:#f5fbfb; }
+.ct-license-plan-badge { min-height:15px; color:#b56a35; font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.ct-license-plan strong { color:#19364c; font-size:15px; }
+.ct-license-plan small { color:#718697; font-size:11px; line-height:1.4; }
+.ct-license-plan-price { margin-top:auto; color:#177b79; font-size:14px; font-weight:800; }
+.ct-license-payment { margin-top:17px; padding:17px; border:1px solid #cae6e1; border-radius:14px; background:linear-gradient(135deg,#f2fbf8,#f7fbfd); }
+.ct-license-payment[hidden] { display:none!important; }
+.ct-license-payment-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.ct-license-payment h3 { margin:0 0 4px; color:#1a514a; font-size:16px; }
+.ct-license-payment p { margin:0; color:#5f7b79; font-size:12px; line-height:1.6; }
+.ct-license-payment-plan { display:inline-flex; flex-direction:column; align-items:flex-end; gap:2px; padding:8px 10px; border-radius:9px; background:#fff; border:1px solid #d5ebe5; white-space:nowrap; }
+.ct-license-payment-plan span { color:#758d8b; font-size:10px; }
+.ct-license-payment-plan strong { color:#197566; font-size:13px; }
+.ct-license-gcash-row { display:flex; align-items:center; gap:9px; margin:15px 0 12px; padding:11px 12px; border:1px solid #d4e8e6; border-radius:10px; background:#fff; }
+.ct-license-gcash-row i { flex:none; color:#138472; }
+.ct-license-gcash-row div { min-width:0; flex:1; }
+.ct-license-gcash-row small { display:block; color:#77908d; font-size:10px; }
+.ct-license-gcash-row strong { display:block; margin-top:3px; color:#1c514b; font-size:13px; overflow-wrap:anywhere; }
+.ct-license-gcash-row button { flex:none; min-height:34px!important; padding:6px 9px!important; font-size:11px!important; }
+.ct-license-qr { display:grid; grid-template-columns:132px minmax(0,1fr); gap:12px; align-items:center; margin:13px 0 12px; padding:12px; border:1px dashed #b9dcd8; border-radius:10px; background:#fbfefe; }
+.ct-license-qr[hidden] { display:none!important; }
+.ct-license-qr img { display:block; width:132px; height:132px; object-fit:contain; border:1px solid #dbe9e8; border-radius:8px; background:#fff; }
+.ct-license-qr-placeholder { display:grid; place-items:center; width:132px; height:132px; padding:10px; text-align:center; color:#78918e; font-size:10px; line-height:1.4; border:1px dashed #c7dfdc; border-radius:8px; background:#fff; }
+.ct-license-qr-copy h4 { margin:0 0 4px; color:#245f5a; font-size:12px; }
+.ct-license-qr-copy p { margin:0 0 8px; color:#718987; font-size:10px; line-height:1.5; }
+.ct-license-qr-copy .ct-button { min-height:32px!important; padding:6px 9px!important; font-size:10px!important; }
+.ct-license-payment-steps { display:grid; gap:7px; margin:12px 0 15px; padding-left:18px; color:#496d6b; font-size:11px; line-height:1.55; }
+.ct-license-payment-status { padding:10px 11px; border-radius:9px; background:#fff8e9; color:#8a642d; font-size:11px; line-height:1.5; }
+.ct-license-payment-followup { margin-top:12px; padding:12px; border:1px solid #d7e8e7; border-radius:10px; background:#fff; }
+.ct-license-payment-followup[hidden] { display:none!important; }
+.ct-license-payment-followup label { display:block; margin-bottom:5px; color:#3f6265; font-size:11px; font-weight:750; }
+.ct-license-payment-followup input { width:100%; min-height:39px; padding:9px 10px; border:1px solid #c9dfe0; border-radius:8px; color:#183d4d; background:#fbfefe; font:inherit; font-size:12px; }
+.ct-license-payment-followup input:focus { outline:none; border-color:#16817f; box-shadow:0 0 0 3px #16817f1c; }
+.ct-license-payment-followup-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-bottom:8px; }
+.ct-license-payment-followup-grid > div { min-width:0; }
+.ct-license-payment-followup input[type=file] { padding:7px 8px; background:#fff; }
+.ct-license-payment-followup-actions { display:flex; gap:8px; margin-top:8px; }
+.ct-license-payment-followup-actions .ct-button { flex:1; }
+.ct-license-payment-followup-note { margin:7px 0 0; color:#71868a; font-size:10px; line-height:1.45; }
+.ct-license-payment-result { margin-top:12px; padding:12px; border:1px solid #93d2c3; border-radius:10px; background:#f1fbf8; color:#245f5a; }
+.ct-license-payment-result[hidden] { display:none!important; }
+.ct-license-payment-result h4 { margin:0 0 7px; font-size:12px; color:#087a57; }
+.ct-license-payment-result p { margin:4px 0 8px; font-size:10px; line-height:1.45; color:#527874; }
+.ct-license-payment-result .ct-license-delivery-key { display:flex; gap:7px; align-items:center; margin:7px 0; padding:8px; border:1px dashed #8fc8ba; border-radius:8px; background:#fff; }
+.ct-license-payment-result code { flex:1; min-width:0; overflow-wrap:anywhere; font:750 12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; color:#183d4d; }
+.ct-license-payment-result dl { display:grid; grid-template-columns:auto minmax(0,1fr); gap:3px 9px; margin:8px 0; font-size:10px; }
+.ct-license-payment-result dt { color:#6f8986; }
+.ct-license-payment-result dd { margin:0; min-width:0; overflow-wrap:anywhere; font-weight:700; color:#245f5a; }
+.ct-license-payment-result .ct-button { min-height:30px!important; padding:5px 8px!important; font-size:10px!important; }
+.ct-license-payment-actions { display:flex; gap:9px; margin-top:13px; }
+.ct-license-payment-actions .ct-button { flex:1; }
 .ct-license-admin { margin-top:14px; padding:14px; border:1px solid #dce7ec; border-radius:12px; background:#fff; }
 .ct-license-admin-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:9px; align-items:end; }
 .ct-license-admin-grid .ct-button { min-height:42px; }
@@ -1078,6 +1182,26 @@ body.ct-tester-mode [onclick^="officePartsReadyToPickUp"] { display:none!importa
  #ctWelcomePreviewClose { grid-column:1/-1; }
  .ct-development-card { padding:28px 22px; }
  .ct-development-card h1 { font-size:24px; }
+ .ct-license-hero { padding:23px 18px 21px; }
+ .ct-license-hero-copy { grid-template-columns:1fr; gap:15px; margin-top:22px; }
+ .ct-license-state { min-width:0; }
+ .ct-license-body { padding:18px; }
+ .ct-license-flow { grid-template-columns:1fr; }
+ .ct-license-agreement { padding:14px; }
+ .ct-license-agreement-head { flex-direction:column; gap:8px; }
+ .ct-license-agreement-version { align-self:flex-start; }
+ .ct-license-agreement ul { grid-template-columns:1fr; }
+ .ct-license-success { padding-inline:15px; }
+ .ct-license-buy-row { align-items:stretch; flex-direction:column; }
+ .ct-license-buy { width:100%; }
+ .ct-license-store-body { padding:18px; }
+ .ct-license-plans { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .ct-license-payment-head { flex-direction:column; }
+ .ct-license-payment-plan { align-items:flex-start; }
+ .ct-license-qr { grid-template-columns:1fr; }
+ .ct-license-qr img,.ct-license-qr-placeholder { width:150px; height:150px; }
+ .ct-license-payment-followup-grid { grid-template-columns:1fr; }
+ .ct-license-payment-actions { flex-direction:column; }
  .ct-license-row { grid-template-columns:1fr; }
  .ct-license-row .ct-button { width:100%; min-height:44px; }
  .ct-license-admin-grid { grid-template-columns:1fr; }
@@ -2107,8 +2231,41 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     </div>
   </section>
   <section id="ctUnderDevelopment" class="ct-development-screen" hidden aria-labelledby="ctDevelopmentTitle">
-    <div class="ct-development-card"><span class="ct-development-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE · WORKSHOP LICENSE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span><h1 id="ctDevelopmentTitle" tabindex="-1">WORKSHOP LICENSE REQUIRED</h1><p id="ctDevelopmentMessage">This workshop does not have active access. The owner or authorized manager can activate or renew it here.</p><div class="ct-license-meta"><span>Workshop<strong id="ctLicenseShopName">CARTECH Main Workshop</strong></span><span>License status<strong id="ctLicenseStatusText">Checking…</strong></span></div><p class="ct-license-sync"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><span><strong>One owner activation unlocks the whole workshop.</strong> Office PCs, mechanic phones, installed apps, and web browsers reconnect automatically using this workshop profile.</span></p><form id="ctLicenseForm" class="ct-license-form" onsubmit="CartechAccess.activateLicense(event); return false;" novalidate><section class="ct-license-agreement" aria-labelledby="ctLicenseAgreementTitle"><h2 id="ctLicenseAgreementTitle">License and data agreement</h2><p>Please read this before activating or renewing CARTECH.</p><ul><li><strong>License time:</strong> the duration begins from the start date stored by the server. The displayed Philippine date and time come from the server, not the device clock.</li><li><strong>Workshop access:</strong> while active, all registered office and mechanic accounts for this workshop may sign in from the web or installed app. Each staff member still uses their own username, password, and permissions.</li><li><strong>Expiry:</strong> when the license expires, active accounts are signed out and new sign-ins are locked until renewal.</li><li><strong>Saved data:</strong> expiry does not delete customers, jobs, inspections, accounts, or history stored in Supabase. Renewing the same workshop continues with the existing records.</li><li><strong>Connection:</strong> internet access is required to activate, renew, synchronize, and periodically verify the license. Unsaved form changes may be lost if access ends before they are saved.</li></ul><label class="ct-welcome-check" for="ctLicenseTermsAccepted"><input id="ctLicenseTermsAccepted" type="checkbox" onchange="CartechAccess.updateLicenseAgreementButton()"><span>I am the workshop owner or an authorized manager. I have read and accept this license and data agreement.</span></label><div class="ct-license-owner"><label for="ctLicenseOwnerName">Owner / authorized manager name</label><input id="ctLicenseOwnerName" class="ct-license-input" type="text" maxlength="100" autocomplete="name" placeholder="e.g. Alex" oninput="CartechAccess.updateLicenseAgreementButton()" required></div></section><label for="ctLicenseInput">Workshop license key</label><div class="ct-license-row"><input id="ctLicenseInput" class="ct-license-input" type="text" maxlength="80" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CT-XXXXXX-XXXXXX-XXXXXX-XXXXXX" oninput="CartechAccess.updateLicenseAgreementButton()" required><button id="ctLicenseActivate" type="submit" class="ct-button ct-welcome-primary" disabled><i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Activate workshop</button></div><p id="ctLicenseMessage" class="ct-license-message" role="status">The license key is used once by the owner. Other connected devices will unlock automatically.</p></form><p class="ct-development-note">License expiry locks access only. Your saved workshop data remains on the server and becomes available again after renewal.</p><div class="ct-development-actions"><button id="ctDevelopmentSignIn" type="button" class="ct-button" onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" class="ct-button" onclick="CartechAccess.resetLicenseTest(event)" hidden><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div></div>
+    <div class="ct-development-card">
+      <header class="ct-license-hero">
+        <div class="ct-license-hero-top"><span class="ct-development-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE · WORKSHOP LICENSE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></div>
+        <div class="ct-license-hero-copy"><div><span class="ct-license-kicker">Workshop access</span><h1 id="ctDevelopmentTitle" tabindex="-1">WORKSHOP LICENSE REQUIRED</h1><p id="ctDevelopmentMessage">This workshop does not have active access. The owner or authorized manager can activate or renew it here.</p></div><div id="ctLicenseState" class="ct-license-state"><span class="ct-license-state-label">Current status</span><strong id="ctLicenseStatusText">Checking…</strong></div></div>
+      </header>
+      <div class="ct-license-body">
+        <div class="ct-license-meta"><span>Workshop<strong id="ctLicenseShopName">CARTECH Main Workshop</strong></span><span>Access scope<strong>One activation · every office and mechanic device</strong></span></div>
+        <p class="ct-license-sync"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><span><strong>One owner activation unlocks the whole workshop.</strong> Office PCs, mechanic phones, installed apps, and web browsers reconnect automatically using this workshop profile.</span></p>
+        <div class="ct-license-flow" aria-label="License activation steps"><div><b>1</b><span><strong>Activate</strong><br>Owner enters the supplied key.</span></div><div><b>2</b><span><strong>Reconnect</strong><br>Staff sign in with their own accounts.</span></div><div><b>3</b><span><strong>Continue</strong><br>Renew later without losing workshop records.</span></div></div>
+        <form id="ctLicenseForm" class="ct-license-form" onsubmit="CartechAccess.activateLicense(event); return false;" novalidate>
+          <section class="ct-license-agreement" aria-labelledby="ctLicenseAgreementTitle">
+            <div class="ct-license-agreement-head"><div><h2 id="ctLicenseAgreementTitle">License, access &amp; data agreement</h2><p>Read this short summary before activating or renewing CARTECH.</p></div><span class="ct-license-agreement-version">Current terms</span></div>
+            <ul>
+              <li><strong>Server-controlled term:</strong> the selected duration starts from the license date stored on the server. Philippine date and time shown by CARTECH come from the server, not the device clock.</li>
+              <li><strong>One shop-wide activation:</strong> one authorized owner or manager activation unlocks this workshop profile for registered office and mechanic accounts on web and installed apps.</li>
+              <li><strong>Individual accounts:</strong> every staff member keeps their own username, password, role, and permissions. Never share account credentials or a license key publicly.</li>
+              <li><strong>Expiry and renewal:</strong> after expiry or revocation, active sessions may be signed out and new sign-ins are blocked until the same workshop is renewed. The developer may adjust dates or revoke a key.</li>
+              <li><strong>Data continuity:</strong> expiry does not delete customers, jobs, inspections, parts history, or reference photos. Renewing this workshop restores access to its existing records, subject to the service’s retention and backup policies.</li>
+              <li><strong>Connection and saving:</strong> an internet connection is required to activate, renew, synchronize, and verify access. Save completed work before leaving; unsaved form changes may not be recoverable.</li>
+            </ul>
+            <label class="ct-welcome-check" for="ctLicenseTermsAccepted"><input id="ctLicenseTermsAccepted" type="checkbox" onchange="CartechAccess.updateLicenseAgreementButton()"><span>I am the workshop owner or an authorized manager. I have read and accept this license and data agreement.</span></label>
+            <p class="ct-license-authorization-note"><i class="fa-solid fa-lock" aria-hidden="true"></i> Your authorization is recorded with this activation for the workshop audit trail. No personal name is required on this screen.</p>
+          </section>
+          <div class="ct-license-key-panel"><label for="ctLicenseInput">Workshop license key</label><div class="ct-license-row"><input id="ctLicenseInput" class="ct-license-input" type="text" maxlength="80" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CT-XXXXXX-XXXXXX-XXXXXX" oninput="CartechAccess.updateLicenseAgreementButton()" required><button id="ctLicenseActivate" type="submit" class="ct-button ct-welcome-primary" disabled><i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Activate workshop</button></div><p id="ctLicenseMessage" class="ct-license-message" role="status">The license key is used once by the owner. Other connected devices will unlock automatically.</p><div class="ct-license-buy-row"><span>Need a new key or renewal?</span><button id="ctBuyLicenseButton" type="button" class="ct-button ct-license-buy" onclick="CartechAccess.openLicenseStore()"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Buy a license</button></div></div>
+        </form>
+        <section id="ctLicenseSuccess" class="ct-license-success" hidden aria-live="polite"><span class="ct-license-success-icon"><i class="fa-solid fa-check" aria-hidden="true"></i></span><h2>Workshop unlocked</h2><p>The key was accepted securely. All connected CARTECH office and mechanic devices can now reconnect with their own accounts.</p><div class="ct-license-success-time"><span>License active until</span><strong id="ctLicenseSuccessExpires">—</strong><small id="ctLicenseSuccessDuration">Server-confirmed duration</small></div><span id="ctLicenseSuccessCountdown" class="ct-license-success-countdown">Preparing your sign-in…</span><div class="ct-license-success-progress" aria-hidden="true"><span id="ctLicenseSuccessProgress"></span></div></section>
+        <p id="ctLicenseNote" class="ct-development-note"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> License expiry locks access only. CARTECH keeps saved workshop records available for the next renewal; it does not erase completed jobs or inspection history.</p>
+        <div id="ctLicenseActions" class="ct-development-actions"><button id="ctDevelopmentSignIn" type="button" class="ct-button" onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" class="ct-button" onclick="CartechAccess.resetLicenseTest(event)" hidden><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
+      </div>
+    </div>
   </section>
+  <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
+    <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p>Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+    <div class="ct-license-store-body"><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>CARTECH license rate: <strong>₱60 per day</strong>. Prices are calculated automatically from the selected term.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="License plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Pay the exact amount</h4><p id="ctLicenseQrText">Scan the plan QR code, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Save the GCash receipt and reference number.</li><li>Return here, enter your workshop details, and upload the receipt.</li><li>The developer verifies the payment, then generates the real license key.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Workshop / company name</label><input id="ctLicensePaymentShopName" type="text" maxlength="100" autocomplete="organization" placeholder="Example Auto Service"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
+  </dialog>
 
   <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="CARTECH account access">
     <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> <span id="ctAccessModeLabel">CARTECH dry run</span></span><span id="ctAccessCaption" class="ct-tester-caption">Shared dry-run schedule</span></div>
@@ -2310,12 +2467,39 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     const CARTECH_MAIN_SHOP_ID = 'cartech-main';
     const CARTECH_SHOP_ID_KEY = 'cartech_shop_id_v1';
     const CARTECH_LICENSE_KEY = 'cartech_shop_license_v1';
+    // Developer-editable sales settings.
+    const CARTECH_GCASH_NUMBER = '09936801829';
+    const CARTECH_LICENSE_RATE_PER_DAY = 60;
+    // Add the final QR image URLs or relative GitHub paths when they are ready.
+    // Each plan can have its own fixed-amount QR image.
+    const CARTECH_PAYMENT_QR_CODES = {
+      '1d': '',
+      '7d': '',
+      '15d': '',
+      '30d': '',
+      '1m': '',
+      '3m': ''
+    };
+    const CARTECH_LICENSE_PLANS = [
+      { id:'1d', label:'1 day', days:1, detail:'One-day access', badge:'Quick test' },
+      { id:'7d', label:'7 days', days:7, detail:'Short trial access', badge:'Try CARTECH' },
+      { id:'15d', label:'15 days', days:15, detail:'Two-week access', badge:'' },
+      { id:'30d', label:'30 days', days:30, detail:'Fixed 30-day access', badge:'' },
+      { id:'1m', label:'1 calendar month', days:30, detail:'Month-to-month access', badge:'Most flexible' },
+      { id:'3m', label:'3 calendar months', days:90, detail:'Quarterly access', badge:'Best value' }
+    ];
+    let selectedLicensePlanId = '';
+    const CARTECH_PAYMENT_REQUEST_KEY = 'cartech_license_payment_request_v1';
+    let paymentResultTimer = 0;
     const storedShopId = String(localStorage.getItem(CARTECH_SHOP_ID_KEY) || '').trim().toLowerCase();
     let currentShopId = /^[a-z0-9][a-z0-9-]{2,63}$/.test(storedShopId) ? storedShopId : CARTECH_MAIN_SHOP_ID;
     let tenantAccessToken = '';
     let tenantAccessSnapshot = null;
     let tenantSessionPromise = null;
     let tenantLastCheckedAt = 0;
+    let licenseSuccessActive = false;
+    let licenseSuccessTimer = 0;
+    let licenseSuccessInterval = 0;
     const TENANT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
 
     const MAIN_SHOP_ROSTER = {
@@ -6409,7 +6593,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
-  const buildId = 'cartech-shopwide-license-v29-20260911';
+  const buildId = 'cartech-shopwide-license-v29-20260912-payment-flow';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -6545,19 +6729,24 @@ window.CartechAccess = (() => {
     const starts = Date.parse(String(access?.license_starts_at || ''));
     const expires = Date.parse(String(access?.license_expires_at || ''));
     byId('ctLicenseShopName').textContent = shopName;
-    byId('ctLicenseStatusText').textContent = access?.valid === true && Number.isFinite(expires)
+    const statusLabel = access?.valid === true && Number.isFinite(expires)
       ? `${access.access_kind === 'trial' ? 'Trial' : 'Active'} · ${philippineDate(expires)}`
       : access?.status === 'not_started' && Number.isFinite(starts) ? `Starts ${philippineDate(starts)}`
         : access?.status === 'revoked' ? 'Revoked' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
+    byId('ctLicenseStatusText').textContent = statusLabel;
+    const state = byId('ctLicenseState');
+    if (state) {
+      state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
+      state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
+    }
     updateLicenseAgreementButton();
   }
   function updateLicenseAgreementButton() {
     const button = byId('ctLicenseActivate');
     if (!button) return;
     const accepted = byId('ctLicenseTermsAccepted')?.checked === true;
-    const owner = String(byId('ctLicenseOwnerName')?.value || '').trim();
     const key = String(byId('ctLicenseInput')?.value || '').trim();
-    button.disabled = licenseBusy || !accepted || owner.length < 2 || key.replace(/[^A-Za-z0-9]/g, '').length < 20;
+    button.disabled = licenseBusy || !accepted || key.replace(/[^A-Za-z0-9]/g, '').length < 20;
   }
   async function refreshLicenseStatus(force = false) {
     if (licenseBusy) return workshopAccessActive();
@@ -6571,7 +6760,7 @@ window.CartechAccess = (() => {
         else if (!underDevPreview) showDevelopment(false);
         return false;
       }
-      if (workshopAccessActive() && !verifiedUser && !underDevPreview) {
+      if (workshopAccessActive() && !verifiedUser && !underDevPreview && !licenseSuccessActive) {
         byId('ctUnderDevelopment').hidden = true;
         byId('loginScreen').classList.remove('hidden');
       }
@@ -6582,13 +6771,323 @@ window.CartechAccess = (() => {
       return false;
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
   }
+  function clearLicenseSuccessTransition(restore = true) {
+    if (licenseSuccessTimer) { clearTimeout(licenseSuccessTimer); licenseSuccessTimer = 0; }
+    if (licenseSuccessInterval) { clearInterval(licenseSuccessInterval); licenseSuccessInterval = 0; }
+    licenseSuccessActive = false;
+    const success = byId('ctLicenseSuccess');
+    if (success) { success.hidden = true; success.classList.remove('ct-license-success-exit'); }
+    if (!restore) return;
+    for (const id of ['ctLicenseForm', 'ctLicenseNote', 'ctLicenseActions']) { const node = byId(id); if (node) node.hidden = false; }
+  }
+  function showLicenseActivationSuccess(access, onComplete) {
+    clearLicenseSuccessTransition(false);
+    licenseSuccessActive = true;
+    const form = byId('ctLicenseForm');
+    const note = byId('ctLicenseNote');
+    const actions = byId('ctLicenseActions');
+    const success = byId('ctLicenseSuccess');
+    if (!success) { onComplete?.(); return; }
+    if (form) form.hidden = true;
+    if (note) note.hidden = true;
+    if (actions) actions.hidden = true;
+    const expiry = Date.parse(String(access?.license_expires_at || ''));
+    byId('ctLicenseSuccessExpires').textContent = Number.isFinite(expiry) ? philippineDate(expiry) : 'Confirmed by server';
+    const start = Date.parse(String(access?.license_starts_at || ''));
+    const termDays = Number.isFinite(start) && Number.isFinite(expiry) ? (expiry - start) / 86400000 : NaN;
+    byId('ctLicenseSuccessDuration').textContent = Number.isFinite(termDays) ? `${termDays >= 1 && Number.isInteger(termDays) ? termDays : termDays.toFixed(1)} day${termDays === 1 ? '' : 's'} · server time` : 'Server-confirmed duration';
+    success.hidden = false;
+    success.classList.remove('ct-license-success-exit');
+    const started = Date.now();
+    const duration = 4200;
+    const render = () => {
+      const remaining = Math.max(0, duration - (Date.now() - started));
+      const seconds = Math.max(1, Math.ceil(remaining / 1000));
+      byId('ctLicenseSuccessCountdown').textContent = `Sign-in opens in ${seconds}…`;
+      byId('ctLicenseSuccessProgress').style.transform = `scaleX(${Math.max(0, remaining / duration)})`;
+    };
+    render();
+    licenseSuccessInterval = setInterval(render, 250);
+    licenseSuccessTimer = setTimeout(() => {
+      clearInterval(licenseSuccessInterval); licenseSuccessInterval = 0;
+      success.classList.add('ct-license-success-exit');
+      setTimeout(() => { licenseSuccessActive = false; success.hidden = true; onComplete?.(); }, 560);
+    }, duration);
+  }
+  function renderLicensePlans() {
+    const container = byId('ctLicensePlans');
+    if (!container) return;
+    container.innerHTML = CARTECH_LICENSE_PLANS.map(plan => `<button type="button" class="ct-license-plan" data-license-plan="${plan.id}" onclick="CartechAccess.selectLicensePlan('${plan.id}')"><span class="ct-license-plan-badge">${escapeHTML(plan.badge || ' ')}</span><strong>${escapeHTML(plan.label)}</strong><small>${escapeHTML(plan.detail)}</small><span class="ct-license-plan-price">${escapeHTML(licensePlanPrice(plan))}</span></button>`).join('');
+  }
+  function licensePlanPrice(plan) { return `₱${(Number(plan?.days || 0) * CARTECH_LICENSE_RATE_PER_DAY).toLocaleString('en-PH')}`; }
+  function licensePlanDurationCode(plan) {
+    return ({ '1d':'1_day', '7d':'7_days', '15d':'15_days', '30d':'30_days', '1m':'1_month', '3m':'3_months' })[plan?.id] || '';
+  }
+  function renderPaymentQr(plan) {
+    const panel = byId('ctLicenseQrPanel');
+    const current = byId('ctLicenseQrVisual');
+    const text = byId('ctLicenseQrText');
+    const download = byId('ctDownloadQrButton');
+    if (!panel || !current || !text || !download || !plan) return;
+    const src = String(CARTECH_PAYMENT_QR_CODES[plan.id] || '').trim();
+    panel.hidden = false;
+    text.textContent = `Scan the ${plan.label} QR code, then save the GCash receipt for ${licensePlanPrice(plan)}.`;
+    if (src) {
+      const image = document.createElement('img');
+      image.id = 'ctLicenseQrVisual';
+      image.src = src;
+      image.alt = `GCash QR for ${plan.label} · ${licensePlanPrice(plan)}`;
+      image.loading = 'lazy';
+      current.replaceWith(image);
+      download.hidden = false;
+      download.dataset.qrSrc = src;
+    } else {
+      const placeholder = document.createElement('div');
+      placeholder.id = 'ctLicenseQrVisual';
+      placeholder.className = 'ct-license-qr-placeholder';
+      placeholder.textContent = 'QR image will be added by the developer.';
+      current.replaceWith(placeholder);
+      download.hidden = true;
+      delete download.dataset.qrSrc;
+    }
+  }
+  function resetPaymentFields() {
+    for (const id of ['ctLicensePaymentShopName','ctLicensePaymentOwner','ctLicensePaymentReference','ctLicensePaymentReceipt']) {
+      const node = byId(id);
+      if (node) node.value = '';
+    }
+    const submit = document.querySelector('#ctLicensePaymentFollowup button[onclick*="submitPaymentRequest"]');
+    if (submit) { submit.disabled = false; submit.textContent = 'Submit payment request'; }
+  }
+  function paymentResultPanel() {
+    let panel = byId('ctLicensePaymentResult');
+    if (panel) return panel;
+    const anchor = document.querySelector('.ct-license-key-panel') || byId('ctLicensePaymentFollowup');
+    if (!anchor) return null;
+    panel = document.createElement('div');
+    panel.id = 'ctLicensePaymentResult';
+    panel.className = 'ct-license-payment-result';
+    panel.hidden = true;
+    if (anchor.classList.contains('ct-license-key-panel')) anchor.append(panel);
+    else anchor.after(panel);
+    return panel;
+  }
+  function renderPaymentDelivery(result) {
+    const panel = paymentResultPanel();
+    if (!panel || !result) return;
+    const status = String(result.status || 'pending');
+    panel.hidden = false;
+    panel.dataset.key = result.license_key || '';
+    panel.dataset.ownerPassword = result.owner_password || '';
+    panel.dataset.shopId = result.shop_id || '';
+    panel.dataset.owner = result.owner_username || '';
+    panel.dataset.shopName = result.shop_name || '';
+    if (status === 'pending') {
+      panel.innerHTML = '<h4>Payment request received</h4><p>The developer is checking your GCash payment. Keep this page open; this box will update automatically after approval.</p>';
+      return;
+    }
+    if (status === 'rejected') {
+      panel.innerHTML = `<h4>Payment request needs attention</h4><p>${escapeHTML(result.review_note || 'The developer did not approve this payment request. Contact the developer before sending another payment.')}</p>`;
+      if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+      return;
+    }
+    if (status !== 'approved' || !result.license_key) return;
+    const key = escapeHTML(result.license_key);
+    const password = escapeHTML(result.owner_password || '—');
+    panel.innerHTML = `<h4>License approved — copy these details now</h4><p>The developer verified the GCash payment. Use the key below on this screen, or copy the complete login details and send them privately.</p><div class="ct-license-delivery-key"><code>${key}</code><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('key')">Copy key</button></div><dl><dt>Workshop</dt><dd>${escapeHTML(result.shop_name)}</dd><dt>Shop ID</dt><dd>${escapeHTML(result.shop_id)}</dd><dt>Owner login</dt><dd>${escapeHTML(result.owner_username)}</dd><dt>Temporary password</dt><dd>${password}</dd><dt>Term</dt><dd>${escapeHTML(result.duration_code)} · ₱${Number(result.amount_pesos || 0).toLocaleString('en-PH')}</dd></dl><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.copyPaymentDelivery('all')">Copy login details</button></div><p>After copying, enter the key above and activate the workshop. Change the temporary password after signing in.</p>`;
+    const input = byId('ctLicenseInput');
+    if (input) input.value = result.license_key;
+    if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+  }
+  async function copyPaymentDelivery(kind = 'all') {
+    const panel = byId('ctLicensePaymentResult');
+    if (!panel) return;
+    const key = panel.dataset.key || '';
+    const shop = panel.dataset.shopName || '';
+    const shopId = panel.dataset.shopId || '';
+    const owner = panel.dataset.owner || '';
+    const password = panel.dataset.ownerPassword || '';
+    const text = kind === 'key' ? key : `CARTECH license\nWorkshop: ${shop}\nShop ID: ${shopId}\nOwner login: ${owner}\nTemporary password: ${password}\nLicense key: ${key}`;
+    try { await navigator.clipboard.writeText(text); byId('ctLicensePaymentStatus').innerHTML = '<strong>Copied.</strong> Keep the license key and temporary password private.'; }
+    catch (_) { byId('ctLicensePaymentStatus').textContent = text; }
+  }
+  async function checkPaymentResult(silent = false) {
+    const requestId = String(localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || '').trim();
+    if (!requestId || !supabaseClient) return null;
+    try {
+      await ensureDeviceAuth();
+      const result = await supabaseClient.rpc('cartech_get_license_payment_result', { p_request_id: requestId });
+      if (result.error) {
+        if (result.error.code === '42883' || /cartech_get_license_payment_result/i.test(result.error.message || '')) {
+          if (!silent) byId('ctLicensePaymentStatus').innerHTML = '<strong>Delivery setup needed:</strong> run the CARTECH-GCASH-QR-PAYMENTS-v2.sql migration in Supabase.';
+          return null;
+        }
+        throw result.error;
+      }
+      const row = Array.isArray(result.data) ? result.data[0] : result.data;
+      if (row) renderPaymentDelivery(row);
+      return row || null;
+    } catch (error) {
+      if (!silent) byId('ctLicensePaymentStatus').innerHTML = `<strong>Could not check payment status:</strong> ${escapeHTML(error?.message || 'Try again.')}`;
+      return null;
+    }
+  }
+  function startPaymentPolling() {
+    if (paymentResultTimer) clearInterval(paymentResultTimer);
+    paymentResultTimer = setInterval(() => { void checkPaymentResult(true); }, 10000);
+  }
+  function openLicenseStore() {
+    renderLicensePlans();
+    selectedLicensePlanId = '';
+    const dialog = byId('ctLicenseStoreDialog');
+    if (!dialog) return;
+    byId('ctLicensePayment').hidden = true;
+    byId('ctLicensePaymentFollowup').hidden = true;
+    resetPaymentFields();
+    byId('ctLicenseQrPanel').hidden = true;
+    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.hidden = false;
+    if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+  }
+  function closeLicenseStore() {
+    const dialog = byId('ctLicenseStoreDialog');
+    if (dialog?.open) dialog.close();
+    else if (dialog) dialog.hidden = true;
+    selectedLicensePlanId = '';
+    byId('ctLicensePayment').hidden = true;
+    byId('ctLicensePaymentFollowup').hidden = true;
+    resetPaymentFields();
+    byId('ctLicenseQrPanel').hidden = true;
+    document.querySelectorAll('[data-license-plan]').forEach(node => node.classList.remove('is-selected'));
+  }
+  function selectLicensePlan(planId) {
+    const plan = CARTECH_LICENSE_PLANS.find(item => item.id === planId);
+    if (!plan) return;
+    selectedLicensePlanId = plan.id;
+    document.querySelectorAll('[data-license-plan]').forEach(node => node.classList.toggle('is-selected', node.dataset.licensePlan === planId));
+    byId('ctLicensePayment').hidden = false;
+    byId('ctLicensePaymentFollowup').hidden = true;
+    resetPaymentFields();
+    const knownShopName = String(tenantAccessSnapshot?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : '')).trim();
+    if (knownShopName) byId('ctLicensePaymentShopName').value = knownShopName;
+    byId('ctLicensePaymentPlan').textContent = `${plan.label} · ${licensePlanPrice(plan)}`;
+    byId('ctGcashNumber').textContent = CARTECH_GCASH_NUMBER;
+    renderPaymentQr(plan);
+    const configured = CARTECH_GCASH_NUMBER && !/^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim());
+    byId('ctCopyGcashButton').disabled = !configured;
+    byId('ctOpenGcashButton').disabled = !configured;
+    byId('ctLicensePaymentStatus').innerHTML = configured
+      ? '<strong>Payment verification:</strong> manual confirmation is enabled. Send the reference number to the developer after payment so a license key can be issued.'
+      : '<strong>Developer setup needed:</strong> set the GCash number in the editable CARTECH settings before publishing this purchase screen.';
+    if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+  }
+  async function copyGcashNumber() {
+    if (!CARTECH_GCASH_NUMBER || /^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim())) return;
+    try { await navigator.clipboard.writeText(CARTECH_GCASH_NUMBER); byId('ctLicensePaymentStatus').textContent = 'GCash number copied. Complete the payment in the GCash app, then send the reference number for verification.'; }
+    catch (_) { byId('ctLicensePaymentStatus').textContent = `Copy this GCash number manually: ${CARTECH_GCASH_NUMBER}`; }
+  }
+  function openGcash() {
+    if (!CARTECH_GCASH_NUMBER || /^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim())) return;
+    const plan = CARTECH_LICENSE_PLANS.find(item => item.id === selectedLicensePlanId);
+    const amount = plan ? licensePlanPrice(plan) : 'the selected amount';
+    byId('ctLicensePaymentStatus').innerHTML = `<strong>Payment step:</strong> Open the GCash app on your phone and send <strong>${escapeHTML(amount)}</strong> to <strong>${escapeHTML(CARTECH_GCASH_NUMBER)}</strong>. Keep this CARTECH page open; the old gcash:// redirect was removed because it opens a blank browser tab on PCs.`;
+    byId('ctLicensePaymentFollowup').hidden = true;
+  }
+  function returnFromGcash() {
+    if (!selectedLicensePlanId) return;
+    byId('ctLicensePaymentFollowup').hidden = false;
+    byId('ctLicensePaymentStatus').innerHTML = '<strong>Welcome back.</strong> Enter the GCash reference number below. A real license key is issued only after the developer verifies the payment.';
+    byId('ctLicensePaymentShopName')?.focus();
+  }
+  function downloadPaymentQr() {
+    const plan = CARTECH_LICENSE_PLANS.find(item => item.id === selectedLicensePlanId);
+    const src = String(byId('ctDownloadQrButton')?.dataset.qrSrc || '').trim();
+    if (!plan || !src) {
+      byId('ctLicensePaymentStatus').innerHTML = '<strong>QR image pending:</strong> the developer has not added this plan’s QR image yet. You can still send the exact amount to the GCash number shown above.';
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = `CARTECH-GCash-${plan.id}-${licensePlanPrice(plan).replace(/[^0-9]/g, '')}.png`;
+    document.body.appendChild(link); link.click(); link.remove();
+  }
+  async function copyPaymentRequest() {
+    const plan = CARTECH_LICENSE_PLANS.find(item => item.id === selectedLicensePlanId);
+    const shop = String(byId('ctLicensePaymentShopName')?.value || '').trim();
+    const owner = String(byId('ctLicensePaymentOwner')?.value || '').trim();
+    const reference = String(byId('ctLicensePaymentReference')?.value || '').trim();
+    if (!plan) return;
+    const text = `CARTECH license payment\nWorkshop: ${shop || '(not entered yet)'}\nOwner username: ${owner || '(not entered yet)'}\nPlan: ${plan.label}\nAmount: ${licensePlanPrice(plan)}\nGCash: ${CARTECH_GCASH_NUMBER}\nReference: ${reference || '(not entered yet)'}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      byId('ctLicensePaymentStatus').innerHTML = '<strong>Payment request copied.</strong> Send it to the developer for verification and key issuance.';
+    } catch (_) {
+      byId('ctLicensePaymentStatus').textContent = text;
+    }
+  }
+  function readPaymentReceipt(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return reject(new Error('Upload the GCash receipt image first.'));
+      if (!/^image\//i.test(file.type || '')) return reject(new Error('Receipt must be an image file.'));
+      if (file.size > 2 * 1024 * 1024) return reject(new Error('Receipt image must be 2 MB or smaller.'));
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('The receipt image could not be read.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  async function submitPaymentRequest() {
+    const plan = CARTECH_LICENSE_PLANS.find(item => item.id === selectedLicensePlanId);
+    const shop = String(byId('ctLicensePaymentShopName')?.value || '').trim();
+    const owner = String(byId('ctLicensePaymentOwner')?.value || '').trim().toLowerCase();
+    const reference = String(byId('ctLicensePaymentReference')?.value || '').trim();
+    const file = byId('ctLicensePaymentReceipt')?.files?.[0];
+    const status = byId('ctLicensePaymentStatus');
+    const submit = document.querySelector('#ctLicensePaymentFollowup button[onclick*="submitPaymentRequest"]');
+    if (!plan) return;
+    if (shop.length < 2) { status.innerHTML = '<strong>Workshop name required:</strong> enter the company or workshop name.'; byId('ctLicensePaymentShopName')?.focus(); return; }
+    if (!/^[a-z0-9][a-z0-9_.-]{2,39}$/.test(owner)) { status.innerHTML = '<strong>Owner username required:</strong> use 3–40 lowercase letters, numbers, dots, dashes, or underscores.'; byId('ctLicensePaymentOwner')?.focus(); return; }
+    if (reference.length < 4) {
+      status.innerHTML = '<strong>Reference required:</strong> enter the reference number shown in the GCash receipt.';
+      byId('ctLicensePaymentReference').focus();
+      return;
+    }
+    if (!file) { status.innerHTML = '<strong>Receipt required:</strong> upload the GCash receipt screenshot so the developer can match it to the transaction.'; byId('ctLicensePaymentReceipt')?.focus(); return; }
+    if (!supabaseClient) { status.textContent = 'The payment service is not available. Check your internet connection and try again.'; return; }
+    if (submit) { submit.disabled = true; submit.textContent = 'Submitting…'; }
+    status.textContent = 'Uploading the receipt and creating your payment request…';
+    try {
+      const receiptData = await readPaymentReceipt(file);
+      await ensureDeviceAuth();
+      const result = await supabaseClient.rpc('cartech_create_license_payment_request', {
+        p_shop_name: shop,
+        p_owner_username: owner,
+        p_plan_code: plan.id,
+        p_duration_code: licensePlanDurationCode(plan),
+        p_amount: Number(plan.days) * CARTECH_LICENSE_RATE_PER_DAY,
+        p_gcash_reference: reference,
+        p_receipt_data: receiptData
+      });
+      if (result.error) throw result.error;
+      const request = Array.isArray(result.data) ? result.data[0] : result.data;
+      status.innerHTML = `<strong>Payment request submitted.</strong> Request <strong>${escapeHTML(request?.request_id || 'received')}</strong> is waiting for developer verification. Keep this page open or save the receipt; the developer will provide the real license key after checking GCash.`;
+      if (request?.request_id) {
+        localStorage.setItem(CARTECH_PAYMENT_REQUEST_KEY, request.request_id);
+        renderPaymentDelivery({ status:'pending' });
+        startPaymentPolling();
+      }
+      if (submit) submit.textContent = 'Request submitted';
+    } catch (error) {
+      status.innerHTML = `<strong>Could not submit request:</strong> ${escapeHTML(error?.message || 'Try again.')}`;
+      if (submit) { submit.disabled = false; submit.textContent = 'Submit payment request'; }
+    }
+  }
+  const submitPaymentReference = submitPaymentRequest;
   async function activateLicense(event) {
     event?.preventDefault?.(); event?.stopPropagation?.();
     if (licenseBusy) return false;
     const key = String(byId('ctLicenseInput').value || '').trim().toUpperCase();
-    const acceptedBy = String(byId('ctLicenseOwnerName').value || '').trim();
+    const acceptedBy = 'Authorized workshop owner';
     if (!byId('ctLicenseTermsAccepted').checked) { message('ctLicenseMessage', 'Read and accept the license and data agreement first.', true); return false; }
-    if (acceptedBy.length < 2) { message('ctLicenseMessage', 'Enter the owner or authorized manager name.', true); return false; }
     if (key.replace(/[^A-Za-z0-9]/g, '').length < 20) { message('ctLicenseMessage', 'Enter the complete license key supplied by the developer.', true); return false; }
     const previousShop = currentShopId;
     const resumableUser = verifiedUser;
@@ -6628,7 +7127,7 @@ window.CartechAccess = (() => {
       byId('ctLicenseInput').value = '';
       byId('ctLicenseTermsAccepted').checked = false;
       updateLicenseGate(access);
-      message('ctLicenseMessage', `Workshop activated by ${acceptedBy}. Every connected CARTECH installation will unlock automatically. Opening sign in…`);
+      message('ctLicenseMessage', 'Workshop activated securely. Every connected CARTECH installation will unlock automatically.');
 
       const canResumeWorkspace = previousShop === currentShopId &&
         resumableUser && resumableRole &&
@@ -6637,7 +7136,7 @@ window.CartechAccess = (() => {
 
       // Do not reload here. Reloading can rotate a new anonymous session in an
       // installed app or private browser and strand it back on the key screen.
-      setTimeout(() => {
+      const finishActivation = () => {
         underDevPreview = false;
         agreementPreview = false;
         byId('ctUnderDevelopment').hidden = true;
@@ -6663,7 +7162,8 @@ window.CartechAccess = (() => {
           loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is unlocked on web and installed apps. Sign in with your staff account.`);
           window.CartechShopHours?.refresh?.();
         }
-      }, 650);
+      };
+      showLicenseActivationSuccess(access, finishActivation);
     } catch (error) {
       message('ctLicenseMessage', error.message || 'The license could not be activated. Check the key and connection.', true);
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
@@ -7076,6 +7576,7 @@ window.CartechAccess = (() => {
   function showDevelopment(preview = false) {
     if (preview && (currentRole !== 'developer' || !identityValid())) return;
     if (!preview && workshopAccessActive()) return;
+    if (!licenseSuccessActive) clearLicenseSuccessTransition(true);
     const wasHidden = byId('ctUnderDevelopment').hidden;
     const testingLicense = licenseTestActive();
     underDevPreview = preview; agreementPreview = false;
@@ -7089,7 +7590,6 @@ window.CartechAccess = (() => {
     byId('ctDevelopmentSignIn').hidden = true;
     if (wasHidden && !preview && !licenseBusy) {
       byId('ctLicenseTermsAccepted').checked = false;
-      byId('ctLicenseOwnerName').value = '';
       byId('ctLicenseInput').value = '';
       message('ctLicenseMessage', 'The license key is used once by the owner. Other connected devices will unlock automatically.');
     }
@@ -7560,7 +8060,12 @@ window.CartechAccess = (() => {
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
   void refreshLicenseStatus(true).then(() => refresh());
-  const api = { buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  if (localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) {
+    renderPaymentDelivery({ status:'pending' });
+    void checkPaymentResult(true);
+    startPaymentPolling();
+  }
+  const api = { buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, selectLicensePlan, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
