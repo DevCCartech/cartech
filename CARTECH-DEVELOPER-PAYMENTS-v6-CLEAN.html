@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review v6 Clean</title>
+  <title>CARTECH Payment Review v6.3 Sold Slots</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
     .shell{min-height:100vh;display:grid;grid-template-columns:255px minmax(0,1fr)}aside{background:var(--navy);color:#fff;padding:28px 22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--orange);font-size:20px;font-weight:900}.brand strong{display:block;font-size:17px;letter-spacing:.04em}.brand small{color:#9fb0c3;font-size:10px;letter-spacing:.13em}.side-note{border:1px solid #ffffff1c;background:#ffffff0b;border-radius:14px;padding:15px}.side-note strong{font-size:12px}.side-note p{font-size:11px;color:#b7c5d4;margin:7px 0 0}.secure{margin-top:auto;color:#91a6b9;font-size:10px}
-    main{padding:30px;max-width:1320px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.top h1{font-size:28px;margin:0;letter-spacing:-.03em}.top p{color:var(--muted);margin:6px 0 0}.badge{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:11px;font-weight:750}
+    main{padding:30px;max-width:1320px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.top h1{font-size:28px;margin:0;letter-spacing:-.03em}.top p{color:var(--muted);margin:6px 0 0}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.plan-jump{display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap}.badge{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:11px;font-weight:750}
     .card{background:var(--white);border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 34px #23384d0c;overflow:hidden}.card-head{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.card-head h2{font-size:16px;margin:0}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.card-body{padding:21px 22px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:11px;font-weight:750;color:#3d5065;text-transform:uppercase;letter-spacing:.05em}.input{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:10px;padding:11px 12px;color:var(--ink);background:#fbfcfd;outline:none}.input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #cfd9e4;background:#fff;color:#31465d;border-radius:9px;padding:10px 13px;font-weight:700}.btn:hover{background:#f5f8fa}.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}.btn.primary:hover{background:#df5d27}.btn.danger{color:var(--red);border-color:#f0cbd2}.btn.quiet{background:#f7f9fb;color:#52657a;border-color:#dce4ed}.btn:disabled{opacity:.55;cursor:wait}.status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f2f7f7;color:#37686d;font-size:12px}.status.error{background:#fff1f2;color:var(--red)}
-    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:220px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.pending,.pill.not_started{background:#fff7e8;color:var(--gold)}.pill.approved,.pill.active{background:#e4f7ef;color:var(--green)}.pill.rejected,.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:220px}.remember-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:11px;color:var(--muted);font-size:11px}.remember-row label{display:flex;align-items:center;gap:7px;color:#31465d;font-weight:700}.remember-row input{accent-color:var(--teal);width:16px;height:16px}.remember-row .btn{font-size:11px;padding:7px 10px}.plan-settings-card{border-color:#d9c59a;box-shadow:0 12px 34px #96661912}.plan-settings-card.plan-editor-collapsed .card-body{display:none}.plan-settings-summary{margin:6px 0 0;color:var(--muted);font-size:11px}.plan-settings-list{display:grid;gap:10px;margin-top:14px}.plan-setting-row{display:grid;grid-template-columns:34px 60px minmax(150px,1fr) 78px 110px minmax(150px,1fr) minmax(210px,1.25fr) 130px;gap:9px;align-items:end;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.plan-setting-row.is-off{background:#f8fafb;opacity:.72}.plan-setting-row .plan-toggle{align-self:center;display:flex;justify-content:center}.plan-toggle input{width:18px;height:18px;accent-color:var(--teal)}.plan-setting-row label{display:grid;gap:4px;color:#52657a;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.04em}.plan-setting-row input,.plan-setting-row select{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fbfcfd;color:var(--ink);font-size:12px}.plan-setting-row input:focus,.plan-setting-row select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.plan-setting-code{font:800 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--teal);padding-bottom:9px}.plan-setting-help{margin:10px 0 0;color:var(--muted);font-size:11px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.pending,.pill.not_started{background:#fff7e8;color:var(--gold)}.pill.approved,.pill.active{background:#e4f7ef;color:var(--green)}.pill.rejected,.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}
     .section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-badge{white-space:nowrap;padding:5px 8px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.license-toolbar-note{font-size:11px;color:var(--muted)}.license-control-card{border-color:#b7dfd5;box-shadow:0 12px 34px #087f8012}.requests{display:grid;gap:12px;margin-top:16px}.request{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:17px;background:#fff}.request.pending{border-color:#ebd29f;background:#fffdf8}.request h3{margin:0;font-size:15px}.request-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 15px;margin-top:10px;font-size:12px}.request-meta dt{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.request-meta dd{margin:0;font-weight:700;overflow-wrap:anywhere}.receipt{width:100%;height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#f7f9fb}.request-side{display:grid;align-content:start;gap:9px}.request-side .actions{display:grid}.request-side .btn{width:100%}.request-note{font-size:11px;color:var(--muted);margin:0}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}.license-list{display:grid;gap:12px;margin-top:14px}.license-row{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:18px;background:#fff;align-items:start}.license-row.current{border-color:#35b98b;background:#f4fffa;box-shadow:0 0 0 2px #35b98b22}.license-row h3{margin:0;font-size:14px;line-height:1.35}.license-row p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.license-side{display:grid;align-content:start;gap:8px;border-left:1px solid #edf1f5;padding-left:16px}.license-side .btn{width:100%;font-size:11px;padding:9px 10px;min-height:38px}.license-side .pill{justify-self:start}.license-help{font-size:11px;color:var(--muted);margin:12px 0 0}.cleanup-actions{display:grid;grid-template-columns:1fr;gap:8px}.cleanup-actions .btn{font-size:11px;padding:9px 10px;min-height:38px}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
-    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.cleanup-actions{grid-template-columns:1fr 1fr}.section-heading{flex-direction:column}}
+    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.top-actions{justify-content:flex-start}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.cleanup-actions{grid-template-columns:1fr 1fr}.section-heading{flex-direction:column}.plan-setting-row{grid-template-columns:40px minmax(0,1fr)}.plan-setting-row .plan-toggle{grid-column:1}.plan-setting-row .plan-setting-code{grid-column:2}.plan-setting-row>label{grid-column:1/-1}}
   </style>
 </head>
 <body>
@@ -26,14 +26,19 @@
       <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><span class="badge">v6 clean build</span></header>
+      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">v6.3 sold slots</span></div></header>
       <section class="card">
-        <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call and is not saved.</p></div>
+        <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
         <div class="card-body">
           <div class="toolbar"><input id="adminSecret" class="input secret" type="password" autocomplete="off" placeholder="Private manager secret"><button id="loadButton" class="btn primary" type="button">Load requests</button><button id="notifyButton" class="btn" type="button">Enable phone notifications</button></div>
+          <div class="remember-row"><label><input id="rememberSecret" type="checkbox" checked> Remember on this device</label><button id="clearSecretButton" class="btn quiet" type="button">Clear saved secret</button><span>Use only on your private phone or computer.</span></div>
           <div id="status" class="status">Enter the manager secret, then load payment requests.</div>
           <div class="summary"><span id="pendingCount" class="pill pending">0 pending</span><span id="totalCount" class="pill">0 total</span><span id="lastLoaded" class="pill">Not loaded</span></div>
         </div>
+      </section>
+      <section id="planSettingsCard" class="card plan-settings-card plan-editor-collapsed" style="margin-top:20px">
+        <div class="card-head"><div class="section-heading"><div><h2>Plans for sale — edit customer page</h2><p>Set the price, availability, and company buying each plan. Only available plans with a company assigned appear on the customer page.</p><p id="planSettingsHeaderStatus" class="plan-settings-summary">Editor minimized. Tap “Edit customer plans” to open it.</p></div><div class="top-actions"><span class="section-badge">Shared online</span><button id="minimizePlansButton" class="btn quiet" type="button">Minimize editor ↑</button></div></div></div>
+        <div class="card-body"><div class="toolbar"><button id="loadPlanSettingsButton" class="btn primary" type="button">Load plan settings</button><button id="savePlanSettingsButton" class="btn" type="button">Save plan settings</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="planSettingsStatus" class="status">Load the settings, then choose which plans are available.</p><div id="planSettingsList" class="plan-settings-list"><div class="empty">Enter the manager secret, then load plan settings.</div></div></div>
       </section>
       <section class="card license-control-card" style="margin-top:20px">
         <div class="card-head"><div class="section-heading"><div><h2>License key control</h2><p>Every issued key is listed here. Revoke running access or permanently delete a key record.</p></div><span class="section-badge">Developer only</span></div></div>
@@ -58,11 +63,123 @@
     let licenseLoadBusy = false;
     const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
     const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
+    const SECRET_STORAGE_KEY = 'cartech_manager_secret_v1';
+    const PLAN_BUYER_OPTIONS = ['', 'A.Y.U. ENGINEERING AND CONSTRUCTION', 'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.', 'TAGUM STARBUILDER', 'CARTECH'];
+    const DEFAULT_PLAN_SETTINGS = [
+      { plan_code:'1d', label:'1 day', days:1, price_pesos:60, detail:'One-day access', badge:'Quick test', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' },
+      { plan_code:'7d', label:'7 days', days:7, price_pesos:420, detail:'Short trial access', badge:'Try CARTECH', is_available:true, is_sold:false, buyer_shop_name:'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.' },
+      { plan_code:'15d', label:'15 days', days:15, price_pesos:900, detail:'Two-week access', badge:'', is_available:true, is_sold:false, buyer_shop_name:'TAGUM STARBUILDER' },
+      { plan_code:'30d', label:'30 days', days:30, price_pesos:1800, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'CARTECH' }
+    ];
+    let planSettings = [];
+    function setPlanEditorOpen(open, shouldScroll = false) {
+      const card = byId('planSettingsCard');
+      const button = byId('editPlansButton');
+      if (!card) return;
+      card.classList.toggle('plan-editor-collapsed', !open);
+      if (button) {
+        button.textContent = open ? 'Hide plan editor ↑' : 'Edit customer plans ↓';
+        button.setAttribute('aria-expanded', String(open));
+      }
+      if (open && shouldScroll) requestAnimationFrame(() => card.scrollIntoView({ behavior:'smooth', block:'start' }));
+    }
+    function setPlanHeaderStatus(text) { const node = byId('planSettingsHeaderStatus'); if (node) node.textContent = text; }
 
     function setStatus(text, error = false) { const node = byId('status'); node.textContent = text; node.classList.toggle('error', error); }
     function amount(value) { return `₱${Number(value || 0).toLocaleString('en-PH')}`; }
     function date(value) { const parsed = new Date(value); return Number.isNaN(parsed.getTime()) ? '—' : parsed.toLocaleString('en-PH', { dateStyle:'medium', timeStyle:'short' }); }
     function secret() { return String(byId('adminSecret').value || '').trim(); }
+    function saveRememberedSecret() {
+      try {
+        const remember = byId('rememberSecret').checked;
+        if (remember && secret()) localStorage.setItem(SECRET_STORAGE_KEY, secret());
+        else if (!remember) localStorage.removeItem(SECRET_STORAGE_KEY);
+      } catch (_) { /* Private browsing or blocked storage: keep using the input normally. */ }
+    }
+    function restoreRememberedSecret() {
+      try {
+        const saved = localStorage.getItem(SECRET_STORAGE_KEY) || '';
+        if (saved) { byId('adminSecret').value = saved; byId('rememberSecret').checked = true; }
+      } catch (_) { /* Storage is optional. */ }
+    }
+    function clearRememberedSecret() {
+      try { localStorage.removeItem(SECRET_STORAGE_KEY); } catch (_) { /* Ignore blocked storage. */ }
+      byId('adminSecret').value = '';
+      byId('rememberSecret').checked = false;
+      setStatus('Saved manager secret cleared from this device.');
+    }
+    function setPlanStatus(text, error = false) { const node = byId('planSettingsStatus'); if (node) { node.textContent = text; node.classList.toggle('error', error); } }
+    function normalizedPlan(item, fallback = {}) {
+      return {
+        plan_code: String(item?.plan_code || fallback.plan_code || '').trim().toLowerCase(),
+        label: String(item?.label ?? fallback.label ?? '').trim(),
+        days: Number(item?.days ?? fallback.days ?? 0),
+        price_pesos: Number(item?.price_pesos ?? fallback.price_pesos ?? 0),
+        detail: String(item?.detail ?? fallback.detail ?? '').trim(),
+        badge: String(item?.badge ?? fallback.badge ?? '').trim(),
+        is_available: item?.is_available !== false,
+        is_sold: item?.is_sold === true || Boolean(String(item?.buyer_shop_name ?? fallback.buyer_shop_name ?? '').trim()),
+        buyer_shop_name: String(item?.buyer_shop_name ?? fallback.buyer_shop_name ?? '').trim()
+      };
+    }
+    function renderPlanSettings(list) {
+      const root = byId('planSettingsList');
+      planSettings = list.length ? list.map((item, index) => normalizedPlan(item, DEFAULT_PLAN_SETTINGS[index] || {})) : DEFAULT_PLAN_SETTINGS.map(item => normalizedPlan(item));
+      if (!root) return;
+      root.innerHTML = planSettings.map(plan => {
+        const buyers = PLAN_BUYER_OPTIONS.map(option => `<option value="${esc(option)}"${option === plan.buyer_shop_name ? ' selected' : ''}>${esc(option || 'No company assigned')}</option>`).join('');
+        return `<div class="plan-setting-row${plan.is_available ? '' : ' is-off'}" data-plan-row="${esc(plan.plan_code)}"><div class="plan-toggle"><label title="Show this plan to customers"><input type="checkbox" data-plan-field="is_available"${plan.is_available ? ' checked' : ''} aria-label="${esc(plan.label)} available"> Available</label><label title="Prevent customers from selecting this plan"><input type="checkbox" data-plan-field="is_sold"${plan.is_sold ? ' checked' : ''} aria-label="${esc(plan.label)} sold"> Sold</label></div><div class="plan-setting-code">${esc(plan.plan_code)}</div><label>Plan name<input data-plan-field="label" type="text" maxlength="80" value="${esc(plan.label)}"></label><label>Days<input data-plan-field="days" type="number" min="1" max="3650" step="1" value="${esc(plan.days)}"></label><label>Price (₱)<input data-plan-field="price_pesos" type="number" min="0" max="999999" step="1" value="${esc(plan.price_pesos)}"></label><label>Description<input data-plan-field="detail" type="text" maxlength="160" value="${esc(plan.detail)}"></label><label>Who buys this slot<select data-plan-field="buyer_shop_name">${buyers}</select></label><label>Badge<input data-plan-field="badge" type="text" maxlength="40" value="${esc(plan.badge)}"></label></div>`;
+      }).join('') + '<p class="plan-setting-help">Turn a plan off to hide it from the customer page. The selected buyer company is shown on the customer plan card and is attached to the payment request.</p>';
+      root.querySelectorAll('[data-plan-field="is_available"]').forEach(input => input.addEventListener('change', event => event.target.closest('[data-plan-row]')?.classList.toggle('is-off', !event.target.checked)));
+      root.querySelectorAll('[data-plan-field="buyer_shop_name"]').forEach(input => input.addEventListener('change', event => { const sold = event.target.closest('[data-plan-row]')?.querySelector('[data-plan-field="is_sold"]'); if (sold && event.target.value) sold.checked = true; }));
+    }
+    function collectPlanSettings() {
+      return Array.from(document.querySelectorAll('[data-plan-row]')).map(row => ({
+        plan_code: row.dataset.planRow,
+        label: row.querySelector('[data-plan-field="label"]')?.value.trim() || '',
+        days: Number(row.querySelector('[data-plan-field="days"]')?.value || 0),
+        price_pesos: Number(row.querySelector('[data-plan-field="price_pesos"]')?.value || 0),
+        detail: row.querySelector('[data-plan-field="detail"]')?.value.trim() || '',
+        badge: row.querySelector('[data-plan-field="badge"]')?.value.trim() || '',
+        is_available: Boolean(row.querySelector('[data-plan-field="is_available"]')?.checked),
+        is_sold: Boolean(row.querySelector('[data-plan-field="is_sold"]')?.checked),
+        buyer_shop_name: row.querySelector('[data-plan-field="buyer_shop_name"]')?.value || ''
+      }));
+    }
+    async function loadPlanSettings(silent = false) {
+      const adminSecret = secret();
+      if (!adminSecret) { if (!silent) setPlanStatus('Enter the private manager secret first.', true); return; }
+      setPlanStatus('Loading shared plan settings…');
+      try {
+        const result = await client.rpc('cartech_list_license_plan_settings', { p_admin_secret: adminSecret });
+        if (result.error) throw result.error;
+        renderPlanSettings(Array.isArray(result.data) ? result.data : []);
+        setPlanStatus('Plan settings loaded. Edit the rows, then save them for the customer page.');
+        setPlanHeaderStatus('Settings loaded. Edit the rows, then save them for the customer page.');
+      } catch (error) {
+        const message = error?.message || 'Could not load plan settings.';
+        setPlanStatus(message.includes('function') ? 'Run CARTECH-PLAN-SETTINGS-v1.sql in Supabase first, then reload this page.' : message, true);
+      }
+    }
+    async function savePlanSettings() {
+      const adminSecret = secret();
+      if (!adminSecret) { setPlanStatus('Enter the private manager secret first.', true); return; }
+      const plans = collectPlanSettings();
+      if (plans.length !== 4 || plans.some(plan => !plan.label || plan.days < 1 || plan.price_pesos < 0)) { setPlanStatus('Check each plan name, days, and price before saving.', true); return; }
+      if (plans.some(plan => plan.is_available && !plan.buyer_shop_name)) { setPlanStatus('Assign a buying company or turn off every plan you leave unassigned.', true); return; }
+      setPlanStatus('Saving plan settings online…');
+      try {
+        const result = await client.rpc('cartech_save_license_plan_settings', { p_admin_secret: adminSecret, p_plans: plans });
+        if (result.error) throw result.error;
+        renderPlanSettings(plans);
+        setPlanStatus('Saved. Customers will see the updated available plans after they reload the buyer page.');
+        setPlanHeaderStatus('Saved online. Customer page will use the updated available plans.');
+        setPlanEditorOpen(false);
+      } catch (error) {
+        const message = error?.message || 'Could not save plan settings.';
+        setPlanStatus(message.includes('function') ? 'Run CARTECH-PLAN-SETTINGS-v1.sql in Supabase first, then try again.' : message, true);
+      }
+    }
     function rowData(data) { return Array.isArray(data) ? data[0] : data; }
 
     function licenseStatusClass(value) {
@@ -329,10 +446,23 @@
     async function copyValue(id) { const text = byId(id)?.textContent || ''; if (!text) return; try { await navigator.clipboard.writeText(text); setStatus('Copied. Keep the license key private.'); } catch (_) { setStatus('Select and copy the value manually.'); } }
     async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Phone/browser notifications enabled while this console is open.' : 'Notifications were not enabled.'); }
 
-    byId('loadButton').addEventListener('click', () => { void loadRequests(false); void loadLicenses(false); });
-    byId('loadLicensesButton').addEventListener('click', () => void loadLicenses(false));
+    restoreRememberedSecret();
+    byId('editPlansButton').addEventListener('click', () => {
+      const card = byId('planSettingsCard');
+      const open = Boolean(card?.classList.contains('plan-editor-collapsed'));
+      setPlanEditorOpen(open, open);
+    });
+    byId('minimizePlansButton').addEventListener('click', () => setPlanEditorOpen(false));
+    byId('adminSecret').addEventListener('input', () => { if (byId('rememberSecret').checked) saveRememberedSecret(); });
+    byId('rememberSecret').addEventListener('change', saveRememberedSecret);
+    byId('clearSecretButton').addEventListener('click', clearRememberedSecret);
+    byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
+    byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
+    byId('savePlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void savePlanSettings(); });
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
-    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { void loadRequests(false); void loadLicenses(false); } });
+    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); } });
+    window.addEventListener('beforeunload', saveRememberedSecret);
     byId('requests').addEventListener('click', event => { const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
     byId('licenseList').addEventListener('click', event => { const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke); const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove); });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
