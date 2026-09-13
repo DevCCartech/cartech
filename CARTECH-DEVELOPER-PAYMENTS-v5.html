@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review</title>
+  <title>CARTECH Payment Review v5</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
@@ -117,7 +117,7 @@
       box.dataset.requestId = requestId;
       box.dataset.licenseKey = issued?.license_key || '';
       box.dataset.ownerPassword = issued?.owner_password || '';
-      box.innerHTML = `<h3>License created — copy these details now</h3><div class="key-box"><code id="issuedKey">${esc(issued?.license_key || '')}</code><button class="btn" data-copy-value="issuedKey">Copy key</button></div><dl><dt>Workshop</dt><dd>${esc(issued?.shop_name)}</dd><dt>Shop ID</dt><dd>${esc(issued?.shop_id)}</dd><dt>Owner login</dt><dd>${esc(issued?.owner_username)}</dd><dt>Temporary password</dt><dd>${esc(issued?.owner_password)}</dd><dt>Term</dt><dd>${esc(issued?.duration_code)} · ${esc(amount(issued?.amount_pesos))}</dd></dl><div class="actions"><button class="btn primary" data-publish-delivery="${esc(requestId)}">Send to buyer page</button></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="repairShopId" class="input" style="flex:1;min-width:180px" value="cartech-main" placeholder="Original shop ID"><button class="btn" data-reissue-delivery="${esc(requestId)}">Repair existing shop</button></div><p id="repairStatus" class="status" style="margin-top:9px" hidden></p><p class="warning">Use Repair existing shop only when this payment accidentally created a new empty tenant. Enter the original ID, such as cartech-main. The v3 Supabase migration is required.</p>`;
+      box.innerHTML = `<h3>License created — copy these details now</h3><div class="key-box"><code id="issuedKey">${esc(issued?.license_key || '')}</code><button class="btn" data-copy-value="issuedKey">Copy key</button></div><dl><dt>Workshop</dt><dd>${esc(issued?.shop_name)}</dd><dt>Shop ID</dt><dd>${esc(issued?.shop_id)}</dd><dt>Owner login</dt><dd>${esc(issued?.owner_username)}</dd><dt>Temporary password</dt><dd>${esc(issued?.owner_password)}</dd><dt>Term</dt><dd>${esc(issued?.duration_code)} · ${esc(amount(issued?.amount_pesos))}</dd></dl><div class="actions"><button class="btn primary" data-publish-delivery="${esc(requestId)}">Send to buyer page</button></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="repairShopId" class="input" style="flex:1;min-width:180px" value="cartech-main" placeholder="Original shop ID"><button class="btn" data-reissue-delivery="${esc(requestId)}">Repair existing shop</button></div><p id="repairStatus" class="status" style="margin-top:9px" hidden></p><p class="warning">Use Repair existing shop only when this payment accidentally created a new empty tenant. Enter the original ID, such as cartech-main. Run the v5 HANDOFF Supabase migration first.</p>`;
       box.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
 
@@ -128,8 +128,24 @@
       try {
         const result = await client.rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
         if (result.error) throw result.error;
-        setStatus('Sent to the buyer page. The buyer can now copy the key and temporary password there.');
-        if (button) { button.textContent = 'Sent to buyer page'; button.disabled = true; }
+        const handoffResult = await client.rpc('cartech_create_buyer_handoff', { p_admin_secret: secret(), p_request_id: requestId });
+        if (handoffResult.error) throw handoffResult.error;
+        const handoff = rowData(handoffResult.data);
+        const token = String(handoff?.handoff_token || '').trim();
+        if (!/^[a-f0-9]{48}$/i.test(token)) throw new Error('The buyer handoff token was not created.');
+        const buyerUrl = new URL('index.html', location.href);
+        buyerUrl.searchParams.set('cartech_handoff', token);
+        const link = buyerUrl.href;
+        let copied = false;
+        try { await navigator.clipboard.writeText(link); copied = true; } catch (_) {}
+        const popup = window.open(link, '_blank');
+        const opened = Boolean(popup);
+        if (popup) { try { popup.opener = null; } catch (_) {} }
+        setStatus(opened
+          ? `Sent to buyer page. The buyer page was opened${copied ? ' and the secure link was copied.' : '.'}`
+          : `The buyer-page popup was blocked.${copied ? ' The secure link was copied; paste it into a new tab.' : ' Allow popups and click again.'}`,
+          !opened && !copied);
+        if (button) { button.textContent = opened ? 'Buyer page opened' : (copied ? 'Buyer link copied' : 'Try again'); button.disabled = opened || copied; }
       } catch (error) { setStatus(error?.message || 'Could not send the key to the buyer page.', true); if (button) button.disabled = false; }
     }
     async function reissueDelivery(requestId) {
