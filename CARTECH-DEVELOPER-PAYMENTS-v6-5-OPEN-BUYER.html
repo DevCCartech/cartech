@@ -1,11 +1,11 @@
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review v6.5 Open Buyer</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>CARTECH Payment Review v6.6 · Stock & Buyers</title>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
@@ -15,6 +15,12 @@
     .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:220px}.remember-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:11px;color:var(--muted);font-size:11px}.remember-row label{display:flex;align-items:center;gap:7px;color:#31465d;font-weight:700}.remember-row input{accent-color:var(--teal);width:16px;height:16px}.remember-row .btn{font-size:11px;padding:7px 10px}.plan-settings-card{border-color:#d9c59a;box-shadow:0 12px 34px #96661912}.plan-settings-card.plan-editor-collapsed .card-body{display:none}.plan-settings-summary{margin:6px 0 0;color:var(--muted);font-size:11px}.plan-settings-list{display:grid;gap:10px;margin-top:14px}.plan-setting-row{display:grid;grid-template-columns:34px 60px minmax(150px,1fr) 78px 110px minmax(150px,1fr) minmax(210px,1.25fr) 130px;gap:9px;align-items:end;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.plan-setting-row.is-off{background:#f8fafb;opacity:.72}.plan-setting-row .plan-toggle{align-self:center;display:flex;justify-content:center}.plan-toggle input{width:18px;height:18px;accent-color:var(--teal)}.plan-setting-row label{display:grid;gap:4px;color:#52657a;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.04em}.plan-setting-row input,.plan-setting-row select{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fbfcfd;color:var(--ink);font-size:12px}.plan-setting-row input:focus,.plan-setting-row select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.plan-setting-code{font:800 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--teal);padding-bottom:9px}.plan-setting-help{margin:10px 0 0;color:var(--muted);font-size:11px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.pending,.pill.not_started{background:#fff7e8;color:var(--gold)}.pill.approved,.pill.active{background:#e4f7ef;color:var(--green)}.pill.rejected,.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}
     .section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-badge{white-space:nowrap;padding:5px 8px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.license-toolbar-note{font-size:11px;color:var(--muted)}.license-control-card{border-color:#b7dfd5;box-shadow:0 12px 34px #087f8012}.requests{display:grid;gap:12px;margin-top:16px}.request{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:17px;background:#fff}.request.pending{border-color:#ebd29f;background:#fffdf8}.request h3{margin:0;font-size:15px}.request-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 15px;margin-top:10px;font-size:12px}.request-meta dt{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.request-meta dd{margin:0;font-weight:700;overflow-wrap:anywhere}.receipt{width:100%;height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#f7f9fb}.request-side{display:grid;align-content:start;gap:9px}.request-side .actions{display:grid}.request-side .btn{width:100%}.request-note{font-size:11px;color:var(--muted);margin:0}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}.license-list{display:grid;gap:12px;margin-top:14px}.license-row{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:18px;background:#fff;align-items:start}.license-row.current{border-color:#35b98b;background:#f4fffa;box-shadow:0 0 0 2px #35b98b22}.license-row h3{margin:0;font-size:14px;line-height:1.35}.license-row p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.license-side{display:grid;align-content:start;gap:8px;border-left:1px solid #edf1f5;padding-left:16px}.license-side .btn{width:100%;font-size:11px;padding:9px 10px;min-height:38px}.license-side .pill{justify-self:start}.license-help{font-size:11px;color:var(--muted);margin:12px 0 0}.cleanup-actions{display:grid;grid-template-columns:1fr;gap:8px}.cleanup-actions .btn{font-size:11px;padding:9px 10px;min-height:38px}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
     @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.top-actions{justify-content:flex-start}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.cleanup-actions{grid-template-columns:1fr 1fr}.section-heading{flex-direction:column}.plan-setting-row{grid-template-columns:40px minmax(0,1fr)}.plan-setting-row .plan-toggle{grid-column:1}.plan-setting-row .plan-setting-code{grid-column:2}.plan-setting-row>label{grid-column:1/-1}}
+    /* Stock is a first-class plan setting. Keep the desktop row compact and
+       let the existing mobile rule stack it with the other fields. */
+    @media(min-width:901px){.plan-setting-row{grid-template-columns:92px 44px minmax(120px,1fr) 72px 92px 78px minmax(140px,1fr) minmax(190px,1.15fr) 100px}.plan-setting-row .plan-toggle{display:grid;gap:5px;justify-content:start}.plan-setting-row .plan-toggle label{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:9px}.plan-setting-row .plan-toggle input{flex:none}}
+    .plan-setting-stock{font-weight:800;color:var(--teal);text-align:center}
+    .plan-auto-state{display:inline-flex;align-items:center;justify-content:center;min-width:66px;padding:4px 6px;border-radius:999px;font-size:9px;font-weight:850;letter-spacing:.04em;background:#e4f7ef;color:var(--green)}
+    .plan-auto-state.is-sold{background:#fff0f2;color:var(--red)}
   </style>
 </head>
 <body>
@@ -26,7 +32,7 @@
       <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">v6.4 low egress</span></div></header>
+      <header class="top"><div><h1>Payment requests</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">v6.6 · stock + low egress</span></div></header>
       <section class="card">
         <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
         <div class="card-body">
@@ -54,7 +60,24 @@
   <script>
     const SUPABASE_URL = 'https://thqoydzuthttyybwijgq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK';
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    async function rpc(functionName, params = {}) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${encodeURIComponent(functionName)}`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      });
+      let data = null;
+      try { data = await response.json(); } catch (_) { data = null; }
+      if (!response.ok) {
+        const message = data?.message || data?.error_description || data?.hint || `RPC request failed (${response.status})`;
+        throw new Error(message);
+      }
+      return { data, error: null };
+    }
     const byId = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     let requests = [];
@@ -65,13 +88,23 @@
     const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
     const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
     const SECRET_STORAGE_KEY = 'cartech_manager_secret_v1';
-    const PLAN_BUYER_OPTIONS = ['', 'A.Y.U. ENGINEERING AND CONSTRUCTION', 'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.', 'TAGUM STARBUILDER', 'CARTECH'];
-    const DEFAULT_PLAN_SETTINGS = [
-      { plan_code:'1d', label:'1 day', days:1, price_pesos:60, detail:'One-day access', badge:'Quick test', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' },
-      { plan_code:'7d', label:'7 days', days:7, price_pesos:420, detail:'Short trial access', badge:'Try CARTECH', is_available:true, is_sold:false, buyer_shop_name:'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.' },
-      { plan_code:'15d', label:'15 days', days:15, price_pesos:900, detail:'Two-week access', badge:'', is_available:true, is_sold:false, buyer_shop_name:'TAGUM STARBUILDER' },
-      { plan_code:'30d', label:'30 days', days:30, price_pesos:1800, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'CARTECH' }
+    const PLAN_BUYER_OPTIONS = ['',
+      'A.Y.U. ENGINEERING AND CONSTRUCTION', 'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.', 'TAGUM STARBUILDER', 'CARTECH',
+      'ROLLYS JUNKSHOP TAGUM', 'ROYCE FOOD CORPORATION', 'BORGE ENGINEERING & CONSTRUCTION',
+      'A.D. PERALTA SARI-SARI STORE - BCL', 'A.K.M. PAINT CENTER', 'A.L. FERNANDEZ JR. SARI SARI STORE',
+      'A.R.M.M. VEGETABLE VENDOR', 'A.V.L. SARI-SARI STORE', 'ABBEY SQUARE SPACE RENTAL',
+      'ABRA DIOCESAN TEACHERS AND EMPLOYEES MULTIPURPOSE COOP.', 'ABRIL EVENTS MANAGEMENT SERVICES',
+      'ADELMOB VARIETY STORE', 'ADORACION B. PASCUA SARI-SARI STORE', 'ADRIAN KURT SARI-SARI STORE',
+      "AERON JAME'S SARI-SARI STORE", 'AFC3 PROPERTY MANAGEMENT', 'AGASHIS SARI SARI STORE - BCL',
+      'AGNES C. CABIGAS SARI-SARI STORE', 'AIDA A. CABOTAGE VEGETABLE STALL'
     ];
+    const DEFAULT_PLAN_SETTINGS = [
+      { plan_code:'1d', label:'1 day', days:1, price_pesos:60, stock_remaining:12, detail:'One-day access', badge:'Quick test', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' },
+      { plan_code:'7d', label:'7 days', days:7, price_pesos:420, stock_remaining:12, detail:'Short trial access', badge:'Try CARTECH', is_available:true, is_sold:false, buyer_shop_name:'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.' },
+      { plan_code:'15d', label:'15 days', days:15, price_pesos:900, stock_remaining:30, detail:'Two-week access', badge:'', is_available:true, is_sold:false, buyer_shop_name:'TAGUM STARBUILDER' },
+      { plan_code:'30d', label:'30 days', days:30, price_pesos:1800, stock_remaining:30, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'CARTECH' }
+    ];
+    const STANDARD_PLAN_DAYS = Object.freeze({ '1d':1, '7d':7, '15d':15, '30d':30 });
     let planSettings = [];
     function setPlanEditorOpen(open, shouldScroll = false) {
       const card = byId('planSettingsCard');
@@ -110,17 +143,24 @@
       setStatus('Saved manager secret cleared from this device.');
     }
     function setPlanStatus(text, error = false) { const node = byId('planSettingsStatus'); if (node) { node.textContent = text; node.classList.toggle('error', error); } }
+    function wholeStock(value, fallback = 0) {
+      const parsed = Number(value);
+      const fallbackValue = Number(fallback);
+      return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : Number.isFinite(fallbackValue) ? Math.max(0, Math.floor(fallbackValue)) : 0;
+    }
     function normalizedPlan(item, fallback = {}) {
+      const planCode = String(item?.plan_code || fallback.plan_code || '').trim().toLowerCase();
       return {
-        plan_code: String(item?.plan_code || fallback.plan_code || '').trim().toLowerCase(),
+        plan_code: planCode,
         label: String(item?.label ?? fallback.label ?? '').trim(),
-        days: Number(item?.days ?? fallback.days ?? 0),
+        days: Number(STANDARD_PLAN_DAYS[planCode] ?? item?.days ?? fallback.days ?? 0),
         price_pesos: Number(item?.price_pesos ?? fallback.price_pesos ?? 0),
         detail: String(item?.detail ?? fallback.detail ?? '').trim(),
         badge: String(item?.badge ?? fallback.badge ?? '').trim(),
         is_available: item?.is_available !== false,
         is_sold: item?.is_sold === true,
-        buyer_shop_name: String(item?.buyer_shop_name ?? fallback.buyer_shop_name ?? '').trim()
+        buyer_shop_name: String(item?.buyer_shop_name ?? fallback.buyer_shop_name ?? '').trim(),
+        stock_remaining: wholeStock(item?.stock_remaining ?? item?.stock_qty ?? item?.stock, fallback.stock_remaining)
       };
     }
     function renderPlanSettings(list) {
@@ -129,21 +169,32 @@
       if (!root) return;
       root.innerHTML = planSettings.map(plan => {
         const buyers = PLAN_BUYER_OPTIONS.map(option => `<option value="${esc(option)}"${option === plan.buyer_shop_name ? ' selected' : ''}>${esc(option || 'Open to anyone')}</option>`).join('');
-        return `<div class="plan-setting-row${plan.is_available ? '' : ' is-off'}" data-plan-row="${esc(plan.plan_code)}"><div class="plan-toggle"><label title="Show this plan to customers"><input type="checkbox" data-plan-field="is_available"${plan.is_available ? ' checked' : ''} aria-label="${esc(plan.label)} available"> Available</label><label title="Prevent customers from selecting this plan"><input type="checkbox" data-plan-field="is_sold"${plan.is_sold ? ' checked' : ''} aria-label="${esc(plan.label)} sold"> Sold</label></div><div class="plan-setting-code">${esc(plan.plan_code)}</div><label>Plan name<input data-plan-field="label" type="text" maxlength="80" value="${esc(plan.label)}"></label><label>Days<input data-plan-field="days" type="number" min="1" max="3650" step="1" value="${esc(plan.days)}"></label><label>Price (₱)<input data-plan-field="price_pesos" type="number" min="0" max="999999" step="1" value="${esc(plan.price_pesos)}"></label><label>Description<input data-plan-field="detail" type="text" maxlength="160" value="${esc(plan.detail)}"></label><label>Who buys this slot<select data-plan-field="buyer_shop_name">${buyers}</select></label><label>Badge<input data-plan-field="badge" type="text" maxlength="40" value="${esc(plan.badge)}"></label></div>`;
-      }).join('') + '<p class="plan-setting-help">An empty buyer means <strong>Open to anyone</strong>. Sold is controlled only by the Sold checkbox. Turn Available off to hide a plan.</p>';
+        return `<div class="plan-setting-row${plan.is_available ? '' : ' is-off'}" data-plan-row="${esc(plan.plan_code)}"><div class="plan-toggle"><label title="Show this plan to customers"><input type="checkbox" data-plan-field="is_available"${plan.is_available ? ' checked' : ''} aria-label="${esc(plan.label)} available"> Available</label><label title="Sold is automatic when stock reaches zero"><span class="plan-auto-state${plan.stock_remaining <= 0 ? ' is-sold' : ''}" data-plan-status>${plan.stock_remaining <= 0 ? 'SOLD' : 'IN STOCK'}</span></label></div><div class="plan-setting-code">${esc(plan.plan_code)}</div><label>Plan name<input data-plan-field="label" type="text" maxlength="80" value="${esc(plan.label)}"></label><label>Days<input data-plan-field="days" type="number" min="1" max="3650" step="1" value="${esc(plan.days)}"></label><label>Price (₱)<input data-plan-field="price_pesos" type="number" min="0" max="999999" step="1" value="${esc(plan.price_pesos)}"></label><label>Stock<input class="plan-setting-stock" data-plan-field="stock_remaining" type="number" min="0" max="999999" step="1" value="${esc(plan.stock_remaining)}" aria-label="${esc(plan.label)} stock"></label><label>Description<input data-plan-field="detail" type="text" maxlength="160" value="${esc(plan.detail)}"></label><label>Who buys this slot<select data-plan-field="buyer_shop_name">${buyers}</select></label><label>Badge<input data-plan-field="badge" type="text" maxlength="40" value="${esc(plan.badge)}"></label></div>`;
+      }).join('') + '<p class="plan-setting-help">Stock is the remaining number of slots. A plan with stock <strong>0</strong> is shown as SOLD to customers. An empty buyer means <strong>Open to anyone</strong>. Sold is automatic when stock reaches 0. Turn Available off to hide a plan.</p>';
       root.querySelectorAll('[data-plan-field="is_available"]').forEach(input => input.addEventListener('change', event => event.target.closest('[data-plan-row]')?.classList.toggle('is-off', !event.target.checked)));
+      root.querySelectorAll('[data-plan-field="stock_remaining"]').forEach(input => input.addEventListener('input', event => {
+        const row = event.target.closest('[data-plan-row]');
+        const status = row?.querySelector('[data-plan-status]');
+        const sold = wholeStock(event.target.value, 0) <= 0;
+        if (status) {
+          status.textContent = sold ? 'SOLD' : 'IN STOCK';
+          status.classList.toggle('is-sold', sold);
+        }
+      }));
     }
     function collectPlanSettings() {
       return Array.from(document.querySelectorAll('[data-plan-row]')).map(row => ({
         plan_code: row.dataset.planRow,
         label: row.querySelector('[data-plan-field="label"]')?.value.trim() || '',
-        days: Number(row.querySelector('[data-plan-field="days"]')?.value || 0),
+        days: Number(STANDARD_PLAN_DAYS[row.dataset.planRow] ?? (row.querySelector('[data-plan-field="days"]')?.value || 0)),
         price_pesos: Number(row.querySelector('[data-plan-field="price_pesos"]')?.value || 0),
         detail: row.querySelector('[data-plan-field="detail"]')?.value.trim() || '',
         badge: row.querySelector('[data-plan-field="badge"]')?.value.trim() || '',
         is_available: Boolean(row.querySelector('[data-plan-field="is_available"]')?.checked),
-        is_sold: Boolean(row.querySelector('[data-plan-field="is_sold"]')?.checked),
-        buyer_shop_name: row.querySelector('[data-plan-field="buyer_shop_name"]')?.value || ''
+        is_sold: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0) <= 0,
+        buyer_shop_name: row.querySelector('[data-plan-field="buyer_shop_name"]')?.value || '',
+        stock_remaining: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0),
+        stock_qty: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0)
       }));
     }
     async function loadPlanSettings(silent = false) {
@@ -151,7 +202,7 @@
       if (!adminSecret) { if (!silent) setPlanStatus('Enter the private manager secret first.', true); return; }
       setPlanStatus('Loading shared plan settings…');
       try {
-        const result = await client.rpc('cartech_list_license_plan_settings', { p_admin_secret: adminSecret });
+        const result = await rpc('cartech_list_license_plan_settings', { p_admin_secret: adminSecret });
         if (result.error) throw result.error;
         renderPlanSettings(Array.isArray(result.data) ? result.data : []);
         setPlanStatus('Plan settings loaded. Edit the rows, then save them for the customer page.');
@@ -165,10 +216,10 @@
       const adminSecret = secret();
       if (!adminSecret) { setPlanStatus('Enter the private manager secret first.', true); return; }
       const plans = collectPlanSettings();
-      if (plans.length !== 4 || plans.some(plan => !plan.label || plan.days < 1 || plan.price_pesos < 0)) { setPlanStatus('Check each plan name, days, and price before saving.', true); return; }
+      if (plans.length !== 4 || plans.some(plan => !plan.label || plan.days < 1 || plan.price_pesos < 0 || !Number.isInteger(plan.stock_remaining) || plan.stock_remaining < 0)) { setPlanStatus('Check each plan name, days, price, and stock before saving.', true); return; }
       setPlanStatus('Saving plan settings online…');
       try {
-        const result = await client.rpc('cartech_save_license_plan_settings', { p_admin_secret: adminSecret, p_plans: plans });
+        const result = await rpc('cartech_save_license_plan_settings', { p_admin_secret: adminSecret, p_plans: plans });
         if (result.error) throw result.error;
         renderPlanSettings(plans);
         setPlanStatus('Saved. Customers will see the updated available plans after they reload the buyer page.');
@@ -205,7 +256,7 @@
       byId('licenseStatus').classList.remove('error');
       if (!silent) byId('licenseStatus').textContent = 'Loading license records…';
       try {
-        const result = await client.rpc('cartech_list_licenses', { p_admin_secret: adminSecret });
+        const result = await rpc('cartech_list_licenses', { p_admin_secret: adminSecret });
         if (result.error) throw result.error;
         const list = Array.isArray(result.data) ? result.data : [];
         renderLicenses(list);
@@ -219,7 +270,7 @@
       if (!confirm('Revoke this license now? The shop will be locked on its next access check.')) return;
       button.disabled = true;
       try {
-        const result = await client.rpc('cartech_revoke_license', { p_admin_secret: secret(), p_license_id: licenseId });
+        const result = await rpc('cartech_revoke_license', { p_admin_secret: secret(), p_license_id: licenseId });
         if (result.error) throw result.error;
         byId('licenseStatus').classList.remove('error');
         byId('licenseStatus').textContent = 'License revoked. Reloading license records…';
@@ -240,7 +291,7 @@
       if (!confirm(`${prompt}\nIf it is the shop's only current key, access will pause until another key is activated.\nWorkshop jobs and account data will remain.`)) return;
       button.disabled = true;
       try {
-        const result = await client.rpc('cartech_delete_license', { p_admin_secret: secret(), p_license_id: licenseId });
+        const result = await rpc('cartech_delete_license', { p_admin_secret: secret(), p_license_id: licenseId });
         if (result.error) throw result.error;
         byId('licenseStatus').classList.remove('error');
         byId('licenseStatus').textContent = 'Old license record deleted. Reloading license records…';
@@ -258,7 +309,7 @@
       if (!confirm('Remove only the uploaded receipt image? The payment record and license will remain.')) return;
       button.disabled = true;
       try {
-        const result = await client.rpc('cartech_clear_payment_receipt', { p_admin_secret: secret(), p_request_id: requestId });
+        const result = await rpc('cartech_clear_payment_receipt', { p_admin_secret: secret(), p_request_id: requestId });
         if (result.error) throw result.error;
         byId('status').classList.remove('error');
         byId('status').textContent = 'Receipt image removed. Reloading payment requests…';
@@ -277,7 +328,7 @@
       if (!confirm(`${prompt}\nWorkshop jobs and account data will remain.`)) return;
       button.disabled = true;
       try {
-        const result = await client.rpc('cartech_delete_payment_request', { p_admin_secret: secret(), p_request_id: requestId });
+        const result = await rpc('cartech_delete_payment_request', { p_admin_secret: secret(), p_request_id: requestId });
         if (result.error) throw result.error;
         byId('status').classList.remove('error');
         byId('status').textContent = 'Payment record deleted. Reloading requests…';
@@ -325,7 +376,7 @@
       if (button) button.disabled = true;
       render();
       try {
-        const result = await client.rpc('cartech_get_license_payment_receipt', { p_admin_secret: adminSecret, p_request_id: requestId });
+        const result = await rpc('cartech_get_license_payment_receipt', { p_admin_secret: adminSecret, p_request_id: requestId });
         if (result.error) throw result.error;
         const row = Array.isArray(result.data) ? result.data[0] : result.data;
         const current = requests.find(item => item.request_id === requestId);
@@ -347,7 +398,7 @@
       loadBusy = true;
       if (!silent) setStatus('Loading payment requests…');
       try {
-        const result = await client.rpc('cartech_list_license_payment_request_meta', { p_admin_secret: adminSecret });
+        const result = await rpc('cartech_list_license_payment_request_meta', { p_admin_secret: adminSecret });
         if (result.error) throw result.error;
         const next = Array.isArray(result.data) ? result.data : [];
         const nextPending = next.filter(row => row.status === 'pending').length;
@@ -369,7 +420,7 @@
       const button = document.querySelector(`[data-${decision}="${CSS.escape(requestId)}"]`); if (button) button.disabled = true;
       setStatus(`${decision === 'approve' ? 'Generating the license key' : 'Rejecting the request'}…`);
       try {
-        const result = await client.rpc('cartech_review_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_decision: decision, p_review_note: note });
+        const result = await rpc('cartech_review_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_decision: decision, p_review_note: note });
         if (result.error) throw result.error;
         const issued = rowData(result.data);
         if (decision === 'approve') showIssued(issued, requestId); else byId('result').hidden = true;
@@ -411,7 +462,7 @@
     async function sendBuyerHandoff(requestId, button = null) {
       if (button) button.disabled = true;
       try {
-        const handoffResult = await client.rpc('cartech_create_buyer_handoff', { p_admin_secret: secret(), p_request_id: requestId });
+        const handoffResult = await rpc('cartech_create_buyer_handoff', { p_admin_secret: secret(), p_request_id: requestId });
         if (handoffResult.error) throw handoffResult.error;
         const handoff = rowData(handoffResult.data);
         const token = String(handoff?.handoff_token || '').trim();
@@ -442,7 +493,7 @@
       const button = box.querySelector('[data-publish-delivery]');
       if (button) button.disabled = true;
       try {
-        const result = await client.rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
+        const result = await rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
         if (result.error) throw result.error;
         await sendBuyerHandoff(requestId, button);
       } catch (error) { setStatus(error?.message || 'Could not send the key to the buyer page.', true); if (button) button.disabled = false; }
@@ -456,7 +507,7 @@
       if (inline) { inline.hidden = false; inline.classList.remove('error'); inline.textContent = 'Repairing the license for ' + existingShopId + '…'; }
       setStatus('Reissuing the approved license for the existing shop…');
       try {
-        const result = await client.rpc('cartech_reissue_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_existing_shop_id: existingShopId });
+        const result = await rpc('cartech_reissue_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_existing_shop_id: existingShopId });
         if (result.error) throw result.error;
         const issued = rowData(result.data);
         showIssued(issued, requestId);
