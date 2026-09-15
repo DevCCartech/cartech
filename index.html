@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
   <meta name="cartech-build" content="cartech-shopwide-license-v50-stock-low-egress">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - Hybrid Queue v50</title>
+  <title>CARTECH - License Portal v54</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -1527,6 +1528,195 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-report-number-editor-actions { justify-content:flex-end; }
 }
 </style>
+<style id="ct-customer-ui-v51">
+/* CARTECH customer license presentation. No data or polling changes. */
+#ctUnderDevelopment{background:radial-gradient(ellipse at top right,#24324b 0,transparent 55%),#090f1c;padding:32px 16px;color:#dce5f2}
+#ctUnderDevelopment .ct-development-card{width:min(100%,1000px);padding:0;border-color:#2c3a50;border-radius:24px;background:#111c2d;box-shadow:0 30px 90px #0006}
+#ctUnderDevelopment .ct-license-hero{background:linear-gradient(120deg,#17253b,#0e1829);border-top:4px solid #f97316;padding:32px}
+#ctUnderDevelopment .ct-development-icon{background:#f973161a;color:#ffad70;box-shadow:inset 0 0 0 1px #f9731640}
+#ctUnderDevelopment .ct-development-brand,#ctUnderDevelopment .ct-license-kicker{color:#ffb47b}
+#ctUnderDevelopment h1{color:#f8fafc;font-size:clamp(25px,4vw,38px);letter-spacing:-.04em}
+#ctUnderDevelopment p{color:#afbed2}
+#ctUnderDevelopment .ct-license-body{padding:28px 32px}
+#ctUnderDevelopment .ct-license-meta,#ctUnderDevelopment .ct-license-sync,#ctUnderDevelopment .ct-license-flow>div,#ctUnderDevelopment .ct-license-agreement,#ctUnderDevelopment .ct-license-key-panel,#ctUnderDevelopment .ct-development-note{background:#162338;border-color:#33445c;color:#bdcbdd}
+#ctUnderDevelopment .ct-license-meta strong,#ctUnderDevelopment .ct-license-flow strong,#ctUnderDevelopment .ct-license-agreement h2,#ctUnderDevelopment .ct-license-agreement li strong,#ctUnderDevelopment .ct-license-form label{color:#f1f5f9}
+#ctUnderDevelopment .ct-license-agreement li,#ctUnderDevelopment .ct-license-flow span{color:#b5c3d7}
+#ctUnderDevelopment .ct-license-agreement{padding:22px;border-radius:14px}
+#ctUnderDevelopment .ct-license-agreement li{line-height:1.7;margin-bottom:9px}
+#ctUnderDevelopment .ct-welcome-check{background:#0e192a;border-color:#40506a;color:#e2e8f0;padding:14px;border-radius:10px}
+#ctUnderDevelopment .ct-license-key-panel{padding:22px;border-radius:14px;margin-top:8px}
+#ctUnderDevelopment .ct-license-input{background:#0b1423;color:#f8fafc;border-color:#53647e;min-height:48px}
+#ctUnderDevelopment .ct-license-buy-row{border-color:#34445d;padding-top:18px}
+#ctUnderDevelopment .ct-button,#ctLicenseStoreDialog .ct-button{background:#23344e;color:#e2e8f0;border-color:#455671;border-radius:10px;min-height:44px}
+#ctUnderDevelopment .ct-welcome-primary,#ctUnderDevelopment .ct-license-buy,#ctLicenseStoreDialog .ct-primary{background:#c94b0c;color:white;border-color:#f97316;font-weight:750}
+#ctUnderDevelopment .ct-button:disabled{opacity:.45;cursor:not-allowed}
+#ctUnderDevelopment .ct-license-message.error{color:#ffb2ba}
+#ctLicenseStoreDialog{width:min(1060px,calc(100% - 24px));background:#101b2d;border:1px solid #394963;border-radius:22px;color:#e2e8f0;color-scheme:dark}
+#ctLicenseStoreDialog::backdrop{background:#030814cc;backdrop-filter:blur(5px)}
+#ctLicenseStoreDialog .ct-dialog-head{background:#152238;border-color:#34445d;padding:26px}
+#ctLicenseStoreDialog .ct-dialog-head h2{color:#f8fafc;font-size:24px;letter-spacing:-.03em}
+#ctLicenseStoreDialog .ct-dialog-head p,#ctLicenseStoreDialog p{color:#acbdd2;font-size:13px}
+#ctLicenseStoreDialog .ct-license-store-body{padding:26px}
+#ctLicenseStoreDialog h3,#ctLicenseStoreDialog h4{color:#f1f5f9}
+#ctLicenseStoreDialog .ct-license-plans{gap:14px}
+#ctLicenseStoreDialog .ct-license-plan{min-height:230px;background:#17253b;border:1px solid #3a4b66;padding:22px 18px;border-radius:16px;gap:10px}
+#ctLicenseStoreDialog .ct-license-plan strong{color:#f8fafc;font-size:20px}
+#ctLicenseStoreDialog .ct-license-plan small{color:#b7c5d7;font-size:12px}
+#ctLicenseStoreDialog .ct-license-plan-badge{color:#ffb079;font-size:10px}
+#ctLicenseStoreDialog .ct-license-plan-price{color:#f8fafc;font-size:27px;letter-spacing:-.04em;padding-top:10px}
+#ctLicenseStoreDialog .ct-license-plan-buyer{color:#a9d9ee!important;overflow-wrap:anywhere}
+#ctLicenseStoreDialog .ct-license-plan-stock{color:#91e0bb!important}
+#ctLicenseStoreDialog .ct-license-plan.is-selected{background:#30251f;border-color:#fb923c;box-shadow:0 0 0 2px #fb923c80}
+#ctLicenseStoreDialog .ct-license-plan:hover:not(:disabled){border-color:#fb923c;transform:translateY(-2px)}
+#ctLicenseStoreDialog .ct-license-plan.is-sold{background:#301d2a;border-color:#a8485c}
+#ctLicenseStoreDialog .ct-license-plan.is-sold strong,#ctLicenseStoreDialog .ct-license-plan.is-sold small,#ctLicenseStoreDialog .ct-license-plan.is-sold .ct-license-plan-price{color:#ffb8c4!important}
+#ctLicenseStoreDialog .ct-license-payment{background:#152238;border-color:#344660;padding:24px;margin-top:24px}
+#ctLicenseStoreDialog .ct-license-payment-plan,#ctLicenseStoreDialog .ct-license-gcash-row,#ctLicenseStoreDialog .ct-license-payment-followup,#ctLicenseStoreDialog .ct-license-buyer-filter,#ctLicenseStoreDialog .ct-license-qr{background:#0e192a;border-color:#354962}
+#ctLicenseStoreDialog label,#ctLicenseStoreDialog .ct-license-gcash-row strong,#ctLicenseStoreDialog .ct-license-payment-plan strong{color:#e2e8f0}
+#ctLicenseStoreDialog .ct-license-payment-plan strong{font-size:18px}
+#ctLicenseStoreDialog input,#ctLicenseStoreDialog select{background:#1c2c43;color:#f8fafc;border-color:#53657f;min-width:0;min-height:44px}
+#ctLicenseStoreDialog .ct-license-payment-followup{padding:20px}
+#ctLicenseStoreDialog .ct-license-payment-followup-grid{gap:16px}
+#ctLicenseStoreDialog .ct-license-payment-steps{color:#c3d0e1;font-size:13px;gap:10px}
+#ctLicenseStoreDialog .ct-license-payment-status{background:#372b1a;color:#f7d69d;border:1px solid #755a31;padding:14px}
+.ct-purchase-roadmap{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 26px;padding:0;list-style:none;counter-reset:purchase}
+.ct-purchase-roadmap li{counter-increment:purchase;display:flex;align-items:center;gap:8px;font-size:12px;color:#c3d0e1}
+.ct-purchase-roadmap li::before{content:counter(purchase);display:grid;place-items:center;width:26px;height:26px;background:#f973161c;color:#ffb679;border:1px solid #c76c344d;border-radius:50%;font-weight:800}
+#ctUnderDevelopment :focus-visible,#ctLicenseStoreDialog :focus-visible{outline:3px solid #fb923c;outline-offset:3px}
+@media(max-width:640px){#ctUnderDevelopment{padding:12px 8px}#ctUnderDevelopment .ct-license-hero,#ctUnderDevelopment .ct-license-body{padding:22px 17px}#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:1fr;gap:16px}#ctUnderDevelopment .ct-license-state{min-width:0}#ctUnderDevelopment .ct-license-row{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-dialog-head,#ctLicenseStoreDialog .ct-license-store-body{padding:20px 16px}#ctLicenseStoreDialog .ct-license-plans{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#ctLicenseStoreDialog .ct-license-plan{padding:16px 12px;min-height:235px}#ctLicenseStoreDialog .ct-license-plan-price{font-size:24px}#ctLicenseStoreDialog .ct-license-payment{padding:16px}#ctLicenseStoreDialog .ct-license-payment-head{flex-direction:column}#ctLicenseStoreDialog .ct-license-payment-followup-grid{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-buyer-filter{align-items:stretch;flex-direction:column}#ctLicenseStoreDialog .ct-license-qr{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-qr-placeholder{margin:auto}.ct-purchase-roadmap{gap:8px}}
+@media(prefers-reduced-motion:reduce){#ctLicenseStoreDialog *,#ctUnderDevelopment *{transition:none!important;animation:none!important}}
+</style>
+<style id="ct-customer-contrast-fix">
+/* Fix nested light cards inherited from the original license theme. */
+#ctUnderDevelopment{color-scheme:dark}
+#ctUnderDevelopment .ct-license-meta{background:transparent}
+#ctUnderDevelopment .ct-license-meta>span,#ctUnderDevelopment .ct-license-agreement li{background:#0e192a;border-color:#3b4e68;color:#bfccdf}
+#ctUnderDevelopment .ct-license-meta strong,#ctUnderDevelopment .ct-license-agreement li strong{color:#f1f5f9}
+#ctUnderDevelopment .ct-license-sync{color:#bfccdf!important}
+#ctUnderDevelopment .ct-license-sync strong{color:#a4e7d6}
+#ctUnderDevelopment .ct-license-sync i,#ctUnderDevelopment .ct-license-authorization-note i{color:#85d9c6}
+#ctUnderDevelopment .ct-license-agreement-version,#ctUnderDevelopment .ct-license-flow b,#ctUnderDevelopment .ct-license-agreement li:before{background:#25433f;border-color:#4a756d;color:#c2f3e4}
+#ctUnderDevelopment .ct-license-authorization-note{color:#bfccdf!important}
+#ctUnderDevelopment .ct-license-buy-row>span{color:#bfccdf}
+#ctUnderDevelopment .ct-license-buy{background:#c94b0c!important;color:#fff!important;border-color:#f97316!important}
+#ctUnderDevelopment .ct-license-buy:hover{background:#a83d08!important}
+#ctUnderDevelopment .ct-license-state{background:#17253b;border-color:#485d7d;box-shadow:none}
+#ctUnderDevelopment .ct-license-state-label{color:#c1cde0}
+#ctUnderDevelopment .ct-license-state strong{color:#ffe0a3}
+#ctUnderDevelopment .ct-license-state.ct-license-state-required{background:#372b1a;border-color:#81683d}
+#ctUnderDevelopment .ct-license-state.ct-license-state-active{background:#173c32;border-color:#488974}
+#ctUnderDevelopment .ct-license-state.ct-license-state-active strong{color:#b3f1d5}
+#ctUnderDevelopment .ct-license-state.ct-license-state-blocked{background:#402233;border-color:#9e586e}
+#ctUnderDevelopment .ct-license-state.ct-license-state-blocked strong{color:#ffbdcd}
+#ctUnderDevelopment .ct-license-success{background:#173129;border-color:#458570;color:#d9f2e8}
+#ctUnderDevelopment .ct-license-success h2{color:#b3f1d5}
+#ctUnderDevelopment .ct-license-success-time{background:#0c211c;border-color:#4a7b6a}
+#ctUnderDevelopment .ct-license-success-time strong{color:#b3f1d5}
+#ctUnderDevelopment .ct-license-success-time span,#ctUnderDevelopment .ct-license-success-time small,#ctUnderDevelopment .ct-license-success-countdown{color:#c1dece}
+#ctUnderDevelopment .ct-license-success-icon{background:#234d3f;color:#c0f6db;box-shadow:0 0 0 7px #1c3b31}
+#ctUnderDevelopment .ct-license-success-progress{background:#395f51}
+#ctUnderDevelopment .ct-license-admin{background:#152238;border-color:#435872}
+#ctUnderDevelopment input::placeholder,#ctLicenseStoreDialog input::placeholder{color:#b2c2d9;opacity:1}
+#ctLicenseStoreDialog .ct-empty-state{background:#162338;color:#c4d2e5;border-color:#526984}
+#ctLicenseStoreDialog .ct-license-payment-result{background:#173129;border-color:#458570;color:#d9f2e8}
+#ctLicenseStoreDialog .ct-license-payment-result h4{color:#b3f1d5}
+#ctLicenseStoreDialog .ct-license-payment-result .ct-license-delivery-key{background:#0c211c;border-color:#679a87}
+#ctLicenseStoreDialog .ct-license-payment-result code,#ctLicenseStoreDialog .ct-license-payment-result dd{color:#e1f7ec}
+#ctLicenseStoreDialog .ct-license-payment-result dt{color:#bfdccd}
+#ctLicenseStoreDialog .ct-license-qr-copy p,#ctLicenseStoreDialog .ct-license-gcash-row small,#ctLicenseStoreDialog .ct-license-payment-plan span{color:#b8c9dc}
+#ctLicenseStoreDialog .ct-license-gcash-row i{color:#85d9c6}
+#ctLicenseStoreDialog .ct-icon-button{background:#23344e;color:#f1f5f9;border:1px solid #536680}
+#ctLicenseStoreDialog .ct-license-payment-followup input[readonly]{background:#24394b;color:#e3f5f5}
+#ctLicenseStoreDialog .ct-license-qr-placeholder{background:#eaf1f5;color:#254353}
+</style>
+<style id="ct-customer-solid-dark-v53">
+/* Customer theme v53: single authoritative palette for every nested panel. */
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog){--ct-page:#080e19;--ct-panel:#111d2e;--ct-raised:#1a2a40;--ct-line:#40536f;--ct-text:#e8eef8;--ct-muted:#bfcee2;color-scheme:dark;background:#080e19!important;color:var(--ct-text)!important;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :where(div,section,article,header,footer,form,p,span,strong,small,b,i,ul,ol,li,label,h1,h2,h3,h4,dl,dt,dd,code,button,input,select,option,textarea){background-color:transparent!important;background-image:none!important;color:var(--ct-text)!important;border-color:var(--ct-line)!important;box-shadow:none!important;text-shadow:none!important;}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :where(p,small,dt){color:var(--ct-muted)!important}
+#ctUnderDevelopment .ct-development-card{background:var(--ct-panel)!important;max-width:1040px;border-radius:24px;box-shadow:0 24px 80px #0005!important}
+#ctUnderDevelopment .ct-license-hero,#ctLicenseStoreDialog .ct-dialog-head{background:#132138!important;border-top-color:#ed792e!important}
+#ctUnderDevelopment .ct-license-hero{padding:30px 32px}
+#ctUnderDevelopment .ct-development-brand,#ctUnderDevelopment .ct-license-kicker{color:#ffbb85!important}
+#ctUnderDevelopment h1{font-size:clamp(25px,3.4vw,36px);line-height:1.2}
+#ctUnderDevelopment .ct-license-body{padding:26px 32px}
+#ctUnderDevelopment .ct-license-meta{gap:14px}
+#ctUnderDevelopment .ct-license-meta>span{background:var(--ct-raised)!important;padding:18px;color:#c5d2e5!important;font-size:11px}
+#ctUnderDevelopment .ct-license-meta strong{font-size:15px;margin-top:8px}
+#ctUnderDevelopment .ct-license-sync,#ctUnderDevelopment .ct-license-key-panel{background:#162b35!important;border-color:#406b76!important}
+#ctUnderDevelopment .ct-license-sync strong{color:#a6eadb!important}
+#ctUnderDevelopment .ct-license-flow>div{background:#142237!important;padding:16px}
+#ctUnderDevelopment .ct-license-flow span{font-size:12px}
+#ctUnderDevelopment .ct-license-agreement{background:#111d2e!important;padding:22px;border-color:#344762!important}
+#ctUnderDevelopment .ct-license-agreement ul{gap:12px}
+#ctUnderDevelopment .ct-license-agreement li{background:#1a2a40!important;font-size:13px;line-height:1.75;margin:0;padding:16px 16px 16px 38px}
+#ctUnderDevelopment .ct-license-agreement li:before{top:19px;background:#274d44!important;color:#c5f5e4!important}
+#ctUnderDevelopment .ct-welcome-check{background:#0c1727!important;border-color:#617493!important;padding:16px;font-size:13px;line-height:1.7}
+#ctUnderDevelopment .ct-license-agreement-version,#ctUnderDevelopment .ct-license-flow b,#ctUnderDevelopment .ct-development-icon,#ctUnderDevelopment .ct-welcome-chip{background:#2d3a4d!important;color:#ffca9d!important;border-color:#596579!important}
+#ctUnderDevelopment .ct-license-state{background:#352a1b!important;border-color:#927044!important}
+#ctUnderDevelopment .ct-license-state strong{color:#ffdda2!important;font-size:15px}
+#ctUnderDevelopment .ct-license-state.ct-license-state-active,#ctUnderDevelopment .ct-license-success,#ctUnderDevelopment .ct-license-success-time{background:#16392f!important;border-color:#508e77!important}
+#ctUnderDevelopment .ct-license-state.ct-license-state-blocked{background:#422436!important;border-color:#ad627b!important}
+#ctUnderDevelopment .ct-license-state.ct-license-state-blocked strong{color:#ffbfd1!important}
+#ctUnderDevelopment .ct-development-note{background:#142237!important}
+#ctUnderDevelopment .ct-license-message,#ctUnderDevelopment .ct-license-authorization-note{color:#c4d6e8!important}
+#ctUnderDevelopment .ct-license-message[data-error=true]{color:#ffb2c4!important}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(input:not([type=checkbox]),select,textarea){background:#0b1626!important;color:#f2f6fc!important;border:1px solid #637896!important;border-radius:10px;min-height:46px;padding:12px;font-size:14px}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) input[type=checkbox]{accent-color:#f98438;width:20px;height:20px}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) input::placeholder{color:#b4c6de!important;opacity:1}
+#ctLicenseStoreDialog option{background:#15243a!important;color:#f2f6fc!important}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-button,.ct-icon-button){background:#293e5b!important;color:#f2f6fc!important;border:1px solid #627b9e!important;border-radius:10px;min-height:46px;font-size:13px}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-primary,.ct-welcome-primary,.ct-license-buy){background:#b94009!important;color:#fff!important;border-color:#fc994e!important;font-weight:750}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) .ct-button:hover:not(:disabled){background:#355272!important}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-primary,.ct-welcome-primary,.ct-license-buy):hover:not(:disabled){background:#943405!important}
+:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :focus-visible{outline:3px solid #ffac6a!important;outline-offset:3px}
+#ctLicenseStoreDialog input::file-selector-button{background:#2b425f;color:#f2f6fc;border:1px solid #637c9e;border-radius:7px;padding:9px 12px;margin-right:12px;font:inherit}
+#ctLicenseStoreDialog{border-color:#4a607f!important;border-radius:22px}
+#ctLicenseStoreDialog .ct-license-plan{background:#192940!important;border-color:#536986!important;min-height:240px}
+#ctLicenseStoreDialog .ct-license-plan-price{font-size:30px;color:#fff!important}
+#ctLicenseStoreDialog .ct-license-plan-badge{color:#ffbf8c!important}
+#ctLicenseStoreDialog .ct-license-plan-stock{color:#adefd2!important}
+#ctLicenseStoreDialog .ct-license-plan.is-selected{background:#38291e!important;border:2px solid #ffac6a!important}
+#ctLicenseStoreDialog .ct-license-plan.is-sold{background:#392133!important;border-color:#b36a84!important}
+#ctLicenseStoreDialog .ct-license-plan.is-sold :is(strong,small,span){color:#ffc4d6!important}
+#ctLicenseStoreDialog .ct-license-plan.is-sold .ct-license-plan-badge{background:#78283f!important;padding:5px 9px;border-radius:8px}
+#ctLicenseStoreDialog :is(.ct-license-payment,.ct-license-payment-followup,.ct-license-buyer-filter,.ct-empty-state){background:#15243a!important;border-color:#455f7c!important}
+#ctLicenseStoreDialog :is(.ct-license-gcash-row,.ct-license-qr,.ct-license-payment-plan,.ct-license-delivery-key){background:#0d192a!important;border-color:#4c6484!important}
+#ctLicenseStoreDialog .ct-license-qr-placeholder{background:#1c3048!important;color:#c5d6ea!important}
+#ctLicenseStoreDialog .ct-license-payment-status{background:#3a2b1a!important;color:#ffe0b3!important;border-color:#997342!important}
+#ctLicenseStoreDialog .ct-license-payment-result{background:#16392f!important;border-color:#508e77!important}
+#ctLicenseStoreDialog .ct-license-payment-result p{font-size:13px;line-height:1.7}
+#ctLicenseStoreDialog .ct-license-payment-result dl{font-size:13px;gap:9px}
+#ctLicenseStoreDialog .ct-license-payment-result code{font-size:14px}
+#ctLicenseStoreDialog .ct-license-payment-followup label{margin-top:10px;margin-bottom:8px}
+#ctLicenseStoreDialog .ct-license-payment-steps{line-height:1.8}
+#ctUnderDevelopment .ct-theme-revision{order:2;margin-left:auto;white-space:nowrap;font:700 10px/1.4 system-ui;letter-spacing:.07em;color:#ffca9d!important;background:#2b3546!important;border:1px solid #53657e;border-radius:7px;padding:6px 8px}
+@media(max-width:640px){#ctUnderDevelopment .ct-license-hero,#ctUnderDevelopment .ct-license-body{padding:22px 16px}#ctUnderDevelopment .ct-license-hero-top{flex-wrap:wrap;gap:10px}#ctUnderDevelopment .ct-theme-revision{margin-left:0}#ctUnderDevelopment .ct-license-meta,#ctUnderDevelopment .ct-license-flow,#ctUnderDevelopment .ct-license-agreement ul{grid-template-columns:1fr}#ctUnderDevelopment .ct-license-agreement{padding:16px}#ctUnderDevelopment .ct-license-buy-row{align-items:stretch;flex-direction:column}#ctLicenseStoreDialog .ct-license-payment-followup-actions,#ctLicenseStoreDialog .ct-license-payment-actions{flex-wrap:wrap}#ctLicenseStoreDialog .ct-license-payment-followup-actions>.ct-button{flex-basis:100%}}
+</style>
+<style id="ct-license-clock-v54">
+/* v54: license status and local countdown */
+#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:minmax(0,1fr) minmax(340px,420px);align-items:center;gap:28px}
+#ctUnderDevelopment #ctLicenseState.ct-running-license{background:#0b1728!important;border:1px solid #566783!important;border-radius:18px;padding:22px;min-width:0;width:100%;box-sizing:border-box}
+#ctUnderDevelopment .ct-running-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+#ctUnderDevelopment #ctLicenseStatusText{font-size:11px!important;margin:0;padding:6px 10px;border-radius:999px;background:#46351f!important;color:#ffdda6!important;white-space:nowrap}
+#ctUnderDevelopment .ct-running-caption{font-size:13px;margin:20px 0 10px;color:#c8d7e9!important}
+#ctUnderDevelopment .ct-running-digits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#ctUnderDevelopment .ct-running-digits>div{background:#192c45!important;border:1px solid #3f5676;border-radius:10px;text-align:center;padding:13px 2px 10px}
+#ctUnderDevelopment .ct-running-digits b{display:block;font:700 clamp(22px,2.5vw,34px)/1.15 ui-monospace,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.05em}
+#ctUnderDevelopment .ct-running-digits small{display:block;margin-top:7px;font-size:8px;letter-spacing:.09em;color:#c2d1e5!important}
+#ctUnderDevelopment .ct-running-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 0;padding-top:14px;border-top:1px solid #394d69}
+#ctUnderDevelopment .ct-running-dates dt{font-size:10px;line-height:1.5}
+#ctUnderDevelopment .ct-running-dates dd{margin:5px 0 0;font-size:12px;line-height:1.6;font-weight:650}
+#ctUnderDevelopment #ctLicenseClockNote{font-size:11px;line-height:1.7;margin:14px 0 0;color:#b8cce4!important}
+#ctUnderDevelopment .ct-running-track{height:5px;background:#2f425b!important;border-radius:99px;margin-top:16px;overflow:hidden}
+#ctUnderDevelopment .ct-running-track>span{display:block;height:100%;background:#7cdbc0!important;border-radius:inherit}
+#ctUnderDevelopment #ctLicenseState[data-license-state=active]{border-color:#4e9784!important}
+#ctUnderDevelopment #ctLicenseState[data-license-state=active] #ctLicenseStatusText{background:#1d4a3d!important;color:#b7f3dc!important}
+#ctUnderDevelopment #ctLicenseState[data-license-state=blocked] #ctLicenseStatusText{background:#54283b!important;color:#ffd0df!important}
+#ctUnderDevelopment #ctLicenseState[data-license-state=unknown] #ctLicenseStatusText{background:#2c3d56!important;color:#d7e5f7!important}
+@media(max-width:850px){#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:1fr}#ctUnderDevelopment .ct-running-digits b{font-size:32px}}
+@media(max-width:420px){#ctUnderDevelopment #ctLicenseState.ct-running-license{padding:17px 13px}#ctUnderDevelopment .ct-running-top{gap:6px}#ctUnderDevelopment .ct-running-digits{gap:6px}#ctUnderDevelopment .ct-running-digits b{font-size:27px}}
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -2255,8 +2445,16 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
   <section id="ctUnderDevelopment" class="ct-development-screen" hidden aria-labelledby="ctDevelopmentTitle">
     <div class="ct-development-card">
       <header class="ct-license-hero">
-        <div class="ct-license-hero-top"><span class="ct-development-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE · WORKSHOP LICENSE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></div>
-        <div class="ct-license-hero-copy"><div><span class="ct-license-kicker">Workshop access</span><h1 id="ctDevelopmentTitle" tabindex="-1">WORKSHOP LICENSE REQUIRED</h1><p id="ctDevelopmentMessage">This workshop does not have active access. The owner or authorized manager can activate or renew it here.</p></div><div id="ctLicenseState" class="ct-license-state"><span class="ct-license-state-label">Current status</span><strong id="ctLicenseStatusText">Checking…</strong></div></div>
+        <div class="ct-license-hero-top"><span class="ct-theme-revision">LICENSE PORTAL · v54</span><span class="ct-development-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE · WORKSHOP LICENSE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></div>
+        <div class="ct-license-hero-copy"><div><span class="ct-license-kicker">Workshop access</span><h1 id="ctDevelopmentTitle" tabindex="-1">WORKSHOP LICENSE REQUIRED</h1><p id="ctDevelopmentMessage">This workshop does not have active access. The owner or authorized manager can activate or renew it here.</p></div><section id="ctLicenseState" class="ct-license-state ct-running-license" aria-label="Workshop license status">
+<div class="ct-running-top"><span class="ct-license-state-label">LICENSE STATUS</span><strong id="ctLicenseStatusText" role="status">Checking…</strong></div>
+<div class="ct-running-caption" id="ctLicenseClockCaption">Waiting for license information</div>
+<div class="ct-running-digits" role="timer" aria-live="off" aria-label="License time remaining">
+<div><b id="ctLicenseDays">—</b><small>DAYS</small></div><div><b id="ctLicenseHours">—</b><small>HOURS</small></div><div><b id="ctLicenseMinutes">—</b><small>MINUTES</small></div><div><b id="ctLicenseSeconds">—</b><small>SECONDS</small></div>
+</div>
+<div class="ct-running-track" id="ctLicenseTermTrack" role="progressbar" aria-label="License term remaining" aria-valuemin="0" aria-valuemax="100" hidden><span id="ctLicenseTermFill"></span></div>
+<dl class="ct-running-dates"><div><dt>Starts · Philippine time</dt><dd id="ctLicenseStartsLabel">—</dd></div><div><dt>Expires · Philippine time</dt><dd id="ctLicenseEndsLabel">—</dd></div></dl>
+<p id="ctLicenseClockNote">Checking the workshop license.</p></section></div>
       </header>
       <div class="ct-license-body">
         <div class="ct-license-meta"><span>Workshop<strong id="ctLicenseShopName">CARTECH Main Workshop</strong></span><span>Access scope<strong>One activation · every office and mechanic device</strong></span></div>
@@ -2286,7 +2484,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
   </section>
   <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
     <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p>Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
-    <div class="ct-license-store-body"><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Plans and prices are controlled by CARTECH. Only plans marked available by the developer appear here.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
+    <div class="ct-license-store-body"><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose a plan</li><li>Pay with GCash</li><li>Upload receipt</li><li>Receive your key</li></ol><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Choose the duration that fits your workshop. Check the price, remaining stock, and assigned company before paying.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
   </dialog>
 
   <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="CARTECH account access">
@@ -6807,6 +7005,42 @@ window.CartechAccess = (() => {
     } catch (error) { if (error.name === 'AbortError') throw new Error('Connection timed out.'); throw error; }
     finally { clearTimeout(timeout); }
   }
+  // Presentation only: uses the existing access snapshot, clock and expiry tick.
+  function licensePortalModel(access, timestamp) {
+    const starts = Date.parse(String(access?.license_starts_at || ''));
+    const expires = Date.parse(String(access?.license_expires_at || ''));
+    const status = String(access?.status || '').toLowerCase();
+    const hasStart = Number.isFinite(starts), hasEnd = Number.isFinite(expires);
+    let state = 'required', label = 'License required', caption = 'No active license', remaining = null;
+    let note = 'Activate a license to start your workshop access.';
+    if (!access) { state = 'unknown'; label = 'Not verified'; caption = 'License information unavailable'; note = 'The timer will appear after the workshop license is verified.'; }
+    else if (status === 'revoked') { state = 'blocked'; label = 'Revoked'; caption = 'Workshop access paused'; note = 'Contact the developer to restore or renew access.'; }
+    else if (status === 'expired' || (hasEnd && expires <= timestamp)) { state = 'blocked'; label = 'Expired'; caption = 'License time remaining'; remaining = 0; note = 'Renew this workshop license to restore access.'; }
+    else if (hasStart && starts > timestamp && (status === 'not_started' || access.valid === true)) { state = 'scheduled'; label = 'Scheduled'; caption = 'Access starts in'; remaining = starts - timestamp; note = 'Access begins on the start date after verification.'; }
+    else if (access.valid === true && hasEnd) { state = 'active'; label = access.access_kind === 'trial' ? 'Trial running' : 'License running'; caption = 'Time remaining'; remaining = expires - timestamp; note = 'Countdown uses the latest verified license. All times are Philippine time.'; }
+    else if (status === 'not_started') { state = 'scheduled'; label = 'Awaiting verification'; caption = 'Start time reached'; note = 'Waiting for the next license verification.'; }
+    else if (access.valid === true) { state = 'unknown'; label = 'Expiry unavailable'; caption = 'No confirmed expiry'; note = 'Remaining time will appear when the expiry is available.'; }
+    const seconds = remaining === null ? null : Math.max(0, Math.ceil(remaining / 1000));
+    const digits = seconds === null ? ['—','—','—','—'] : [Math.floor(seconds / 86400), Math.floor(seconds % 86400 / 3600), Math.floor(seconds % 3600 / 60), seconds % 60].map(v => String(v).padStart(2,'0'));
+    const percent = state === 'active' && hasStart && hasEnd && expires > starts ? Math.min(100, Math.max(0, (expires-timestamp)/(expires-starts)*100)) : null;
+    return {state,label,caption,note,starts,expires,hasStart,hasEnd,digits,percent};
+  }
+  function renderLicensePortal(access = tenantAccessSnapshot) {
+    const root = byId('ctLicenseState');
+    if (!root) return;
+    const model = licensePortalModel(access, now());
+    const setText = (id,value) => { const el = byId(id); if (el && el.textContent !== value) el.textContent = value; };
+    root.dataset.licenseState = model.state;
+    setText('ctLicenseStatusText',model.label);
+    setText('ctLicenseClockCaption',model.caption);
+    setText('ctLicenseClockNote',model.note);
+    ['ctLicenseDays','ctLicenseHours','ctLicenseMinutes','ctLicenseSeconds'].forEach((id,i) => setText(id,model.digits[i]));
+    setText('ctLicenseStartsLabel',model.hasStart ? philippineDate(model.starts) : 'Not available');
+    setText('ctLicenseEndsLabel',model.hasEnd ? philippineDate(model.expires) : 'Not available');
+    const track = byId('ctLicenseTermTrack');
+    track.hidden = model.percent === null;
+    if (model.percent !== null) { track.setAttribute('aria-valuenow', String(Math.round(model.percent))); byId('ctLicenseTermFill').style.width = model.percent + '%'; }
+  }
   function updateLicenseGate(access = tenantAccessSnapshot) {
     const shopName = access?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : 'Not activated');
     const starts = Date.parse(String(access?.license_starts_at || ''));
@@ -6822,6 +7056,7 @@ window.CartechAccess = (() => {
       state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
       state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
     }
+    renderLicensePortal(access);
     updateLicenseAgreementButton();
   }
   function updateLicenseAgreementButton() {
@@ -7704,6 +7939,7 @@ window.CartechAccess = (() => {
     } finally { checking = false; }
   }
   function checkExpiry() {
+    if (!document.hidden && !byId('ctUnderDevelopment')?.hidden) renderLicensePortal();
     refreshProgramStatus();
     if (!workshopAccessActive()) {
       if (verifiedUser) signOut('license-expired');
