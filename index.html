@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,7 @@
   <meta name="cartech-build" content="cartech-shopwide-license-v50-stock-low-egress">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - License Portal v54</title>
+  <title>CARTECH - License Portal v63</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -1586,136 +1585,74 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 @media(max-width:640px){#ctUnderDevelopment{padding:12px 8px}#ctUnderDevelopment .ct-license-hero,#ctUnderDevelopment .ct-license-body{padding:22px 17px}#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:1fr;gap:16px}#ctUnderDevelopment .ct-license-state{min-width:0}#ctUnderDevelopment .ct-license-row{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-dialog-head,#ctLicenseStoreDialog .ct-license-store-body{padding:20px 16px}#ctLicenseStoreDialog .ct-license-plans{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#ctLicenseStoreDialog .ct-license-plan{padding:16px 12px;min-height:235px}#ctLicenseStoreDialog .ct-license-plan-price{font-size:24px}#ctLicenseStoreDialog .ct-license-payment{padding:16px}#ctLicenseStoreDialog .ct-license-payment-head{flex-direction:column}#ctLicenseStoreDialog .ct-license-payment-followup-grid{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-buyer-filter{align-items:stretch;flex-direction:column}#ctLicenseStoreDialog .ct-license-qr{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-qr-placeholder{margin:auto}.ct-purchase-roadmap{gap:8px}}
 @media(prefers-reduced-motion:reduce){#ctLicenseStoreDialog *,#ctUnderDevelopment *{transition:none!important;animation:none!important}}
 </style>
-<style id="ct-customer-contrast-fix">
-/* Fix nested light cards inherited from the original license theme. */
-#ctUnderDevelopment{color-scheme:dark}
-#ctUnderDevelopment .ct-license-meta{background:transparent}
-#ctUnderDevelopment .ct-license-meta>span,#ctUnderDevelopment .ct-license-agreement li{background:#0e192a;border-color:#3b4e68;color:#bfccdf}
-#ctUnderDevelopment .ct-license-meta strong,#ctUnderDevelopment .ct-license-agreement li strong{color:#f1f5f9}
-#ctUnderDevelopment .ct-license-sync{color:#bfccdf!important}
-#ctUnderDevelopment .ct-license-sync strong{color:#a4e7d6}
-#ctUnderDevelopment .ct-license-sync i,#ctUnderDevelopment .ct-license-authorization-note i{color:#85d9c6}
-#ctUnderDevelopment .ct-license-agreement-version,#ctUnderDevelopment .ct-license-flow b,#ctUnderDevelopment .ct-license-agreement li:before{background:#25433f;border-color:#4a756d;color:#c2f3e4}
-#ctUnderDevelopment .ct-license-authorization-note{color:#bfccdf!important}
-#ctUnderDevelopment .ct-license-buy-row>span{color:#bfccdf}
-#ctUnderDevelopment .ct-license-buy{background:#c94b0c!important;color:#fff!important;border-color:#f97316!important}
-#ctUnderDevelopment .ct-license-buy:hover{background:#a83d08!important}
-#ctUnderDevelopment .ct-license-state{background:#17253b;border-color:#485d7d;box-shadow:none}
-#ctUnderDevelopment .ct-license-state-label{color:#c1cde0}
-#ctUnderDevelopment .ct-license-state strong{color:#ffe0a3}
-#ctUnderDevelopment .ct-license-state.ct-license-state-required{background:#372b1a;border-color:#81683d}
-#ctUnderDevelopment .ct-license-state.ct-license-state-active{background:#173c32;border-color:#488974}
-#ctUnderDevelopment .ct-license-state.ct-license-state-active strong{color:#b3f1d5}
-#ctUnderDevelopment .ct-license-state.ct-license-state-blocked{background:#402233;border-color:#9e586e}
-#ctUnderDevelopment .ct-license-state.ct-license-state-blocked strong{color:#ffbdcd}
-#ctUnderDevelopment .ct-license-success{background:#173129;border-color:#458570;color:#d9f2e8}
-#ctUnderDevelopment .ct-license-success h2{color:#b3f1d5}
-#ctUnderDevelopment .ct-license-success-time{background:#0c211c;border-color:#4a7b6a}
-#ctUnderDevelopment .ct-license-success-time strong{color:#b3f1d5}
-#ctUnderDevelopment .ct-license-success-time span,#ctUnderDevelopment .ct-license-success-time small,#ctUnderDevelopment .ct-license-success-countdown{color:#c1dece}
-#ctUnderDevelopment .ct-license-success-icon{background:#234d3f;color:#c0f6db;box-shadow:0 0 0 7px #1c3b31}
-#ctUnderDevelopment .ct-license-success-progress{background:#395f51}
-#ctUnderDevelopment .ct-license-admin{background:#152238;border-color:#435872}
-#ctUnderDevelopment input::placeholder,#ctLicenseStoreDialog input::placeholder{color:#b2c2d9;opacity:1}
-#ctLicenseStoreDialog .ct-empty-state{background:#162338;color:#c4d2e5;border-color:#526984}
-#ctLicenseStoreDialog .ct-license-payment-result{background:#173129;border-color:#458570;color:#d9f2e8}
-#ctLicenseStoreDialog .ct-license-payment-result h4{color:#b3f1d5}
-#ctLicenseStoreDialog .ct-license-payment-result .ct-license-delivery-key{background:#0c211c;border-color:#679a87}
-#ctLicenseStoreDialog .ct-license-payment-result code,#ctLicenseStoreDialog .ct-license-payment-result dd{color:#e1f7ec}
-#ctLicenseStoreDialog .ct-license-payment-result dt{color:#bfdccd}
-#ctLicenseStoreDialog .ct-license-qr-copy p,#ctLicenseStoreDialog .ct-license-gcash-row small,#ctLicenseStoreDialog .ct-license-payment-plan span{color:#b8c9dc}
-#ctLicenseStoreDialog .ct-license-gcash-row i{color:#85d9c6}
-#ctLicenseStoreDialog .ct-icon-button{background:#23344e;color:#f1f5f9;border:1px solid #536680}
-#ctLicenseStoreDialog .ct-license-payment-followup input[readonly]{background:#24394b;color:#e3f5f5}
-#ctLicenseStoreDialog .ct-license-qr-placeholder{background:#eaf1f5;color:#254353}
-</style>
-<style id="ct-customer-solid-dark-v53">
-/* Customer theme v53: single authoritative palette for every nested panel. */
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog){--ct-page:#080e19;--ct-panel:#111d2e;--ct-raised:#1a2a40;--ct-line:#40536f;--ct-text:#e8eef8;--ct-muted:#bfcee2;color-scheme:dark;background:#080e19!important;color:var(--ct-text)!important;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :where(div,section,article,header,footer,form,p,span,strong,small,b,i,ul,ol,li,label,h1,h2,h3,h4,dl,dt,dd,code,button,input,select,option,textarea){background-color:transparent!important;background-image:none!important;color:var(--ct-text)!important;border-color:var(--ct-line)!important;box-shadow:none!important;text-shadow:none!important;}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :where(p,small,dt){color:var(--ct-muted)!important}
-#ctUnderDevelopment .ct-development-card{background:var(--ct-panel)!important;max-width:1040px;border-radius:24px;box-shadow:0 24px 80px #0005!important}
-#ctUnderDevelopment .ct-license-hero,#ctLicenseStoreDialog .ct-dialog-head{background:#132138!important;border-top-color:#ed792e!important}
-#ctUnderDevelopment .ct-license-hero{padding:30px 32px}
-#ctUnderDevelopment .ct-development-brand,#ctUnderDevelopment .ct-license-kicker{color:#ffbb85!important}
-#ctUnderDevelopment h1{font-size:clamp(25px,3.4vw,36px);line-height:1.2}
-#ctUnderDevelopment .ct-license-body{padding:26px 32px}
-#ctUnderDevelopment .ct-license-meta{gap:14px}
-#ctUnderDevelopment .ct-license-meta>span{background:var(--ct-raised)!important;padding:18px;color:#c5d2e5!important;font-size:11px}
-#ctUnderDevelopment .ct-license-meta strong{font-size:15px;margin-top:8px}
-#ctUnderDevelopment .ct-license-sync,#ctUnderDevelopment .ct-license-key-panel{background:#162b35!important;border-color:#406b76!important}
-#ctUnderDevelopment .ct-license-sync strong{color:#a6eadb!important}
-#ctUnderDevelopment .ct-license-flow>div{background:#142237!important;padding:16px}
-#ctUnderDevelopment .ct-license-flow span{font-size:12px}
-#ctUnderDevelopment .ct-license-agreement{background:#111d2e!important;padding:22px;border-color:#344762!important}
-#ctUnderDevelopment .ct-license-agreement ul{gap:12px}
-#ctUnderDevelopment .ct-license-agreement li{background:#1a2a40!important;font-size:13px;line-height:1.75;margin:0;padding:16px 16px 16px 38px}
-#ctUnderDevelopment .ct-license-agreement li:before{top:19px;background:#274d44!important;color:#c5f5e4!important}
-#ctUnderDevelopment .ct-welcome-check{background:#0c1727!important;border-color:#617493!important;padding:16px;font-size:13px;line-height:1.7}
-#ctUnderDevelopment .ct-license-agreement-version,#ctUnderDevelopment .ct-license-flow b,#ctUnderDevelopment .ct-development-icon,#ctUnderDevelopment .ct-welcome-chip{background:#2d3a4d!important;color:#ffca9d!important;border-color:#596579!important}
-#ctUnderDevelopment .ct-license-state{background:#352a1b!important;border-color:#927044!important}
-#ctUnderDevelopment .ct-license-state strong{color:#ffdda2!important;font-size:15px}
-#ctUnderDevelopment .ct-license-state.ct-license-state-active,#ctUnderDevelopment .ct-license-success,#ctUnderDevelopment .ct-license-success-time{background:#16392f!important;border-color:#508e77!important}
-#ctUnderDevelopment .ct-license-state.ct-license-state-blocked{background:#422436!important;border-color:#ad627b!important}
-#ctUnderDevelopment .ct-license-state.ct-license-state-blocked strong{color:#ffbfd1!important}
-#ctUnderDevelopment .ct-development-note{background:#142237!important}
-#ctUnderDevelopment .ct-license-message,#ctUnderDevelopment .ct-license-authorization-note{color:#c4d6e8!important}
-#ctUnderDevelopment .ct-license-message[data-error=true]{color:#ffb2c4!important}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(input:not([type=checkbox]),select,textarea){background:#0b1626!important;color:#f2f6fc!important;border:1px solid #637896!important;border-radius:10px;min-height:46px;padding:12px;font-size:14px}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) input[type=checkbox]{accent-color:#f98438;width:20px;height:20px}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) input::placeholder{color:#b4c6de!important;opacity:1}
-#ctLicenseStoreDialog option{background:#15243a!important;color:#f2f6fc!important}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-button,.ct-icon-button){background:#293e5b!important;color:#f2f6fc!important;border:1px solid #627b9e!important;border-radius:10px;min-height:46px;font-size:13px}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-primary,.ct-welcome-primary,.ct-license-buy){background:#b94009!important;color:#fff!important;border-color:#fc994e!important;font-weight:750}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) .ct-button:hover:not(:disabled){background:#355272!important}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :is(.ct-primary,.ct-welcome-primary,.ct-license-buy):hover:not(:disabled){background:#943405!important}
-:is(#ctUnderDevelopment,#ctLicenseStoreDialog) :focus-visible{outline:3px solid #ffac6a!important;outline-offset:3px}
-#ctLicenseStoreDialog input::file-selector-button{background:#2b425f;color:#f2f6fc;border:1px solid #637c9e;border-radius:7px;padding:9px 12px;margin-right:12px;font:inherit}
-#ctLicenseStoreDialog{border-color:#4a607f!important;border-radius:22px}
-#ctLicenseStoreDialog .ct-license-plan{background:#192940!important;border-color:#536986!important;min-height:240px}
-#ctLicenseStoreDialog .ct-license-plan-price{font-size:30px;color:#fff!important}
-#ctLicenseStoreDialog .ct-license-plan-badge{color:#ffbf8c!important}
-#ctLicenseStoreDialog .ct-license-plan-stock{color:#adefd2!important}
-#ctLicenseStoreDialog .ct-license-plan.is-selected{background:#38291e!important;border:2px solid #ffac6a!important}
-#ctLicenseStoreDialog .ct-license-plan.is-sold{background:#392133!important;border-color:#b36a84!important}
-#ctLicenseStoreDialog .ct-license-plan.is-sold :is(strong,small,span){color:#ffc4d6!important}
-#ctLicenseStoreDialog .ct-license-plan.is-sold .ct-license-plan-badge{background:#78283f!important;padding:5px 9px;border-radius:8px}
-#ctLicenseStoreDialog :is(.ct-license-payment,.ct-license-payment-followup,.ct-license-buyer-filter,.ct-empty-state){background:#15243a!important;border-color:#455f7c!important}
-#ctLicenseStoreDialog :is(.ct-license-gcash-row,.ct-license-qr,.ct-license-payment-plan,.ct-license-delivery-key){background:#0d192a!important;border-color:#4c6484!important}
-#ctLicenseStoreDialog .ct-license-qr-placeholder{background:#1c3048!important;color:#c5d6ea!important}
-#ctLicenseStoreDialog .ct-license-payment-status{background:#3a2b1a!important;color:#ffe0b3!important;border-color:#997342!important}
-#ctLicenseStoreDialog .ct-license-payment-result{background:#16392f!important;border-color:#508e77!important}
-#ctLicenseStoreDialog .ct-license-payment-result p{font-size:13px;line-height:1.7}
-#ctLicenseStoreDialog .ct-license-payment-result dl{font-size:13px;gap:9px}
-#ctLicenseStoreDialog .ct-license-payment-result code{font-size:14px}
-#ctLicenseStoreDialog .ct-license-payment-followup label{margin-top:10px;margin-bottom:8px}
-#ctLicenseStoreDialog .ct-license-payment-steps{line-height:1.8}
-#ctUnderDevelopment .ct-theme-revision{order:2;margin-left:auto;white-space:nowrap;font:700 10px/1.4 system-ui;letter-spacing:.07em;color:#ffca9d!important;background:#2b3546!important;border:1px solid #53657e;border-radius:7px;padding:6px 8px}
-@media(max-width:640px){#ctUnderDevelopment .ct-license-hero,#ctUnderDevelopment .ct-license-body{padding:22px 16px}#ctUnderDevelopment .ct-license-hero-top{flex-wrap:wrap;gap:10px}#ctUnderDevelopment .ct-theme-revision{margin-left:0}#ctUnderDevelopment .ct-license-meta,#ctUnderDevelopment .ct-license-flow,#ctUnderDevelopment .ct-license-agreement ul{grid-template-columns:1fr}#ctUnderDevelopment .ct-license-agreement{padding:16px}#ctUnderDevelopment .ct-license-buy-row{align-items:stretch;flex-direction:column}#ctLicenseStoreDialog .ct-license-payment-followup-actions,#ctLicenseStoreDialog .ct-license-payment-actions{flex-wrap:wrap}#ctLicenseStoreDialog .ct-license-payment-followup-actions>.ct-button{flex-basis:100%}}
-</style>
-<style id="ct-license-clock-v54">
-/* v54: license status and local countdown */
-#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:minmax(0,1fr) minmax(340px,420px);align-items:center;gap:28px}
-#ctUnderDevelopment #ctLicenseState.ct-running-license{background:#0b1728!important;border:1px solid #566783!important;border-radius:18px;padding:22px;min-width:0;width:100%;box-sizing:border-box}
-#ctUnderDevelopment .ct-running-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
-#ctUnderDevelopment #ctLicenseStatusText{font-size:11px!important;margin:0;padding:6px 10px;border-radius:999px;background:#46351f!important;color:#ffdda6!important;white-space:nowrap}
-#ctUnderDevelopment .ct-running-caption{font-size:13px;margin:20px 0 10px;color:#c8d7e9!important}
-#ctUnderDevelopment .ct-running-digits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-#ctUnderDevelopment .ct-running-digits>div{background:#192c45!important;border:1px solid #3f5676;border-radius:10px;text-align:center;padding:13px 2px 10px}
-#ctUnderDevelopment .ct-running-digits b{display:block;font:700 clamp(22px,2.5vw,34px)/1.15 ui-monospace,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.05em}
-#ctUnderDevelopment .ct-running-digits small{display:block;margin-top:7px;font-size:8px;letter-spacing:.09em;color:#c2d1e5!important}
-#ctUnderDevelopment .ct-running-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 0;padding-top:14px;border-top:1px solid #394d69}
-#ctUnderDevelopment .ct-running-dates dt{font-size:10px;line-height:1.5}
-#ctUnderDevelopment .ct-running-dates dd{margin:5px 0 0;font-size:12px;line-height:1.6;font-weight:650}
-#ctUnderDevelopment #ctLicenseClockNote{font-size:11px;line-height:1.7;margin:14px 0 0;color:#b8cce4!important}
-#ctUnderDevelopment .ct-running-track{height:5px;background:#2f425b!important;border-radius:99px;margin-top:16px;overflow:hidden}
-#ctUnderDevelopment .ct-running-track>span{display:block;height:100%;background:#7cdbc0!important;border-radius:inherit}
-#ctUnderDevelopment #ctLicenseState[data-license-state=active]{border-color:#4e9784!important}
-#ctUnderDevelopment #ctLicenseState[data-license-state=active] #ctLicenseStatusText{background:#1d4a3d!important;color:#b7f3dc!important}
-#ctUnderDevelopment #ctLicenseState[data-license-state=blocked] #ctLicenseStatusText{background:#54283b!important;color:#ffd0df!important}
-#ctUnderDevelopment #ctLicenseState[data-license-state=unknown] #ctLicenseStatusText{background:#2c3d56!important;color:#d7e5f7!important}
-@media(max-width:850px){#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:1fr}#ctUnderDevelopment .ct-running-digits b{font-size:32px}}
-@media(max-width:420px){#ctUnderDevelopment #ctLicenseState.ct-running-license{padding:17px 13px}#ctUnderDevelopment .ct-running-top{gap:6px}#ctUnderDevelopment .ct-running-digits{gap:6px}#ctUnderDevelopment .ct-running-digits b{font-size:27px}}
+
+
+
+
+
+
+
+
+
+<style id="ct-reference-integration-v63">
+/* Supplied reference layout, scoped to the real license portal only. */
+#ctUnderDevelopment.ct-reference-portal{background:#07090e!important;padding:32px 16px!important;color:#f8fafc;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;place-items:start center}
+#ctUnderDevelopment .ct-reference-main{width:100%;max-width:576px;background:#101622;border:1px solid #253044;border-radius:16px;overflow:hidden;box-sizing:border-box}
+#ctUnderDevelopment .bg-cardHeader{background:#0d121b}
+#ctUnderDevelopment .bg-innerCardBg{background:#171e2e}
+#ctUnderDevelopment .bg-cardBg{background:#101622}
+#ctUnderDevelopment .bg-darkBg\/80{background:#090d15}
+#ctUnderDevelopment .bg-darkBg\/60{background:#0b1018}
+#ctUnderDevelopment header{padding:16px 24px;border-bottom:1px solid #253044}
+#ctUnderDevelopment header h2{font-size:12px;color:#fb923c}
+#ctUnderDevelopment header p{font-size:11px;line-height:1.5;margin:0;color:#a5b7cf}
+#ctUnderDevelopment h1{color:#fff!important;font-size:24px!important;font-weight:700;line-height:1.3;letter-spacing:-.035em;margin:0 0 10px}
+#ctUnderDevelopment #ctDevelopmentMessage{font-size:14px;line-height:1.65;color:#a5b7cf;margin:0}
+#ctUnderDevelopment #ctLicenseState{background:#171e2e;border:1px solid #263145;border-radius:12px}
+#ctUnderDevelopment #ctLicenseStatusText{background:#493716;color:#ffd16e;border-color:#715828;font-size:11px}
+#ctUnderDevelopment[data-license-state=active] #ctLicenseStatusText{background:#14382d;color:#a1eace;border-color:#347e67}
+#ctUnderDevelopment[data-license-state=blocked] #ctLicenseStatusText{background:#422034;color:#ffb6cd;border-color:#97546e}
+#ctUnderDevelopment[data-license-state=active] #status-indicator-dot{background:#34d399}
+#ctUnderDevelopment #ctLicenseClockCaption{font-size:13px;color:#d1dbea}
+#ctUnderDevelopment #ctLicenseState .text-slate-500{color:#98acc6}
+#ctUnderDevelopment #ctLicenseState .text-slate-400{color:#aabbd1}
+#ctUnderDevelopment #ctLicenseClockNote{font-size:11px;color:#a7b9ce;line-height:1.5;margin-top:12px}
+#ctUnderDevelopment #ctLicenseTermTrack{height:4px;border-radius:4px;background:#2d3b4f;margin-top:12px;overflow:hidden}
+#ctUnderDevelopment #ctLicenseTermFill{display:block;height:100%;background:#34d399}
+#ctUnderDevelopment #ctLicenseForm{padding:0;margin:16px 0 0;background:transparent;border:0;display:block}
+#ctUnderDevelopment #ctLicenseInput{width:100%;background:#171e2e;color:#f1f5f9;border:1px solid #42526b;border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.5;font-family:ui-monospace,monospace;box-sizing:border-box;min-height:50px}
+#ctUnderDevelopment #ctLicenseInput::placeholder{color:#8ca1bd;opacity:1}
+#ctUnderDevelopment #ctLicenseInput:focus{outline:2px solid #f97316;outline-offset:2px}
+#ctUnderDevelopment #ctLicenseActivate{width:100%;background:linear-gradient(110deg,#c44904,#cc5706);color:white;border:1px solid #fb923c;border-radius:12px;min-height:52px;font-size:15px;font-weight:650;box-shadow:0 5px 20px #ea580c26}
+#ctUnderDevelopment #ctLicenseActivate:disabled{opacity:.65;cursor:not-allowed}
+#ctUnderDevelopment #ctLicenseMessage{font-size:11px!important;line-height:1.6;color:#b5c5d9!important;margin:10px 0 0!important}
+#ctUnderDevelopment #ctLicenseMessage[data-error=true]{color:#ffadbf!important}
+#ctUnderDevelopment .ct-ref-purchase{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;border-top:1px solid #27344a;padding-top:12px;font-size:12px;color:#a8bbd2}
+#ctUnderDevelopment #ctBuyLicenseButton{font-size:12px;color:#ffae70;background:transparent;border:0;padding:10px 0;min-height:40px;cursor:pointer}
+#ctUnderDevelopment .ct-ref-updates{margin-top:12px;border-top:1px solid #27344a;padding-top:6px;font-size:12px;color:#bdcce0}
+#ctUnderDevelopment .ct-ref-updates summary{display:flex;justify-content:space-between;gap:12px;padding:10px 0;cursor:pointer;list-style:none}
+#ctUnderDevelopment #ctPaymentUpdateLabel{color:#f3c97a;font-size:11px}
+#ctUnderDevelopment .ct-license-payment-result{margin:0;padding:12px;background:#122b2c;border:1px solid #345c5f;color:#d5ece8;border-radius:9px}
+#ctUnderDevelopment .ct-license-payment-result h4{color:#b8f1d8;font-size:13px}
+#ctUnderDevelopment .ct-license-payment-result p{color:#bdd8d5;font-size:12px;line-height:1.6}
+#ctUnderDevelopment .ct-license-payment-result code{color:#cde8dd}
+#ctUnderDevelopment .ct-license-delivery-key{background:#0b211d;border-color:#426e5f}
+#ctUnderDevelopment #ctLicenseNote{font-size:11px;color:#9aadc7;padding:16px 24px;background:#0b1018;border-top:1px solid #273247;margin:0;text-align:center}
+#ctUnderDevelopment #ctLicenseSuccess{width:min(448px,calc(100% - 32px));max-height:calc(100vh - 32px);overflow:auto;margin:auto;padding:32px;background:#101622;color:#f8fafc;border:1px solid #146657;border-radius:16px;text-align:center;box-sizing:border-box}
+#ctUnderDevelopment #ctLicenseSuccess::backdrop{background:#000b;backdrop-filter:blur(5px)}
+#ctUnderDevelopment #ctLicenseSuccess>div:first-child{width:64px;height:64px;background:#0c3029;border:1px solid #12624f;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#34d399}
+#ctUnderDevelopment #ctLicenseSuccess>div:first-child svg{width:32px;height:32px}
+#ctUnderDevelopment #ctRefSuccessTitle{font-size:21px;font-weight:700;letter-spacing:-.025em;margin:0 0 10px}
+#ctUnderDevelopment #ctLicenseSuccess .ct-ref-verified-copy{font-size:12px;line-height:1.7;color:#c7d2e0;margin:0}
+#ctUnderDevelopment #ctVerifiedKey{color:#fb923c;font-family:ui-monospace,monospace;font-weight:650;overflow-wrap:anywhere}
+#ctUnderDevelopment #ctLicenseSuccess>.bg-innerCardBg{margin:22px 0;padding:16px;font-size:12px;background:#171e2e;border:1px solid #283447;border-radius:12px}
+#ctUnderDevelopment #ctLicenseSuccess .flex.justify-between{gap:12px;line-height:1.5}
+#ctUnderDevelopment #ctLicenseSuccess .flex.justify-between>span:last-child{text-align:right}
+#ctUnderDevelopment #ctLicenseContinue{width:100%;background:#047c5d;color:#fff;border:1px solid #0ba97d;border-radius:12px;padding:13px 16px;min-height:48px;font-size:15px;font-weight:650;cursor:pointer}
+#ctUnderDevelopment #ctLicenseContinue:hover{background:#05654e}
+#ctUnderDevelopment :focus-visible{outline:2px solid #fb923c;outline-offset:3px}
+#ctUnderDevelopment [hidden]{display:none!important}
+@media(max-width:480px){#ctUnderDevelopment.ct-reference-portal{padding:16px 10px!important}#ctUnderDevelopment h1{font-size:21px!important}#ctUnderDevelopment header{padding:16px}#ctUnderDevelopment #ctLicenseSuccess{padding:26px 22px}}
 </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -1778,21 +1715,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
         <div>
           <h2 class="text-base font-black text-slate-900 tracking-tight leading-none">CARTECH</h2>
           <p class="text-[9px] font-bold text-orange-600 uppercase tracking-widest mt-0.5">Automotive Operations</p>
-        </div>
-      </div>
-
-      <!-- SYSTEM NOTICE: UNDER DEVELOPMENT & BETA NOTICE -->
-      <div id="loginNotice" class="p-3.5 bg-amber-500/10 border-2 border-amber-500/60 rounded-2xl space-y-1.5 text-center shadow-inner">
-        <div class="flex items-center justify-center gap-1.5 text-amber-700 font-black text-xs uppercase tracking-wider">
-          <i class="fa-solid fa-triangle-exclamation text-sm text-amber-600 animate-pulse"></i>
-          <span id="loginNoticeTitle">UNDER DEVELOPMENT</span>
-        </div>
-        <p id="loginNoticeMessage" class="text-[11px] font-bold text-slate-800 leading-snug">
-          CARTECH Hybrid Queue System is currently under development.
-        </p>
-        <div class="pt-1 border-t border-amber-200/60">
-          <p id="loginNoticeFooter" class="text-[10px] font-black uppercase text-amber-800 tracking-tight leading-relaxed whitespace-pre-line">More updates and features will be added.
-SEPTEMBER 19 BETA TEST IS ENDED</p>
         </div>
       </div>
 
@@ -2442,46 +2364,156 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       <p id="ctTermsVersionLabel" class="ct-welcome-footnote">CARTECH HYBRID QUEUE · Limited developer dry run · Current terms</p>
     </div>
   </section>
-  <section id="ctUnderDevelopment" class="ct-development-screen" hidden aria-labelledby="ctDevelopmentTitle">
-    <div class="ct-development-card">
-      <header class="ct-license-hero">
-        <div class="ct-license-hero-top"><span class="ct-theme-revision">LICENSE PORTAL · v54</span><span class="ct-development-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div class="ct-development-brand">CARTECH HYBRID QUEUE · WORKSHOP LICENSE</div><span id="ctDevelopmentPreviewBadge" class="ct-welcome-chip" hidden>Developer preview</span></div>
-        <div class="ct-license-hero-copy"><div><span class="ct-license-kicker">Workshop access</span><h1 id="ctDevelopmentTitle" tabindex="-1">WORKSHOP LICENSE REQUIRED</h1><p id="ctDevelopmentMessage">This workshop does not have active access. The owner or authorized manager can activate or renew it here.</p></div><section id="ctLicenseState" class="ct-license-state ct-running-license" aria-label="Workshop license status">
-<div class="ct-running-top"><span class="ct-license-state-label">LICENSE STATUS</span><strong id="ctLicenseStatusText" role="status">Checking…</strong></div>
-<div class="ct-running-caption" id="ctLicenseClockCaption">Waiting for license information</div>
-<div class="ct-running-digits" role="timer" aria-live="off" aria-label="License time remaining">
-<div><b id="ctLicenseDays">—</b><small>DAYS</small></div><div><b id="ctLicenseHours">—</b><small>HOURS</small></div><div><b id="ctLicenseMinutes">—</b><small>MINUTES</small></div><div><b id="ctLicenseSeconds">—</b><small>SECONDS</small></div>
-</div>
-<div class="ct-running-track" id="ctLicenseTermTrack" role="progressbar" aria-label="License term remaining" aria-valuemin="0" aria-valuemax="100" hidden><span id="ctLicenseTermFill"></span></div>
-<dl class="ct-running-dates"><div><dt>Starts · Philippine time</dt><dd id="ctLicenseStartsLabel">—</dd></div><div><dt>Expires · Philippine time</dt><dd id="ctLicenseEndsLabel">—</dd></div></dl>
-<p id="ctLicenseClockNote">Checking the workshop license.</p></section></div>
-      </header>
-      <div class="ct-license-body">
-        <div class="ct-license-meta"><span>Workshop<strong id="ctLicenseShopName">CARTECH Main Workshop</strong></span><span>Access scope<strong>One activation · every office and mechanic device</strong></span></div>
-        <p class="ct-license-sync"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><span><strong>One owner activation unlocks the whole workshop.</strong> Office PCs, mechanic phones, installed apps, and web browsers reconnect automatically using this workshop profile.</span></p>
-        <div class="ct-license-flow" aria-label="License activation steps"><div><b>1</b><span><strong>Activate</strong><br>Owner enters the supplied key.</span></div><div><b>2</b><span><strong>Reconnect</strong><br>Staff sign in with their own accounts.</span></div><div><b>3</b><span><strong>Continue</strong><br>Renew later without losing workshop records.</span></div></div>
-        <form id="ctLicenseForm" class="ct-license-form" onsubmit="CartechAccess.activateLicense(event); return false;" novalidate>
-          <section class="ct-license-agreement" aria-labelledby="ctLicenseAgreementTitle">
-            <div class="ct-license-agreement-head"><div><h2 id="ctLicenseAgreementTitle">License, access &amp; data agreement</h2><p>Read this short summary before activating or renewing CARTECH.</p></div><span class="ct-license-agreement-version">Current terms</span></div>
-            <ul>
-              <li><strong>Server-controlled term:</strong> the selected duration starts from the license date stored on the server. Philippine date and time shown by CARTECH come from the server, not the device clock.</li>
-              <li><strong>One shop-wide activation:</strong> one authorized owner or manager activation unlocks this workshop profile for registered office and mechanic accounts on web and installed apps.</li>
-              <li><strong>Individual accounts:</strong> every staff member keeps their own username, password, role, and permissions. Never share account credentials or a license key publicly.</li>
-              <li><strong>Expiry and renewal:</strong> after expiry or revocation, active sessions may be signed out and new sign-ins are blocked until the same workshop is renewed. The developer may adjust dates or revoke a key.</li>
-              <li><strong>Data continuity:</strong> expiry does not delete customers, jobs, inspections, parts history, or reference photos. Renewing this workshop restores access to its existing records, subject to the service's retention and backup policies.</li>
-              <li><strong>Connection and saving:</strong> an internet connection is required to activate, renew, synchronize, and verify access. Save completed work before leaving; unsaved form changes may not be recoverable.</li>
-            </ul>
-            <label class="ct-welcome-check" for="ctLicenseTermsAccepted"><input id="ctLicenseTermsAccepted" type="checkbox" onchange="CartechAccess.updateLicenseAgreementButton()"><span>I am the workshop owner or an authorized manager. I have read and accept this license and data agreement.</span></label>
-            <p class="ct-license-authorization-note"><i class="fa-solid fa-lock" aria-hidden="true"></i> Your authorization is recorded with this activation for the workshop audit trail. No personal name is required on this screen.</p>
-          </section>
-          <div class="ct-license-key-panel"><label for="ctLicenseInput">Workshop license key</label><div class="ct-license-row"><input id="ctLicenseInput" class="ct-license-input" type="text" maxlength="80" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CT-XXXXXX-XXXXXX-XXXXXX" oninput="CartechAccess.updateLicenseAgreementButton()" required><button id="ctLicenseActivate" type="submit" class="ct-button ct-welcome-primary" disabled><i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Activate workshop</button></div><p id="ctLicenseMessage" class="ct-license-message" role="status">The license key is used once by the owner. Other connected devices will unlock automatically.</p><div class="ct-license-buy-row"><span>Need a new key or renewal?</span><button id="ctBuyLicenseButton" type="button" class="ct-button ct-license-buy" onclick="CartechAccess.openLicenseStore()"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Buy a license</button></div></div>
-        </form>
-        <section id="ctLicenseSuccess" class="ct-license-success" hidden aria-live="polite"><span class="ct-license-success-icon"><i class="fa-solid fa-check" aria-hidden="true"></i></span><h2>Workshop unlocked</h2><p>The key was accepted securely. All connected CARTECH office and mechanic devices can now reconnect with their own accounts.</p><div class="ct-license-success-time"><span>License active until</span><strong id="ctLicenseSuccessExpires">—</strong><small id="ctLicenseSuccessDuration">Server-confirmed duration</small></div><span id="ctLicenseSuccessCountdown" class="ct-license-success-countdown">Preparing your sign-in…</span><div class="ct-license-success-progress" aria-hidden="true"><span id="ctLicenseSuccessProgress"></span></div></section>
-        <p id="ctLicenseNote" class="ct-development-note"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> License expiry locks access only. CARTECH keeps saved workshop records available for the next renewal; it does not erase completed jobs or inspection history.</p>
-        <div id="ctLicenseActions" class="ct-development-actions"><button id="ctDevelopmentSignIn" type="button" class="ct-button" onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" class="ct-button" onclick="CartechAccess.resetLicenseTest(event)" hidden><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" class="ct-button ct-welcome-primary" onclick="CartechAccess.closeProgramPreview()" hidden>Back to control terminal</button></div>
-      </div>
-    </div>
-  </section>
+<section id="ctUnderDevelopment" class="ct-development-screen ct-reference-portal" hidden aria-labelledby="ctDevelopmentTitle"><main class="max-w-xl w-full bg-cardBg border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ct-reference-main">
+        
+        <!-- Header Bar -->
+        <header class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-cardHeader">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xs font-bold tracking-wider text-orange-400 uppercase">Cartech Hybrid Queue</h2>
+                    <p class="text-[11px] font-medium text-slate-400">Workshop License Portal</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono font-semibold text-slate-400 bg-slate-800/80 border border-slate-700/50 px-2.5 py-1 rounded-md">
+                PORTAL - v63
+            </span>
+        </header>
+
+        <!-- Content Body -->
+        <div class="p-6 sm:p-8 space-y-7">
+            
+            <!-- Title & Notice Section -->
+            <div id="portal-header-section">
+                <h1 id="ctDevelopmentTitle" class="text-2xl font-bold tracking-tight text-white mb-2 flex items-center gap-2">
+                    <span>WORKSHOP LICENSE REQUIRED</span>
+                </h1>
+                <p id="ctDevelopmentMessage" class="text-sm text-slate-400 leading-relaxed">
+                    This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore office and mechanic sign-in.
+                </p>
+            </div>
+
+            <!-- License Status Card -->
+            <div id="ctLicenseState" class="bg-innerCardBg border border-slate-800 rounded-xl p-5 sm:p-6 relative transition-all duration-300" aria-label="Workshop license status">
+                <div class="flex items-center justify-between mb-5">
+                    <span class="text-xs font-semibold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
+                        <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        License Status
+                    </span>
+                    <span id="ctLicenseStatusText" class="text-xs font-medium px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full transition-all">
+                        License required
+                    </span>
+                </div>
+
+                <div class="mb-6">
+                    <p id="status-subtext" class="text-sm font-medium text-slate-300 mb-4 flex items-center justify-between">
+                        <span id="ctLicenseClockCaption">No active license</span>
+                        </p>
+                    
+                    <!-- Live Timer Grid -->
+                    <div class="grid grid-cols-4 gap-2.5 sm:gap-3 text-center">
+                        <div class="bg-darkBg/80 p-3 rounded-lg border border-slate-800/80 flex flex-col items-center justify-center min-h-[64px]">
+                            <div id="ctLicenseDays" class="text-lg sm:text-xl font-bold text-slate-500 font-mono">—</div>
+                            <div class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider mt-1">Days</div>
+                        </div>
+                        <div class="bg-darkBg/80 p-3 rounded-lg border border-slate-800/80 flex flex-col items-center justify-center min-h-[64px]">
+                            <div id="ctLicenseHours" class="text-lg sm:text-xl font-bold text-slate-500 font-mono">—</div>
+                            <div class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider mt-1">Hours</div>
+                        </div>
+                        <div class="bg-darkBg/80 p-3 rounded-lg border border-slate-800/80 flex flex-col items-center justify-center min-h-[64px]">
+                            <div id="ctLicenseMinutes" class="text-lg sm:text-xl font-bold text-slate-500 font-mono">—</div>
+                            <div class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider mt-1">Minutes</div>
+                        </div>
+                        <div class="bg-darkBg/80 p-3 rounded-lg border border-slate-800/80 flex flex-col items-center justify-center min-h-[64px]">
+                            <div id="ctLicenseSeconds" class="text-lg sm:text-xl font-bold text-slate-500 font-mono">—</div>
+                            <div class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider mt-1">Seconds</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start & Expiry dates -->
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800/80 text-xs">
+                    <div>
+                        <span class="text-slate-500 block mb-0.5">Starts · Philippine time</span>
+                        <span id="ctLicenseStartsLabel" class="font-medium text-slate-300 font-mono">Not available</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block mb-0.5">Expires · Philippine time</span>
+                        <span id="ctLicenseEndsLabel" class="font-medium text-slate-300 font-mono">Not available</span>
+                    </div>
+                </div>
+            <div id="ctLicenseTermTrack" hidden role="progressbar" aria-label="License term remaining" aria-valuemin="0" aria-valuemax="100"><span id="ctLicenseTermFill"></span></div><p id="ctLicenseClockNote"></p></div>
+
+            <!-- Activation Form Section -->
+            <div id="activation-section" class="space-y-4 pt-2">
+                <div>
+                    <h3 class="text-base font-semibold text-white mb-1 flex items-center gap-2">
+                        <span>Activate workshop</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">Paste your valid workshop key to activate or renew access.</p>
+                </div>
+
+                <form id="ctLicenseForm" onsubmit="CartechAccess.activateLicense(event); return false;" class="space-y-4 ct-license-key-panel" novalidate="">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="ctLicenseInput" class="block text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                                Workshop License Key
+                            </label>
+                            </div>
+                        <div class="relative">
+                            <input id="ctLicenseInput" type="text" placeholder="CT-XXXXXX-XXXXXX-XXXXXX" autocomplete="off" spellcheck="false" maxlength="80" oninput="CartechAccess.updateLicenseAgreementButton()" class="w-full bg-innerCardBg border border-slate-800 rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 uppercase tracking-wider transition-all" required="" autocapitalize="characters">
+                            </div>
+                        </div>
+
+                    <button id="ctLicenseActivate" type="submit" class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 active:scale-[0.99] text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50" disabled>
+                        <svg id="btn-icon-lock" class="w-4 h-4 text-orange-200 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <span id="btn-text">Activate workshop</span>
+                    </button>
+                <p id="ctLicenseMessage" role="status"></p><div class="ct-ref-purchase"><span>Need a license?</span><button id="ctBuyLicenseButton" type="button" onclick="CartechAccess.openLicenseStore()">Buy or renew →</button></div><details id="ctPaymentUpdates" class="ct-ref-updates" hidden><summary>Payment updates <span id="ctPaymentUpdateLabel">Pending</span></summary><div id="ctLicensePaymentResult" class="ct-license-payment-result" hidden></div></details></form>
+            </div>
+
+            <!-- Active License Management Options (Visible only when licensed) -->
+            </div>
+
+        <!-- Footer Footer -->
+        <footer class="px-6 py-4 bg-darkBg/60 border-t border-slate-800/60 text-center text-xs text-slate-500" id="ctLicenseNote">
+            Cartech Queue Management System • All Rights Reserved
+        </footer>
+    <div id="ctLicenseActions" hidden><span id="ctLicenseShopName" hidden></span><span id="ctDevelopmentPreviewBadge" hidden></span><button id="ctDevelopmentSignIn" type="button" hidden onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" hidden onclick="CartechAccess.resetLicenseTest(event)">Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" hidden onclick="CartechAccess.closeProgramPreview()">Back to control terminal</button></div></main>
+
+    <dialog class="ct-reference-success" id="ctLicenseSuccess" hidden="" aria-labelledby="ctRefSuccessTitle">
+            <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2" id="ctRefSuccessTitle">Workshop License Activated!</h3>
+                <p class="ct-ref-verified-copy">Your key <span id="ctVerifiedKey"></span> has been verified. <span id="ctLicenseSuccessDuration"></span></p></div>
+
+            <div class="bg-innerCardBg p-4 rounded-xl border border-slate-800 text-left text-xs space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">License:</span>
+                    <span class="text-emerald-400 font-medium">Workshop license</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Time Zone:</span>
+                    <span class="text-slate-200 font-medium">Philippine Standard Time (PST)</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Valid Until:</span>
+                    <span id="ctLicenseSuccessExpires" class="text-slate-200 font-mono font-medium"></span>
+                </div>
+            </div>
+
+            <button onclick="CartechAccess.finishLicenseSuccess()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition-all" id="ctLicenseContinue" type="button">Continue to sign-in</button>
+        </dialog>
+    </section>
   <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
     <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p>Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
     <div class="ct-license-store-body"><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose a plan</li><li>Pay with GCash</li><li>Upload receipt</li><li>Receive your key</li></ol><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Choose the duration that fits your workshop. Check the price, remaining stock, and assigned company before paying.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
@@ -2804,10 +2836,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let CONFIG_RECORD_ID = '';
     let ANNOUNCEMENT_RECORD_ID = '';
     let HOLIDAY_RECORD_ID = '';
+    // No staff member is on holiday unless the workshop explicitly saves it.
+    let manualDutyOverrides = {};
 
     function applyShopContext(shopId) {
       const normalized = String(shopId || '').trim().toLowerCase();
       if (!/^[a-z0-9][a-z0-9-]{2,63}$/.test(normalized)) throw new Error('Invalid workshop license profile.');
+      if (normalized !== currentShopId) manualDutyOverrides = {};
       currentShopId = normalized;
       const scoped = name => `${currentShopId}::${name}`;
       USERS_RECORD_ID = scoped('SYS_ACCOUNTS_V2');
@@ -2969,7 +3004,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     }
     applyLoginNoticeConfig(featureFlags);
     let activeAnnouncement = null;
-    let manualDutyOverrides = { "josh": "holiday", "shiela": "holiday" };
+
 
     function staffVisibleInOffice(username) {
       const user = String(username || '').toLowerCase();
@@ -3492,7 +3527,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           activeAnnouncement = JSON.parse(rec.details);
           renderTopFloatingAnnouncement();
         }
-        if (rec.id === HOLIDAY_RECORD_ID) manualDutyOverrides = { ...manualDutyOverrides, ...JSON.parse(rec.details) };
+        if (rec.id === HOLIDAY_RECORD_ID) {
+          const savedDuty = JSON.parse(rec.details);
+          if (savedDuty && typeof savedDuty === 'object' && !Array.isArray(savedDuty)) {
+            // Each record is a complete workshop schedule, not a partial patch.
+            manualDutyOverrides = { ...savedDuty };
+          }
+        }
       } catch(e){}
     }
 
@@ -6873,7 +6914,7 @@ window.CartechAccess = (() => {
   const licenseTestActive = () => storedLicenseTestTime() !== null;
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
-  const licenseAgreementVersion = 'cartech-shop-license-2026-09-11-v1';
+  const licenseAgreementVersion = 'cartech-key-activation-no-agreement-v61';
   const buildId = 'cartech-shopwide-license-v50-stock-low-egress';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
@@ -7031,6 +7072,7 @@ window.CartechAccess = (() => {
     const model = licensePortalModel(access, now());
     const setText = (id,value) => { const el = byId(id); if (el && el.textContent !== value) el.textContent = value; };
     root.dataset.licenseState = model.state;
+    byId('ctUnderDevelopment').dataset.licenseState = model.state;
     setText('ctLicenseStatusText',model.label);
     setText('ctLicenseClockCaption',model.caption);
     setText('ctLicenseClockNote',model.note);
@@ -7062,9 +7104,8 @@ window.CartechAccess = (() => {
   function updateLicenseAgreementButton() {
     const button = byId('ctLicenseActivate');
     if (!button) return;
-    const accepted = byId('ctLicenseTermsAccepted')?.checked === true;
     const key = String(byId('ctLicenseInput')?.value || '').trim();
-    button.disabled = licenseBusy || !accepted || key.replace(/[^A-Za-z0-9]/g, '').length < 20;
+    button.disabled = licenseBusy || key.replace(/[^A-Za-z0-9]/g, '').length < 20;
   }
   async function refreshLicenseStatus(force = false) {
     if (licenseBusy) return workshopAccessActive();
@@ -7089,48 +7130,40 @@ window.CartechAccess = (() => {
       return false;
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
   }
+  let licenseSuccessCompletion = null;
   function clearLicenseSuccessTransition(restore = true) {
     if (licenseSuccessTimer) { clearTimeout(licenseSuccessTimer); licenseSuccessTimer = 0; }
     if (licenseSuccessInterval) { clearInterval(licenseSuccessInterval); licenseSuccessInterval = 0; }
+    licenseSuccessCompletion = null;
+    if (byId('ctVerifiedKey')) byId('ctVerifiedKey').textContent = '';
     licenseSuccessActive = false;
     const success = byId('ctLicenseSuccess');
-    if (success) { success.hidden = true; success.classList.remove('ct-license-success-exit'); }
-    if (!restore) return;
-    for (const id of ['ctLicenseForm', 'ctLicenseNote', 'ctLicenseActions']) { const node = byId(id); if (node) node.hidden = false; }
+    if (success) { if (success.open) success.close(); success.hidden = true; }
+    if (restore) for (const id of ['ctLicenseForm','ctLicenseNote','ctLicenseActions']) { const node = byId(id); if (node) node.hidden = false; }
   }
-  function showLicenseActivationSuccess(access, onComplete) {
+  function finishLicenseSuccess() {
+    if (!licenseSuccessActive) return;
+    const complete = licenseSuccessCompletion;
+    clearLicenseSuccessTransition(true);
+    complete?.();
+  }
+  function showLicenseActivationSuccess(access, onComplete, activatedKey) {
     clearLicenseSuccessTransition(false);
-    licenseSuccessActive = true;
-    const form = byId('ctLicenseForm');
-    const note = byId('ctLicenseNote');
-    const actions = byId('ctLicenseActions');
     const success = byId('ctLicenseSuccess');
     if (!success) { onComplete?.(); return; }
-    if (form) form.hidden = true;
-    if (note) note.hidden = true;
-    if (actions) actions.hidden = true;
+    licenseSuccessActive = true;
+    licenseSuccessCompletion = onComplete;
     const expiry = Date.parse(String(access?.license_expires_at || ''));
-    byId('ctLicenseSuccessExpires').textContent = Number.isFinite(expiry) ? philippineDate(expiry) : 'Confirmed by server';
     const start = Date.parse(String(access?.license_starts_at || ''));
-    const termDays = Number.isFinite(start) && Number.isFinite(expiry) ? (expiry - start) / 86400000 : NaN;
-    byId('ctLicenseSuccessDuration').textContent = Number.isFinite(termDays) ? `${termDays >= 1 && Number.isInteger(termDays) ? termDays : termDays.toFixed(1)} day${termDays === 1 ? '' : 's'} · server time` : 'Server-confirmed duration';
+    const termDays = Number.isFinite(start) && Number.isFinite(expiry) ? (expiry-start)/86400000 : NaN;
+    byId('ctVerifiedKey').textContent = activatedKey || 'Your workshop license';
+    byId('ctLicenseSuccessExpires').textContent = Number.isFinite(expiry) ? philippineDate(expiry) : 'Confirmed by server';
+    byId('ctLicenseSuccessDuration').textContent = Number.isFinite(termDays) ? `${Number(termDays.toFixed(1))} days in your verified license term.` : 'Verified workshop license';
+    byId('ctLicenseContinue').textContent = verifiedUser && agreementAccepted ? 'Continue to workspace' : 'Continue to sign-in';
+    success.oncancel = event => { event.preventDefault(); finishLicenseSuccess(); };
     success.hidden = false;
-    success.classList.remove('ct-license-success-exit');
-    const started = Date.now();
-    const duration = 4200;
-    const render = () => {
-      const remaining = Math.max(0, duration - (Date.now() - started));
-      const seconds = Math.max(1, Math.ceil(remaining / 1000));
-      byId('ctLicenseSuccessCountdown').textContent = `Sign-in opens in ${seconds}…`;
-      byId('ctLicenseSuccessProgress').style.transform = `scaleX(${Math.max(0, remaining / duration)})`;
-    };
-    render();
-    licenseSuccessInterval = setInterval(render, 250);
-    licenseSuccessTimer = setTimeout(() => {
-      clearInterval(licenseSuccessInterval); licenseSuccessInterval = 0;
-      success.classList.add('ct-license-success-exit');
-      setTimeout(() => { licenseSuccessActive = false; success.hidden = true; onComplete?.(); }, 560);
-    }, duration);
+    success.showModal();
+    byId('ctLicenseContinue').focus();
   }
   function applyPublicPlanSettings(rows) {
     const fallbackById = Object.fromEntries(CARTECH_LICENSE_PLANS.map(plan => [plan.id, plan]));
@@ -7286,6 +7319,8 @@ window.CartechAccess = (() => {
     return Boolean(access.license_starts_at || access.license_activated_at || access.activated_at || access.started_at || access.activated === true);
   }
   function clearPaymentDelivery() {
+    const updates = byId('ctPaymentUpdates');
+    if (updates) { updates.hidden = true; updates.open = false; delete updates.dataset.status; }
     const panel = byId('ctLicensePaymentResult');
     if (panel) {
       panel.hidden = true;
@@ -7358,6 +7393,9 @@ window.CartechAccess = (() => {
       return;
     }
     const status = String(result.status || 'pending');
+    const updates = byId('ctPaymentUpdates');
+    if (updates) { updates.hidden = false; if (updates.dataset.status !== status) updates.open = status !== 'pending'; updates.dataset.status = status; }
+    if (byId('ctPaymentUpdateLabel')) byId('ctPaymentUpdateLabel').textContent = status === 'approved' ? 'Approved' : status === 'rejected' ? 'Needs attention' : 'Pending';
     panel.hidden = false;
     panel.dataset.key = result.license_key || '';
     panel.dataset.ownerPassword = result.owner_password || '';
@@ -7603,8 +7641,7 @@ window.CartechAccess = (() => {
     event?.preventDefault?.(); event?.stopPropagation?.();
     if (licenseBusy) return false;
     const key = String(byId('ctLicenseInput').value || '').trim().toUpperCase();
-    const acceptedBy = 'Authorized workshop owner';
-    if (!byId('ctLicenseTermsAccepted').checked) { message('ctLicenseMessage', 'Read and accept the license and data agreement first.', true); return false; }
+    const acceptedBy = 'License key holder';
     if (key.replace(/[^A-Za-z0-9]/g, '').length < 20) { message('ctLicenseMessage', 'Enter the complete license key supplied by the developer.', true); return false; }
     const previousShop = currentShopId;
     const resumableUser = verifiedUser;
@@ -7643,7 +7680,6 @@ window.CartechAccess = (() => {
       programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
       scheduleInputDirty = false;
       byId('ctLicenseInput').value = '';
-      byId('ctLicenseTermsAccepted').checked = false;
       updateLicenseGate(access);
       message('ctLicenseMessage', 'Workshop activated securely. Every connected CARTECH installation will unlock automatically.');
 
@@ -7681,7 +7717,7 @@ window.CartechAccess = (() => {
           window.CartechShopHours?.refresh?.();
         }
       };
-      showLicenseActivationSuccess(access, finishActivation);
+      showLicenseActivationSuccess(access, finishActivation, key);
     } catch (error) {
       if (/(revoked|expired|already\s+(used|activated)|used)/i.test(String(error?.message || ''))) {
         blockPaymentDelivery();
@@ -7689,7 +7725,7 @@ window.CartechAccess = (() => {
         if (licenseInput) licenseInput.value = '';
         updateLicenseAgreementButton();
       }
-      message('ctLicenseMessage', error.message || 'The license could not be activated. Check the key and connection.', true);
+      message('ctLicenseMessage', /current license agreement must be accepted/i.test(error.message || '') ? 'Server update required. Ask the developer to install the v62 activation SQL update, then try your license key again.' : error.message || 'The license could not be activated. Check the key and connection.', true);
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
     return false;
   }
@@ -8114,7 +8150,6 @@ window.CartechAccess = (() => {
     byId('ctLicenseTestReset').hidden = !testingLicense;
     byId('ctDevelopmentSignIn').hidden = true;
     if (wasHidden && !preview && !licenseBusy) {
-      byId('ctLicenseTermsAccepted').checked = false;
       byId('ctLicenseInput').value = '';
       message('ctLicenseMessage', 'The license key is used once by the owner. Other connected devices will unlock automatically.');
     }
@@ -8593,7 +8628,7 @@ window.CartechAccess = (() => {
     void checkPaymentResult(true);
     startPaymentPolling();
   }
-  const api = { buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
