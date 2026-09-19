@@ -2857,8 +2857,11 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       { id:'30d', label:'30 days', days:30, price_pesos:1800, stock_remaining:30, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' }
     ];
     const CARTECH_PLAN_SETTINGS_RPC = 'cartech_get_public_license_plan_settings';
+    const CARTECH_PLAN_UPDATE_SIGNAL_KEY = 'cartech_license_plan_settings_changed_v1';
     const CARTECH_PLAN_SETTINGS_CACHE_TTL_MS = 60 * 1000;
     let cartechPlanSettingsLoadedAt = 0;
+    let cartechPlanSettingsVerified = false;
+    let cartechPlanSettingsError = '';
     let selectedLicensePlanId = '';
     let selectedLicenseBuyer = '';
     const CARTECH_PAYMENT_REQUEST_KEY = 'cartech_license_payment_request_v1';
@@ -2868,6 +2871,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     const CARTECH_PAYMENT_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
     let paymentResultTimer = 0;
     let paymentHandoffChannel = null;
+    window.addEventListener('storage', event => {
+      if (event.key !== CARTECH_PLAN_UPDATE_SIGNAL_KEY) return;
+      cartechPlanSettingsLoadedAt = 0;
+      cartechPlanSettingsVerified = false;
+      const dialog = byId('ctLicenseStoreDialog');
+      if (dialog?.open || dialog?.hidden === false) void loadPublicPlanSettings(true).then(() => renderLicensePlans());
+    });
     const storedShopId = String(localStorage.getItem(CARTECH_SHOP_ID_KEY) || '').trim().toLowerCase();
     let currentShopId = /^[a-z0-9][a-z0-9-]{2,63}$/.test(storedShopId) ? storedShopId : CARTECH_MAIN_SHOP_ID;
     let tenantAccessToken = '';
@@ -7214,6 +7224,12 @@ window.CartechAccess = (() => {
       : access?.status === 'not_started' && Number.isFinite(starts) ? `Starts ${philippineDate(starts)}`
         : access?.status === 'revoked' ? 'Revoked' : access?.status === 'payment_paused' ? 'Payment required · access paused' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
     byId('ctLicenseStatusText').textContent = statusLabel;
+    const buyButton = byId('ctBuyLicenseButton');
+    const purchaseRow = buyButton?.closest('.ct-ref-purchase');
+    const activePaid = access?.valid === true && access?.access_kind === 'license' && Number.isFinite(expires) && expires > now();
+    const renewalWindow = activePaid && expires - now() <= 2 * 86400000;
+    if (purchaseRow) purchaseRow.hidden = activePaid && !renewalWindow;
+    if (buyButton) buyButton.textContent = activePaid ? 'Renew or add time →' : 'Buy or renew →';
     const state = byId('ctLicenseState');
     if (state) {
       state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
@@ -7314,18 +7330,24 @@ window.CartechAccess = (() => {
     if (mapped.length) CARTECH_LICENSE_PLANS = mapped;
   }
   async function loadPublicPlanSettings(force = false) {
-    if (!supabaseClient) return;
+    if (!supabaseClient) { cartechPlanSettingsVerified = false; cartechPlanSettingsError = 'License pricing service is unavailable.'; return false; }
     const elapsed = Date.now() - cartechPlanSettingsLoadedAt;
-    if (!force && cartechPlanSettingsLoadedAt && elapsed < CARTECH_PLAN_SETTINGS_CACHE_TTL_MS) return;
+    if (!force && cartechPlanSettingsVerified && cartechPlanSettingsLoadedAt && elapsed < CARTECH_PLAN_SETTINGS_CACHE_TTL_MS) return true;
     try {
       const result = await cartechRpc(CARTECH_PLAN_SETTINGS_RPC);
       if (result.error) throw result.error;
       const rows = Array.isArray(result.data) ? result.data : [];
+      if (!rows.length) throw new Error('No published license plans were returned.');
       applyPublicPlanSettings(rows);
       cartechPlanSettingsLoadedAt = Date.now();
-    } catch (_) {
-      // Keep the last known settings; never silently turn a SOLD plan back into stock.
-      cartechPlanSettingsLoadedAt = Date.now();
+      cartechPlanSettingsVerified = true;
+      cartechPlanSettingsError = '';
+      return true;
+    } catch (error) {
+      // Never accept payment using hard-coded or stale fallback pricing.
+      cartechPlanSettingsVerified = false;
+      cartechPlanSettingsError = error?.message || 'The latest license prices could not be verified.';
+      return false;
     }
   }
   function ensureLicenseBuyerFilter() {
@@ -7350,6 +7372,10 @@ window.CartechAccess = (() => {
   function renderLicensePlans() {
     const container = byId('ctLicensePlans');
     if (!container) return;
+    if (!cartechPlanSettingsVerified) {
+      container.innerHTML = `<div class="ct-empty-state"><strong>Payment temporarily unavailable.</strong><br>The latest price and stock could not be verified. Reload after the developer saves the plan settings. No payment should be made from this screen.</div>`;
+      return;
+    }
     const available = CARTECH_LICENSE_PLANS.filter(plan => plan.is_available !== false && (!selectedLicenseBuyer || !String(plan.buyer_shop_name || '').trim() || plan.buyer_shop_name === selectedLicenseBuyer));
     if (!available.length) {
       const message = selectedLicenseBuyer ? `No available plan is assigned to ${escapeHTML(selectedLicenseBuyer)}.` : 'No license plans are currently available. Please check again later.';
@@ -7591,7 +7617,14 @@ window.CartechAccess = (() => {
     paymentResultTimer = setInterval(() => { void checkPaymentResult(true); }, 30000);
   }
   async function openLicenseStore() {
-    await loadPublicPlanSettings();
+    const expiry = licenseExpiry();
+    const activePaid = paidLicenseActive();
+    const renewalWindow = activePaid && expiry - now() <= 2 * 86400000;
+    if (activePaid && !renewalWindow) {
+      alert(`Your workshop license is already paid and active until ${philippineDate(expiry)}. No new payment is required.`);
+      return;
+    }
+    await loadPublicPlanSettings(true);
     ensureLicenseBuyerFilter();
     selectedLicenseBuyer = '';
     if (byId('ctLicenseBuyerFilter')) byId('ctLicenseBuyerFilter').value = '';
