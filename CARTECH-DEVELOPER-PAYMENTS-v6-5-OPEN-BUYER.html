@@ -276,6 +276,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         const state = mergedLicenseState(item);
         const active = state === 'active' && item.active_for_shop === true;
         const controlsEnabled = Boolean(item.starts_at) && state !== 'revoked';
+        const repair = active ? `<button class="btn primary" type="button" data-license-repair-shop="${esc(item.shop_id)}">Repair web access</button>` : '';
         const revoke = !['revoked','expired'].includes(state)
           ? `<button class="btn danger" type="button" data-license-revoke="${esc(item.license_id)}">Revoke key</button>`
           : '';
@@ -292,7 +293,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           <section class="license-tool"><h4>Claimable extra time</h4><p>The office must claim this before it is added.</p>${pendingBonus || `<label>Bonus days<input type="number" min="0.01" max="365" step="0.01" value="3" data-license-bonus-days></label><label>Offer title<input maxlength="100" value="3 free days for your first license" data-license-bonus-title></label><label>Message<textarea maxlength="300" data-license-bonus-message>Claim this gift to add 3 days to your current license.</textarea></label><button class="btn primary" type="button" data-license-create-bonus="${esc(item.license_id)}" ${controlsEnabled ? '' : 'disabled'}>Offer extra time</button>`}</section>
           <section class="license-tool"><h4>Payment status</h4><p>Unpaid pauses immediately. Partial pauses when its due date passes.</p>${paymentAlert}<label>Status<select data-license-payment-status><option value="paid" ${paymentStatus === 'paid' ? 'selected' : ''}>Paid / clear</option><option value="partial" ${paymentStatus === 'partial' ? 'selected' : ''}>Partial payment</option><option value="unpaid" ${paymentStatus === 'unpaid' ? 'selected' : ''}>Unpaid · pause now</option></select></label><label>Outstanding balance (PHP)<input type="number" min="0" step="0.01" value="${esc(Number(item.amount_due || 0).toFixed(2))}" data-license-amount-due></label><label>Payment deadline (PHT)<input type="datetime-local" value="${esc(manilaInput(item.due_at))}" data-license-due-at></label><label>Internal note<textarea maxlength="500" data-license-payment-note>${esc(item.payment_note || '')}</textarea></label><button class="btn primary" type="button" data-license-save-payment="${esc(item.license_id)}">Save payment status</button></section>
         </div></details>`;
-        return `<article class="license-row${active ? ' current' : ''}" data-license-row="${esc(item.license_id)}"><div><h3>${esc(item.shop_name || 'Workshop')} ${active ? '<span class="pill approved">Running for shop</span>' : ''}</h3><p><strong>${esc(item.shop_id || '—')}</strong> · Key ${esc(item.key_prefix || '—')} · ${esc(item.duration_code || '—')}</p><p>Status: <strong>${esc(state.replaceAll('_',' '))}</strong> · Issued ${esc(date(item.issued_at))} · ${item.starts_at ? `Started ${esc(date(item.starts_at))}` : 'Not activated'} · Expires ${esc(date(item.expires_at))}</p><p>${Number(item.activated_devices) || 0} activated device(s)${item.notes ? ` · ${esc(item.notes)}` : ''}</p>${active ? '<p><strong>This key currently controls web and app access for this shop.</strong></p>' : ''}</div><div class="license-side"><span class="pill ${licenseStatusClass(state)}">${esc(state.replaceAll('_',' '))}</span>${revoke}${remove}</div>${tools}</article>`;
+        return `<article class="license-row${active ? ' current' : ''}" data-license-row="${esc(item.license_id)}"><div><h3>${esc(item.shop_name || 'Workshop')} ${active ? '<span class="pill approved">Running for shop</span>' : ''}</h3><p><strong>${esc(item.shop_id || '—')}</strong> · Key ${esc(item.key_prefix || '—')} · ${esc(item.duration_code || '—')}</p><p>Status: <strong>${esc(state.replaceAll('_',' '))}</strong> · Issued ${esc(date(item.issued_at))} · ${item.starts_at ? `Started ${esc(date(item.starts_at))}` : 'Not activated'} · Expires ${esc(date(item.expires_at))}</p><p>${Number(item.activated_devices) || 0} activated device(s)${item.notes ? ` · ${esc(item.notes)}` : ''}</p>${active ? '<p><strong>This key currently controls web and app access for this shop.</strong></p>' : ''}</div><div class="license-side"><span class="pill ${licenseStatusClass(state)}">${esc(state.replaceAll('_',' '))}</span>${repair}${revoke}${remove}</div>${tools}</article>`;
       }).join('');
     }
     async function loadLicenses(silent = false) {
@@ -359,6 +360,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     async function cancelLicenseBonus(offerId, button) {
       if (!confirm('Cancel this unclaimed extra-time offer?')) return;
       await runLicenseControl(button, 'cartech_admin_cancel_license_bonus', { p_offer_id:offerId }, 'Bonus offer cancelled.');
+    }
+    async function repairShopAccess(shopId, button) {
+      if (!confirm(`Repair licensed web access for ${shopId}? This keeps the current key, expiry and workshop records.`)) return;
+      await runLicenseControl(button, 'cartech_admin_repair_shop_access', { p_shop_id:shopId }, 'Workshop access repaired.');
     }
     async function revokeLicense(licenseId, button) {
       if (!confirm('Revoke this license now? The shop will be locked on its next access check.')) return;
@@ -644,6 +649,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       const bonus = event.target.closest('[data-license-create-bonus]'); if (bonus) void createLicenseBonus(bonus.dataset.licenseCreateBonus, bonus);
       const payment = event.target.closest('[data-license-save-payment]'); if (payment) void saveLicensePayment(payment.dataset.licenseSavePayment, payment);
       const cancel = event.target.closest('[data-license-cancel-bonus]'); if (cancel) void cancelLicenseBonus(cancel.dataset.licenseCancelBonus, cancel);
+      const repair = event.target.closest('[data-license-repair-shop]'); if (repair) void repairShopAccess(repair.dataset.licenseRepairShop, repair);
     });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
     // Deliberately no background polling. Payment-list RPC responses previously
