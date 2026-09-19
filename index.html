@@ -1769,6 +1769,11 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 @media(max-width:900px){#viewDeveloper .hr-grid{grid-template-columns:1fr}#viewDeveloper #devHolidayRosterList{grid-template-columns:repeat(2,minmax(0,1fr))}#viewDeveloper .ct-dev-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){#viewDeveloper.ct-admin-v2{padding:14px}#viewDeveloper .hr-top{align-items:flex-start}.hr-top h2{font-size:20px}.hr-top p{display:none}#viewDeveloper .hr-card{padding:16px}#viewDeveloper .ct-account-card{display:flex;align-items:stretch;flex-direction:column}#viewDeveloper .ct-account-actions{width:100%;justify-content:flex-start}#viewDeveloper .ct-admin-password{text-align:left}#viewDeveloper #devHolidayRosterList,#viewDeveloper #devStaffPresenceList{grid-template-columns:1fr}.hr-tabs button{padding:12px}.hr-insights{gap:6px}.hr-insights div{padding:10px}}
 </style>
+<style id="ct-license-extras-style">
+  #ctLicenseExtras{margin:14px 24px 0;border:1px solid #f1c27d;border-radius:14px;background:#fffaf0;box-shadow:0 8px 24px rgba(135,83,20,.08);overflow:hidden}
+  #ctLicenseExtras[hidden]{display:none!important}.ct-license-extra-row{display:flex;align-items:center;gap:12px;padding:13px 15px}.ct-license-extra-row+.ct-license-extra-row{border-top:1px solid #f4d9ad}.ct-license-extra-icon{width:38px;height:38px;flex:0 0 auto;border-radius:12px;display:grid;place-items:center;background:#f97316;color:#fff}.ct-license-extra-copy{min-width:0;flex:1}.ct-license-extra-copy strong{display:block;color:#172337;font-size:13px}.ct-license-extra-copy span{display:block;color:#64748b;font-size:11px;margin-top:2px;line-height:1.45}.ct-license-extra-action{border:0;border-radius:10px;background:#0f766e;color:#fff;padding:10px 14px;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 4px 12px rgba(15,118,110,.18)}.ct-license-extra-action:disabled{opacity:.55;cursor:wait}.ct-license-extra-row.is-payment{background:#fff1f2}.ct-license-extra-row.is-payment .ct-license-extra-icon{background:#dc2626}.ct-license-extra-row.is-bonus{background:#effcf6}.ct-license-extra-row.is-bonus .ct-license-extra-icon{background:#059669}
+  @media(max-width:640px){#ctLicenseExtras{margin:12px 16px 0}.ct-license-extra-row{align-items:flex-start;flex-wrap:wrap}.ct-license-extra-action{width:100%}}
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -2050,6 +2055,22 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
         </button>
       </div>
     </div>
+
+    <section id="ctLicenseExtras" class="no-print" hidden aria-live="polite">
+      <div id="ctLicenseExpiryWarning" class="ct-license-extra-row" hidden>
+        <span class="ct-license-extra-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></span>
+        <div class="ct-license-extra-copy"><strong id="ctLicenseExpiryTitle">License renewal reminder</strong><span id="ctLicenseExpiryCopy"></span></div>
+      </div>
+      <div id="ctLicensePaymentWarning" class="ct-license-extra-row is-payment" hidden>
+        <span class="ct-license-extra-icon"><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
+        <div class="ct-license-extra-copy"><strong>Workshop license paused</strong><span id="ctLicensePaymentCopy">An outstanding balance must be settled before access can continue.</span></div>
+      </div>
+      <div id="ctLicenseBonusOffer" class="ct-license-extra-row is-bonus" hidden>
+        <span class="ct-license-extra-icon"><i class="fa-solid fa-gift" aria-hidden="true"></i></span>
+        <div class="ct-license-extra-copy"><strong id="ctLicenseBonusTitle">Extra license time available</strong><span id="ctLicenseBonusCopy"></span></div>
+        <button id="ctLicenseBonusClaim" class="ct-license-extra-action" type="button">Claim extra time</button>
+      </div>
+    </section>
 
     <!-- DEVELOPER & ADMIN VIEW -->
     <main class="hidden max-w-7xl mx-auto p-4 md:p-8 space-y-6 flex-1 w-full ct-admin-v2" id="viewDeveloper">
@@ -2968,7 +2989,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
     function acceptTenantAccess(access) {
       tenantAccessSnapshot = access;
-      if (access && ['revoked', 'expired'].includes(String(access.status || '').toLowerCase())) {
+      if (access && ['revoked', 'expired', 'payment_paused'].includes(String(access.status || '').toLowerCase())) {
         const licenseInput = byId('ctLicenseInput');
         if (licenseInput) licenseInput.value = '';
         blockPaymentDelivery();
@@ -2984,6 +3005,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           ALL_STAFF_ROSTER = currentShopId === CARTECH_MAIN_SHOP_ID ? ["shiela", "josh", "ken", "bert", "charl", "mark", "nel", "rocky", "bot"] : [];
         }
       }
+      queueMicrotask(() => window.CartechLicenseExtras?.renderAccess?.(access));
       return access;
     }
 
@@ -3723,6 +3745,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
             // phone still receives the expiry/revoke event after access closes.
             tenantLastCheckedAt = 0;
             void window.CartechAccess?.refreshLicenseStatus?.(true);
+            void window.CartechLicenseExtras?.refresh?.(true);
           }
         )
         .subscribe();
@@ -7153,6 +7176,7 @@ window.CartechAccess = (() => {
     let note = 'Activate a license to start your workshop access.';
     if (!access) { state = 'unknown'; label = 'Not verified'; caption = 'License information unavailable'; note = 'The timer will appear after the workshop license is verified.'; }
     else if (status === 'revoked') { state = 'blocked'; label = 'Revoked'; caption = 'Workshop access paused'; note = 'Contact the developer to restore or renew access.'; }
+    else if (status === 'payment_paused') { state = 'blocked'; label = 'Payment required'; caption = 'Workshop access paused'; note = 'An outstanding license balance is overdue. Settle it to continue using CARTECH.'; }
     else if (status === 'expired' || (hasEnd && expires <= timestamp)) { state = 'blocked'; label = 'Expired'; caption = 'License time remaining'; remaining = 0; note = 'Renew this workshop license to restore access.'; }
     else if (hasStart && starts > timestamp && (status === 'not_started' || access.valid === true)) { state = 'scheduled'; label = 'Scheduled'; caption = 'Access starts in'; remaining = starts - timestamp; note = 'Access begins on the start date after verification.'; }
     else if (access.valid === true && hasEnd) { state = 'active'; label = access.access_kind === 'trial' ? 'Trial running' : 'License running'; caption = 'Time remaining'; remaining = expires - timestamp; note = 'Countdown uses the latest verified license. All times are Philippine time.'; }
@@ -7188,12 +7212,12 @@ window.CartechAccess = (() => {
     const statusLabel = access?.valid === true && Number.isFinite(expires)
       ? `${access.access_kind === 'trial' ? 'Trial' : 'Active'} · ${philippineDate(expires)}`
       : access?.status === 'not_started' && Number.isFinite(starts) ? `Starts ${philippineDate(starts)}`
-        : access?.status === 'revoked' ? 'Revoked' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
+        : access?.status === 'revoked' ? 'Revoked' : access?.status === 'payment_paused' ? 'Payment required · access paused' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
     byId('ctLicenseStatusText').textContent = statusLabel;
     const state = byId('ctLicenseState');
     if (state) {
       state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
-      state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
+      state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired','payment_paused'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
     }
     renderLicensePortal(access);
     updateLicenseAgreementButton();
@@ -8160,7 +8184,9 @@ window.CartechAccess = (() => {
     setText('ctWelcomeDeadlineTitle', `Free trial closes ${deadline}`);
     setText('ctWelcomeDeadlineCopy', `After the free trial closes, every account is signed out until the shop owner activates a valid CARTECH license.`);
     setText('ctWelcomeAccessRule', `Access ends when the account timer expires, access is revoked, the free trial closes, or the workshop license expires—whichever happens first. After the trial, the shop owner activates one workshop license; all connected office and mechanic installations then synchronize automatically. You only need to accept this user agreement once per version. Unsaved work may be lost when a session ends.`);
-    setText('ctDevelopmentMessage', `This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
+    setText('ctDevelopmentMessage', String(tenantAccessSnapshot?.status || '').toLowerCase() === 'payment_paused'
+      ? `This workshop license has an unpaid balance. Access is paused until the outstanding payment is cleared by the developer.`
+      : `This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
     setText('ctTermsVersionLabel', `CARTECH HYBRID QUEUE · Limited developer dry run · Terms version ${agreementVersion}`);
     setText('ctProgramDurationOption', paidLicenseActive() ? `Use workshop license expiry · ${philippineDate(licenseExpiry())}` : `Use free-trial deadline · ${deadline}`);
     setText('ctTesterAccountHelp', `All users accept the agreement once per version. The default follows ${paidLicenseActive() ? 'the active workshop license' : 'the free-trial deadline (' + deadline + ')'}. Choose a shorter account timer only when needed.`);
@@ -8207,6 +8233,7 @@ window.CartechAccess = (() => {
     agreementPreview = false; underDevPreview = false; developerLoginOpen = false;
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
     getAudioContext(); bootApp(); refresh();
+    queueMicrotask(() => window.CartechLicenseExtras?.refresh?.(true));
     if (currentRole !== 'tester') void sendPresenceHeartbeat(true);
   }
   async function acceptAgreement(event) {
@@ -9097,6 +9124,91 @@ function refresh(){filter();const all=cards();el('hrActive').textContent=all.len
 search.addEventListener('input',filter);['hrRole','hrStatus','hrSort'].forEach(id=>el(id).addEventListener('change',filter));new MutationObserver(refresh).observe(list,{childList:true});
 el('hrExport').onclick=()=>{const safe=v=>'"'+String(/^[=+@\-\t\r]/.test(v)?"'"+v:v).replace(/"/g,'""')+'"';const rows=[['Staff name','Role','Access status','Agreement','Access timer'],...cards().filter(c=>!c.hidden).map(c=>[c.dataset.hrName,c.dataset.hrRole,c.dataset.hrStatus,c.dataset.hrAgreement,c.querySelector('.ct-account-timer')?.textContent.trim()||''])];const url=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(safe).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='CARTECH-staff-records-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 refresh();show('overview');
+})();
+</script>
+<script id="ct-license-extras-script">
+window.CartechLicenseExtras = (() => {
+  const allowedRoles = new Set(['office','admin','developer']);
+  let busy = false, lastReadAt = 0, currentOffer = null;
+  const el = id => document.getElementById(id);
+  function roleCanClaim() { return allowedRoles.has(String(currentRole || '').toLowerCase()) && Boolean(currentUser); }
+  function money(value) { return new Intl.NumberFormat('en-PH', { style:'currency', currency:'PHP' }).format(Number(value) || 0); }
+  function duration(minutes) {
+    const value = Number(minutes) || 0;
+    if (value % 1440 === 0) return `${value / 1440} day${value === 1440 ? '' : 's'}`;
+    if (value % 60 === 0) return `${value / 60} hour${value === 60 ? '' : 's'}`;
+    return `${value} minutes`;
+  }
+  function syncRoot() {
+    const root = el('ctLicenseExtras');
+    if (root) root.hidden = !['ctLicenseExpiryWarning','ctLicensePaymentWarning','ctLicenseBonusOffer'].some(id => !el(id)?.hidden);
+  }
+  function renderAccess(access = tenantAccessSnapshot) {
+    const expiryRow = el('ctLicenseExpiryWarning'), paymentRow = el('ctLicensePaymentWarning');
+    const status = String(access?.status || '').toLowerCase();
+    const expires = Date.parse(String(access?.license_expires_at || ''));
+    const remaining = Number.isFinite(expires) ? expires - Date.now() : Infinity;
+    const showExpiry = access?.valid === true && access?.access_kind === 'license' && remaining > 0 && remaining <= 2 * 86400000;
+    if (expiryRow) expiryRow.hidden = !showExpiry;
+    if (showExpiry) {
+      const hours = Math.max(1, Math.ceil(remaining / 3600000));
+      el('ctLicenseExpiryTitle').textContent = hours <= 24 ? 'License expires within 24 hours' : 'License expires within 2 days';
+      el('ctLicenseExpiryCopy').textContent = `Your CARTECH license expires ${philippineDate(expires)}. Renew or buy a key to continue using the system.`;
+    }
+    if (paymentRow) paymentRow.hidden = status !== 'payment_paused';
+    if (status === 'payment_paused') el('ctLicensePaymentCopy').textContent = 'Your license has an unpaid balance. Access stays paused until the developer marks the payment as cleared.';
+    if (!roleCanClaim()) { currentOffer = null; if (el('ctLicenseBonusOffer')) el('ctLicenseBonusOffer').hidden = true; }
+    syncRoot();
+    if (roleCanClaim() && access?.shop_id && access?.access_kind === 'license') void refresh(false);
+  }
+  async function refresh(force = false) {
+    if (!roleCanClaim() || !currentShopId || busy) return;
+    if (!force && Date.now() - lastReadAt < 1800000) return;
+    busy = true;
+    try {
+      const result = await cartechRpc('cartech_get_license_extras', { p_shop_id:currentShopId });
+      if (result.error) throw result.error;
+      const extra = tenantResult(result.data) || {};
+      lastReadAt = Date.now();
+      currentOffer = extra.offer_id ? extra : null;
+      const paymentRow = el('ctLicensePaymentWarning');
+      const paymentStatus = String(extra.payment_status || 'paid').toLowerCase();
+      const due = Date.parse(String(extra.payment_due_at || ''));
+      const paymentPaused = paymentStatus === 'unpaid' || (paymentStatus === 'partial' && Number(extra.amount_due) > 0 && Number.isFinite(due) && due <= Date.now());
+      if (paymentRow) paymentRow.hidden = !paymentPaused;
+      if (paymentPaused) el('ctLicensePaymentCopy').textContent = `${money(extra.amount_due)} is outstanding${Number.isFinite(due) ? ` (due ${philippineDate(due)})` : ''}. Access stays paused until the developer clears the payment.`;
+      const bonus = el('ctLicenseBonusOffer');
+      if (bonus) bonus.hidden = !currentOffer;
+      if (currentOffer) {
+        el('ctLicenseBonusTitle').textContent = currentOffer.bonus_title || 'Extra license time available';
+        el('ctLicenseBonusCopy').textContent = `${currentOffer.bonus_message || 'A license-time gift is ready.'} Claim to add ${duration(currentOffer.bonus_minutes)} to the current workshop license.`;
+      }
+      syncRoot();
+    } catch (error) {
+      if (!/function|schema cache|does not exist/i.test(String(error?.message || ''))) console.warn('License extras could not be loaded:', error);
+    } finally { busy = false; }
+  }
+  async function claim() {
+    if (!currentOffer?.offer_id || busy) return;
+    const button = el('ctLicenseBonusClaim');
+    if (button) { button.disabled = true; button.textContent = 'Claiming…'; }
+    busy = true;
+    try {
+      const result = await cartechRpc('cartech_claim_license_bonus', { p_offer_id:currentOffer.offer_id });
+      if (result.error) throw result.error;
+      const claimed = tenantResult(result.data) || {};
+      currentOffer = null; lastReadAt = 0;
+      if (el('ctLicenseBonusOffer')) el('ctLicenseBonusOffer').hidden = true;
+      syncRoot();
+      tenantLastCheckedAt = 0;
+      await refreshLicenseStatus(true);
+      alert(`Extra time claimed. Your workshop license now expires ${philippineDate(claimed.new_expires_at)}.`);
+    } catch (error) { alert(error?.message || 'The extra time could not be claimed. Please try again.'); }
+    finally { busy = false; if (button) { button.disabled = false; button.textContent = 'Claim extra time'; } }
+  }
+  el('ctLicenseBonusClaim')?.addEventListener('click', () => void claim());
+  renderAccess(tenantAccessSnapshot);
+  return { renderAccess, refresh, claim };
 })();
 </script>
 </body>
