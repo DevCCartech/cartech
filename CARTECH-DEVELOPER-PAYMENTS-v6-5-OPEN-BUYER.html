@@ -102,6 +102,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
     const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
     const SECRET_STORAGE_KEY = 'cartech_manager_secret_v1';
+    const PLAN_UPDATE_SIGNAL_KEY = 'cartech_license_plan_settings_changed_v1';
     const PLAN_BUYER_OPTIONS = ['',
       'A.Y.U. ENGINEERING AND CONSTRUCTION', 'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.', 'TAGUM STARBUILDER', 'CARTECH',
       'ROLLYS JUNKSHOP TAGUM', 'ROYCE FOOD CORPORATION', 'BORGE ENGINEERING & CONSTRUCTION',
@@ -236,6 +237,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         const result = await rpc('cartech_save_license_plan_settings', { p_admin_secret: adminSecret, p_plans: plans });
         if (result.error) throw result.error;
         renderPlanSettings(plans);
+        try { localStorage.setItem(PLAN_UPDATE_SIGNAL_KEY, String(Date.now())); } catch (_) {}
         setPlanStatus('Saved. Customers will see the updated available plans after they reload the buyer page.');
         setPlanHeaderStatus('Saved online. Customer page will use the updated available plans.');
         setPlanEditorOpen(false);
