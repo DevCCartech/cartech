@@ -1,12 +1,11 @@
 
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>CARTECH Payment Review v6.7 · Stock & Buyers</title>
+  <title>CARTECH Developer Billing & License Control v7</title>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
@@ -30,6 +29,12 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
 @media(max-width:1100px) and (min-width:901px){.shell{grid-template-columns:200px minmax(0,1fr)}aside{padding:24px 16px}main{padding:24px}.plan-setting-row{grid-template-columns:repeat(2,minmax(0,1fr))}.request{grid-template-columns:1fr}.license-row{grid-template-columns:1fr}.license-side{border-left:0;padding-left:0;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:flex;position:static;height:auto;padding:18px;gap:16px;border-bottom:1px solid #32435d}.side-note,.secure{display:none}.ct-dev-nav{display:flex;flex-wrap:wrap;gap:4px}.ct-dev-nav a{padding:10px 8px;font-size:12px}main{padding:20px 14px}.top h1{font-size:27px}.card-head,.card-body{padding:20px 16px}.toolbar .input{min-width:0;flex-basis:100%}.request,.license-row{padding:17px}.plan-setting-row{padding:16px}.btn{white-space:normal}.top-actions{justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    .pill.payment_paused{background:#fff1f2;color:#b42338}.license-manager{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;margin-top:2px;display:grid;gap:14px}
+    .license-manager summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .license-manager summary::-webkit-details-marker{display:none}.license-manager summary::after{content:'Open controls';font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}.license-manager[open] summary::after{content:'Close controls'}
+    .license-control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.license-tool{border:1px solid var(--line);background:#f8fafc;border-radius:12px;padding:13px}.license-tool h4{margin:0 0 4px;font-size:12px}.license-tool>p{margin:0 0 10px;font-size:10px;color:var(--muted)}
+    .license-tool label{display:grid;gap:4px;margin-top:8px;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#52657a}.license-tool input,.license-tool select,.license-tool textarea{width:100%;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fff;color:var(--ink);font:12px inherit}.license-tool textarea{min-height:62px;resize:vertical}.license-tool .btn{width:100%;margin-top:10px}.license-tool-note{font-size:10px;color:var(--muted);margin-top:8px}.license-alert{border-radius:9px;padding:9px 10px;background:#fff4e8;color:#8a4b10;font-size:11px}.license-alert.payment-paused{background:#fff1f2;color:var(--red)}
+    @media(max-width:1100px){.license-control-grid{grid-template-columns:1fr}.license-manager{padding-top:13px}}
 </style>
 </head>
 <body>
@@ -56,8 +61,8 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         <div class="card-body"><div class="toolbar"><button id="loadPlanSettingsButton" class="btn primary" type="button">Load plan settings</button><button id="savePlanSettingsButton" class="btn" type="button">Save plan settings</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="planSettingsStatus" class="status">Load the settings, then choose which plans are available.</p><div id="planSettingsList" class="plan-settings-list"><div class="empty">Enter the manager secret, then load plan settings.</div></div></div>
       </section>
       <section id="licenseControl" class="card license-control-card" style="margin-top:20px">
-        <div class="card-head"><div class="section-heading"><div><h2>License key control</h2><p>Every issued key is listed here. Revoke running access or permanently delete a key record.</p></div><span class="section-badge">Developer only</span></div></div>
-        <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Delete is shown for every row. Revoke a running key first. If it is the shop’s only current key, deletion pauses shop access until another key is activated—no trial fallback. Jobs, customers, and account data remain safe.</p></div>
+        <div class="card-head"><div class="section-heading"><div><h2>License time, payment &amp; bonus control</h2><p>Edit the exact expiry, pause access for an unpaid balance, or offer claimable extra time to the office.</p></div><span class="section-badge">Developer only</span></div></div>
+        <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Open “Manage this running key” to change its expiry, payment state, or claimable bonus. Revoke a running key before permanently deleting it. Workshop jobs and account data remain safe.</p></div>
       </section>
       <div id="paymentReviewAnchor"></div><section id="incomingRequestsCard" class="card" style="margin-top:20px" hidden>
         <div class="card-head"><h2>Incoming GCash requests</h2><p>New pending payment requests appear here after the developer secret is accepted.</p></div>
@@ -242,19 +247,50 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     function rowData(data) { return Array.isArray(data) ? data[0] : data; }
 
     function licenseStatusClass(value) {
-      return ['active','revoked','expired','not_started'].includes(String(value || '').toLowerCase()) ? String(value).toLowerCase() : '';
+      return ['active','revoked','expired','not_started','payment_paused'].includes(String(value || '').toLowerCase()) ? String(value).toLowerCase() : '';
+    }
+    function manilaInput(value) {
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.getTime())) return '';
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Manila', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23' }).formatToParts(parsed).filter(part => part.type !== 'literal').map(part => [part.type, part.value]));
+      return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+    }
+    function manilaIso(value) { return value ? `${value}:00+08:00` : null; }
+    function durationLabel(minutes) {
+      const value = Number(minutes) || 0;
+      if (value % 1440 === 0) return `${value / 1440} day${value === 1440 ? '' : 's'}`;
+      if (value % 60 === 0) return `${value / 60} hour${value === 60 ? '' : 's'}`;
+      return `${value} minutes`;
+    }
+    function mergedLicenseState(item) {
+      const payment = String(item.payment_status || 'paid');
+      const partialDue = payment === 'partial' && Number(item.amount_due) > 0 && item.due_at && Date.parse(item.due_at) <= Date.now();
+      return payment === 'unpaid' || partialDue ? 'payment_paused' : String(item.status || 'unknown').toLowerCase();
     }
     function renderLicenses(list) {
       const root = byId('licenseList');
       if (!list.length) { root.innerHTML = '<div class="empty">No paid license records found.</div>'; return; }
       root.innerHTML = list.map(item => {
-        const state = String(item.status || 'unknown').toLowerCase();
+        const state = mergedLicenseState(item);
         const active = state === 'active' && item.active_for_shop === true;
-        const revoke = state !== 'revoked' && state !== 'expired'
+        const controlsEnabled = Boolean(item.starts_at) && state !== 'revoked';
+        const revoke = !['revoked','expired'].includes(state)
           ? `<button class="btn danger" type="button" data-license-revoke="${esc(item.license_id)}">Revoke key</button>`
           : '';
         const remove = `<button class="btn danger" type="button" data-license-delete="${esc(item.license_id)}" data-license-state="${esc(state)}">Delete key</button>`;
-        return `<article class="license-row${active ? ' current' : ''}"><div><h3>${esc(item.shop_name || 'Workshop')} ${active ? '<span class="pill approved">Running for shop</span>' : ''}</h3><p><strong>${esc(item.shop_id || '—')}</strong> · Key ${esc(item.key_prefix || '—')} · ${esc(item.duration_code || '—')}</p><p>Status: <strong>${esc(state.replace('_',' '))}</strong> · Issued ${esc(date(item.issued_at))} · ${item.starts_at ? `Started ${esc(date(item.starts_at))}` : 'Not activated'} · Expires ${esc(date(item.expires_at))}</p><p>${Number(item.activated_devices) || 0} activated device(s)${item.notes ? ` · ${esc(item.notes)}` : ''}</p>${active ? '<p><strong>This key currently controls web and app access for this shop.</strong></p>' : ''}</div><div class="license-side"><span class="pill ${licenseStatusClass(state)}">${esc(state.replace('_',' '))}</span>${revoke}${remove}</div></article>`;
+        const paymentStatus = String(item.payment_status || 'paid');
+        const paymentAlert = state === 'payment_paused'
+          ? '<div class="license-alert payment-paused"><strong>Access paused:</strong> the outstanding balance is overdue.</div>'
+          : paymentStatus === 'partial' ? `<div class="license-alert">Partial payment · ₱${esc(Number(item.amount_due || 0).toFixed(2))} due ${esc(date(item.due_at))}</div>` : '';
+        const pendingBonus = item.pending_offer_id
+          ? `<div class="license-alert"><strong>Pending office claim:</strong> ${esc(item.pending_bonus_title)} · ${esc(durationLabel(item.pending_bonus_minutes))}<button class="btn quiet" style="margin-top:8px" type="button" data-license-cancel-bonus="${esc(item.pending_offer_id)}">Cancel offer</button></div>`
+          : '';
+        const tools = `<details class="license-manager"><summary>Manage this running key</summary><div class="license-control-grid">
+          <section class="license-tool"><h4>Remaining time</h4><p>Set the exact workshop expiry in Philippine time.</p><label>Expires at (PHT)<input type="datetime-local" data-license-expiry-input value="${esc(manilaInput(item.expires_at))}" ${controlsEnabled ? '' : 'disabled'}></label><button class="btn primary" type="button" data-license-save-expiry="${esc(item.license_id)}" ${controlsEnabled ? '' : 'disabled'}>Save expiry</button><div class="license-tool-note">Reducing this time affects every connected office and mechanic device.</div></section>
+          <section class="license-tool"><h4>Claimable extra time</h4><p>The office must claim this before it is added.</p>${pendingBonus || `<label>Bonus days<input type="number" min="0.01" max="365" step="0.01" value="3" data-license-bonus-days></label><label>Offer title<input maxlength="100" value="3 free days for your first license" data-license-bonus-title></label><label>Message<textarea maxlength="300" data-license-bonus-message>Claim this gift to add 3 days to your current license.</textarea></label><button class="btn primary" type="button" data-license-create-bonus="${esc(item.license_id)}" ${controlsEnabled ? '' : 'disabled'}>Offer extra time</button>`}</section>
+          <section class="license-tool"><h4>Payment status</h4><p>Unpaid pauses immediately. Partial pauses when its due date passes.</p>${paymentAlert}<label>Status<select data-license-payment-status><option value="paid" ${paymentStatus === 'paid' ? 'selected' : ''}>Paid / clear</option><option value="partial" ${paymentStatus === 'partial' ? 'selected' : ''}>Partial payment</option><option value="unpaid" ${paymentStatus === 'unpaid' ? 'selected' : ''}>Unpaid · pause now</option></select></label><label>Outstanding balance (PHP)<input type="number" min="0" step="0.01" value="${esc(Number(item.amount_due || 0).toFixed(2))}" data-license-amount-due></label><label>Payment deadline (PHT)<input type="datetime-local" value="${esc(manilaInput(item.due_at))}" data-license-due-at></label><label>Internal note<textarea maxlength="500" data-license-payment-note>${esc(item.payment_note || '')}</textarea></label><button class="btn primary" type="button" data-license-save-payment="${esc(item.license_id)}">Save payment status</button></section>
+        </div></details>`;
+        return `<article class="license-row${active ? ' current' : ''}" data-license-row="${esc(item.license_id)}"><div><h3>${esc(item.shop_name || 'Workshop')} ${active ? '<span class="pill approved">Running for shop</span>' : ''}</h3><p><strong>${esc(item.shop_id || '—')}</strong> · Key ${esc(item.key_prefix || '—')} · ${esc(item.duration_code || '—')}</p><p>Status: <strong>${esc(state.replaceAll('_',' '))}</strong> · Issued ${esc(date(item.issued_at))} · ${item.starts_at ? `Started ${esc(date(item.starts_at))}` : 'Not activated'} · Expires ${esc(date(item.expires_at))}</p><p>${Number(item.activated_devices) || 0} activated device(s)${item.notes ? ` · ${esc(item.notes)}` : ''}</p>${active ? '<p><strong>This key currently controls web and app access for this shop.</strong></p>' : ''}</div><div class="license-side"><span class="pill ${licenseStatusClass(state)}">${esc(state.replaceAll('_',' '))}</span>${revoke}${remove}</div>${tools}</article>`;
       }).join('');
     }
     async function loadLicenses(silent = false) {
@@ -265,15 +301,62 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       byId('licenseStatus').classList.remove('error');
       if (!silent) byId('licenseStatus').textContent = 'Loading license records…';
       try {
-        const result = await rpc('cartech_list_licenses', { p_admin_secret: adminSecret });
-        if (result.error) throw result.error;
-        const list = Array.isArray(result.data) ? result.data : [];
+        const [licenseResult, controlResult] = await Promise.all([
+          rpc('cartech_list_licenses', { p_admin_secret: adminSecret }),
+          rpc('cartech_list_license_admin_controls', { p_admin_secret: adminSecret })
+        ]);
+        if (licenseResult.error) throw licenseResult.error;
+        if (controlResult.error) throw controlResult.error;
+        const controls = new Map((Array.isArray(controlResult.data) ? controlResult.data : []).map(item => [String(item.license_id), item]));
+        const list = (Array.isArray(licenseResult.data) ? licenseResult.data : []).map(item => ({ ...item, ...(controls.get(String(item.license_id)) || {}) }));
         renderLicenses(list);
         byId('licenseStatus').textContent = `${list.length} license record${list.length === 1 ? '' : 's'} loaded.`;
       } catch (error) {
-        byId('licenseStatus').textContent = error?.message || 'Could not load license records.';
+        const message = error?.message || 'Could not load license records.';
+        byId('licenseStatus').textContent = /cartech_list_license_admin_controls|function/i.test(message) ? 'Run CARTECH-LICENSE-TIME-BONUS-PAYMENT-v1.sql in Supabase first, then reload.' : message;
         byId('licenseStatus').classList.add('error');
       } finally { licenseLoadBusy = false; }
+    }
+    function licenseRow(button) { return button?.closest('[data-license-row]'); }
+    async function runLicenseControl(button, functionName, params, successMessage) {
+      button.disabled = true;
+      byId('licenseStatus').classList.remove('error');
+      byId('licenseStatus').textContent = 'Saving secure license update…';
+      try {
+        const result = await rpc(functionName, { p_admin_secret: secret(), ...params });
+        if (result.error) throw result.error;
+        byId('licenseStatus').textContent = `${successMessage} Connected devices will receive the update automatically.`;
+        await loadLicenses(true);
+      } catch (error) {
+        byId('licenseStatus').textContent = error?.message || 'Could not save the license update.';
+        byId('licenseStatus').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function saveLicenseExpiry(licenseId, button) {
+      const row = licenseRow(button), value = row?.querySelector('[data-license-expiry-input]')?.value;
+      if (!value) { byId('licenseStatus').textContent = 'Choose the new expiry date and time first.'; byId('licenseStatus').classList.add('error'); return; }
+      const expiry = manilaIso(value);
+      if (Date.parse(expiry) < Date.now() + 60000) { byId('licenseStatus').textContent = 'The new expiry must be at least one minute from now.'; byId('licenseStatus').classList.add('error'); return; }
+      if (!confirm(`Change this workshop license expiry to ${date(expiry)}?`)) return;
+      await runLicenseControl(button, 'cartech_admin_set_license_expiry', { p_license_id:licenseId, p_expires_at:expiry }, 'License expiry updated.');
+    }
+    async function createLicenseBonus(licenseId, button) {
+      const row = licenseRow(button), days = Number(row?.querySelector('[data-license-bonus-days]')?.value), title = String(row?.querySelector('[data-license-bonus-title]')?.value || '').trim(), message = String(row?.querySelector('[data-license-bonus-message]')?.value || '').trim();
+      const minutes = Math.round(days * 1440);
+      if (!Number.isFinite(minutes) || minutes < 1 || minutes > 525600 || title.length < 3) { byId('licenseStatus').textContent = 'Enter 0.01–365 bonus days and an offer title.'; byId('licenseStatus').classList.add('error'); return; }
+      await runLicenseControl(button, 'cartech_admin_create_license_bonus', { p_license_id:licenseId, p_bonus_minutes:minutes, p_title:title, p_message:message }, `Bonus offer created for ${durationLabel(minutes)}.`);
+    }
+    async function saveLicensePayment(licenseId, button) {
+      const row = licenseRow(button), status = row?.querySelector('[data-license-payment-status]')?.value || 'paid', amount = Number(row?.querySelector('[data-license-amount-due]')?.value || 0), dueValue = row?.querySelector('[data-license-due-at]')?.value || '', note = String(row?.querySelector('[data-license-payment-note]')?.value || '').trim();
+      if (amount < 0 || !Number.isFinite(amount)) { byId('licenseStatus').textContent = 'Enter a valid outstanding balance.'; byId('licenseStatus').classList.add('error'); return; }
+      if (status === 'partial' && (!(amount > 0) || !dueValue)) { byId('licenseStatus').textContent = 'Partial payment needs a balance and payment deadline.'; byId('licenseStatus').classList.add('error'); return; }
+      if (status === 'unpaid' && !confirm('Mark this key unpaid and pause the whole workshop immediately?')) return;
+      await runLicenseControl(button, 'cartech_admin_set_license_payment', { p_license_id:licenseId, p_payment_status:status, p_amount_due:status === 'paid' ? 0 : amount, p_due_at:status === 'paid' ? null : manilaIso(dueValue), p_note:note }, status === 'paid' ? 'Payment cleared and access restored.' : 'Payment status updated.');
+    }
+    async function cancelLicenseBonus(offerId, button) {
+      if (!confirm('Cancel this unclaimed extra-time offer?')) return;
+      await runLicenseControl(button, 'cartech_admin_cancel_license_bonus', { p_offer_id:offerId }, 'Bonus offer cancelled.');
     }
     async function revokeLicense(licenseId, button) {
       if (!confirm('Revoke this license now? The shop will be locked on its next access check.')) return;
@@ -552,7 +635,14 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); } });
     window.addEventListener('beforeunload', saveRememberedSecret);
     byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
-    byId('licenseList').addEventListener('click', event => { const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke); const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove); });
+    byId('licenseList').addEventListener('click', event => {
+      const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke);
+      const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove);
+      const expiry = event.target.closest('[data-license-save-expiry]'); if (expiry) void saveLicenseExpiry(expiry.dataset.licenseSaveExpiry, expiry);
+      const bonus = event.target.closest('[data-license-create-bonus]'); if (bonus) void createLicenseBonus(bonus.dataset.licenseCreateBonus, bonus);
+      const payment = event.target.closest('[data-license-save-payment]'); if (payment) void saveLicensePayment(payment.dataset.licenseSavePayment, payment);
+      const cancel = event.target.closest('[data-license-cancel-bonus]'); if (cancel) void cancelLicenseBonus(cancel.dataset.licenseCancelBonus, cancel);
+    });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
     // Deliberately no background polling. Payment-list RPC responses previously
     // included receipt images, so refreshing every 30 seconds caused avoidable
