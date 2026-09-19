@@ -3026,6 +3026,20 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       // same active license automatically on its next verification.
       let result = await cartechRpc('cartech_auto_join_shop', { p_shop_id:currentShopId });
       let access = tenantResult(result.data);
+      // Recover a browser that still remembers an older workshop ID. First use
+      // the authenticated device membership; then retry the CARTECH main shop.
+      if (!result.error && access?.valid !== true) {
+        const remembered = await cartechRpc('cartech_request_shop_id');
+        const resolvedShop = String(remembered.data || '').trim().toLowerCase();
+        if (!remembered.error && /^[a-z0-9][a-z0-9-]{2,63}$/.test(resolvedShop) && resolvedShop !== currentShopId) {
+          result = await cartechRpc('cartech_auto_join_shop', { p_shop_id:resolvedShop });
+          access = tenantResult(result.data);
+        }
+      }
+      if (!result.error && access?.valid !== true && currentShopId !== CARTECH_MAIN_SHOP_ID) {
+        result = await cartechRpc('cartech_auto_join_shop', { p_shop_id:CARTECH_MAIN_SHOP_ID });
+        access = tenantResult(result.data);
+      }
       const missingShopwideRpc = result.error && (result.error.code === '42883' || /cartech_auto_join_shop/i.test(result.error.message || ''));
       if (missingShopwideRpc) {
         result = await cartechRpc('cartech_device_access');
