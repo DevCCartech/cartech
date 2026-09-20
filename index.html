@@ -1651,6 +1651,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 #ctUnderDevelopment #ctLicenseContinue{width:100%;background:#047c5d;color:#fff;border:1px solid #0ba97d;border-radius:12px;padding:13px 16px;min-height:48px;font-size:15px;font-weight:650;cursor:pointer}
 #ctUnderDevelopment #ctLicenseContinue:hover{background:#05654e}
 #ctUnderDevelopment :focus-visible{outline:2px solid #fb923c;outline-offset:3px}
+.ct-operational-pause{margin:16px 0;padding:18px;border:1px solid #f59e0b66;border-radius:14px;background:#261b0e;color:#f8fafc}.ct-operational-pause[hidden]{display:none}.ct-operational-pause h3{margin:0 0 6px;font-size:16px;color:#fdba74}.ct-operational-pause p{margin:5px 0 13px;color:#d7c7b8!important;font-size:12px!important;line-height:1.55}.ct-operational-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ct-operational-grid input{width:100%;box-sizing:border-box;background:#0f172a;color:#fff;border:1px solid #475569;border-radius:10px;padding:12px;margin-bottom:8px}.ct-operational-grid button,.ct-pause-admin button{width:100%;min-height:44px;border-radius:10px;border:1px solid #fb923c;background:#c2410c;color:#fff;font-weight:750}.ct-operational-grid details{border-top:1px solid #ffffff24;margin-top:10px;padding-top:10px}.ct-pause-admin{margin:0 0 18px;padding:18px;border:1px solid #fed7aa;border-radius:16px;background:#fff7ed}.ct-pause-admin h3{margin:0 0 5px;color:#7c2d12}.ct-pause-admin p{font-size:12px;color:#9a3412}.ct-pause-admin .ct-pause-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ct-pause-admin input{width:100%;box-sizing:border-box;border:1px solid #fdba74;border-radius:9px;padding:10px;background:#fff}.ct-pause-status{margin-top:9px;font-size:12px;font-weight:650}.ct-pause-status[data-error=true]{color:#be123c}@media(max-width:640px){.ct-operational-grid,.ct-pause-admin .ct-pause-fields{grid-template-columns:1fr}}
 #ctUnderDevelopment [hidden]{display:none!important}
 @media(max-width:480px){#ctUnderDevelopment.ct-reference-portal{padding:16px 10px!important}#ctUnderDevelopment h1{font-size:21px!important}#ctUnderDevelopment header{padding:16px}#ctUnderDevelopment #ctLicenseSuccess{padding:26px 22px}}
 </style>
@@ -7201,6 +7202,7 @@ window.CartechAccess = (() => {
     if (!access) { state = 'unknown'; label = 'Not verified'; caption = 'License information unavailable'; note = 'The timer will appear after the workshop license is verified.'; }
     else if (status === 'revoked') { state = 'blocked'; label = 'Revoked'; caption = 'Workshop access paused'; note = 'Contact the developer to restore or renew access.'; }
     else if (status === 'payment_paused') { state = 'blocked'; label = 'Payment required'; caption = 'Workshop access paused'; note = 'An outstanding license balance is overdue. Settle it to continue using CARTECH.'; }
+    else if (status === 'operational_paused') { state = 'blocked'; label = 'Temporarily paused'; caption = 'License time is frozen'; note = 'The registered owner or developer can resume workshop access below.'; }
     else if (status === 'expired' || (hasEnd && expires <= timestamp)) { state = 'blocked'; label = 'Expired'; caption = 'License time remaining'; remaining = 0; note = 'Renew this workshop license to restore access.'; }
     else if (hasStart && starts > timestamp && (status === 'not_started' || access.valid === true)) { state = 'scheduled'; label = 'Scheduled'; caption = 'Access starts in'; remaining = starts - timestamp; note = 'Access begins on the start date after verification.'; }
     else if (access.valid === true && hasEnd) { state = 'active'; label = access.access_kind === 'trial' ? 'Trial running' : 'License running'; caption = 'Time remaining'; remaining = expires - timestamp; note = 'Countdown uses the latest verified license. All times are Philippine time.'; }
@@ -7236,7 +7238,7 @@ window.CartechAccess = (() => {
     const statusLabel = access?.valid === true && Number.isFinite(expires)
       ? `${access.access_kind === 'trial' ? 'Trial' : 'Active'} · ${philippineDate(expires)}`
       : access?.status === 'not_started' && Number.isFinite(starts) ? `Starts ${philippineDate(starts)}`
-        : access?.status === 'revoked' ? 'Revoked' : access?.status === 'payment_paused' ? 'Payment required · access paused' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
+        : access?.status === 'revoked' ? 'Revoked' : access?.status === 'payment_paused' ? 'Payment required · access paused' : access?.status === 'operational_paused' ? 'Temporarily paused · owner resume required' : access?.status === 'expired' ? 'Expired · renewal required' : 'Required';
     byId('ctLicenseStatusText').textContent = statusLabel;
     const buyButton = byId('ctBuyLicenseButton');
     const purchaseRow = buyButton?.closest('.ct-ref-purchase');
@@ -7247,10 +7249,58 @@ window.CartechAccess = (() => {
     const state = byId('ctLicenseState');
     if (state) {
       state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
-      state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired','payment_paused'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
+      state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired','payment_paused','operational_paused'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
     }
     renderLicensePortal(access);
+    renderOperationalPausePanel(access);
     updateLicenseAgreementButton();
+  }
+  function operationallyPaused(access = tenantAccessSnapshot) { return String(access?.status || '').toLowerCase() === 'operational_paused'; }
+  async function operationalPauseInfo() {
+    const result = await cartechRpc('cartech_operational_pause_info', { p_shop_id:currentShopId });
+    if (result.error) throw result.error;
+    return tenantResult(result.data) || {};
+  }
+  function ensureOperationalPausePanel() {
+    let panel = byId('ctOperationalPausePanel');
+    if (panel) return panel;
+    panel = document.createElement('section'); panel.id='ctOperationalPausePanel'; panel.className='ct-operational-pause'; panel.hidden=true;
+    panel.innerHTML=`<h3><i class="fa-solid fa-circle-pause"></i> Workshop access is paused</h3><p id="ctOperationalPauseReason">The workshop owner can resume access. Staff and mechanics cannot bypass this screen.</p><div class="ct-operational-grid"><form onsubmit="CartechAccess.resumeOperationalAsOwner(event)"><strong>Owner access</strong><p>Enter the registered license-owner account.</p><input id="ctPauseOwnerUser" autocomplete="username" placeholder="Owner username" required><input id="ctPauseOwnerPass" type="password" autocomplete="current-password" placeholder="Owner password" required><button type="submit">Resume workshop</button></form><details><summary>Developer override</summary><p>Use the private manager secret.</p><form onsubmit="CartechAccess.resumeOperationalAsDeveloper(event)"><input id="ctPauseDeveloperSecret" type="password" autocomplete="off" placeholder="Manager secret" required><button type="submit">Developer resume</button></form></details></div><p id="ctOperationalPauseMessage" class="ct-pause-status" hidden></p>`;
+    const form=byId('ctLicenseForm'); form?.parentNode?.insertBefore(panel,form); return panel;
+  }
+  async function renderOperationalPausePanel(access = tenantAccessSnapshot) {
+    const panel=ensureOperationalPausePanel(); panel.hidden=!operationallyPaused(access); if(panel.hidden)return;
+    try { const info=await operationalPauseInfo(); setText('ctOperationalPauseReason',`${info.reason||'Workshop temporarily paused'}. Registered owner ${info.owner_username||'account'} may resume access.`); } catch(_) {}
+  }
+  async function resumeOperationalAsOwner(event) {
+    event?.preventDefault();
+    try {
+      message('ctOperationalPauseMessage','Verifying owner access…');
+      const result=await cartechRpc('cartech_owner_resume_operational_pause',{p_shop_id:currentShopId,p_username:String(byId('ctPauseOwnerUser')?.value||'').trim().toLowerCase(),p_password:String(byId('ctPauseOwnerPass')?.value||'')});
+      if(result.error)throw result.error; byId('ctPauseOwnerPass').value=''; message('ctOperationalPauseMessage','Workshop resumed. Restoring sign-in…'); tenantLastCheckedAt=0; await refreshLicenseStatus(true);
+    } catch(error){message('ctOperationalPauseMessage',error.message||'Owner resume failed.',true);} return false;
+  }
+  async function resumeOperationalAsDeveloper(event) {
+    event?.preventDefault();
+    try {
+      message('ctOperationalPauseMessage','Applying developer override…');
+      const result=await cartechRpc('cartech_set_operational_pause',{p_admin_secret:String(byId('ctPauseDeveloperSecret')?.value||''),p_shop_id:currentShopId,p_paused:false,p_reason:null,p_owner_username:null});
+      if(result.error)throw result.error; byId('ctPauseDeveloperSecret').value=''; message('ctOperationalPauseMessage','Workshop resumed. Restoring sign-in…'); tenantLastCheckedAt=0; await refreshLicenseStatus(true);
+    } catch(error){message('ctOperationalPauseMessage',error.message||'Developer resume failed.',true);} return false;
+  }
+  function ensureDeveloperPauseControls() {
+    let panel=byId('ctDeveloperPauseControls'),anchor=byId('developerAccountsWrapper'); if(panel||!anchor)return panel;
+    panel=document.createElement('section'); panel.id='ctDeveloperPauseControls'; panel.className='ct-pause-admin';
+    panel.innerHTML=`<h3><i class="fa-solid fa-calendar-day"></i> Workshop pause control</h3><p>Pause for Sunday, holiday, or maintenance. Paid license time freezes until the registered owner or developer resumes it.</p><div class="ct-pause-fields"><input id="ctPauseReason" placeholder="Reason (e.g. Sunday closure)"><input id="ctPauseOwner" placeholder="Registered owner username"><input id="ctPauseSecret" type="password" autocomplete="off" placeholder="Developer manager secret"></div><button type="button" onclick="CartechAccess.pauseOperationalAccess()">Pause workshop access</button><p id="ctPauseAdminMessage" class="ct-pause-status" hidden></p>`;
+    anchor.parentNode.insertBefore(panel,anchor); return panel;
+  }
+  async function pauseOperationalAccess() {
+    if(currentRole!=='developer')return;
+    try {
+      message('ctPauseAdminMessage','Pausing workshop securely…');
+      const result=await cartechRpc('cartech_set_operational_pause',{p_admin_secret:String(byId('ctPauseSecret')?.value||''),p_shop_id:currentShopId,p_paused:true,p_reason:String(byId('ctPauseReason')?.value||''),p_owner_username:String(byId('ctPauseOwner')?.value||'').trim().toLowerCase()});
+      if(result.error)throw result.error; message('ctPauseAdminMessage','Workshop paused. License countdown is frozen.'); tenantLastCheckedAt=0; setTimeout(()=>void refreshLicenseStatus(true),500);
+    } catch(error){message('ctPauseAdminMessage',error.message||'Could not pause workshop.',true);}
   }
   function updateLicenseAgreementButton() {
     const button = byId('ctLicenseActivate');
@@ -8195,6 +8245,7 @@ window.CartechAccess = (() => {
       byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
     }
     if (entered) {
+      if (currentRole === 'developer') ensureDeveloperPauseControls();
       const shell = byId('appShell');
       const topbar = shell.querySelector('.ct-topbar');
       if (topbar && byId('ctTesterBanner').parentElement !== topbar) topbar.append(byId('ctTesterBanner'));
@@ -8233,7 +8284,9 @@ window.CartechAccess = (() => {
     setText('ctWelcomeAccessRule', `Access ends when the account timer expires, access is revoked, the free trial closes, or the workshop license expires—whichever happens first. After the trial, the shop owner activates one workshop license; all connected office and mechanic installations then synchronize automatically. You only need to accept this user agreement once per version. Unsaved work may be lost when a session ends.`);
     setText('ctDevelopmentMessage', String(tenantAccessSnapshot?.status || '').toLowerCase() === 'payment_paused'
       ? `This workshop license has an unpaid balance. Access is paused until the outstanding payment is cleared by the developer.`
-      : `This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
+      : String(tenantAccessSnapshot?.status || '').toLowerCase() === 'operational_paused'
+        ? `Workshop access is temporarily paused. Staff and mechanics must wait; the registered license owner or developer can resume access below.`
+        : `This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore every office and mechanic sign-in.`);
     setText('ctTermsVersionLabel', `CARTECH HYBRID QUEUE · Limited developer dry run · Terms version ${agreementVersion}`);
     setText('ctProgramDurationOption', paidLicenseActive() ? `Use workshop license expiry · ${philippineDate(licenseExpiry())}` : `Use free-trial deadline · ${deadline}`);
     setText('ctTesterAccountHelp', `All users accept the agreement once per version. The default follows ${paidLicenseActive() ? 'the active workshop license' : 'the free-trial deadline (' + deadline + ')'}. Choose a shorter account timer only when needed.`);
@@ -8800,6 +8853,7 @@ window.CartechAccess = (() => {
     startPaymentPolling();
   }
   const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  Object.assign(api, { resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
