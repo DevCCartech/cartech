@@ -2857,6 +2857,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       { id:'15d', label:'15 days', days:15, price_pesos:900, stock_remaining:30, detail:'Two-week access', badge:'', is_available:true, is_sold:false, buyer_shop_name:'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.' },
       { id:'30d', label:'30 days', days:30, price_pesos:1800, stock_remaining:30, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' }
     ];
+    const CARTECH_OFFICIAL_FALLBACK_PLANS = CARTECH_LICENSE_PLANS.map(plan => ({ ...plan }));
+    const CARTECH_DISCOUNT_TOPUP_PLANS = Object.freeze([
+      { id:'topup_3d', label:'3 days', days:3, price_pesos:180, stock_remaining:999999, detail:'Add 72 hours to current expiry', badge:'Trial top-up', is_available:true, is_sold:false, buyer_shop_name:'' },
+      { id:'topup_6d', label:'6 days', days:6, price_pesos:350, stock_remaining:999999, detail:'Add 144 hours to current expiry', badge:'Discounted', is_available:true, is_sold:false, buyer_shop_name:'' },
+      { id:'topup_15d', label:'15 days', days:15, price_pesos:780, stock_remaining:999999, detail:'Add 360 hours to current expiry', badge:'Best value', is_available:true, is_sold:false, buyer_shop_name:'' }
+    ]);
+    let cartechPurchaseMode = 'renewal';
     const CARTECH_PLAN_SETTINGS_RPC = 'cartech_get_public_license_plan_settings';
     const CARTECH_PLAN_UPDATE_SIGNAL_KEY = 'cartech_license_plan_settings_changed_v1';
     const CARTECH_PLAN_SETTINGS_CACHE_TTL_MS = 60 * 1000;
@@ -2866,6 +2873,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let selectedLicensePlanId = '';
     let selectedLicenseBuyer = '';
     const CARTECH_PAYMENT_REQUEST_KEY = 'cartech_license_payment_request_v1';
+    const CARTECH_TOPUP_REQUEST_KEY = 'cartech_license_topup_request_v1';
     const CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY = 'cartech_license_payment_delivery_blocked_v1';
     const CARTECH_PAYMENT_HANDOFF_KEY = 'cartech_license_payment_handoff_v1';
     const CARTECH_PAYMENT_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
@@ -7243,9 +7251,8 @@ window.CartechAccess = (() => {
     const buyButton = byId('ctBuyLicenseButton');
     const purchaseRow = buyButton?.closest('.ct-ref-purchase');
     const activePaid = access?.valid === true && access?.access_kind === 'license' && Number.isFinite(expires) && expires > now();
-    const renewalWindow = activePaid && expires - now() <= 2 * 86400000;
-    if (purchaseRow) purchaseRow.hidden = activePaid && !renewalWindow;
-    if (buyButton) buyButton.textContent = activePaid ? 'Renew or add time →' : 'Buy or renew →';
+    if (purchaseRow) purchaseRow.hidden = false;
+    if (buyButton) buyButton.textContent = activePaid ? 'Top up discounted time →' : 'Buy or renew →';
     const state = byId('ctLicenseState');
     if (state) {
       state.classList.remove('ct-license-state-active', 'ct-license-state-required', 'ct-license-state-blocked');
@@ -7440,7 +7447,7 @@ window.CartechAccess = (() => {
   function renderLicensePlans() {
     const container = byId('ctLicensePlans');
     if (!container) return;
-    if (!cartechPlanSettingsVerified) {
+    if (cartechPurchaseMode !== 'topup' && !cartechPlanSettingsVerified) {
       container.innerHTML = `<div class="ct-empty-state"><strong>Payment temporarily unavailable.</strong><br>The latest price and stock could not be verified. Reload after the developer saves the plan settings. No payment should be made from this screen.</div>`;
       return;
     }
@@ -7466,7 +7473,7 @@ window.CartechAccess = (() => {
   function licensePlanAmount(plan) { const configured = Number(plan?.price_pesos); return Number.isFinite(configured) ? configured : Number(plan?.days || 0) * CARTECH_LICENSE_RATE_PER_DAY; }
   function licensePlanPrice(plan) { return `₱${licensePlanAmount(plan).toLocaleString('en-PH')}`; }
   function licensePlanDurationCode(plan) {
-    return ({ '1d':'1_day', '7d':'7_days', '15d':'15_days', '30d':'30_days' })[plan?.id] || '';
+    return ({ '1d':'1_day', '7d':'7_days', '15d':'15_days', '30d':'30_days', 'topup_3d':'3_days', 'topup_6d':'6_days', 'topup_15d':'15_days' })[plan?.id] || '';
   }
   function renderPaymentQr(plan) {
     const panel = byId('ctLicenseQrPanel');
@@ -7626,6 +7633,13 @@ window.CartechAccess = (() => {
       if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
       return;
     }
+    if (status === 'approved' && result.request_kind === 'topup') {
+      panel.innerHTML = `<h4>Top-up approved — time added</h4><p><strong>${escapeHTML(String(result.days_added || 0))} day(s)</strong> were added to the current workshop license. New expiry: <strong>${escapeHTML(philippineDate(Date.parse(String(result.new_expires_at || ''))))}</strong>.</p>`;
+      try { localStorage.removeItem(CARTECH_TOPUP_REQUEST_KEY); } catch (_) {}
+      if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+      void refreshLicenseStatus(true);
+      return;
+    }
     if (status !== 'approved' || !result.license_key) return;
     // A fresh developer handoff must be shown even when this shop already has
     // an active older license. The handoff is cleared after this key is used.
@@ -7657,10 +7671,18 @@ window.CartechAccess = (() => {
     catch (_) { byId('ctLicensePaymentStatus').textContent = text; }
   }
   async function checkPaymentResult(silent = false) {
+    const topupRequestId = String(localStorage.getItem(CARTECH_TOPUP_REQUEST_KEY) || '').trim();
     const handoffToken = String(localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || '').trim();
     const requestId = String(localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || '').trim();
-    if ((!handoffToken && !requestId) || !supabaseClient) return null;
+    if ((!topupRequestId && !handoffToken && !requestId) || !supabaseClient) return null;
     try {
+      if (topupRequestId) {
+        const topup = await cartechRpc('cartech_get_license_topup_result', { p_request_id:topupRequestId });
+        if (topup.error) throw topup.error;
+        const topupRow = Array.isArray(topup.data) ? topup.data[0] : topup.data;
+        if (topupRow) renderPaymentDelivery({ ...topupRow, request_kind:'topup' });
+        return topupRow || null;
+      }
       if (!handoffToken) await ensureDeviceAuth();
       const result = handoffToken
         ? await cartechRpc('cartech_get_buyer_handoff', { p_handoff_token: handoffToken })
@@ -7687,13 +7709,17 @@ window.CartechAccess = (() => {
   async function openLicenseStore() {
     const expiry = licenseExpiry();
     const activePaid = paidLicenseActive();
-    const renewalWindow = activePaid && expiry - now() <= 2 * 86400000;
-    if (activePaid && !renewalWindow) {
-      alert(`Your workshop license is already paid and active until ${philippineDate(expiry)}. No new payment is required.`);
-      return;
+    cartechPurchaseMode = activePaid ? 'topup' : 'renewal';
+    if (activePaid) {
+      CARTECH_LICENSE_PLANS = CARTECH_DISCOUNT_TOPUP_PLANS.map(plan => ({ ...plan }));
+      cartechPlanSettingsVerified = true;
+    } else {
+      CARTECH_LICENSE_PLANS = CARTECH_OFFICIAL_FALLBACK_PLANS.map(plan => ({ ...plan }));
+      await loadPublicPlanSettings(true);
     }
-    await loadPublicPlanSettings(true);
     ensureLicenseBuyerFilter();
+    const buyerFilter = byId('ctLicenseBuyerFilter')?.closest('.ct-license-buyer-filter');
+    if (buyerFilter) buyerFilter.hidden = activePaid;
     selectedLicenseBuyer = '';
     if (byId('ctLicenseBuyerFilter')) byId('ctLicenseBuyerFilter').value = '';
     renderLicensePlans();
@@ -7701,12 +7727,19 @@ window.CartechAccess = (() => {
     selectedLicensePlanId = '';
     const dialog = byId('ctLicenseStoreDialog');
     if (!dialog) return;
+    if (byId('ctLicenseStoreTitle')) byId('ctLicenseStoreTitle').textContent = activePaid ? 'Top up your active CARTECH license' : 'Buy a CARTECH workshop license';
+    const introTitle = document.querySelector('.ct-license-store-intro h3');
+    const introCopy = document.querySelector('.ct-license-store-intro p');
+    if (introTitle) introTitle.textContent = activePaid ? 'Choose a discounted top-up' : 'Choose your official plan';
+    if (introCopy) introCopy.textContent = activePaid
+      ? `Your key is active until ${philippineDate(expiry)}. Approved top-up time is added to that expiry, so no remaining time is lost.`
+      : 'Your previous key is expired. Choose an official renewal plan using the developer-published price and stock.';
     byId('ctLicensePayment').hidden = true;
     byId('ctLicensePaymentFollowup').hidden = true;
     resetPaymentFields();
     byId('ctLicenseQrPanel').hidden = true;
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.hidden = false;
-    if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+    if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || localStorage.getItem(CARTECH_TOPUP_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
   }
   function closeLicenseStore() {
     const dialog = byId('ctLicenseStoreDialog');
@@ -7832,22 +7865,33 @@ window.CartechAccess = (() => {
     try {
       const receiptData = await readPaymentReceipt(file);
       await ensureDeviceAuth();
-      const result = await cartechRpc('cartech_create_license_payment_request', {
-        p_shop_name: shop,
-        p_owner_username: owner,
-        p_plan_code: plan.id,
-        p_duration_code: licensePlanDurationCode(plan),
-        p_amount: Math.round(licensePlanAmount(plan)),
-        p_gcash_reference: reference,
-        p_receipt_data: receiptData
-      });
+      const isTopup = cartechPurchaseMode === 'topup';
+      const result = isTopup
+        ? await cartechRpc('cartech_create_license_topup_request', {
+            p_shop_id: currentShopId,
+            p_shop_name: shop,
+            p_owner_username: owner,
+            p_plan_code: plan.id,
+            p_amount: Math.round(licensePlanAmount(plan)),
+            p_gcash_reference: reference,
+            p_receipt_data: receiptData
+          })
+        : await cartechRpc('cartech_create_license_payment_request', {
+            p_shop_name: shop,
+            p_owner_username: owner,
+            p_plan_code: plan.id,
+            p_duration_code: licensePlanDurationCode(plan),
+            p_amount: Math.round(licensePlanAmount(plan)),
+            p_gcash_reference: reference,
+            p_receipt_data: receiptData
+          });
       if (result.error) throw result.error;
       const request = Array.isArray(result.data) ? result.data[0] : result.data;
-      status.innerHTML = `<strong>Payment request submitted.</strong> Request <strong>${escapeHTML(request?.request_id || 'received')}</strong> is waiting for developer verification. Keep this page open or save the receipt; the developer will provide the real license key after checking GCash.`;
+      status.innerHTML = `<strong>${isTopup ? 'Top-up' : 'Payment'} request submitted.</strong> Request <strong>${escapeHTML(request?.request_id || 'received')}</strong> is waiting for developer verification. ${isTopup ? 'After approval, the purchased time is added automatically to your current expiry.' : 'The developer will provide the real license key after checking GCash.'}`;
       if (request?.request_id) {
         try { localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY); } catch (_) {}
         try { localStorage.removeItem(CARTECH_PAYMENT_HANDOFF_KEY); } catch (_) {}
-        localStorage.setItem(CARTECH_PAYMENT_REQUEST_KEY, request.request_id);
+        localStorage.setItem(isTopup ? CARTECH_TOPUP_REQUEST_KEY : CARTECH_PAYMENT_REQUEST_KEY, request.request_id);
         renderPaymentDelivery({ status:'pending' });
         startPaymentPolling();
       }
