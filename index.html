@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-topup-qr-payment-v20-autoupdate">
+  <meta name="cartech-build" content="cartech-topup-qr-only-v21-autoupdate">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Portal v63</title>
@@ -1607,15 +1607,17 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 #ctLicenseStoreDialog.is-topup-mode.has-topup-selection .ct-license-plans{grid-template-columns:minmax(0,1fr);max-width:240px;margin:0 auto}
 #ctLicenseStoreDialog.is-topup-mode.has-topup-selection .ct-license-plan:not(.is-selected){display:none!important}
 #ctLicenseStoreDialog.is-topup-mode.has-topup-selection .ct-license-plan.is-selected{min-height:150px}
-.ct-topup-payment-details{display:grid;grid-template-columns:minmax(180px,260px) minmax(0,1fr);gap:18px;align-items:center;margin-bottom:14px;padding:16px;border:1px solid #344660;border-radius:12px;background:#0b1627}
+.ct-topup-payment-details{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;align-items:center;margin-bottom:14px;padding:14px;border:1px solid #344660;border-radius:12px;background:#0b1627}
 .ct-topup-payment-details img{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:12px;background:#0865db}
+.ct-topup-qr-crop{position:relative;width:200px;aspect-ratio:1;overflow:hidden;border:10px solid #fff;border-radius:12px;background:#fff;box-sizing:border-box}
+.ct-topup-qr-crop img{position:absolute!important;width:211.76%!important;max-width:none!important;max-height:none!important;height:auto!important;left:-55.88%!important;top:-112.94%!important;border-radius:0!important;background:#fff!important}
 .ct-topup-payment-copy{display:grid;gap:10px;color:#d8e4f3}
 .ct-topup-payment-copy h4{margin:0;color:#fff;font-size:18px}
 .ct-topup-payment-copy p{margin:0;color:#b9c8da;font-size:12px;line-height:1.6}
 .ct-topup-number{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid #3d5270;border-radius:10px;background:#17253b}
 .ct-topup-number strong{font-size:18px;color:#fff;letter-spacing:.04em}
 .ct-topup-payment-copy .ct-button{width:100%}
-@media(max-width:640px){.ct-topup-payment-details{grid-template-columns:1fr}.ct-topup-payment-details img{max-height:460px}.ct-topup-number{align-items:stretch;flex-direction:column}}
+@media(max-width:640px){.ct-topup-payment-details{grid-template-columns:1fr}.ct-topup-qr-crop{width:min(210px,100%);margin:auto}.ct-topup-number{align-items:stretch;flex-direction:column}}
 @media(max-width:640px){#ctLicenseStoreDialog.is-topup-mode .ct-license-plans{grid-template-columns:1fr}#ctLicenseStoreDialog.is-topup-mode .ct-license-plan{min-height:165px}#ctLicenseStoreDialog.is-topup-mode .ct-dialog-head{padding:18px 18px 12px}#ctLicenseStoreDialog.is-topup-mode .ct-license-store-body{padding:0 18px 20px}}
 @media(prefers-reduced-motion:reduce){#ctLicenseStoreDialog *,#ctUnderDevelopment *{transition:none!important;animation:none!important}}
 </style>
@@ -7109,7 +7111,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-key-activation-no-agreement-v61';
-  const buildId = 'cartech-topup-qr-payment-v20-autoupdate';
+  const buildId = 'cartech-topup-qr-only-v21-autoupdate';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -7810,7 +7812,7 @@ window.CartechAccess = (() => {
     const details = document.createElement('div');
     details.id = 'ctTopupPaymentDetails';
     details.className = 'ct-topup-payment-details';
-    details.innerHTML = `<img src="${qrSource}" alt="GCash QR code for ${escapeHTML(plan.label)} at ${escapeHTML(licensePlanPrice(plan))}"><div class="ct-topup-payment-copy"><h4>Pay ${escapeHTML(licensePlanPrice(plan))} with GCash</h4><p>Scan this exact QR code or send the exact amount to the GCash number below. After payment, enter only the GCash reference number.</p><div class="ct-topup-number"><strong>${escapeHTML(CARTECH_GCASH_NUMBER)}</strong><button type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy number</button></div><button type="button" class="ct-button" onclick="CartechAccess.resetTopupPlanSelection()">Change plan</button></div>`;
+    details.innerHTML = `<div class="ct-topup-qr-crop"><img src="${qrSource}" alt="GCash QR code for ${escapeHTML(plan.label)} at ${escapeHTML(licensePlanPrice(plan))}"></div><div class="ct-topup-payment-copy"><h4>Pay ${escapeHTML(licensePlanPrice(plan))} with GCash</h4><p>Scan the QR code or send the exact amount to the GCash number below. After payment, enter only the GCash reference number.</p><div class="ct-topup-number"><strong>${escapeHTML(CARTECH_GCASH_NUMBER)}</strong><button type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy number</button></div><button type="button" class="ct-button" onclick="CartechAccess.resetTopupPlanSelection()">Change plan</button></div>`;
     byId('ctLicensePaymentStatus')?.before(details);
   }
   function resetTopupPlanSelection() {
