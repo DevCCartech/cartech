@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-loud-horn-v23-autoupdate">
+  <meta name="cartech-build" content="cartech-office-work-hours-v24-low-egress">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Portal v63</title>
@@ -5953,6 +5953,12 @@ async function submitPartsRequest() {
 
     let lastActivityTime = Date.now();
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+    const ALWAYS_ON_OFFICE_USERS = new Set(['shiela', 'shielaadmin', 'lanver', 'lanveroffice']);
+    const manilaWorkHour = () => Number(new Intl.DateTimeFormat('en-GB', {
+      timeZone:'Asia/Manila', hour:'2-digit', hourCycle:'h23'
+    }).format(new Date()));
+    const isAlwaysOnOfficeUser = () => ALWAYS_ON_OFFICE_USERS.has(String(currentUser || '').trim().toLowerCase()) &&
+      ['office', 'admin'].includes(String(currentRole || '').toLowerCase());
 
     ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
       window.addEventListener(evt, () => {
@@ -5965,8 +5971,9 @@ async function submitPartsRequest() {
       if (window.CartechAccess && !window.CartechAccess.identityValid()) return;
       if (currentRole === 'tester') { window.CartechAccess?.checkExpiry(); return; }
       const now = Date.now();
-      const currentHour = new Date().getHours();
-      const isUnrestricted = currentRole === 'developer' || currentRole === 'admin' || currentUser === 'bot';
+      const currentHour = manilaWorkHour();
+      const protectedDuringWorkHours = isAlwaysOnOfficeUser() && currentHour >= 8 && currentHour < 17;
+      const isUnrestricted = currentRole === 'developer' || currentUser === 'bot' || (currentRole === 'admin' && !isAlwaysOnOfficeUser());
 
       if (!isUnrestricted) {
         if (currentHour >= 17 || currentHour < 8) {
@@ -5976,7 +5983,7 @@ async function submitPartsRequest() {
         }
       }
 
-      if (now - lastActivityTime > IDLE_TIMEOUT_MS && currentUser !== 'bot') {
+      if (!protectedDuringWorkHours && now - lastActivityTime > IDLE_TIMEOUT_MS && currentUser !== 'bot') {
         alert("🔒 Logged out due to 30 minutes of inactivity to protect workshop bandwidth.");
         handleLogout();
       }
@@ -7113,7 +7120,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-key-activation-no-agreement-v61';
-  const buildId = 'cartech-loud-horn-v23-autoupdate';
+  const buildId = 'cartech-office-work-hours-v24-low-egress';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
