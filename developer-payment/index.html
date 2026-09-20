@@ -1,0 +1,759 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0c1422">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CARTECH Pay">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/cartech-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/cartech-192.png">
+  <title>CARTECH Developer Payment PWA</title>
+  <style>
+    :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
+    .shell{min-height:100vh;display:grid;grid-template-columns:255px minmax(0,1fr)}aside{background:var(--navy);color:#fff;padding:28px 22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--orange);font-size:20px;font-weight:900}.brand strong{display:block;font-size:17px;letter-spacing:.04em}.brand small{color:#9fb0c3;font-size:10px;letter-spacing:.13em}.side-note{border:1px solid #ffffff1c;background:#ffffff0b;border-radius:14px;padding:15px}.side-note strong{font-size:12px}.side-note p{font-size:11px;color:#b7c5d4;margin:7px 0 0}.secure{margin-top:auto;color:#91a6b9;font-size:10px}
+    main{padding:30px;max-width:1320px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.top h1{font-size:28px;margin:0;letter-spacing:-.03em}.top p{color:var(--muted);margin:6px 0 0}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.plan-jump{display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap}.badge{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:11px;font-weight:750}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 34px #23384d0c;overflow:hidden}.card-head{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.card-head h2{font-size:16px;margin:0}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.card-body{padding:21px 22px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:11px;font-weight:750;color:#3d5065;text-transform:uppercase;letter-spacing:.05em}.input{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:10px;padding:11px 12px;color:var(--ink);background:#fbfcfd;outline:none}.input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #cfd9e4;background:#fff;color:#31465d;border-radius:9px;padding:10px 13px;font-weight:700}.btn:hover{background:#f5f8fa}.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}.btn.primary:hover{background:#df5d27}.btn.danger{color:var(--red);border-color:#f0cbd2}.btn.quiet{background:#f7f9fb;color:#52657a;border-color:#dce4ed}.btn:disabled{opacity:.55;cursor:wait}.status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f2f7f7;color:#37686d;font-size:12px}.status.error{background:#fff1f2;color:var(--red)}
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.toolbar .input{flex:1;min-width:220px}.remember-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:11px;color:var(--muted);font-size:11px}.remember-row label{display:flex;align-items:center;gap:7px;color:#31465d;font-weight:700}.remember-row input{accent-color:var(--teal);width:16px;height:16px}.remember-row .btn{font-size:11px;padding:7px 10px}.plan-settings-card{border-color:#d9c59a;box-shadow:0 12px 34px #96661912}.plan-settings-card.plan-editor-collapsed .card-body{display:none}.plan-settings-summary{margin:6px 0 0;color:var(--muted);font-size:11px}.plan-settings-list{display:grid;gap:10px;margin-top:14px}.plan-setting-row{display:grid;grid-template-columns:34px 60px minmax(150px,1fr) 78px 110px minmax(150px,1fr) minmax(210px,1.25fr) 130px;gap:9px;align-items:end;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.plan-setting-row.is-off{background:#f8fafb;opacity:.72}.plan-setting-row .plan-toggle{align-self:center;display:flex;justify-content:center}.plan-toggle input{width:18px;height:18px;accent-color:var(--teal)}.plan-setting-row label{display:grid;gap:4px;color:#52657a;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.04em}.plan-setting-row input,.plan-setting-row select{width:100%;min-width:0;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fbfcfd;color:var(--ink);font-size:12px}.plan-setting-row input:focus,.plan-setting-row select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px #087f8016;background:#fff}.plan-setting-code{font:800 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--teal);padding-bottom:9px}.plan-setting-help{margin:10px 0 0;color:var(--muted);font-size:11px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}.pill{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:#eef2f6;color:#53687f}.pill.pending,.pill.not_started{background:#fff7e8;color:var(--gold)}.pill.approved,.pill.active{background:#e4f7ef;color:var(--green)}.pill.rejected,.pill.revoked,.pill.expired{background:#fff0f2;color:var(--red)}
+    .section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-badge{white-space:nowrap;padding:5px 8px;border-radius:999px;background:#e7f6f1;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.license-toolbar-note{font-size:11px;color:var(--muted)}.license-control-card{border-color:#b7dfd5;box-shadow:0 12px 34px #087f8012}.requests{display:grid;gap:12px;margin-top:16px}.request{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:17px;background:#fff}.request.pending{border-color:#ebd29f;background:#fffdf8}.request h3{margin:0;font-size:15px}.request-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 15px;margin-top:10px;font-size:12px}.request-meta dt{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.request-meta dd{margin:0;font-weight:700;overflow-wrap:anywhere}.receipt{width:100%;height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#f7f9fb}.request-side{display:grid;align-content:start;gap:9px}.request-side .actions{display:grid}.request-side .btn{width:100%}.request-note{font-size:11px;color:var(--muted);margin:0}.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.result{margin-top:18px;border:1px solid #b7dfd5;background:#f2fbf8;border-radius:13px;padding:17px}.result[hidden]{display:none}.result h3{margin:0 0 8px;font-size:14px;color:var(--green)}.key-box{display:flex;gap:8px;align-items:center;background:#fff;border:1px dashed #8fc8ba;border-radius:10px;padding:10px;margin:10px 0}.key-box code{font:750 13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;flex:1}.result dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:12px}.result dt{color:var(--muted)}.result dd{margin:0;font-weight:700;overflow-wrap:anywhere}.warning{color:#8a5a16;font-size:11px;margin:10px 0 0}.license-list{display:grid;gap:12px;margin-top:14px}.license-row{border:1px solid var(--line);border-radius:13px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:18px;background:#fff;align-items:start}.license-row.current{border-color:#35b98b;background:#f4fffa;box-shadow:0 0 0 2px #35b98b22}.license-row h3{margin:0;font-size:14px;line-height:1.35}.license-row p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.license-side{display:grid;align-content:start;gap:8px;border-left:1px solid #edf1f5;padding-left:16px}.license-side .btn{width:100%;font-size:11px;padding:9px 10px;min-height:38px}.license-side .pill{justify-self:start}.license-help{font-size:11px;color:var(--muted);margin:12px 0 0}.cleanup-actions{display:grid;grid-template-columns:1fr;gap:8px}.cleanup-actions .btn{font-size:11px;padding:9px 10px;min-height:38px}.footer{margin-top:18px;color:#7c8b9a;font-size:10px;text-align:center}
+    @media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:18px}.top{flex-direction:column}.top-actions{justify-content:flex-start}.request{grid-template-columns:1fr}.request-meta{grid-template-columns:1fr}.receipt{height:260px}.license-row{grid-template-columns:1fr}.license-side{border-left:0;border-top:1px solid #edf1f5;padding:12px 0 0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.license-side .pill{grid-column:1/-1}.license-side .btn{width:100%}.cleanup-actions{grid-template-columns:1fr 1fr}.section-heading{flex-direction:column}.plan-setting-row{grid-template-columns:40px minmax(0,1fr)}.plan-setting-row .plan-toggle{grid-column:1}.plan-setting-row .plan-setting-code{grid-column:2}.plan-setting-row>label{grid-column:1/-1}}
+    /* Stock is a first-class plan setting. Keep the desktop row compact and
+       let the existing mobile rule stack it with the other fields. */
+    @media(min-width:901px){.plan-setting-row{grid-template-columns:92px 44px minmax(120px,1fr) 72px 92px 78px minmax(140px,1fr) minmax(190px,1.15fr) 100px}.plan-setting-row .plan-toggle{display:grid;gap:5px;justify-content:start}.plan-setting-row .plan-toggle label{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:9px}.plan-setting-row .plan-toggle input{flex:none}}
+    .plan-setting-stock{font-weight:800;color:var(--teal);text-align:center}
+    .plan-auto-state{display:inline-flex;align-items:center;justify-content:center;min-width:66px;padding:4px 6px;border-radius:999px;font-size:9px;font-weight:850;letter-spacing:.04em;background:#e4f7ef;color:var(--green)}
+    .plan-auto-state.is-sold{background:#fff0f2;color:var(--red)}
+  </style>
+<style id="ct-developer-ui-v67">
+:root{color-scheme:dark;--navy:#0c1422;--ink:#e5edf8;--muted:#a5b5cb;--line:#32435d;--page:#0b1322;--white:#152238;--orange:#d9500d;--teal:#75d8c9;--red:#ff9aaa;--green:#8ae4be;--gold:#f5cf8c}
+html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradient(ellipse at top right,#23324a,transparent 60%),#0b1322;font-size:14px}.shell{grid-template-columns:240px minmax(0,1fr)}aside{border-right:1px solid #29374e;padding:30px 22px;position:sticky;top:0;height:100vh}.mark{background:#e75d15;box-shadow:0 6px 25px #ef6c2226}.brand small{color:#ffad75}.side-note{background:#152238;border-color:#2c3e58}.side-note p{font-size:12px;line-height:1.7}.secure{line-height:1.7}.ct-dev-nav{display:grid;gap:8px}.ct-dev-nav a{display:flex;gap:12px;text-decoration:none;color:#c6d3e6;padding:12px;border-radius:10px;font-size:13px;border:1px solid transparent}.ct-dev-nav a:hover,.ct-dev-nav a:focus-visible{background:#f9731614;color:#ffb27c;border-color:#f9731640}.ct-dev-nav span{color:#ffad75;font:12px ui-monospace,monospace}main{max-width:1540px;padding:36px;margin:0 auto;min-width:0}.top{margin-bottom:28px}.top h1{font-size:32px;letter-spacing:-.04em}.top p{max-width:520px}.badge,.section-badge{background:#183d35;color:#a5edcd;border:1px solid #326855}.card{border-radius:18px;box-shadow:0 14px 34px #0002}.card-head{padding:22px 24px;background:#19283f}.card-head h2{font-size:17px;letter-spacing:-.015em}.card-body{padding:24px}.input,.plan-setting-row input,.plan-setting-row select{background:#0e192b;color:#f1f5f9;border-color:#4a5d7a;min-height:44px}.input:focus,.plan-setting-row input:focus,.plan-setting-row select:focus{background:#13223a;border-color:#fb923c;box-shadow:0 0 0 3px #fb923c22}.field label,.plan-setting-row label,.remember-row label{color:#c1cee0}.btn{background:#23354f;color:#e2e8f0;border-color:#475a77;min-height:44px}.btn:hover{background:#304765}.btn.primary{background:#c94b0c;border-color:#ef7a39;color:white}.btn.primary:hover{background:#e05d17}.btn.quiet{background:#1c2d45;color:#c3d0e1;border-color:#415571}.btn.danger{background:#382032;color:#ffb5c0;border-color:#7f4254}.status{background:#152f39;color:#b0e0e4;padding:14px}.status.error{background:#402233;color:#ffbbc6}.pill{background:#2c3e57;color:#c7d5e8;padding:6px 9px}.pill.pending,.pill.not_started{background:#48361e;color:#ffdc9f}.pill.approved,.pill.active{background:#1b4639;color:#a3edcd}.pill.rejected,.pill.revoked,.pill.expired{background:#4b2335;color:#ffb3c3}.plan-settings-card{border-color:#77543b}.plan-setting-row{background:#111e32;padding:18px;gap:14px;align-items:end}.plan-setting-row.is-off{background:#101a2c;opacity:.8}.plan-setting-code{color:#ffb784;font-size:14px}.plan-setting-row label{font-size:11px}.plan-auto-state{background:#1b4639;color:#a3edcd}.plan-auto-state.is-sold{background:#4b2335;color:#ffb3c3}.plan-settings-list{gap:16px}.request,.license-row{background:#101e31;padding:22px}.request.pending{background:#29251e;border-color:#8b6835}.license-row.current{background:#142f2a;border-color:#409577}.request-meta dt{font-size:11px}.request-meta dd{font-size:13px}.license-side{border-color:#32435d}.receipt{background:white}.result{background:#152f29;border-color:#458c72}.result h3{color:#a3edcd}.key-box{background:#0d1e1b;border-color:#478977}.warning{color:#efc67f}.license-control-card{border-color:#376c60}.empty{border-color:#405471;background:#101d30}.footer{color:#93a8c1}.plan-settings-card,.license-control-card,#incomingRequestsCard{scroll-margin-top:24px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #fb923c;outline-offset:3px}
+@media(min-width:901px){.plan-setting-row{grid-template-columns:repeat(4,minmax(0,1fr))}.plan-setting-row .plan-toggle{grid-column:1;align-self:center}.plan-setting-code{grid-column:2/-1}.plan-setting-row>label{min-width:0}.plan-setting-row>label:nth-last-child(2){grid-column:span 2}.plan-setting-row .plan-toggle label{font-size:11px}}
+@media(max-width:1100px) and (min-width:901px){.shell{grid-template-columns:200px minmax(0,1fr)}aside{padding:24px 16px}main{padding:24px}.plan-setting-row{grid-template-columns:repeat(2,minmax(0,1fr))}.request{grid-template-columns:1fr}.license-row{grid-template-columns:1fr}.license-side{border-left:0;padding-left:0;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}aside{display:flex;position:static;height:auto;padding:18px;gap:16px;border-bottom:1px solid #32435d}.side-note,.secure{display:none}.ct-dev-nav{display:flex;flex-wrap:wrap;gap:4px}.ct-dev-nav a{padding:10px 8px;font-size:12px}main{padding:20px 14px}.top h1{font-size:27px}.card-head,.card-body{padding:20px 16px}.toolbar .input{min-width:0;flex-basis:100%}.request,.license-row{padding:17px}.plan-setting-row{padding:16px}.btn{white-space:normal}.top-actions{justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    .pwa-status{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;background:#102036e8;border-bottom:1px solid #32435d;backdrop-filter:blur(12px);color:#c7d5e8;font-size:12px}.pwa-status strong{color:#8ae4be}.pwa-status.is-offline strong{color:#ffb3c3}.pwa-status-actions{display:flex;gap:8px}.pwa-status .btn{min-height:34px;padding:6px 10px;font-size:11px}.install-button[hidden]{display:none}.mobile-dock{display:none}
+    @media(max-width:900px){body{padding-bottom:72px}.pwa-status{padding:8px 12px}.pwa-status-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-dock{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:0;right:0;bottom:0;z-index:60;background:#0c1422f2;border-top:1px solid #32435d;backdrop-filter:blur(14px);padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));box-shadow:0 -10px 30px #0005}.mobile-dock a,.mobile-dock button{display:grid;place-items:center;gap:2px;border:0;background:transparent;color:#c6d3e6;text-decoration:none;font:700 10px/1.2 inherit;padding:7px 3px;border-radius:9px;min-height:45px}.mobile-dock a:active,.mobile-dock button:active{background:#223651;color:#ffb27c}.mobile-dock b{font-size:17px;line-height:1}.top-actions .install-button{width:100%}}
+    .pill.payment_paused{background:#fff1f2;color:#b42338}.license-manager{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;margin-top:2px;display:grid;gap:14px}
+    .license-manager summary{cursor:pointer;font-weight:800;color:var(--navy);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .license-manager summary::-webkit-details-marker{display:none}.license-manager summary::after{content:'Open controls';font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}.license-manager[open] summary::after{content:'Close controls'}
+    .license-control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.license-tool{border:1px solid var(--line);background:#f8fafc;border-radius:12px;padding:13px}.license-tool h4{margin:0 0 4px;font-size:12px}.license-tool>p{margin:0 0 10px;font-size:10px;color:var(--muted)}
+    .license-tool label{display:grid;gap:4px;margin-top:8px;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#52657a}.license-tool input,.license-tool select,.license-tool textarea{width:100%;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fff;color:var(--ink);font:12px inherit}.license-tool textarea{min-height:62px;resize:vertical}.license-tool .btn{width:100%;margin-top:10px}.license-tool-note{font-size:10px;color:var(--muted);margin-top:8px}.license-alert{border-radius:9px;padding:9px 10px;background:#fff4e8;color:#8a4b10;font-size:11px}.license-alert.payment-paused{background:#fff1f2;color:var(--red)}
+    @media(max-width:1100px){.license-control-grid{grid-template-columns:1fr}.license-manager{padding-top:13px}}
+</style>
+</head>
+<body>
+  <div id="pwaStatus" class="pwa-status"><span class="pwa-status-label"><strong id="networkState">Online</strong> · Live data loads only when requested.</span><span class="pwa-status-actions"><button id="quickRefreshButton" class="btn quiet" type="button">Refresh data</button><button id="installAppButton" class="btn primary install-button" type="button" hidden>Install app</button></span></div>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span class="mark">C</span><div><strong>CARTECH</strong><small>PAYMENT REVIEW</small></div></div>
+      <nav class="ct-dev-nav" aria-label="Developer sections"><a href="#developerAccess"><span>01</span> Developer access</a><a href="#planSettingsCard"><span>02</span> Plans &amp; stock</a><a href="#licenseControl"><span>03</span> License keys</a><a href="#paymentReviewAnchor"><span>04</span> Payment requests</a></nav><div class="side-note"><strong>Developer-only console</strong><p>Review QR/GCash receipts here. Check the real transaction in your GCash app before approving a key.</p></div>
+      <div class="side-note"><strong>What approval does</strong><p>Approval calls the secure Supabase RPC, creates the shop owner login, and returns the license key once.</p></div>
+      <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
+    </aside>
+    <main>
+      <header class="top"><div><h1>Payments &amp; workshop licenses</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v1 · Payment console</span></div></header>
+      <section id="developerAccess" class="card">
+        <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
+        <div class="card-body">
+          <div class="toolbar"><input id="adminSecret" class="input secret" type="password" autocomplete="off" placeholder="Private manager secret"><button id="loadButton" class="btn primary" type="button">Load requests</button><button id="notifyButton" class="btn" type="button">Enable phone notifications</button></div>
+          <div class="remember-row"><label><input id="rememberSecret" type="checkbox" checked> Remember on this device</label><button id="clearSecretButton" class="btn quiet" type="button">Clear saved secret</button><span>Use only on your private phone or computer.</span></div>
+          <div id="status" class="status">Enter the manager secret, then load payment requests.</div>
+          <div class="summary"><span id="pendingCount" class="pill pending">0 pending</span><span id="totalCount" class="pill">0 total</span><span id="lastLoaded" class="pill">Not loaded</span></div>
+        </div>
+      </section>
+      <section id="planSettingsCard" class="card plan-settings-card plan-editor-collapsed" style="margin-top:20px">
+        <div class="card-head"><div class="section-heading"><div><h2>Plans for sale — edit customer page</h2><p>Set price and availability. Choose a company, or choose <strong>Open to anyone</strong>. Only Available plans appear on the customer page.</p><p id="planSettingsHeaderStatus" class="plan-settings-summary">Editor minimized. Tap “Edit customer plans” to open it.</p></div><div class="top-actions"><span class="section-badge">Shared online</span><button id="minimizePlansButton" class="btn quiet" type="button">Minimize editor ↑</button></div></div></div>
+        <div class="card-body"><div class="toolbar"><button id="loadPlanSettingsButton" class="btn primary" type="button">Load plan settings</button><button id="savePlanSettingsButton" class="btn" type="button">Save plan settings</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="planSettingsStatus" class="status">Load the settings, then choose which plans are available.</p><div id="planSettingsList" class="plan-settings-list"><div class="empty">Enter the manager secret, then load plan settings.</div></div></div>
+      </section>
+      <section id="licenseControl" class="card license-control-card" style="margin-top:20px">
+        <div class="card-head"><div class="section-heading"><div><h2>License time, payment &amp; bonus control</h2><p>Edit the exact expiry, pause access for an unpaid balance, or offer claimable extra time to the office.</p></div><span class="section-badge">Developer only</span></div></div>
+        <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Open “Manage this running key” to change its expiry, payment state, or claimable bonus. Revoke a running key before permanently deleting it. Workshop jobs and account data remain safe.</p></div>
+      </section>
+      <div id="paymentReviewAnchor"></div><section id="incomingRequestsCard" class="card" style="margin-top:20px" hidden>
+        <div class="card-head"><h2>Incoming GCash requests</h2><p>New pending payment requests appear here after the developer secret is accepted.</p></div>
+        <div class="card-body"><div id="requests" class="requests"><div class="empty">No requests loaded yet.</div></div><div id="result" class="result" hidden></div></div>
+      </section>
+      <section id="topupRequestsCard" class="card" style="margin-top:20px" hidden>
+        <div class="card-head"><h2>Discounted license top-ups</h2><p>Verify the GCash receipt. Approval adds the purchased days to the active key automatically.</p></div>
+        <div class="card-body"><div id="topupRequests" class="requests"></div></div>
+      </section>
+      <p class="footer">CARTECH developer utility · verification should be completed in the official GCash app.</p>
+    </main>
+  </div>
+  <nav class="mobile-dock" aria-label="Quick app navigation"><a href="#developerAccess"><b>⌁</b>Access</a><a href="#licenseControl"><b>🔑</b>Licenses</a><a href="#paymentReviewAnchor"><b>₱</b>Payments</a><button id="dockRefreshButton" type="button"><b>↻</b>Refresh</button></nav>
+  <script>
+    const SUPABASE_URL = 'https://thqoydzuthttyybwijgq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK';
+    async function rpc(functionName, params = {}) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${encodeURIComponent(functionName)}`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      });
+      let data = null;
+      try { data = await response.json(); } catch (_) { data = null; }
+      if (!response.ok) {
+        const message = data?.message || data?.error_description || data?.hint || `RPC request failed (${response.status})`;
+        throw new Error(message);
+      }
+      return { data, error: null };
+    }
+    const byId = id => document.getElementById(id);
+    const esc = value => String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    let requests = [];
+    let topupRequests = [];
+    let previousPending = null;
+    let loadBusy = false;
+    let licenseLoadBusy = false;
+    const receiptLoading = {};
+    const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
+    const BUYER_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
+    const SECRET_STORAGE_KEY = 'cartech_manager_secret_v1';
+    const PLAN_UPDATE_SIGNAL_KEY = 'cartech_license_plan_settings_changed_v1';
+    const PLAN_BUYER_OPTIONS = ['',
+      'A.Y.U. ENGINEERING AND CONSTRUCTION', 'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.', 'TAGUM STARBUILDER', 'CARTECH',
+      'ROLLYS JUNKSHOP TAGUM', 'ROYCE FOOD CORPORATION', 'BORGE ENGINEERING & CONSTRUCTION',
+      'A.D. PERALTA SARI-SARI STORE - BCL', 'A.K.M. PAINT CENTER', 'A.L. FERNANDEZ JR. SARI SARI STORE',
+      'A.R.M.M. VEGETABLE VENDOR', 'A.V.L. SARI-SARI STORE', 'ABBEY SQUARE SPACE RENTAL',
+      'ABRA DIOCESAN TEACHERS AND EMPLOYEES MULTIPURPOSE COOP.', 'ABRIL EVENTS MANAGEMENT SERVICES',
+      'ADELMOB VARIETY STORE', 'ADORACION B. PASCUA SARI-SARI STORE', 'ADRIAN KURT SARI-SARI STORE',
+      "AERON JAME'S SARI-SARI STORE", 'AFC3 PROPERTY MANAGEMENT', 'AGASHIS SARI SARI STORE - BCL',
+      'AGNES C. CABIGAS SARI-SARI STORE', 'AIDA A. CABOTAGE VEGETABLE STALL'
+    ];
+    const DEFAULT_PLAN_SETTINGS = [
+      { plan_code:'1d', label:'1 day', days:1, price_pesos:60, stock_remaining:12, detail:'One-day access', badge:'Quick test', is_available:true, is_sold:false, buyer_shop_name:'A.Y.U. ENGINEERING AND CONSTRUCTION' },
+      { plan_code:'7d', label:'7 days', days:7, price_pesos:420, stock_remaining:12, detail:'Short trial access', badge:'Try CARTECH', is_available:true, is_sold:false, buyer_shop_name:'SOUTHERN PHILIPPINES JRH INDUSTRIAL CORP.' },
+      { plan_code:'15d', label:'15 days', days:15, price_pesos:900, stock_remaining:30, detail:'Two-week access', badge:'', is_available:true, is_sold:false, buyer_shop_name:'TAGUM STARBUILDER' },
+      { plan_code:'30d', label:'30 days', days:30, price_pesos:1800, stock_remaining:30, detail:'Fixed 30-day access', badge:'Best seller', is_available:true, is_sold:false, buyer_shop_name:'CARTECH' }
+    ];
+    const STANDARD_PLAN_DAYS = Object.freeze({ '1d':1, '7d':7, '15d':15, '30d':30 });
+    let planSettings = [];
+    function setPlanEditorOpen(open, shouldScroll = false) {
+      const card = byId('planSettingsCard');
+      const button = byId('editPlansButton');
+      if (!card) return;
+      card.classList.toggle('plan-editor-collapsed', !open);
+      if (button) {
+        button.textContent = open ? 'Hide plan editor ↑' : 'Edit customer plans ↓';
+        button.setAttribute('aria-expanded', String(open));
+      }
+      if (open && shouldScroll) requestAnimationFrame(() => card.scrollIntoView({ behavior:'smooth', block:'start' }));
+    }
+    function setPlanHeaderStatus(text) { const node = byId('planSettingsHeaderStatus'); if (node) node.textContent = text; }
+
+    function setStatus(text, error = false) { const node = byId('status'); node.textContent = text; node.classList.toggle('error', error); }
+    function amount(value) { return `₱${Number(value || 0).toLocaleString('en-PH')}`; }
+    function date(value) { const parsed = new Date(value); return Number.isNaN(parsed.getTime()) ? '—' : parsed.toLocaleString('en-PH', { dateStyle:'medium', timeStyle:'short' }); }
+    function secret() { return String(byId('adminSecret').value || '').trim(); }
+    function saveRememberedSecret() {
+      try {
+        const remember = byId('rememberSecret').checked;
+        if (remember && secret()) localStorage.setItem(SECRET_STORAGE_KEY, secret());
+        else if (!remember) localStorage.removeItem(SECRET_STORAGE_KEY);
+      } catch (_) { /* Private browsing or blocked storage: keep using the input normally. */ }
+    }
+    function restoreRememberedSecret() {
+      try {
+        const saved = localStorage.getItem(SECRET_STORAGE_KEY) || '';
+        if (saved) { byId('adminSecret').value = saved; byId('rememberSecret').checked = true; }
+      } catch (_) { /* Storage is optional. */ }
+    }
+    function clearRememberedSecret() {
+      try { localStorage.removeItem(SECRET_STORAGE_KEY); } catch (_) { /* Ignore blocked storage. */ }
+      byId('adminSecret').value = '';
+      byId('rememberSecret').checked = false;
+      setStatus('Saved manager secret cleared from this device.');
+    }
+    function setPlanStatus(text, error = false) { const node = byId('planSettingsStatus'); if (node) { node.textContent = text; node.classList.toggle('error', error); } }
+    function wholeStock(value, fallback = 0) {
+      const parsed = Number(value);
+      const fallbackValue = Number(fallback);
+      return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : Number.isFinite(fallbackValue) ? Math.max(0, Math.floor(fallbackValue)) : 0;
+    }
+    function normalizedPlan(item, fallback = {}) {
+      const planCode = String(item?.plan_code || fallback.plan_code || '').trim().toLowerCase();
+      return {
+        plan_code: planCode,
+        label: String(item?.label ?? fallback.label ?? '').trim(),
+        days: Number(STANDARD_PLAN_DAYS[planCode] ?? item?.days ?? fallback.days ?? 0),
+        price_pesos: Number(item?.price_pesos ?? fallback.price_pesos ?? 0),
+        detail: String(item?.detail ?? fallback.detail ?? '').trim(),
+        badge: String(item?.badge ?? fallback.badge ?? '').trim(),
+        is_available: item?.is_available !== false,
+        is_sold: item?.is_sold === true,
+        buyer_shop_name: String(item?.buyer_shop_name ?? fallback.buyer_shop_name ?? '').trim(),
+        stock_remaining: wholeStock(item?.stock_remaining ?? item?.stock_qty ?? item?.stock, fallback.stock_remaining)
+      };
+    }
+    function renderPlanSettings(list) {
+      const root = byId('planSettingsList');
+      planSettings = list.length ? list.map((item, index) => normalizedPlan(item, DEFAULT_PLAN_SETTINGS[index] || {})) : DEFAULT_PLAN_SETTINGS.map(item => normalizedPlan(item));
+      if (!root) return;
+      root.innerHTML = planSettings.map(plan => {
+        const buyers = PLAN_BUYER_OPTIONS.map(option => `<option value="${esc(option)}"${option === plan.buyer_shop_name ? ' selected' : ''}>${esc(option || 'Open to anyone')}</option>`).join('');
+        return `<div class="plan-setting-row${plan.is_available ? '' : ' is-off'}" data-plan-row="${esc(plan.plan_code)}"><div class="plan-toggle"><label title="Show this plan to customers"><input type="checkbox" data-plan-field="is_available"${plan.is_available ? ' checked' : ''} aria-label="${esc(plan.label)} available"> Available</label><label title="Sold is automatic when stock reaches zero"><span class="plan-auto-state${plan.stock_remaining <= 0 ? ' is-sold' : ''}" data-plan-status>${plan.stock_remaining <= 0 ? 'SOLD' : 'IN STOCK'}</span></label></div><div class="plan-setting-code">${esc(plan.plan_code)}</div><label>Plan name<input data-plan-field="label" type="text" maxlength="80" value="${esc(plan.label)}"></label><label>Days<input data-plan-field="days" type="number" min="1" max="3650" step="1" value="${esc(plan.days)}"></label><label>Price (₱)<input data-plan-field="price_pesos" type="number" min="0" max="999999" step="1" value="${esc(plan.price_pesos)}"></label><label>Stock<input class="plan-setting-stock" data-plan-field="stock_remaining" type="number" min="0" max="999999" step="1" value="${esc(plan.stock_remaining)}" aria-label="${esc(plan.label)} stock"></label><label>Description<input data-plan-field="detail" type="text" maxlength="160" value="${esc(plan.detail)}"></label><label>Who buys this slot<select data-plan-field="buyer_shop_name">${buyers}</select></label><label>Badge<input data-plan-field="badge" type="text" maxlength="40" value="${esc(plan.badge)}"></label></div>`;
+      }).join('') + '<p class="plan-setting-help">Stock is the remaining number of slots. A plan with stock <strong>0</strong> is shown as SOLD to customers. An empty buyer means <strong>Open to anyone</strong>. Sold is automatic when stock reaches 0. Turn Available off to hide a plan.</p>';
+      root.querySelectorAll('[data-plan-field="is_available"]').forEach(input => input.addEventListener('change', event => event.target.closest('[data-plan-row]')?.classList.toggle('is-off', !event.target.checked)));
+      root.querySelectorAll('[data-plan-field="stock_remaining"]').forEach(input => input.addEventListener('input', event => {
+        const row = event.target.closest('[data-plan-row]');
+        const status = row?.querySelector('[data-plan-status]');
+        const sold = wholeStock(event.target.value, 0) <= 0;
+        if (status) {
+          status.textContent = sold ? 'SOLD' : 'IN STOCK';
+          status.classList.toggle('is-sold', sold);
+        }
+      }));
+    }
+    function collectPlanSettings() {
+      return Array.from(document.querySelectorAll('[data-plan-row]')).map(row => ({
+        plan_code: row.dataset.planRow,
+        label: row.querySelector('[data-plan-field="label"]')?.value.trim() || '',
+        days: Number(STANDARD_PLAN_DAYS[row.dataset.planRow] ?? (row.querySelector('[data-plan-field="days"]')?.value || 0)),
+        price_pesos: Number(row.querySelector('[data-plan-field="price_pesos"]')?.value || 0),
+        detail: row.querySelector('[data-plan-field="detail"]')?.value.trim() || '',
+        badge: row.querySelector('[data-plan-field="badge"]')?.value.trim() || '',
+        is_available: Boolean(row.querySelector('[data-plan-field="is_available"]')?.checked),
+        is_sold: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0) <= 0,
+        buyer_shop_name: row.querySelector('[data-plan-field="buyer_shop_name"]')?.value || '',
+        stock_remaining: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0),
+        stock_qty: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0)
+      }));
+    }
+    async function loadPlanSettings(silent = false) {
+      const adminSecret = secret();
+      if (!adminSecret) { if (!silent) setPlanStatus('Enter the private manager secret first.', true); return; }
+      setPlanStatus('Loading shared plan settings…');
+      try {
+        const result = await rpc('cartech_list_license_plan_settings', { p_admin_secret: adminSecret });
+        if (result.error) throw result.error;
+        renderPlanSettings(Array.isArray(result.data) ? result.data : []);
+        setPlanStatus('Plan settings loaded. Edit the rows, then save them for the customer page.');
+        setPlanHeaderStatus('Settings loaded. Edit the rows, then save them for the customer page.');
+      } catch (error) {
+        const message = error?.message || 'Could not load plan settings.';
+        setPlanStatus(message.includes('function') ? 'Run CARTECH-PLAN-SETTINGS-v1.sql in Supabase first, then reload this page.' : message, true);
+      }
+    }
+    async function savePlanSettings() {
+      const adminSecret = secret();
+      if (!adminSecret) { setPlanStatus('Enter the private manager secret first.', true); return; }
+      const plans = collectPlanSettings();
+      if (plans.length !== 4 || plans.some(plan => !plan.label || plan.days < 1 || plan.price_pesos < 0 || !Number.isInteger(plan.stock_remaining) || plan.stock_remaining < 0)) { setPlanStatus('Check each plan name, days, price, and stock before saving.', true); return; }
+      setPlanStatus('Saving plan settings online…');
+      try {
+        const result = await rpc('cartech_save_license_plan_settings', { p_admin_secret: adminSecret, p_plans: plans });
+        if (result.error) throw result.error;
+        renderPlanSettings(plans);
+        try { localStorage.setItem(PLAN_UPDATE_SIGNAL_KEY, String(Date.now())); } catch (_) {}
+        setPlanStatus('Saved. Customers will see the updated available plans after they reload the buyer page.');
+        setPlanHeaderStatus('Saved online. Customer page will use the updated available plans.');
+        setPlanEditorOpen(false);
+      } catch (error) {
+        const message = error?.message || 'Could not save plan settings.';
+        setPlanStatus(message.includes('function') ? 'Run CARTECH-PLAN-SETTINGS-v1.sql in Supabase first, then try again.' : message, true);
+      }
+    }
+    function rowData(data) { return Array.isArray(data) ? data[0] : data; }
+
+    function licenseStatusClass(value) {
+      return ['active','revoked','expired','not_started','payment_paused'].includes(String(value || '').toLowerCase()) ? String(value).toLowerCase() : '';
+    }
+    function manilaInput(value) {
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.getTime())) return '';
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Manila', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23' }).formatToParts(parsed).filter(part => part.type !== 'literal').map(part => [part.type, part.value]));
+      return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+    }
+    function manilaIso(value) { return value ? `${value}:00+08:00` : null; }
+    function durationLabel(minutes) {
+      const value = Number(minutes) || 0;
+      if (value % 1440 === 0) return `${value / 1440} day${value === 1440 ? '' : 's'}`;
+      if (value % 60 === 0) return `${value / 60} hour${value === 60 ? '' : 's'}`;
+      return `${value} minutes`;
+    }
+    function mergedLicenseState(item) {
+      const payment = String(item.payment_status || 'paid');
+      const partialDue = payment === 'partial' && Number(item.amount_due) > 0 && item.due_at && Date.parse(item.due_at) <= Date.now();
+      return payment === 'unpaid' || partialDue ? 'payment_paused' : String(item.status || 'unknown').toLowerCase();
+    }
+    function renderLicenses(list) {
+      const root = byId('licenseList');
+      if (!list.length) { root.innerHTML = '<div class="empty">No paid license records found.</div>'; return; }
+      root.innerHTML = list.map(item => {
+        const state = mergedLicenseState(item);
+        const active = state === 'active' && item.active_for_shop === true;
+        const controlsEnabled = Boolean(item.starts_at) && state !== 'revoked';
+        const repair = active ? `<button class="btn primary" type="button" data-license-repair-shop="${esc(item.shop_id)}">Repair web access</button>` : '';
+        const revoke = !['revoked','expired'].includes(state)
+          ? `<button class="btn danger" type="button" data-license-revoke="${esc(item.license_id)}">Revoke key</button>`
+          : '';
+        const remove = `<button class="btn danger" type="button" data-license-delete="${esc(item.license_id)}" data-license-state="${esc(state)}">Delete key</button>`;
+        const paymentStatus = String(item.payment_status || 'paid');
+        const paymentAlert = state === 'payment_paused'
+          ? '<div class="license-alert payment-paused"><strong>Access paused:</strong> the outstanding balance is overdue.</div>'
+          : paymentStatus === 'partial' ? `<div class="license-alert">Partial payment · ₱${esc(Number(item.amount_due || 0).toFixed(2))} due ${esc(date(item.due_at))}</div>` : '';
+        const pendingBonus = item.pending_offer_id
+          ? `<div class="license-alert"><strong>Pending office claim:</strong> ${esc(item.pending_bonus_title)} · ${esc(durationLabel(item.pending_bonus_minutes))}<button class="btn quiet" style="margin-top:8px" type="button" data-license-cancel-bonus="${esc(item.pending_offer_id)}">Cancel offer</button></div>`
+          : '';
+        const tools = `<details class="license-manager"><summary>Manage this running key</summary><div class="license-control-grid">
+          <section class="license-tool"><h4>Remaining time</h4><p>Set the exact workshop expiry in Philippine time.</p><label>Expires at (PHT)<input type="datetime-local" data-license-expiry-input value="${esc(manilaInput(item.expires_at))}" ${controlsEnabled ? '' : 'disabled'}></label><button class="btn primary" type="button" data-license-save-expiry="${esc(item.license_id)}" ${controlsEnabled ? '' : 'disabled'}>Save expiry</button><div class="license-tool-note">Reducing this time affects every connected office and mechanic device.</div></section>
+          <section class="license-tool"><h4>Claimable extra time</h4><p>The office must claim this before it is added.</p>${pendingBonus || `<label>Bonus days<input type="number" min="0.01" max="365" step="0.01" value="3" data-license-bonus-days></label><label>Offer title<input maxlength="100" value="3 free days for your first license" data-license-bonus-title></label><label>Message<textarea maxlength="300" data-license-bonus-message>Claim this gift to add 3 days to your current license.</textarea></label><button class="btn primary" type="button" data-license-create-bonus="${esc(item.license_id)}" ${controlsEnabled ? '' : 'disabled'}>Offer extra time</button>`}</section>
+          <section class="license-tool"><h4>Payment status</h4><p>Unpaid pauses immediately. Partial pauses when its due date passes.</p>${paymentAlert}<label>Status<select data-license-payment-status><option value="paid" ${paymentStatus === 'paid' ? 'selected' : ''}>Paid / clear</option><option value="partial" ${paymentStatus === 'partial' ? 'selected' : ''}>Partial payment</option><option value="unpaid" ${paymentStatus === 'unpaid' ? 'selected' : ''}>Unpaid · pause now</option></select></label><label>Outstanding balance (PHP)<input type="number" min="0" step="0.01" value="${esc(Number(item.amount_due || 0).toFixed(2))}" data-license-amount-due></label><label>Payment deadline (PHT)<input type="datetime-local" value="${esc(manilaInput(item.due_at))}" data-license-due-at></label><label>Internal note<textarea maxlength="500" data-license-payment-note>${esc(item.payment_note || '')}</textarea></label><button class="btn primary" type="button" data-license-save-payment="${esc(item.license_id)}">Save payment status</button></section>
+        </div></details>`;
+        return `<article class="license-row${active ? ' current' : ''}" data-license-row="${esc(item.license_id)}"><div><h3>${esc(item.shop_name || 'Workshop')} ${active ? '<span class="pill approved">Running for shop</span>' : ''}</h3><p><strong>${esc(item.shop_id || '—')}</strong> · Key ${esc(item.key_prefix || '—')} · ${esc(item.duration_code || '—')}</p><p>Status: <strong>${esc(state.replaceAll('_',' '))}</strong> · Issued ${esc(date(item.issued_at))} · ${item.starts_at ? `Started ${esc(date(item.starts_at))}` : 'Not activated'} · Expires ${esc(date(item.expires_at))}</p><p>${Number(item.activated_devices) || 0} activated device(s)${item.notes ? ` · ${esc(item.notes)}` : ''}</p>${active ? '<p><strong>This key currently controls web and app access for this shop.</strong></p>' : ''}</div><div class="license-side"><span class="pill ${licenseStatusClass(state)}">${esc(state.replaceAll('_',' '))}</span>${repair}${revoke}${remove}</div>${tools}</article>`;
+      }).join('');
+    }
+    async function loadLicenses(silent = false) {
+      if (licenseLoadBusy) return;
+      const adminSecret = secret();
+      if (!adminSecret) { if (!silent) setStatus('Enter the private manager secret first.', true); return; }
+      licenseLoadBusy = true;
+      byId('licenseStatus').classList.remove('error');
+      if (!silent) byId('licenseStatus').textContent = 'Loading license records…';
+      try {
+        const [licenseResult, controlResult] = await Promise.all([
+          rpc('cartech_list_licenses', { p_admin_secret: adminSecret }),
+          rpc('cartech_list_license_admin_controls', { p_admin_secret: adminSecret })
+        ]);
+        if (licenseResult.error) throw licenseResult.error;
+        if (controlResult.error) throw controlResult.error;
+        const controls = new Map((Array.isArray(controlResult.data) ? controlResult.data : []).map(item => [String(item.license_id), item]));
+        const list = (Array.isArray(licenseResult.data) ? licenseResult.data : []).map(item => ({ ...item, ...(controls.get(String(item.license_id)) || {}) }));
+        renderLicenses(list);
+        byId('licenseStatus').textContent = `${list.length} license record${list.length === 1 ? '' : 's'} loaded.`;
+      } catch (error) {
+        const message = error?.message || 'Could not load license records.';
+        byId('licenseStatus').textContent = /cartech_list_license_admin_controls|function/i.test(message) ? 'Run CARTECH-LICENSE-TIME-BONUS-PAYMENT-v1.sql in Supabase first, then reload.' : message;
+        byId('licenseStatus').classList.add('error');
+      } finally { licenseLoadBusy = false; }
+    }
+    function licenseRow(button) { return button?.closest('[data-license-row]'); }
+    async function runLicenseControl(button, functionName, params, successMessage) {
+      button.disabled = true;
+      byId('licenseStatus').classList.remove('error');
+      byId('licenseStatus').textContent = 'Saving secure license update…';
+      try {
+        const result = await rpc(functionName, { p_admin_secret: secret(), ...params });
+        if (result.error) throw result.error;
+        byId('licenseStatus').textContent = `${successMessage} Connected devices will receive the update automatically.`;
+        await loadLicenses(true);
+      } catch (error) {
+        byId('licenseStatus').textContent = error?.message || 'Could not save the license update.';
+        byId('licenseStatus').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function saveLicenseExpiry(licenseId, button) {
+      const row = licenseRow(button), value = row?.querySelector('[data-license-expiry-input]')?.value;
+      if (!value) { byId('licenseStatus').textContent = 'Choose the new expiry date and time first.'; byId('licenseStatus').classList.add('error'); return; }
+      const expiry = manilaIso(value);
+      if (Date.parse(expiry) < Date.now() + 60000) { byId('licenseStatus').textContent = 'The new expiry must be at least one minute from now.'; byId('licenseStatus').classList.add('error'); return; }
+      if (!confirm(`Change this workshop license expiry to ${date(expiry)}?`)) return;
+      await runLicenseControl(button, 'cartech_admin_set_license_expiry', { p_license_id:licenseId, p_expires_at:expiry }, 'License expiry updated.');
+    }
+    async function createLicenseBonus(licenseId, button) {
+      const row = licenseRow(button), days = Number(row?.querySelector('[data-license-bonus-days]')?.value), title = String(row?.querySelector('[data-license-bonus-title]')?.value || '').trim(), message = String(row?.querySelector('[data-license-bonus-message]')?.value || '').trim();
+      const minutes = Math.round(days * 1440);
+      if (!Number.isFinite(minutes) || minutes < 1 || minutes > 525600 || title.length < 3) { byId('licenseStatus').textContent = 'Enter 0.01–365 bonus days and an offer title.'; byId('licenseStatus').classList.add('error'); return; }
+      await runLicenseControl(button, 'cartech_admin_create_license_bonus', { p_license_id:licenseId, p_bonus_minutes:minutes, p_title:title, p_message:message }, `Bonus offer created for ${durationLabel(minutes)}.`);
+    }
+    async function saveLicensePayment(licenseId, button) {
+      const row = licenseRow(button), status = row?.querySelector('[data-license-payment-status]')?.value || 'paid', amount = Number(row?.querySelector('[data-license-amount-due]')?.value || 0), dueValue = row?.querySelector('[data-license-due-at]')?.value || '', note = String(row?.querySelector('[data-license-payment-note]')?.value || '').trim();
+      if (amount < 0 || !Number.isFinite(amount)) { byId('licenseStatus').textContent = 'Enter a valid outstanding balance.'; byId('licenseStatus').classList.add('error'); return; }
+      if (status === 'partial' && (!(amount > 0) || !dueValue)) { byId('licenseStatus').textContent = 'Partial payment needs a balance and payment deadline.'; byId('licenseStatus').classList.add('error'); return; }
+      if (status === 'unpaid' && !confirm('Mark this key unpaid and pause the whole workshop immediately?')) return;
+      await runLicenseControl(button, 'cartech_admin_set_license_payment', { p_license_id:licenseId, p_payment_status:status, p_amount_due:status === 'paid' ? 0 : amount, p_due_at:status === 'paid' ? null : manilaIso(dueValue), p_note:note }, status === 'paid' ? 'Payment cleared and access restored.' : 'Payment status updated.');
+    }
+    async function cancelLicenseBonus(offerId, button) {
+      if (!confirm('Cancel this unclaimed extra-time offer?')) return;
+      await runLicenseControl(button, 'cartech_admin_cancel_license_bonus', { p_offer_id:offerId }, 'Bonus offer cancelled.');
+    }
+    async function repairShopAccess(shopId, button) {
+      if (!confirm(`Repair licensed web access for ${shopId}? This keeps the current key, expiry and workshop records.`)) return;
+      await runLicenseControl(button, 'cartech_admin_repair_shop_access', { p_shop_id:shopId }, 'Workshop access repaired.');
+    }
+    async function revokeLicense(licenseId, button) {
+      if (!confirm('Revoke this license now? The shop will be locked on its next access check.')) return;
+      button.disabled = true;
+      try {
+        const result = await rpc('cartech_revoke_license', { p_admin_secret: secret(), p_license_id: licenseId });
+        if (result.error) throw result.error;
+        byId('licenseStatus').classList.remove('error');
+        byId('licenseStatus').textContent = 'License revoked. Reloading license records…';
+        await loadLicenses();
+      } catch (error) {
+        byId('licenseStatus').textContent = error?.message || 'Could not revoke the license.';
+        byId('licenseStatus').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function deleteLicense(licenseId, button) {
+      const state = String(button?.dataset.licenseState || '').toLowerCase();
+      if (state === 'active') {
+        alert('This running license cannot be deleted yet. Click Revoke key first, then delete it after the status changes to revoked.');
+        return;
+      }
+      const prompt = 'Delete this license record permanently?';
+      if (!confirm(`${prompt}\nIf it is the shop's only current key, access will pause until another key is activated.\nWorkshop jobs and account data will remain.`)) return;
+      button.disabled = true;
+      try {
+        const result = await rpc('cartech_delete_license', { p_admin_secret: secret(), p_license_id: licenseId });
+        if (result.error) throw result.error;
+        byId('licenseStatus').classList.remove('error');
+        byId('licenseStatus').textContent = 'Old license record deleted. Reloading license records…';
+        await loadLicenses();
+      } catch (error) {
+        const message = error?.message || '';
+        byId('licenseStatus').textContent = message.includes('Activate or issue a replacement license')
+          ? 'Supabase is still using the old delete function. Run the updated v30 cleanup SQL, then reload this page.'
+          : (message || 'Could not delete the license record.');
+        byId('licenseStatus').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function clearReceipt(requestId, button) {
+      if (!confirm('Remove only the uploaded receipt image? The payment record and license will remain.')) return;
+      button.disabled = true;
+      try {
+        const result = await rpc('cartech_clear_payment_receipt', { p_admin_secret: secret(), p_request_id: requestId });
+        if (result.error) throw result.error;
+        byId('status').classList.remove('error');
+        byId('status').textContent = 'Receipt image removed. Reloading payment requests…';
+        await loadRequests();
+      } catch (error) {
+        byId('status').textContent = error?.message || 'Could not remove the receipt image.';
+        byId('status').classList.add('error');
+        button.disabled = false;
+      }
+    }
+    async function deletePaymentRequest(requestId, button) {
+      const approved = button?.dataset.requestStatus === 'approved';
+      const prompt = approved
+        ? 'Delete this payment record and its receipt? The issued license stays, but this request will no longer be available for buyer handoff.'
+        : 'Delete this payment record and its uploaded receipt?';
+      if (!confirm(`${prompt}\nWorkshop jobs and account data will remain.`)) return;
+      button.disabled = true;
+      try {
+        const result = await rpc('cartech_delete_payment_request', { p_admin_secret: secret(), p_request_id: requestId });
+        if (result.error) throw result.error;
+        byId('status').classList.remove('error');
+        byId('status').textContent = 'Payment record deleted. Reloading requests…';
+        await loadRequests();
+      } catch (error) {
+        byId('status').textContent = error?.message || 'Could not delete the payment record.';
+        byId('status').classList.add('error');
+        button.disabled = false;
+      }
+    }
+
+    function render() {
+      const root = byId('requests');
+      const visibleRequests = requests.filter(row => !(row.status === 'approved' && !row.license_id));
+      byId('incomingRequestsCard').hidden = visibleRequests.length === 0;
+      const pending = visibleRequests.filter(row => row.status === 'pending').length;
+      byId('pendingCount').textContent = `${pending} pending`;
+      byId('totalCount').textContent = `${visibleRequests.length} total`;
+      byId('lastLoaded').textContent = visibleRequests.length ? `Loaded ${new Date().toLocaleTimeString()}` : 'No active requests';
+      if (!visibleRequests.length) { root.innerHTML = ''; return; }
+      root.innerHTML = visibleRequests.map(row => {
+        const status = ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
+        const receipt = row.receipt_data && /^data:image\//i.test(row.receipt_data) ? row.receipt_data : '';
+        const hasReceipt = Boolean(receipt || row.has_receipt);
+        const cleanup = `<div class="cleanup-actions">${hasReceipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
+        const action = status === 'pending'
+          ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
+          : status === 'approved'
+            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
+            : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
+        const receiptView = receipt
+          ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>`
+          : hasReceipt
+            ? `<button class="btn quiet" type="button" data-load-receipt="${esc(row.request_id)}" ${receiptLoading[row.request_id] ? 'disabled' : ''}>${receiptLoading[row.request_id] ? 'Loading receipt…' : 'View receipt'}</button>`
+            : '<div class="empty">No receipt image</div>';
+        return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receiptView}${action}</div></article>`;
+      }).join('');
+    }
+
+    async function loadReceipt(requestId, button) {
+      if (!requestId || receiptLoading[requestId]) return;
+      const adminSecret = secret();
+      if (!adminSecret) { setStatus('Enter the private manager secret first.', true); return; }
+      receiptLoading[requestId] = true;
+      if (button) button.disabled = true;
+      render();
+      try {
+        const result = await rpc('cartech_get_license_payment_receipt', { p_admin_secret: adminSecret, p_request_id: requestId });
+        if (result.error) throw result.error;
+        const row = Array.isArray(result.data) ? result.data[0] : result.data;
+        const current = requests.find(item => item.request_id === requestId);
+        if (!row?.receipt_data || !current) throw new Error('Receipt image is not available.');
+        current.receipt_data = row.receipt_data;
+        render();
+      } catch (error) {
+        setStatus(error?.message || 'Could not load the receipt image.', true);
+      } finally {
+        delete receiptLoading[requestId];
+        render();
+      }
+    }
+
+    async function loadRequests(silent = false) {
+      if (loadBusy) return;
+      const adminSecret = secret();
+      if (!adminSecret) { if (!silent) setStatus('Enter the private manager secret first.', true); return; }
+      loadBusy = true;
+      if (!silent) setStatus('Loading payment requests…');
+      try {
+        const result = await rpc('cartech_list_license_payment_request_meta', { p_admin_secret: adminSecret });
+        if (result.error) throw result.error;
+        const next = Array.isArray(result.data) ? result.data : [];
+        const nextPending = next.filter(row => row.status === 'pending').length;
+        if (previousPending !== null && nextPending > previousPending && 'Notification' in window && Notification.permission === 'granted') new Notification('CARTECH payment received', { body:`${nextPending - previousPending} new payment request${nextPending - previousPending === 1 ? '' : 's'}.` });
+        previousPending = nextPending;
+        requests = next;
+        render();
+        if (!silent) setStatus('Requests loaded. Verify each amount and reference in GCash before approving.');
+      } catch (error) { if (!silent) setStatus(error?.message || 'Could not load payment requests.', true); }
+      finally { loadBusy = false; }
+    }
+
+    async function review(requestId, decision) {
+      const row = requests.find(item => item.request_id === requestId);
+      if (!row) return;
+      if (decision === 'approve' && !confirm(`Confirm that ${amount(row.amount_pesos)} was received in GCash for ${row.shop_name}? A real license key and owner password will be generated.`)) return;
+      if (decision === 'reject' && !confirm(`Reject the payment request for ${row.shop_name}?`)) return;
+      const note = prompt('Optional note for your records:', decision === 'approve' ? 'Payment verified in GCash' : 'Payment not verified') || '';
+      const button = document.querySelector(`[data-${decision}="${CSS.escape(requestId)}"]`); if (button) button.disabled = true;
+      setStatus(`${decision === 'approve' ? 'Generating the license key' : 'Rejecting the request'}…`);
+      try {
+        const result = await rpc('cartech_review_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_decision: decision, p_review_note: note });
+        if (result.error) throw result.error;
+        const issued = rowData(result.data);
+        if (decision === 'approve') showIssued(issued, requestId); else byId('result').hidden = true;
+        setStatus(decision === 'approve' ? 'Payment approved. Save and send the key and temporary owner password privately.' : 'Payment request rejected.');
+        await loadRequests(true);
+        await loadLicenses(true);
+      } catch (error) { setStatus(error?.message || 'Could not review this request.', true); if (button) button.disabled = false; }
+    }
+
+    function showIssued(issued, requestId = '') {
+      const box = byId('result');
+      box.hidden = false;
+      box.dataset.requestId = requestId;
+      box.dataset.licenseKey = issued?.license_key || '';
+      box.dataset.ownerPassword = issued?.owner_password || '';
+      box.innerHTML = `<h3>License created — copy these details now</h3><div class="key-box"><code id="issuedKey">${esc(issued?.license_key || '')}</code><button class="btn" data-copy-value="issuedKey">Copy key</button></div><dl><dt>Workshop</dt><dd>${esc(issued?.shop_name)}</dd><dt>Shop ID</dt><dd>${esc(issued?.shop_id)}</dd><dt>Owner login</dt><dd>${esc(issued?.owner_username)}</dd><dt>Temporary password</dt><dd>${esc(issued?.owner_password)}</dd><dt>Term</dt><dd>${esc(issued?.duration_code)} · ${esc(amount(issued?.amount_pesos))}</dd></dl><div class="actions"><button class="btn primary" data-publish-delivery="${esc(requestId)}">Send to buyer page</button></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="repairShopId" class="input" style="flex:1;min-width:180px" value="cartech-main" placeholder="Original shop ID"><button class="btn" data-reissue-delivery="${esc(requestId)}">Repair existing shop</button></div><p id="repairStatus" class="status" style="margin-top:9px" hidden></p><p class="warning">Use Repair existing shop only when this payment accidentally created a new empty tenant. Enter the original ID, such as cartech-main. Run the v5 HANDOFF Supabase migration first.</p>`;
+      box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+
+    function notifyOpenBuyerTabs(token) {
+      const message = { token: String(token || '').trim().toLowerCase(), nonce: `${Date.now()}-${Math.random().toString(36).slice(2)}` };
+      let notified = false;
+      try {
+        if ('BroadcastChannel' in window) {
+          const channel = new BroadcastChannel(BUYER_HANDOFF_CHANNEL);
+          channel.postMessage(message);
+          channel.close();
+          notified = true;
+        }
+      } catch (_) {}
+      try {
+        localStorage.setItem(BUYER_HANDOFF_SIGNAL_KEY, JSON.stringify(message));
+        setTimeout(() => { try { localStorage.removeItem(BUYER_HANDOFF_SIGNAL_KEY); } catch (_) {} }, 1500);
+        notified = true;
+      } catch (_) {}
+      return notified;
+    }
+
+    async function sendBuyerHandoff(requestId, button = null) {
+      if (button) button.disabled = true;
+      try {
+        const handoffResult = await rpc('cartech_create_buyer_handoff', { p_admin_secret: secret(), p_request_id: requestId });
+        if (handoffResult.error) throw handoffResult.error;
+        const handoff = rowData(handoffResult.data);
+        const token = String(handoff?.handoff_token || '').trim();
+        if (!/^[a-f0-9]{48}$/i.test(token)) throw new Error('The buyer handoff token was not created.');
+        const buyerUrl = new URL('index.html', location.href);
+        buyerUrl.searchParams.set('cartech_handoff', token);
+        const link = buyerUrl.href;
+        const notified = notifyOpenBuyerTabs(token);
+        let copied = false;
+        try { await navigator.clipboard.writeText(link); copied = true; } catch (_) {}
+        const popup = window.open(link, '_blank');
+        const opened = Boolean(popup);
+        if (popup) { try { popup.opener = null; } catch (_) {} }
+        setStatus(opened
+          ? `Sent to buyer page. ${notified ? 'The open buyer tab was notified and the new buyer page was opened.' : 'The buyer page was opened.'}${copied ? ' The secure link was copied.' : ''}`
+          : `${notified ? 'The open buyer tab was notified. ' : ''}${copied ? 'The secure link was copied; paste it into a new tab.' : 'Allow popups and click again.'}`,
+          !opened && !copied && !notified);
+        if (button) { button.textContent = opened ? 'Open buyer page again' : (copied ? 'Buyer link copied — open again' : 'Try again'); button.disabled = false; }
+        return true;
+      } catch (error) {
+        setStatus(error?.message || 'Could not send the key to the buyer page.', true);
+        if (button) { button.textContent = 'Send to buyer page'; button.disabled = false; }
+        return false;
+      }
+    }
+    async function publishDelivery(requestId) {
+      const box = byId('result');
+      const button = box.querySelector('[data-publish-delivery]');
+      if (button) button.disabled = true;
+      try {
+        const result = await rpc('cartech_publish_license_payment_delivery', { p_admin_secret: secret(), p_request_id: requestId, p_license_key: box.dataset.licenseKey || '', p_owner_password: box.dataset.ownerPassword || '' });
+        if (result.error) throw result.error;
+        await sendBuyerHandoff(requestId, button);
+      } catch (error) { setStatus(error?.message || 'Could not send the key to the buyer page.', true); if (button) button.disabled = false; }
+    }
+    async function reissueDelivery(requestId) {
+      const existingShopId = String(byId('repairShopId')?.value || '').trim().toLowerCase();
+      if (!existingShopId) return;
+      const button = byId('result').querySelector('[data-reissue-delivery]');
+      const inline = byId('repairStatus');
+      if (button) button.disabled = true;
+      if (inline) { inline.hidden = false; inline.classList.remove('error'); inline.textContent = 'Repairing the license for ' + existingShopId + '…'; }
+      setStatus('Reissuing the approved license for the existing shop…');
+      try {
+        const result = await rpc('cartech_reissue_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_existing_shop_id: existingShopId });
+        if (result.error) throw result.error;
+        const issued = rowData(result.data);
+        showIssued(issued, requestId);
+        setStatus('License repaired. The old new-tenant key was revoked and the new key keeps the existing shop data.');
+        const successInline = byId('repairStatus');
+        if (successInline) { successInline.hidden = false; successInline.textContent = 'Success: the new license is attached to ' + existingShopId + '. Check the Shop ID above.'; }
+      } catch (error) {
+        const message = error?.message || 'Could not repair the shop license.';
+        setStatus(message, true);
+        if (inline) { inline.hidden = false; inline.classList.add('error'); inline.textContent = message.includes('function') ? 'Run CARTECH-GCASH-QR-PAYMENTS-v3.sql in Supabase first, then reload this page.' : message; }
+        if (button) button.disabled = false;
+      }
+    }
+
+    function renderTopups() {
+      const card = byId('topupRequestsCard');
+      const root = byId('topupRequests');
+      card.hidden = topupRequests.length === 0;
+      root.innerHTML = topupRequests.map(row => {
+        const pending = row.status === 'pending';
+        return `<article class="request ${esc(row.status)}"><div><h3>${esc(row.shop_name)} <span class="pill ${esc(row.status)}">${esc(row.status)}</span></h3><dl class="request-meta"><div><dt>Discount top-up</dt><dd>${esc(row.days_to_add)} days · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Current shop</dt><dd>${esc(row.shop_id)}</dd></div><div><dt>Owner</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>New expiry</dt><dd>${esc(date(row.new_expires_at))}</dd></div></dl></div><div class="request-side"><button class="btn quiet" data-topup-receipt="${esc(row.request_id)}" ${row.has_receipt ? '' : 'disabled'}>View receipt</button>${pending ? `<button class="btn primary" data-topup-approve="${esc(row.request_id)}">Approve &amp; add time</button><button class="btn danger" data-topup-reject="${esc(row.request_id)}">Reject</button>` : ''}</div></article>`;
+      }).join('');
+    }
+    async function loadTopups(silent = true) {
+      if (!secret()) return;
+      try {
+        const result = await rpc('cartech_list_license_topup_requests',{p_admin_secret:secret()});
+        topupRequests = Array.isArray(result.data) ? result.data : [];
+        renderTopups();
+      } catch (error) { if (!silent) setStatus(error?.message || 'Could not load top-up requests.',true); }
+    }
+    async function reviewTopup(requestId,decision,button) {
+      const row = topupRequests.find(item => item.request_id===requestId);
+      if (!row) return;
+      if (!confirm(decision==='approve' ? `Confirm ${amount(row.amount_pesos)} was received? ${row.days_to_add} days will be added to ${row.shop_id}.` : `Reject this top-up for ${row.shop_name}?`)) return;
+      button.disabled=true;
+      try {
+        const result=await rpc('cartech_review_license_topup_request',{p_admin_secret:secret(),p_request_id:requestId,p_decision:decision,p_review_note:decision==='approve'?'Payment verified in GCash':'Payment not verified'});
+        const updated=rowData(result.data);
+        setStatus(decision==='approve' ? `Top-up approved. ${updated.days_added} days added; new expiry ${date(updated.new_expires_at)}.` : 'Top-up request rejected.');
+        await loadTopups(true); await loadLicenses(true);
+      } catch(error){setStatus(error?.message || 'Could not review top-up.',true);button.disabled=false;}
+    }
+    async function viewTopupReceipt(requestId) {
+      try {
+        const result=await rpc('cartech_get_license_topup_receipt',{p_admin_secret:secret(),p_request_id:requestId});
+        const row=rowData(result.data);
+        if (!row?.receipt_data) throw new Error('Receipt is no longer available.');
+        const popup=window.open('','_blank');
+        if (popup) popup.document.write(`<title>CARTECH top-up receipt</title><img src="${esc(row.receipt_data)}" style="max-width:100%;height:auto">`);
+      } catch(error){setStatus(error?.message || 'Could not load receipt.',true);}
+    }
+    async function copyValue(id) { const text = byId(id)?.textContent || ''; if (!text) return; try { await navigator.clipboard.writeText(text); setStatus('Copied. Keep the license key private.'); } catch (_) { setStatus('Select and copy the value manually.'); } }
+    async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Android/browser notifications enabled while this app is open.' : 'Notifications were not enabled.'); }
+
+    async function refreshAll(showMessage = true) {
+      saveRememberedSecret();
+      if (!navigator.onLine) { setStatus('Offline. Reconnect to load live payment and license records.', true); return; }
+      if (!secret()) { setStatus('Enter the private manager secret first.', true); byId('adminSecret')?.focus(); return; }
+      if (showMessage) setStatus('Refreshing live payment and license data…');
+      await Promise.allSettled([loadRequests(true), loadTopups(true), loadLicenses(true), loadPlanSettings(true)]);
+      if (showMessage) setStatus('Live data refreshed. Receipts are loaded only when you open them.');
+    }
+
+    let deferredInstallPrompt = null;
+    const installButtons = [byId('installAppButton'), byId('installAppButtonTop')].filter(Boolean);
+    function setInstallButtonsVisible(visible) { installButtons.forEach(button => { button.hidden = !visible; }); }
+    window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; setInstallButtonsVisible(true); });
+    async function installPwa() {
+      if (!deferredInstallPrompt) { setStatus('To install: open Chrome menu, then tap “Add to Home screen” or “Install app”.'); return; }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      setInstallButtonsVisible(false);
+    }
+    installButtons.forEach(button => button.addEventListener('click', () => void installPwa()));
+    window.addEventListener('appinstalled', () => { setInstallButtonsVisible(false); setStatus('CARTECH Developer Payment was installed successfully.'); });
+
+    function updateNetworkState() {
+      const online = navigator.onLine;
+      byId('networkState').textContent = online ? 'Online' : 'Offline';
+      byId('pwaStatus').classList.toggle('is-offline', !online);
+    }
+    window.addEventListener('online', () => { updateNetworkState(); setStatus('Connection restored. Tap Refresh data to load the latest records.'); });
+    window.addEventListener('offline', () => { updateNetworkState(); setStatus('You are offline. The app shell works, but live actions are paused.', true); });
+    updateNetworkState();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {
+        setStatus('App opened, but offline installation is unavailable on this host.', true);
+      }));
+    }
+
+    restoreRememberedSecret();
+    byId('editPlansButton').addEventListener('click', () => {
+      const card = byId('planSettingsCard');
+      const open = Boolean(card?.classList.contains('plan-editor-collapsed'));
+      setPlanEditorOpen(open, open);
+    });
+    byId('minimizePlansButton').addEventListener('click', () => setPlanEditorOpen(false));
+    byId('adminSecret').addEventListener('input', () => { if (byId('rememberSecret').checked) saveRememberedSecret(); });
+    byId('rememberSecret').addEventListener('change', saveRememberedSecret);
+    byId('clearSecretButton').addEventListener('click', clearRememberedSecret);
+    byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
+    byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
+    byId('savePlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void savePlanSettings(); });
+    byId('notifyButton').addEventListener('click', () => void enableNotifications());
+    byId('quickRefreshButton').addEventListener('click', () => void refreshAll(true));
+    byId('dockRefreshButton').addEventListener('click', () => void refreshAll(true));
+    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); } });
+    window.addEventListener('beforeunload', saveRememberedSecret);
+    byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
+    byId('topupRequests').addEventListener('click', event => { const receipt=event.target.closest('[data-topup-receipt]'); if(receipt) void viewTopupReceipt(receipt.dataset.topupReceipt); const approve=event.target.closest('[data-topup-approve]'); if(approve) void reviewTopup(approve.dataset.topupApprove,'approve',approve); const reject=event.target.closest('[data-topup-reject]'); if(reject) void reviewTopup(reject.dataset.topupReject,'reject',reject); });
+    byId('licenseList').addEventListener('click', event => {
+      const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke);
+      const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove);
+      const expiry = event.target.closest('[data-license-save-expiry]'); if (expiry) void saveLicenseExpiry(expiry.dataset.licenseSaveExpiry, expiry);
+      const bonus = event.target.closest('[data-license-create-bonus]'); if (bonus) void createLicenseBonus(bonus.dataset.licenseCreateBonus, bonus);
+      const payment = event.target.closest('[data-license-save-payment]'); if (payment) void saveLicensePayment(payment.dataset.licenseSavePayment, payment);
+      const cancel = event.target.closest('[data-license-cancel-bonus]'); if (cancel) void cancelLicenseBonus(cancel.dataset.licenseCancelBonus, cancel);
+      const repair = event.target.closest('[data-license-repair-shop]'); if (repair) void repairShopAccess(repair.dataset.licenseRepairShop, repair);
+    });
+    byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
+    // Load once on app start when this private device already has the manager
+    // secret. Deliberately no background polling: payment-list RPC responses previously
+    // included receipt images, so refreshing every 30 seconds caused avoidable
+    // PostgREST egress. Use the visible Load buttons, and open a receipt only
+    // when it is needed.
+    if (secret() && navigator.onLine) void refreshAll(false);
+  </script>
+</body>
+</html>

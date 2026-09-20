@@ -1,0 +1,27 @@
+{
+  "id": "./?source=pwa",
+  "name": "CARTECH Developer Payment",
+  "short_name": "CARTECH Pay",
+  "description": "Private CARTECH payment, license, plan and top-up management console.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1322",
+  "theme_color": "#0c1422",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "./icons/cartech-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/cartech-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
