@@ -1603,6 +1603,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 #ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup-grid{display:none!important}
 #ctLicenseStoreDialog.is-topup-mode .ct-license-payment-status{margin-bottom:10px;background:#17332d;color:#b7f3dc;border-color:#2c715e}
 #ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup-note{color:#aebed1}
+#ctLicenseStoreDialog.is-topup-mode label[for="ctLicensePaymentReceipt"],#ctLicenseStoreDialog.is-topup-mode #ctLicensePaymentReceipt,#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup-note{display:none!important}
 @media(max-width:640px){#ctLicenseStoreDialog.is-topup-mode .ct-license-plans{grid-template-columns:1fr}#ctLicenseStoreDialog.is-topup-mode .ct-license-plan{min-height:165px}#ctLicenseStoreDialog.is-topup-mode .ct-dialog-head{padding:18px 18px 12px}#ctLicenseStoreDialog.is-topup-mode .ct-license-store-body{padding:0 18px 20px}}
 @media(prefers-reduced-motion:reduce){#ctLicenseStoreDialog *,#ctUnderDevelopment *{transition:none!important;animation:none!important}}
 </style>
@@ -7754,6 +7755,7 @@ window.CartechAccess = (() => {
     dialog.classList.toggle('is-topup-mode', activePaid);
     if (byId('ctLicenseStoreTitle')) byId('ctLicenseStoreTitle').textContent = activePaid ? 'Top up your active CARTECH license' : 'Buy a CARTECH workshop license';
     const roadmap = Array.from(document.querySelectorAll('#ctLicenseStoreDialog .ct-purchase-roadmap li'));
+    if (roadmap[2]) roadmap[2].textContent = activePaid ? 'Enter reference' : 'Upload receipt';
     if (roadmap[3]) roadmap[3].textContent = activePaid ? 'Time added' : 'Receive your key';
     const introTitle = document.querySelector('.ct-license-store-intro h3');
     const introCopy = document.querySelector('.ct-license-store-intro p');
@@ -7806,6 +7808,8 @@ window.CartechAccess = (() => {
     if (ownerField && cartechPurchaseMode === 'topup') ownerField.value = String(tenantAccessSnapshot?.owner_username || currentUser || '').trim().toLowerCase();
     byId('ctGcashNumber').textContent = CARTECH_GCASH_NUMBER;
     if (cartechPurchaseMode === 'topup') {
+      const submitReference = document.querySelector('#ctLicensePaymentFollowup button[onclick*="submitPaymentRequest"]');
+      if (submitReference) submitReference.textContent = 'Submit reference number';
       byId('ctLicenseQrPanel').hidden = true;
       byId('ctLicensePaymentStatus').innerHTML = `<strong>${escapeHTML(plan.label)} selected · ${escapeHTML(licensePlanPrice(plan))}.</strong> Opening GCash… When you return, enter the reference number and upload the receipt below.`;
       setTimeout(() => openGcashAppForPlan(plan), 120);
@@ -7902,6 +7906,7 @@ window.CartechAccess = (() => {
     const owner = String(byId('ctLicensePaymentOwner')?.value || tenantAccessSnapshot?.owner_username || currentUser || '').trim().toLowerCase();
     const reference = String(byId('ctLicensePaymentReference')?.value || '').trim();
     const file = byId('ctLicensePaymentReceipt')?.files?.[0];
+    const isTopup = cartechPurchaseMode === 'topup';
     const status = byId('ctLicensePaymentStatus');
     const submit = document.querySelector('#ctLicensePaymentFollowup button[onclick*="submitPaymentRequest"]');
     if (!plan) return;
@@ -7912,14 +7917,13 @@ window.CartechAccess = (() => {
       byId('ctLicensePaymentReference').focus();
       return;
     }
-    if (!file) { status.innerHTML = '<strong>Receipt required:</strong> upload the GCash receipt screenshot so the developer can match it to the transaction.'; byId('ctLicensePaymentReceipt')?.focus(); return; }
+    if (!isTopup && !file) { status.innerHTML = '<strong>Receipt required:</strong> upload the GCash receipt screenshot so the developer can match it to the transaction.'; byId('ctLicensePaymentReceipt')?.focus(); return; }
     if (!supabaseClient) { status.textContent = 'The payment service is not available. Check your internet connection and try again.'; return; }
     if (submit) { submit.disabled = true; submit.textContent = 'Submitting…'; }
     status.textContent = 'Uploading the receipt and creating your payment request…';
     try {
-      const receiptData = await readPaymentReceipt(file);
+      const receiptData = isTopup ? null : await readPaymentReceipt(file);
       await ensureDeviceAuth();
-      const isTopup = cartechPurchaseMode === 'topup';
       const result = isTopup
         ? await cartechRpc('cartech_create_license_topup_request', {
             p_shop_id: currentShopId,
