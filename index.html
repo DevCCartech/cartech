@@ -1997,6 +1997,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
         <button id="ctNavQueue" type="button" onclick="CartechUI.navigate('queue')"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Jobs & inspections <span id="ctNavActive" class="ct-nav-count">0</span></button>
         <button id="ctNavParts" type="button" onclick="CartechUI.navigate('parts')"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Parts requests <span id="ctNavPartsCount" class="ct-nav-count ct-warm">0</span></button>
         <button id="ctNavTeam" type="button" onclick="CartechUI.openTeam()"><i class="fa-solid fa-user-group" aria-hidden="true"></i>Team overview</button>
+        <button id="ctNavLicenseTopup" type="button" onclick="CartechAccess.openLicenseStore()" hidden><i class="fa-solid fa-wallet" aria-hidden="true"></i>License top up <span class="ct-nav-count ct-warm">+</span></button>
         <button id="ctNavWorkshop" type="button" onclick="CartechUI.navigate('workshop')" hidden><i class="fa-solid fa-wrench" aria-hidden="true"></i>Mechanic workspace</button>
         <button id="ctNavControl" type="button" onclick="CartechUI.navigate('control')" hidden><i class="fa-solid fa-sliders" aria-hidden="true"></i>Team & access</button>
       </nav>
@@ -6168,6 +6169,7 @@ window.CartechUI = (() => {
     byId('ctNavQueue').hidden = !officeViewer();
     byId('ctNavParts').hidden = !officeViewer();
     byId('ctNavTeam').hidden = !canManage;
+    byId('ctNavLicenseTopup').hidden = !(officeViewer() && currentRole !== 'tester' && currentRole !== 'workshop');
     byId('ctNavWorkshop').hidden = !(isElevated || currentRole === 'workshop');
     byId('ctNavControl').hidden = !isElevated;
     byId('ctSidebarCapacity').hidden = !canManage;
