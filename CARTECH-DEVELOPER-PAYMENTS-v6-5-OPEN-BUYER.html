@@ -68,6 +68,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         <div class="card-head"><h2>Incoming GCash requests</h2><p>New pending payment requests appear here after the developer secret is accepted.</p></div>
         <div class="card-body"><div id="requests" class="requests"><div class="empty">No requests loaded yet.</div></div><div id="result" class="result" hidden></div></div>
       </section>
+      <section id="topupRequestsCard" class="card" style="margin-top:20px" hidden>
+        <div class="card-head"><h2>Discounted license top-ups</h2><p>Verify the GCash receipt. Approval adds the purchased days to the active key automatically.</p></div>
+        <div class="card-body"><div id="topupRequests" class="requests"></div></div>
+      </section>
       <p class="footer">CARTECH developer utility · verification should be completed in the official GCash app.</p>
     </main>
   </div>
@@ -95,6 +99,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     const byId = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     let requests = [];
+    let topupRequests = [];
     let previousPending = null;
     let loadBusy = false;
     let licenseLoadBusy = false;
@@ -621,6 +626,44 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       }
     }
 
+    function renderTopups() {
+      const card = byId('topupRequestsCard');
+      const root = byId('topupRequests');
+      card.hidden = topupRequests.length === 0;
+      root.innerHTML = topupRequests.map(row => {
+        const pending = row.status === 'pending';
+        return `<article class="request ${esc(row.status)}"><div><h3>${esc(row.shop_name)} <span class="pill ${esc(row.status)}">${esc(row.status)}</span></h3><dl class="request-meta"><div><dt>Discount top-up</dt><dd>${esc(row.days_to_add)} days · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Current shop</dt><dd>${esc(row.shop_id)}</dd></div><div><dt>Owner</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>New expiry</dt><dd>${esc(date(row.new_expires_at))}</dd></div></dl></div><div class="request-side"><button class="btn quiet" data-topup-receipt="${esc(row.request_id)}" ${row.has_receipt ? '' : 'disabled'}>View receipt</button>${pending ? `<button class="btn primary" data-topup-approve="${esc(row.request_id)}">Approve &amp; add time</button><button class="btn danger" data-topup-reject="${esc(row.request_id)}">Reject</button>` : ''}</div></article>`;
+      }).join('');
+    }
+    async function loadTopups(silent = true) {
+      if (!secret()) return;
+      try {
+        const result = await rpc('cartech_list_license_topup_requests',{p_admin_secret:secret()});
+        topupRequests = Array.isArray(result.data) ? result.data : [];
+        renderTopups();
+      } catch (error) { if (!silent) setStatus(error?.message || 'Could not load top-up requests.',true); }
+    }
+    async function reviewTopup(requestId,decision,button) {
+      const row = topupRequests.find(item => item.request_id===requestId);
+      if (!row) return;
+      if (!confirm(decision==='approve' ? `Confirm ${amount(row.amount_pesos)} was received? ${row.days_to_add} days will be added to ${row.shop_id}.` : `Reject this top-up for ${row.shop_name}?`)) return;
+      button.disabled=true;
+      try {
+        const result=await rpc('cartech_review_license_topup_request',{p_admin_secret:secret(),p_request_id:requestId,p_decision:decision,p_review_note:decision==='approve'?'Payment verified in GCash':'Payment not verified'});
+        const updated=rowData(result.data);
+        setStatus(decision==='approve' ? `Top-up approved. ${updated.days_added} days added; new expiry ${date(updated.new_expires_at)}.` : 'Top-up request rejected.');
+        await loadTopups(true); await loadLicenses(true);
+      } catch(error){setStatus(error?.message || 'Could not review top-up.',true);button.disabled=false;}
+    }
+    async function viewTopupReceipt(requestId) {
+      try {
+        const result=await rpc('cartech_get_license_topup_receipt',{p_admin_secret:secret(),p_request_id:requestId});
+        const row=rowData(result.data);
+        if (!row?.receipt_data) throw new Error('Receipt is no longer available.');
+        const popup=window.open('','_blank');
+        if (popup) popup.document.write(`<title>CARTECH top-up receipt</title><img src="${esc(row.receipt_data)}" style="max-width:100%;height:auto">`);
+      } catch(error){setStatus(error?.message || 'Could not load receipt.',true);}
+    }
     async function copyValue(id) { const text = byId(id)?.textContent || ''; if (!text) return; try { await navigator.clipboard.writeText(text); setStatus('Copied. Keep the license key private.'); } catch (_) { setStatus('Select and copy the value manually.'); } }
     async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Phone/browser notifications enabled while this console is open.' : 'Notifications were not enabled.'); }
 
@@ -634,14 +677,15 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     byId('adminSecret').addEventListener('input', () => { if (byId('rememberSecret').checked) saveRememberedSecret(); });
     byId('rememberSecret').addEventListener('change', saveRememberedSecret);
     byId('clearSecretButton').addEventListener('click', clearRememberedSecret);
-    byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
     byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
     byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
     byId('savePlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void savePlanSettings(); });
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
-    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadLicenses(false); void loadPlanSettings(false); } });
+    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); } });
     window.addEventListener('beforeunload', saveRememberedSecret);
     byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
+    byId('topupRequests').addEventListener('click', event => { const receipt=event.target.closest('[data-topup-receipt]'); if(receipt) void viewTopupReceipt(receipt.dataset.topupReceipt); const approve=event.target.closest('[data-topup-approve]'); if(approve) void reviewTopup(approve.dataset.topupApprove,'approve',approve); const reject=event.target.closest('[data-topup-reject]'); if(reject) void reviewTopup(reject.dataset.topupReject,'reject',reject); });
     byId('licenseList').addEventListener('click', event => {
       const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke);
       const remove = event.target.closest('[data-license-delete]'); if (remove) void deleteLicense(remove.dataset.licenseDelete, remove);
