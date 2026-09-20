@@ -7298,7 +7298,8 @@ window.CartechAccess = (() => {
     return panel;
   }
   async function pauseOperationalAccess() {
-    if(currentRole!=='developer')return;
+    const developerOperator=currentRole==='developer'||currentUser==='dev'||verifiedUser==='dev';
+    if(!developerOperator){loginError('DEVELOPER ACCESS REQUIRED','Only the registered developer account can pause workshop access.');return;}
     try {
       message('ctPauseAdminMessage','Pausing workshop securely…');
       const result=await cartechRpc('cartech_set_operational_pause',{p_admin_secret:String(byId('ctPauseSecret')?.value||''),p_shop_id:currentShopId,p_paused:true,p_reason:String(byId('ctPauseReason')?.value||''),p_owner_username:String(byId('ctPauseOwner')?.value||'').trim().toLowerCase()});
@@ -8248,7 +8249,7 @@ window.CartechAccess = (() => {
       byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
     }
     if (entered) {
-      if (currentRole === 'developer') ensureDeveloperPauseControls();
+      if (currentRole === 'developer' || currentUser === 'dev' || verifiedUser === 'dev') ensureDeveloperPauseControls();
       const shell = byId('appShell');
       const topbar = shell.querySelector('.ct-topbar');
       if (topbar && byId('ctTesterBanner').parentElement !== topbar) topbar.append(byId('ctTesterBanner'));
