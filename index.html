@@ -1583,6 +1583,27 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 .ct-purchase-roadmap li::before{content:counter(purchase);display:grid;place-items:center;width:26px;height:26px;background:#f973161c;color:#ffb679;border:1px solid #c76c344d;border-radius:50%;font-weight:800}
 #ctUnderDevelopment :focus-visible,#ctLicenseStoreDialog :focus-visible{outline:3px solid #fb923c;outline-offset:3px}
 @media(max-width:640px){#ctUnderDevelopment{padding:12px 8px}#ctUnderDevelopment .ct-license-hero,#ctUnderDevelopment .ct-license-body{padding:22px 17px}#ctUnderDevelopment .ct-license-hero-copy{grid-template-columns:1fr;gap:16px}#ctUnderDevelopment .ct-license-state{min-width:0}#ctUnderDevelopment .ct-license-row{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-dialog-head,#ctLicenseStoreDialog .ct-license-store-body{padding:20px 16px}#ctLicenseStoreDialog .ct-license-plans{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#ctLicenseStoreDialog .ct-license-plan{padding:16px 12px;min-height:235px}#ctLicenseStoreDialog .ct-license-plan-price{font-size:24px}#ctLicenseStoreDialog .ct-license-payment{padding:16px}#ctLicenseStoreDialog .ct-license-payment-head{flex-direction:column}#ctLicenseStoreDialog .ct-license-payment-followup-grid{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-buyer-filter{align-items:stretch;flex-direction:column}#ctLicenseStoreDialog .ct-license-qr{grid-template-columns:1fr}#ctLicenseStoreDialog .ct-license-qr-placeholder{margin:auto}.ct-purchase-roadmap{gap:8px}}
+
+/* v17: compact active-license top-up experience. */
+#ctLicenseStoreDialog.is-topup-mode{width:min(680px,calc(100% - 28px))}
+#ctLicenseStoreDialog.is-topup-mode .ct-dialog-head{padding:22px 28px 14px}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-store-body{padding:0 28px 28px}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-buyer-filter{display:none!important}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plans{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan{min-height:190px;padding:18px 16px;border-radius:14px;background:#101b2f;border:1px solid #3b4b65;gap:7px}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan strong{font-size:22px}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan-price{font-size:23px;padding-top:8px;margin-top:auto}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan-buyer,#ctLicenseStoreDialog.is-topup-mode .ct-license-plan-stock{display:none!important}
+#ctLicenseStoreDialog.is-topup-mode .ct-plan-select-label{display:flex;width:100%;min-height:38px;margin-top:5px;align-items:center;justify-content:center;border-radius:8px;background:#34455f;color:#fff;font-size:12px;font-weight:850}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan:hover .ct-plan-select-label,#ctLicenseStoreDialog.is-topup-mode .ct-license-plan.is-selected .ct-plan-select-label{background:#12bf8c;color:#061c18}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-plan.is-selected{background:#10243a;border-color:#10c58e;box-shadow:0 0 0 2px #10c58e55}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment{margin-top:16px;padding:14px;background:#101b2f;border-color:#344660}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-head,#ctLicenseStoreDialog.is-topup-mode .ct-license-gcash-row,#ctLicenseStoreDialog.is-topup-mode .ct-license-qr,#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-steps,#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-actions{display:none!important}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup{margin:0;padding:14px;background:#17253b}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup-grid{display:none!important}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-status{margin-bottom:10px;background:#17332d;color:#b7f3dc;border-color:#2c715e}
+#ctLicenseStoreDialog.is-topup-mode .ct-license-payment-followup-note{color:#aebed1}
+@media(max-width:640px){#ctLicenseStoreDialog.is-topup-mode .ct-license-plans{grid-template-columns:1fr}#ctLicenseStoreDialog.is-topup-mode .ct-license-plan{min-height:165px}#ctLicenseStoreDialog.is-topup-mode .ct-dialog-head{padding:18px 18px 12px}#ctLicenseStoreDialog.is-topup-mode .ct-license-store-body{padding:0 18px 20px}}
 @media(prefers-reduced-motion:reduce){#ctLicenseStoreDialog *,#ctUnderDevelopment *{transition:none!important;animation:none!important}}
 </style>
 
@@ -7467,9 +7488,10 @@ window.CartechAccess = (() => {
       const unavailable = outOfStock;
       const statusLabel = 'SOLD';
       const stockLabel = outOfStock ? 'No stock remaining' : `${stock.toLocaleString('en-PH')} slot${stock === 1 ? '' : 's'} remaining`;
+      const topupSelect = cartechPurchaseMode === 'topup' ? '<span class="ct-plan-select-label">Select Plan</span>' : '';
       return unavailable
         ? `<button type="button" class="ct-license-plan is-sold${outOfStock ? ' is-out-of-stock' : ''}" data-license-plan="${escapeHTML(plan.id)}" disabled aria-disabled="true"><span class="ct-license-plan-badge">${statusLabel}</span><strong>${escapeHTML(plan.label)}</strong><small>${escapeHTML(plan.detail)}</small><small class="ct-license-plan-buyer">Buyer: ${escapeHTML(buyerLabel)}</small><small class="ct-license-plan-stock">${escapeHTML(stockLabel)}</small><span class="ct-license-plan-price">${escapeHTML(licensePlanPrice(plan))}</span></button>`
-        : `<button type="button" class="ct-license-plan" data-license-plan="${escapeHTML(plan.id)}" onclick="CartechAccess.selectLicensePlan('${escapeHTML(plan.id)}')"><span class="ct-license-plan-badge">${escapeHTML(plan.badge || ' ')}</span><strong>${escapeHTML(plan.label)}</strong><small>${escapeHTML(plan.detail)}</small><small class="ct-license-plan-buyer">Buyer: ${escapeHTML(buyerLabel)}</small><small class="ct-license-plan-stock">${escapeHTML(stockLabel)}</small><span class="ct-license-plan-price">${escapeHTML(licensePlanPrice(plan))}</span></button>`;
+        : `<button type="button" class="ct-license-plan" data-license-plan="${escapeHTML(plan.id)}" onclick="CartechAccess.selectLicensePlan('${escapeHTML(plan.id)}')"><span class="ct-license-plan-badge">${escapeHTML(plan.badge || ' ')}</span><strong>${escapeHTML(plan.label)}</strong><small>${escapeHTML(plan.detail)}</small><small class="ct-license-plan-buyer">Buyer: ${escapeHTML(buyerLabel)}</small><small class="ct-license-plan-stock">${escapeHTML(stockLabel)}</small><span class="ct-license-plan-price">${escapeHTML(licensePlanPrice(plan))}</span>${topupSelect}</button>`;
     }).join('');
   }
   function licensePlanAmount(plan) { const configured = Number(plan?.price_pesos); return Number.isFinite(configured) ? configured : Number(plan?.days || 0) * CARTECH_LICENSE_RATE_PER_DAY; }
@@ -7729,7 +7751,10 @@ window.CartechAccess = (() => {
     selectedLicensePlanId = '';
     const dialog = byId('ctLicenseStoreDialog');
     if (!dialog) return;
+    dialog.classList.toggle('is-topup-mode', activePaid);
     if (byId('ctLicenseStoreTitle')) byId('ctLicenseStoreTitle').textContent = activePaid ? 'Top up your active CARTECH license' : 'Buy a CARTECH workshop license';
+    const roadmap = Array.from(document.querySelectorAll('#ctLicenseStoreDialog .ct-purchase-roadmap li'));
+    if (roadmap[3]) roadmap[3].textContent = activePaid ? 'Time added' : 'Receive your key';
     const introTitle = document.querySelector('.ct-license-store-intro h3');
     const introCopy = document.querySelector('.ct-license-store-intro p');
     if (introTitle) introTitle.textContent = activePaid ? 'Choose a discounted top-up' : 'Choose your official plan';
@@ -7772,12 +7797,20 @@ window.CartechAccess = (() => {
     const buyerField = byId('ctLicensePaymentShopName');
     if (buyerField) {
       const assignedBuyer = String(plan.buyer_shop_name || '').trim();
-      buyerField.value = assignedBuyer;
+      buyerField.value = cartechPurchaseMode === 'topup' ? String(tenantAccessSnapshot?.shop_name || 'CARTECH Autoservice') : assignedBuyer;
       buyerField.readOnly = Boolean(assignedBuyer);
       buyerField.placeholder = assignedBuyer ? 'Assigned plan buyer' : 'Enter company or shop name';
       buyerField.setAttribute('aria-readonly', assignedBuyer ? 'true' : 'false');
     }
+    const ownerField = byId('ctLicensePaymentOwner');
+    if (ownerField && cartechPurchaseMode === 'topup') ownerField.value = String(tenantAccessSnapshot?.owner_username || currentUser || '').trim().toLowerCase();
     byId('ctGcashNumber').textContent = CARTECH_GCASH_NUMBER;
+    if (cartechPurchaseMode === 'topup') {
+      byId('ctLicenseQrPanel').hidden = true;
+      byId('ctLicensePaymentStatus').innerHTML = `<strong>${escapeHTML(plan.label)} selected · ${escapeHTML(licensePlanPrice(plan))}.</strong> Opening GCash… When you return, enter the reference number and upload the receipt below.`;
+      setTimeout(() => openGcashAppForPlan(plan), 120);
+      return;
+    }
     renderPaymentQr(plan);
     const configured = CARTECH_GCASH_NUMBER && !/^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim());
     if (byId('ctCopyGcashButton')) byId('ctCopyGcashButton').disabled = !configured;
@@ -7793,6 +7826,25 @@ window.CartechAccess = (() => {
     if (!CARTECH_GCASH_NUMBER || /^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim())) return;
     try { await navigator.clipboard.writeText(CARTECH_GCASH_NUMBER); byId('ctLicensePaymentStatus').textContent = 'GCash number copied. Complete the payment in the GCash app, then send the reference number for verification.'; }
     catch (_) { byId('ctLicensePaymentStatus').textContent = `Copy this GCash number manually: ${CARTECH_GCASH_NUMBER}`; }
+  }
+  function openGcashAppForPlan(plan) {
+    if (!plan) return;
+    const ua = navigator.userAgent || '';
+    const android = /android/i.test(ua);
+    const ios = /iphone|ipad|ipod/i.test(ua);
+    try {
+      localStorage.setItem('cartech_pending_topup_plan_v1', JSON.stringify({ id:plan.id, amount:licensePlanAmount(plan), selected_at:Date.now() }));
+    } catch (_) {}
+    if (android) {
+      window.location.href = 'intent://open#Intent;scheme=gcash;package=com.globe.gcash.android;end';
+      return;
+    }
+    if (ios) {
+      window.location.href = 'gcash://';
+      return;
+    }
+    const status = byId('ctLicensePaymentStatus');
+    if (status) status.innerHTML = `<strong>${escapeHTML(plan.label)} selected · ${escapeHTML(licensePlanPrice(plan))}.</strong> GCash app launching works on Android or iPhone. On this computer, pay using your phone, then upload the receipt below.`;
   }
   function openGcash() {
     if (!CARTECH_GCASH_NUMBER || /^set your gcash number$/i.test(CARTECH_GCASH_NUMBER.trim())) return;
