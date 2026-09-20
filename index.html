@@ -7289,10 +7289,13 @@ window.CartechAccess = (() => {
     } catch(error){message('ctOperationalPauseMessage',error.message||'Developer resume failed.',true);} return false;
   }
   function ensureDeveloperPauseControls() {
-    let panel=byId('ctDeveloperPauseControls'),anchor=byId('developerAccountsWrapper'); if(panel||!anchor)return panel;
+    let panel=byId('ctDeveloperPauseControls'),anchor=byId('developerAccountsWrapper'); if(panel)return panel; if(!anchor)return null;
     panel=document.createElement('section'); panel.id='ctDeveloperPauseControls'; panel.className='ct-pause-admin';
     panel.innerHTML=`<h3><i class="fa-solid fa-calendar-day"></i> Workshop pause control</h3><p>Pause for Sunday, holiday, or maintenance. Paid license time freezes until the registered owner or developer resumes it.</p><div class="ct-pause-fields"><input id="ctPauseReason" placeholder="Reason (e.g. Sunday closure)"><input id="ctPauseOwner" placeholder="Registered owner username"><input id="ctPauseSecret" type="password" autocomplete="off" placeholder="Developer manager secret"></div><button type="button" onclick="CartechAccess.pauseOperationalAccess()">Pause workshop access</button><p id="ctPauseAdminMessage" class="ct-pause-status" hidden></p>`;
-    anchor.parentNode.insertBefore(panel,anchor); return panel;
+    const settingsPanel=byId('hr-panel-settings');
+    if(settingsPanel) settingsPanel.prepend(panel);
+    else anchor.parentNode.insertBefore(panel,anchor);
+    return panel;
   }
   async function pauseOperationalAccess() {
     if(currentRole!=='developer')return;
@@ -9215,6 +9218,7 @@ move(root.querySelector('.ct-dev-metrics'),'overview');
 const grid=document.createElement('div');grid.className='hr-grid';grid.innerHTML='<article class="hr-card"><h3>Team composition</h3><p>Current accounts by workspace role</p><div id="hrRoleBars" class="hr-bars"></div></article><article class="hr-card"><h3>Account health</h3><p>Access and agreement status from loaded staff records</p><div class="hr-insights"><div><strong id="hrActive">—</strong><small>Active access</small></div><div><strong id="hrExpired">—</strong><small>Expired / off</small></div><div><strong id="hrPending">—</strong><small>Agreement pending</small></div></div><p id="hrCoverage" style="margin-top:20px"></p></article>';panels.overview.append(grid);
 const cols=root.querySelector('.ct-dev-columns'),accounts=root.querySelector('.ct-admin-accounts');move(accounts,'people');move(el('subUsername').closest('form').parentElement,'setup');move(el('devStaffPresenceList').parentElement,'overview');move(el('devDeletedLogsPanel'),'records');if(cols)cols.remove();
 move(el('ctDevAnnouncementFold'),'notices');move(el('ctDevDutyFold'),'duty');move(el('ctDevArchiveFold'),'records');move(el('ctTrialControlCard'),'settings');move(el('devFeatureFlagCard'),'settings');
+move(el('ctDeveloperPauseControls'),'settings');
 const recovery=root.querySelector('.ct-admin-recovery');move(recovery,'records');['ctDevAnnouncementFold','ctDevDutyFold','ctDevArchiveFold'].forEach(id=>el(id).open=true);
 el('hrAdd').onclick=()=>{show('setup');el('subUsername').focus();};
 const list=el('devRegisteredAccountsContainer'),search=el('ctAdminStaffSearch');
