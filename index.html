@@ -5395,7 +5395,7 @@ async function submitPartsRequest() {
           ? `<span class="text-[8px] text-indigo-500 font-black mt-0.5"><i class="fa-solid fa-check-double mr-0.5"></i> Seen${seenByOthers[0] !== 'office' ? ` by ${escapeHTML(seenByOthers[0].toUpperCase())}` : ''}</span>`
           : '';
         const messageKey = encodeURIComponent(chatMessageKey(msg)).replace(/'/g, '%27');
-        const developerDeleteAllowed = currentRole === 'developer' && Boolean(currentUser) && window.CartechAccess?.sessionValid();
+        const developerDeleteAllowed = hasDeveloperChatDeleteAccess();
         const deleteButton = developerDeleteAllowed
           ? `<button type="button" onclick="deleteChatMessage('${escapeHTML(jobId)}','${messageKey}')" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[9px] font-black transition shadow-sm inline-flex items-center gap-1 justify-center cursor-pointer" title="Developer: delete this message" aria-label="Delete this message"><i class="fa-solid fa-trash"></i><span>Delete</span></button>`
           : '';
@@ -5432,8 +5432,16 @@ async function submitPartsRequest() {
       return `legacy:${String(message?.sentAt || '')}:${String(message?.sender || '')}:${String(message?.time || '')}:${String(message?.text || '')}`;
     }
 
+    function hasDeveloperChatDeleteAccess() {
+      const user = String(currentUser || '').trim().toLowerCase();
+      const registeredRole = String(cachedCloudAccounts?.[user]?.role || '').trim().toLowerCase();
+      return user === 'dev'
+        && (currentRole === 'developer' || registeredRole === 'developer')
+        && Boolean(window.CartechAccess?.sessionValid());
+    }
+
     async function deleteChatMessage(jobId, encodedMessageKey) {
-      if (currentRole !== 'developer' || !window.CartechAccess?.sessionValid()) {
+      if (!hasDeveloperChatDeleteAccess()) {
         alert('Developer access is required to delete a message.');
         return;
       }
@@ -8281,11 +8289,19 @@ window.CartechAccess = (() => {
     const row = rows.find(item => item.id === USERS_RECORD_ID);
     const parsed = row ? JSON.parse(row.details) : {};
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid account registry.');
-    return { row, parsed, accounts: { ...defaults, ...parsed } };
+    const normalized = normalizeReservedAccountRoles(parsed);
+    return { row, parsed:normalized, accounts: { ...defaults, ...normalized } };
+  }
+  function normalizeReservedAccountRoles(accounts) {
+    const normalized = { ...accounts };
+    if (currentShopId === CARTECH_MAIN_SHOP_ID && validAccount(normalized.dev)) {
+      normalized.dev = { ...normalized.dev, role:'developer' };
+    }
+    return normalized;
   }
   function receiveAccounts(parsed) {
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
-    cachedCloudAccounts = { ...defaults, ...parsed };
+    cachedCloudAccounts = { ...defaults, ...normalizeReservedAccountRoles(parsed) };
     // Tester identities never join the mechanic or permanent staff rosters.
     Object.entries(cachedCloudAccounts).forEach(([user, acc]) => {
       if (!validAccount(acc) || acc.role === 'tester' || acc.revoked) return;
