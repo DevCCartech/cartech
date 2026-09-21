@@ -3555,6 +3555,41 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       }, 0);
     }
 
+    // Open the compact Messenger-style panel as soon as the office receives a
+    // new mechanic message. This uses the existing realtime row update and
+    // performs no additional database read or polling.
+    function autoOpenIncomingMechanicChat(previousJob, updatedJob) {
+      if (!updatedJob || !['office', 'admin', 'developer'].includes(String(currentRole || '').toLowerCase())) return false;
+      if (!window.CartechAccess?.sessionValid() || currentRole === 'tester') return false;
+
+      const previousMessages = previousJob
+        ? (parsePartsInfo(previousJob.auto_schedule_slot).chatList || [])
+        : [];
+      const updatedMessages = parsePartsInfo(updatedJob.auto_schedule_slot).chatList || [];
+      if (updatedMessages.length <= previousMessages.length) return false;
+
+      const viewer = getViewerSeenId();
+      const incoming = updatedMessages.slice(previousMessages.length).filter(message => {
+        const senderId = String(message?.senderId || '').trim().toLowerCase();
+        return message?.role === 'workshop' && senderId !== viewer;
+      });
+      if (!incoming.length) return false;
+
+      const chatWindow = document.getElementById('fbFloatingChatWindow');
+      const anotherChatIsVisible = activeModalChatJobId &&
+        activeModalChatJobId !== updatedJob.id &&
+        chatWindow && !chatWindow.classList.contains('hidden') &&
+        !isChatMinimizedToBubble;
+
+      // Never replace another conversation while the office is reading or
+      // typing in it. Its unread badge and browser alert remain available.
+      if (anotherChatIsVisible) return false;
+
+      const mechanic = resolveMechanicName(updatedJob) || incoming[incoming.length - 1].sender || 'Mechanic';
+      openMessengerChatForJob(updatedJob.id, mechanic);
+      return true;
+    }
+
     function isUserOnHoliday(username) {
       if (!username) return false;
       const u = username.toLowerCase();
@@ -3796,7 +3831,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
               render();
               updateAlarmState();
 
-              if (activeModalChatJobId === newRecord.id) {
+              const chatAutoOpened = autoOpenIncomingMechanicChat(previous, newRecord);
+              if (!chatAutoOpened && activeModalChatJobId === newRecord.id) {
                 updateModalChatStream(newRecord.id);
               }
             } 
