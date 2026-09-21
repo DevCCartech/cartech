@@ -5566,7 +5566,7 @@ async function submitPartsRequest() {
     }
 
     function renderDeveloperAnalytics() {
-      const isDev = currentRole === 'developer' || String(currentUser || '').toLowerCase() === 'dev';
+      const isDev = currentRole === 'developer';
       const canManageAccounts = isDev;
       const accountsWrapper = document.getElementById('developerAccountsWrapper');
       const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
@@ -9508,7 +9508,7 @@ window.CartechShopHours = (() => {
 (()=>{
 const root=document.getElementById('viewDeveloper');if(!root)return;
 const el=id=>document.getElementById(id);
-const isDeveloperWorkspace=currentRole==='developer'||String(currentUser||'').toLowerCase()==='dev';
+const isDeveloperWorkspace=currentRole==='developer';
 const top=document.createElement('div');top.className='hr-top';top.innerHTML='<div><small>CARTECH / PEOPLE OPERATIONS</small><h2>Team management</h2><p>Your people, access and workshop records in one place.</p></div><button class="hr-btn hr-primary" id="hrAdd">+ Add staff</button>';root.prepend(top);
 const nav=document.createElement('div');nav.className='hr-tabs';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Staff management sections');top.after(nav);
 const sections=[['overview','Overview'],['duty','Duty & schedules'],['notices','Announcements'],['records','Records & recovery'],['setup','Account setup']];if(isDeveloperWorkspace)sections.push(['settings','Developer settings']);
@@ -9519,8 +9519,8 @@ function move(node,key){if(node&&panels[key])panels[key].append(node);}
 move(root.querySelector('.ct-dev-metrics'),'overview');
 const grid=document.createElement('div');grid.className='hr-grid';grid.innerHTML='<article class="hr-card"><h3>Team composition</h3><p>Current accounts by workspace role</p><div id="hrRoleBars" class="hr-bars"></div></article><article class="hr-card"><h3>Account health</h3><p>Access and agreement status from loaded staff records</p><div class="hr-insights"><div><strong id="hrActive">—</strong><small>Active access</small></div><div><strong id="hrExpired">—</strong><small>Expired / off</small></div><div><strong id="hrPending">—</strong><small>Agreement pending</small></div></div><p id="hrCoverage" style="margin-top:20px"></p></article>';panels.overview.append(grid);
 const cols=root.querySelector('.ct-dev-columns'),accounts=root.querySelector('.ct-admin-accounts');if(isDeveloperWorkspace)move(accounts,'settings');else if(accounts)accounts.hidden=true;move(el('subUsername').closest('form').parentElement,'setup');move(el('devStaffPresenceList').parentElement,'overview');move(el('devDeletedLogsPanel'),'records');if(cols)cols.remove();
-move(el('ctDevAnnouncementFold'),'notices');move(el('ctDevDutyFold'),'duty');move(el('ctDevArchiveFold'),'records');
-const developerOnlyNodes=[el('ctTrialControlCard'),el('devFeatureFlagCard'),el('ctDeveloperPauseControls')].filter(Boolean);if(isDeveloperWorkspace)developerOnlyNodes.forEach(node=>move(node,'settings'));else developerOnlyNodes.forEach(node=>node.hidden=true);
+move(el('ctDevAnnouncementFold'),'notices');move(el('ctDevDutyFold'),'duty');move(el('ctDevArchiveFold'),'records');move(el('ctTrialControlCard'),'settings');move(el('devFeatureFlagCard'),'settings');
+move(el('ctDeveloperPauseControls'),'settings');
 const recovery=root.querySelector('.ct-admin-recovery');move(recovery,'records');['ctDevAnnouncementFold','ctDevDutyFold','ctDevArchiveFold'].forEach(id=>el(id).open=true);
 el('hrAdd').onclick=()=>{show('setup');el('subUsername').focus();};
 const list=el('devRegisteredAccountsContainer'),search=el('ctAdminStaffSearch');
