@@ -5395,8 +5395,9 @@ async function submitPartsRequest() {
           ? `<span class="text-[8px] text-indigo-500 font-black mt-0.5"><i class="fa-solid fa-check-double mr-0.5"></i> Seen${seenByOthers[0] !== 'office' ? ` by ${escapeHTML(seenByOthers[0].toUpperCase())}` : ''}</span>`
           : '';
         const messageKey = encodeURIComponent(chatMessageKey(msg)).replace(/'/g, '%27');
-        const deleteButton = currentRole === 'developer'
-          ? `<button type="button" onclick="deleteChatMessage('${escapeHTML(jobId)}','${messageKey}')" class="p-1 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-[9px] transition shadow-sm flex items-center justify-center cursor-pointer" title="Delete this message" aria-label="Delete this message"><i class="fa-solid fa-trash"></i></button>`
+        const developerDeleteAllowed = currentRole === 'developer' && Boolean(currentUser) && window.CartechAccess?.sessionValid();
+        const deleteButton = developerDeleteAllowed
+          ? `<button type="button" onclick="deleteChatMessage('${escapeHTML(jobId)}','${messageKey}')" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[9px] font-black transition shadow-sm inline-flex items-center gap-1 justify-center cursor-pointer" title="Developer: delete this message" aria-label="Delete this message"><i class="fa-solid fa-trash"></i><span>Delete</span></button>`
           : '';
 
         return `
