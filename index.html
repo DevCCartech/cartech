@@ -5567,7 +5567,7 @@ async function submitPartsRequest() {
 
     function renderDeveloperAnalytics() {
       const isDev = currentRole === 'developer';
-      const canManageAccounts = isDev || currentRole === 'admin';
+      const canManageAccounts = isDev;
       const accountsWrapper = document.getElementById('developerAccountsWrapper');
       const restrictedNotice = document.getElementById('adminRestrictedAccountsNotice');
       const deletedLogsPanel = document.getElementById('devDeletedLogsPanel');
@@ -9508,15 +9508,17 @@ window.CartechShopHours = (() => {
 (()=>{
 const root=document.getElementById('viewDeveloper');if(!root)return;
 const el=id=>document.getElementById(id);
+const isDeveloperWorkspace=currentRole==='developer';
 const top=document.createElement('div');top.className='hr-top';top.innerHTML='<div><small>CARTECH / PEOPLE OPERATIONS</small><h2>Team management</h2><p>Your people, access and workshop records in one place.</p></div><button class="hr-btn hr-primary" id="hrAdd">+ Add staff</button>';root.prepend(top);
 const nav=document.createElement('div');nav.className='hr-tabs';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Staff management sections');top.after(nav);
-const panels={};[['overview','Overview'],['people','Staff directory'],['duty','Duty & schedules'],['notices','Announcements'],['records','Records & recovery'],['setup','Account setup'],['settings','Developer settings']].forEach(([key,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.id='hr-tab-'+key;b.setAttribute('role','tab');b.setAttribute('aria-controls','hr-panel-'+key);b.addEventListener('click',()=>show(key));nav.append(b);const p=document.createElement('section');p.id='hr-panel-'+key;p.dataset.hrPanel=key;p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',b.id);root.append(p);panels[key]=p;});
+const sections=[['overview','Overview'],['duty','Duty & schedules'],['notices','Announcements'],['records','Records & recovery'],['setup','Account setup']];if(isDeveloperWorkspace)sections.push(['settings','Developer settings']);
+const panels={};sections.forEach(([key,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.id='hr-tab-'+key;b.setAttribute('role','tab');b.setAttribute('aria-controls','hr-panel-'+key);b.addEventListener('click',()=>show(key));nav.append(b);const p=document.createElement('section');p.id='hr-panel-'+key;p.dataset.hrPanel=key;p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',b.id);root.append(p);panels[key]=p;});
 function show(key){Object.keys(panels).forEach(k=>{panels[k].hidden=k!==key;el('hr-tab-'+k).setAttribute('aria-selected',String(k===key));});}
 nav.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const bs=[...nav.children],i=bs.indexOf(document.activeElement);let n=e.key==='Home'?0:e.key==='End'?bs.length-1:(i+(e.key==='ArrowRight'?1:-1)+bs.length)%bs.length;bs[n].click();bs[n].focus();});
-function move(node,key){if(node)panels[key].append(node);}
+function move(node,key){if(node&&panels[key])panels[key].append(node);}
 move(root.querySelector('.ct-dev-metrics'),'overview');
 const grid=document.createElement('div');grid.className='hr-grid';grid.innerHTML='<article class="hr-card"><h3>Team composition</h3><p>Current accounts by workspace role</p><div id="hrRoleBars" class="hr-bars"></div></article><article class="hr-card"><h3>Account health</h3><p>Access and agreement status from loaded staff records</p><div class="hr-insights"><div><strong id="hrActive">—</strong><small>Active access</small></div><div><strong id="hrExpired">—</strong><small>Expired / off</small></div><div><strong id="hrPending">—</strong><small>Agreement pending</small></div></div><p id="hrCoverage" style="margin-top:20px"></p></article>';panels.overview.append(grid);
-const cols=root.querySelector('.ct-dev-columns'),accounts=root.querySelector('.ct-admin-accounts');move(accounts,'people');move(el('subUsername').closest('form').parentElement,'setup');move(el('devStaffPresenceList').parentElement,'overview');move(el('devDeletedLogsPanel'),'records');if(cols)cols.remove();
+const cols=root.querySelector('.ct-dev-columns'),accounts=root.querySelector('.ct-admin-accounts');if(isDeveloperWorkspace)move(accounts,'settings');else if(accounts)accounts.hidden=true;move(el('subUsername').closest('form').parentElement,'setup');move(el('devStaffPresenceList').parentElement,'overview');move(el('devDeletedLogsPanel'),'records');if(cols)cols.remove();
 move(el('ctDevAnnouncementFold'),'notices');move(el('ctDevDutyFold'),'duty');move(el('ctDevArchiveFold'),'records');move(el('ctTrialControlCard'),'settings');move(el('devFeatureFlagCard'),'settings');
 move(el('ctDeveloperPauseControls'),'settings');
 const recovery=root.querySelector('.ct-admin-recovery');move(recovery,'records');['ctDevAnnouncementFold','ctDevDutyFold','ctDevArchiveFold'].forEach(id=>el(id).open=true);
