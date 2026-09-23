@@ -2705,7 +2705,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         <footer class="px-6 py-4 bg-darkBg/60 border-t border-slate-800/60 text-center text-xs text-slate-500" id="ctLicenseNote">
             Cartech Queue Management System • All Rights Reserved
         </footer>
-    <div id="ctLicenseActions" hidden><span id="ctLicenseShopName" hidden></span><span id="ctDevelopmentPreviewBadge" hidden></span><button id="ctDevelopmentSignIn" type="button" hidden onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" hidden onclick="CartechAccess.resetLicenseTest(event)">Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" hidden onclick="CartechAccess.closeProgramPreview()">Back to control terminal</button></div></main>
+    <button id="ctRenewalBack" type="button" onclick="CartechAccess.cancelRenewal()" style="display:block;margin:8px auto 18px;color:#fb923c;font-weight:700">Back to sign-in</button><div id="ctLicenseActions" hidden><span id="ctLicenseShopName" hidden></span><span id="ctDevelopmentPreviewBadge" hidden></span><button id="ctDevelopmentSignIn" type="button" hidden onclick="CartechAccess.openDeveloperLogin()">Developer sign-in</button><button id="ctLicenseTestReset" type="button" hidden onclick="CartechAccess.resetLicenseTest(event)">Exit license test</button><button id="ctDevelopmentPreviewClose" type="button" hidden onclick="CartechAccess.closeProgramPreview()">Back to control terminal</button></div></main>
 
     <dialog class="ct-reference-success" id="ctLicenseSuccess" hidden="" aria-labelledby="ctRefSuccessTitle">
             <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400">
@@ -3307,19 +3307,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     let markSeenInFlight = {};
     let pendingAlertNavigation = null;
 
-    const MAIN_DEFAULT_ACCOUNTS = Object.freeze({
-      "dev": { pass: "kean12", role: "developer", expiresAt: 0 }, 
-      "admin": { pass: "admin123", role: "admin", expiresAt: 0 },
-      "shiela": { pass: "1234", role: "office", expiresAt: 0 },
-      "josh": { pass: "1234", role: "office", expiresAt: 0 },
-      "ken": { pass: "1234", role: "office", expiresAt: 0 },
-      "charl": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "bert": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "nel": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "rocky": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "mark": { pass: "1234", role: "workshop", expiresAt: 0 },
-      "bot": { pass: "1122", role: "workshop", expiresAt: 0 }
-    });
+    const MAIN_DEFAULT_ACCOUNTS = Object.freeze({});
     let cachedCloudAccounts = currentShopId === CARTECH_MAIN_SHOP_ID
       ? JSON.parse(JSON.stringify(MAIN_DEFAULT_ACCOUNTS))
       : {};
@@ -7353,6 +7341,7 @@ window.CartechAccess = (() => {
   const consentKey = 'cartech_terms_agreement_session';
   let agreementAccepted = false, agreementPreview = false, underDevPreview = false, agreementBusy = false;
   let developerLoginOpen = false, authGeneration = 0, phoneLayout = null;
+  let renewalAuthorized = false, renewalUser = null, renewalPassword = null;
   const allowedRoles = ['developer', 'admin', 'office', 'workshop', 'tester'];
   const nowMono = () => typeof performance !== 'undefined' ? performance.now() : Date.now();
   let clockBase = Date.now(), monoBase = nowMono(), clockOffset = 0, highestTime = clockBase;
@@ -8241,7 +8230,11 @@ window.CartechAccess = (() => {
     event?.preventDefault?.(); event?.stopPropagation?.();
     if (licenseBusy) return false;
     const key = String(byId('ctLicenseInput').value || '').trim().toUpperCase();
-    const acceptedBy = 'License key holder';
+    if (!renewalAuthorized || !renewalUser) {
+      message('ctLicenseMessage', 'Admin or developer sign-in is required before renewal.', true);
+      return false;
+    }
+    const acceptedBy = renewalUser;
     if (key.replace(/[^A-Za-z0-9]/g, '').length < 20) { message('ctLicenseMessage', 'Enter the complete license key supplied by the developer.', true); return false; }
     const previousShop = currentShopId;
     const resumableUser = verifiedUser;
@@ -8313,7 +8306,11 @@ window.CartechAccess = (() => {
           byId('authBoxForgot').classList.add('hidden');
           byId('authBoxLogin').classList.remove('hidden');
           initRememberedDeviceUI();
-          loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is unlocked on web and installed apps. Sign in with your staff account.`);
+          loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is unlocked on web and installed apps.`);
+          const account = renewalUser, password = renewalPassword;
+          renewalAuthorized = false; renewalUser = renewalPassword = null;
+          if (account && password) void authenticate(account, password).catch(error =>
+            loginError('SIGN-IN REQUIRED', error.message || 'Sign in again to continue.'));
           window.CartechShopHours?.refresh?.();
         }
       };
@@ -8448,8 +8445,27 @@ window.CartechAccess = (() => {
     if (window.CartechUpdates?.pending()) return false;
     if (!await refreshLicenseStatus(true)) {
       clearAuth();
-      if (programClosed()) showDevelopment(false);
-      return false;
+      if (mode !== 'password') {
+        loginError('SIGN-IN REQUIRED', 'Enter your account password to check workshop access.');
+        return false;
+      }
+      const result = await cartechRpc('cartech_renewal_sign_in', {
+        p_username:user, p_password:password
+      });
+      if (result.error) throw result.error;
+      const check = tenantResult(result.data);
+      if (!check?.allowed) {
+        loginError('INVALID CREDENTIALS', 'Invalid username or password. Try again.');
+        return false;
+      }
+      if (!['admin','developer'].includes(check.account_role)) {
+        loginError('LICENSE EXPIRED', 'Ask the admin to reactivate the workshop key. The app will unlock after renewal.');
+        return false;
+      }
+      renewalAuthorized = true; renewalUser = user; renewalPassword = password;
+      byId('loginPassword').value = '';
+      showDevelopment(false);
+      return true;
     }
     if (mode !== 'password' && !rememberedSignIn(user)) { signOut('updated'); return false; }
     const cloud = await readAccounts();
@@ -8542,6 +8558,7 @@ window.CartechAccess = (() => {
     if (['expired', 'revoked', 'program-ended', 'license-expired', 'license-required'].includes(reason)) clearRememberedDevice();
     try { sessionStorage.removeItem(signInKey); } catch (_) {}
     currentUser = currentRole = verifiedUser = verifiedRole = null; accountSnapshot = null;
+    renewalAuthorized = false; renewalUser = renewalPassword = null;
     previews.clear();
     state = []; completedArchive = []; isCompletedLoaded = false; previousJobStatuses = {};
     window.CartechDiagnostics?.resetSession();
@@ -8666,7 +8683,7 @@ window.CartechAccess = (() => {
     setText('ctWelcomeDeadlineTitle', `Free trial closes ${deadline}`);
     setText('ctWelcomeDeadlineCopy', `After the free trial closes, every account is signed out until the shop owner activates a valid CARTECH license.`);
     setText('ctWelcomeAccessRule', `Access ends when the account timer expires, access is revoked, the free trial closes, or the workshop license expires—whichever happens first. After the trial, the shop owner activates one workshop license; all connected office and mechanic installations then synchronize automatically. You only need to accept this user agreement once per version. Unsaved work may be lost when a session ends.`);
-    setText('ctDevelopmentMessage', String(tenantAccessSnapshot?.status || '').toLowerCase() === 'payment_paused'
+    if (renewalAuthorized) setText('ctDevelopmentMessage', String(tenantAccessSnapshot?.status || '').toLowerCase() === 'payment_paused'
       ? `This workshop license has an unpaid balance. Access is paused until the outstanding payment is cleared by the developer.`
       : String(tenantAccessSnapshot?.status || '').toLowerCase() === 'operational_paused'
         ? `Workshop access is temporarily paused. Staff and mechanics must wait; the registered license owner or developer can resume access below.`
@@ -8745,6 +8762,12 @@ window.CartechAccess = (() => {
   function showDevelopment(preview = false) {
     if (preview && (currentRole !== 'developer' || !identityValid())) return;
     if (!preview && workshopAccessActive()) return;
+    if (!preview && !renewalAuthorized) {
+      byId('ctUnderDevelopment').hidden = true;
+      byId('appShell').classList.add('hidden');
+      byId('loginScreen').classList.remove('hidden');
+      return;
+    }
     if (!licenseSuccessActive) clearLicenseSuccessTransition(true);
     const wasHidden = byId('ctUnderDevelopment').hidden;
     const testingLicense = licenseTestActive();
@@ -8757,12 +8780,21 @@ window.CartechAccess = (() => {
     byId('ctDevelopmentPreviewClose').hidden = !preview || testingLicense;
     byId('ctLicenseTestReset').hidden = !testingLicense;
     byId('ctDevelopmentSignIn').hidden = true;
+    setText('ctDevelopmentTitle', 'YOUR LICENSE EXPIRED');
+    setText('ctDevelopmentMessage', 'To continue using CARTECH, renew your workshop license. Enter the new key below.');
     if (wasHidden && !preview && !licenseBusy) {
       byId('ctLicenseInput').value = '';
       message('ctLicenseMessage', 'The license key is used once by the owner. Other connected devices will unlock automatically.');
     }
     updateLicenseGate();
     if (wasHidden) { window.scrollTo?.({ top:0, behavior:'instant' }); byId('ctDevelopmentTitle').focus(); }
+  }
+  function cancelRenewal() {
+    renewalAuthorized = false; renewalUser = renewalPassword = null;
+    void cartechRpc('cartech_renewal_sign_out').catch(() => {});
+    byId('ctUnderDevelopment').hidden = true;
+    byId('loginScreen').classList.remove('hidden');
+    byId('loginUsername').focus();
   }
   function openDeveloperLogin() {
     if (!programClosed() || underDevPreview || !paidLicenseActive()) return;
@@ -9237,7 +9269,7 @@ window.CartechAccess = (() => {
     startPaymentPolling();
   }
   const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
-  Object.assign(api, { resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
+  Object.assign(api, { cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
