@@ -3072,6 +3072,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:false }
     }) : null;
     let realtimeChannel = null;
+    let realtimeConnected = false;
+    let realtimeRetryAt = 0;
 
     let USERS_RECORD_ID = '';
     let PRESENCE_RECORD_ID = '';
@@ -3827,7 +3829,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
     // PURE ZERO-DELAY REALTIME SUBSCRIPTION
     function initRealtimeSubscription() {
-      if (!supabaseClient || realtimeChannel) return;
+      if (!supabaseClient || realtimeChannel || Date.now() < realtimeRetryAt) return;
 
       realtimeChannel = supabaseClient
         .channel(`workshop_queue_${currentShopId}_live`)
@@ -3942,7 +3944,21 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
             void window.CartechLicenseExtras?.refresh?.(true);
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            realtimeConnected = true;
+            // Recover inserts missed while Android was asleep or disconnected.
+            if (currentUser && !document.hidden) void pullData(false);
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            realtimeConnected = false;
+            realtimeRetryAt = Date.now() + 15000;
+            if (realtimeChannel) {
+              const staleChannel = realtimeChannel;
+              realtimeChannel = null;
+              void supabaseClient.removeChannel(staleChannel);
+            }
+          }
+        });
     }
 
     // RENDER OR HIDE THE TOP FLOATING BANNER
@@ -6119,6 +6135,7 @@ async function submitPartsRequest() {
         if (activeModalChatJobId && !isChatMinimizedToBubble) {
           markConversationSeen(activeModalChatJobId);
         }
+        if (!realtimeChannel) initRealtimeSubscription();
         pullData(false);
       }
     });
@@ -6136,13 +6153,16 @@ async function submitPartsRequest() {
 
     initRememberedDeviceUI();
 
-    // Realtime is the normal live path. Only poll when no realtime channel is
-    // available; this prevents repeated full queue downloads and egress spikes.
+    // Android can keep a channel object after its socket stops delivering events.
+    // One visible-only fallback check per minute catches missed dispatches.
+    let queueReconcileTicks = 0;
     setInterval(() => {
-      if (!document.hidden && currentUser && !realtimeChannel) {
-        pullData(false);
+      if (!document.hidden && currentUser && window.CartechAccess?.sessionValid()) {
+        queueReconcileTicks++;
+        if (!realtimeChannel) initRealtimeSubscription();
+        if (!realtimeConnected || queueReconcileTicks % 5 === 0) void pullData(false);
       }
-    }, 1800000);
+    }, 60000);
 
     // Keep the developer's ON/OFF diagnostic release visible to every active mechanic
     // even when realtime is unavailable. Realtime remains the fast path.
@@ -8475,9 +8495,9 @@ window.CartechAccess = (() => {
       if (mode !== 'password') { clearRememberedDevice(); clearAuth(); }
       loginError('INVALID CREDENTIALS', 'Invalid username or password. Please try again.'); return false;
     }
-    if (window.CartechShopHours && !window.CartechShopHours.isOpen() && acc.role !== 'developer') {
+    if (window.CartechShopHours && !window.CartechShopHours.isOpen() && acc.role !== 'developer' && user !== 'bot') {
       clearAuth();
-      loginError('SHOP IS CLOSED', 'Staff sign-in is available from 8:00 AM to 5:00 PM Philippine time. Only developer accounts can sign in after hours.');
+      loginError('SHOP IS CLOSED', 'Staff sign-in is available from 8:00 AM to 5:00 PM Philippine time. Only developer and bot test accounts can sign in after hours.');
       return false;
     }
     if (mode !== 'password' && !rememberedSignIn(user, acc.role)) {
