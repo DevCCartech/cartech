@@ -3827,6 +3827,67 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       } catch(e){}
     }
 
+
+    // Windows office launcher backup. The mechanic saves to Supabase first;
+    // the office PC copies only confirmed records, then backfills after login.
+    let pcBackupReady = false;
+    let pcBackupBackfillStartedFor = '';
+    let pcBackupRunning = false;
+    const pcBackupOffice = () => pcBackupReady &&
+      ['office', 'admin', 'developer'].includes(currentRole) &&
+      !!currentUser && window.CartechAccess?.sessionValid() === true;
+    function sendInspectionToPc(job) {
+      if (!pcBackupOffice() || !job || job.shop_id !== currentShopId) return;
+      const inspection = parsePartsInfo(job.auto_schedule_slot).diagData;
+      if (!inspection || !inspection.savedAtISO) return;
+      const keys = ['id', 'shop_id', 'created_at', 'customer', 'phone', 'vehicle', 'plate', 'service', 'details', 'status'];
+      const record = Object.fromEntries(keys.map(key => [key, job[key] ?? '']));
+      record.inspection = inspection;
+      window.postMessage({ type:'cartech-inspection-backup-v1', shopId:currentShopId, job:record }, window.location.origin);
+    }
+    function backupLoadedInspections() {
+      if (!pcBackupOffice()) return;
+      [...state, ...completedArchive].forEach(sendInspectionToPc);
+    }
+    async function backfillPcInspections(force = false) {
+      if (!pcBackupOffice() || pcBackupRunning || !navigator.onLine) return;
+      const scope = `${currentShopId}:${currentUser}`;
+      if (!force && pcBackupBackfillStartedFor === scope) return;
+      pcBackupRunning = true;
+      try {
+        // This runs once per office login, and again only after a connection
+        // returns. Normal realtime and queue refresh add new reports immediately.
+        const batch = 50;
+        for (let offset = 0; ; offset += batch) {
+          if (!pcBackupOffice() || scope !== `${currentShopId}:${currentUser}`) break;
+          const url = `${API_URL}?select=id,shop_id,created_at,customer,phone,vehicle,plate,service,details,status,auto_schedule_slot&auto_schedule_slot=like.*DIAG_DATA*&order=created_at.asc&limit=${batch}&offset=${offset}`;
+          const response = await cartechFetch(url, { headers:HEADERS, cache:'no-store' });
+          if (!response.ok) throw new Error(`Inspection backup returned ${response.status}`);
+          const jobs = await response.json();
+          if (!Array.isArray(jobs)) throw new Error('Invalid inspection backup response');
+          if (!pcBackupOffice() || scope !== `${currentShopId}:${currentUser}`) break;
+          jobs.forEach(sendInspectionToPc);
+          if (jobs.length < batch) { pcBackupBackfillStartedFor = scope; break; }
+        }
+      } catch (error) {
+        console.warn('CARTECH PC backup will retry on the next login or reconnection:', error);
+      } finally { pcBackupRunning = false; }
+    }
+    window.addEventListener('message', event => {
+      if (event.source !== window || event.origin !== window.location.origin || event.data?.type !== 'cartech-pc-backup-ready-v1') return;
+      pcBackupReady = true;
+      backupLoadedInspections();
+      void backfillPcInspections();
+    });
+    function connectPcBackup() {
+      window.postMessage({ type:'cartech-pc-backup-ping-v1' }, window.location.origin);
+    }
+    window.addEventListener('online', () => {
+      if (!pcBackupOffice()) return;
+      backupLoadedInspections();
+      void backfillPcInspections(true);
+    });
+
     // PURE ZERO-DELAY REALTIME SUBSCRIPTION
     function initRealtimeSubscription() {
       if (!supabaseClient || realtimeChannel || Date.now() < realtimeRetryAt) return;
@@ -3839,6 +3900,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           (payload) => {
             if (!window.CartechAccess?.sessionValid()) return;
             const { eventType, new: newRecord, old: oldRecord } = payload;
+            if ((eventType === 'UPDATE' || eventType === 'INSERT') && newRecord) sendInspectionToPc(newRecord);
 
             // 1. SYSTEM RECORD SYNC
             if (newRecord && newRecord.status === 'system_record') {
@@ -4519,6 +4581,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
       initRealtimeSubscription();
       void syncFeatureConfig(true);
+      connectPcBackup();
 
       pullData(true).then(() => {
         if (pendingAlertNavigation) {
@@ -4600,6 +4663,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
             if (Array.isArray(data)) {
               if (!window.CartechAccess?.sessionValid()) return;
               completedArchive = data;
+              backupLoadedInspections();
               isCompletedLoaded = true;
               render();
             }
@@ -4656,6 +4720,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
             if (currentUser !== requestUser || !window.CartechAccess?.sessionValid()) return;
             state = data;
+            backupLoadedInspections();
             render();
             updateAlarmState();
             if (activeModalChatJobId) {
