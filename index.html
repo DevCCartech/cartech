@@ -1933,7 +1933,43 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 .ct-lo-actions button { min-height:42px; padding:10px 17px; border:1px solid #415776; border-radius:8px; background:#243952; color:white; font-size:12px; font-weight:750; cursor:pointer; }
 .ct-lo-actions button.ct-lo-proceed { background:#0a9a70; border-color:#0a9a70; }
 .ct-lo-actions button:hover { filter:brightness(1.12); }
-@media(max-width:740px) { .ct-lo-head{padding:14px 18px}.ct-lo-main{padding:22px 18px}.ct-lo-hero{flex-wrap:wrap;padding:20px}.ct-lo-timer{width:100%;min-width:0}.ct-lo-cards{grid-template-columns:1fr}.ct-lo-card{min-height:135px}.ct-lo-actions{align-items:stretch;flex-direction:column}.ct-lo-buttons{justify-content:stretch}.ct-lo-buttons button{flex:1} }
+#ctLauncherLicenseScreen { background:radial-gradient(circle at 18% 12%,#1b3049 0%,transparent 42%),linear-gradient(135deg,#0b1527,#101d34); }
+.ct-lo-head { padding:15px max(27px,calc((100% - 980px)/2)); background:#0b172c; border-color:#2b3e58; }
+.ct-lo-mark { background:linear-gradient(135deg,#ff873a,#ed540a); font-size:19px; box-shadow:0 4px 16px #f2621940; }
+.ct-lo-head-brand { letter-spacing:.08em; }
+.ct-lo-head small { font-size:9px; letter-spacing:.12em; color:#abc0da; }
+.ct-lo-head-user { padding:7px 11px; border:1px solid #354862; border-radius:30px; font-weight:700; }
+.ct-lo-main { max-width:980px; padding:26px 27px 30px; }
+.ct-lo-eyebrow { margin:0 0 5px; color:#ff9c54; font-size:10px; font-weight:850; letter-spacing:.16em; }
+.ct-lo-main h1 { margin:0; font-size:27px; line-height:1.25; letter-spacing:-.025em; }
+.ct-lo-intro { margin:7px 0 18px; color:#a7bbd2; font-size:12px; }
+.ct-lo-hero { display:grid; grid-template-columns:minmax(0,1fr) 300px; align-items:stretch; gap:20px; padding:23px; border:1px solid #3e5270; border-top:3px solid #f77724; border-left:1px solid #3e5270; background:linear-gradient(120deg,#192c47,#14243d 70%); box-shadow:0 16px 36px #030b1c36; }
+.ct-lo-hero-left { min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:22px; }
+.ct-lo-keyicon { background:#613319; color:#ffd0a8; font-size:25px; }
+.ct-lo-kicker { display:inline-flex; padding:4px 9px; border-radius:30px; color:#8fe3bf; background:#133f38; font-size:10px; letter-spacing:.045em; }
+.ct-lo-shop { font-size:21px; margin:8px 0 2px; }
+.ct-lo-sub { font-size:11px; }
+.ct-lo-timer { display:flex; flex-direction:column; justify-content:center; min-width:0; padding:20px; background:#0b182d; border-color:#3a506e; text-align:left; }
+.ct-lo-timer strong { margin:10px 0 8px; color:#ff9b48; font-size:24px; letter-spacing:-.04em; }
+.ct-lo-timer span { color:#aec0d5; font-size:11px; }
+.ct-lo-progress[hidden] { display:none!important; }
+.ct-lo-progress-label { display:flex; justify-content:space-between; gap:10px; color:#b7c7db; font-size:10px; font-weight:700; }
+.ct-lo-track { height:6px; margin-top:8px; border-radius:99px; background:#344761; overflow:hidden; }
+.ct-lo-track span { display:block; height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,#f66e1a,#ffb45b); transition:width .4s linear; }
+.ct-lo-details { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:13px; }
+.ct-lo-detail { min-width:0; display:flex; flex-direction:column; gap:4px; padding:14px 17px; border:1px solid #324760; border-radius:11px; background:#16263e; }
+.ct-lo-detail small { color:#9bb3d1; font-size:10px; font-weight:800; letter-spacing:.1em; }
+.ct-lo-detail strong { color:#fff; font-size:15px; overflow-wrap:anywhere; }
+.ct-lo-detail span { color:#9bb3d1; font-size:10px; }
+.ct-lo-renew { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:14px; padding:15px 18px; border:1px solid #5b4435; border-radius:11px; background:linear-gradient(110deg,#302b30,#242c3e); }
+.ct-lo-renew strong { color:#fff; font-size:15px; }
+.ct-lo-renew p { max-width:560px; margin:4px 0 0; color:#c5cbd3; font-size:11px; }
+.ct-lo-renew button { flex:none; min-height:40px; padding:9px 16px; border-radius:8px; background:#f36b1b; color:#fff; font-size:12px; font-weight:800; cursor:pointer; }
+.ct-lo-renew button:hover { background:#ff823a; }
+.ct-lo-actions { margin-top:13px; padding-top:14px; }
+.ct-lo-actions p { font-size:11px; }
+.ct-lo-actions button.ct-lo-proceed { min-height:43px; background:#0d9e75; border-color:#0d9e75; font-size:12px; }
+@media(max-width:760px) { .ct-lo-head{padding:14px 18px}.ct-lo-main{padding:20px 18px}.ct-lo-hero{grid-template-columns:1fr;padding:18px}.ct-lo-timer{width:100%}.ct-lo-details{grid-template-columns:1fr}.ct-lo-renew{align-items:stretch;flex-direction:column}.ct-lo-actions{align-items:stretch;flex-direction:column}.ct-lo-actions button{width:100%} }
 </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
@@ -1987,16 +2023,21 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 
   <!-- Windows launcher: post-login license overview for admins/developers only. -->
   <section id="ctLauncherLicenseScreen" hidden aria-labelledby="ctLauncherLicenseTitle">
-    <header class="ct-lo-head"><div class="ct-lo-head-brand"><span class="ct-lo-mark" aria-hidden="true">⚿</span><span>CARTECH<small>Workshop Launcher &amp; License Portal</small></span></div><span id="ctLauncherLicenseUser" class="ct-lo-head-user"></span></header>
+    <header class="ct-lo-head"><div class="ct-lo-head-brand"><span class="ct-lo-mark" aria-hidden="true">C</span><span>CARTECH<small>WORKSHOP LICENSE CENTER</small></span></div><span id="ctLauncherLicenseUser" class="ct-lo-head-user"></span></header>
     <main class="ct-lo-main">
-      <h1 id="ctLauncherLicenseTitle">Workshop subscription</h1>
+      <p class="ct-lo-eyebrow">YOUR WORKSHOP · SUBSCRIPTION</p>
+      <h1 id="ctLauncherLicenseTitle">Ready for the workshop.</h1>
+      <p class="ct-lo-intro">Review your license before entering the dashboard.</p>
       <section class="ct-lo-hero" aria-label="Current subscription">
-        <div class="ct-lo-heading"><span class="ct-lo-keyicon" aria-hidden="true">🔑</span><div><span id="ctLauncherLicenseStatus" class="ct-lo-kicker">Checking license</span><h2 id="ctLauncherLicenseShop" class="ct-lo-shop">CARTECH Workshop</h2><span id="ctLauncherLicenseProfile" class="ct-lo-sub">Your workshop subscription</span></div></div>
-        <div class="ct-lo-timer"><small>Time remaining on license</small><strong id="ctLauncherLicenseCountdown" aria-live="off">—</strong><span id="ctLauncherLicenseEnd">Checking expiry…</span></div>
+        <div class="ct-lo-hero-left">
+          <div class="ct-lo-heading"><span class="ct-lo-keyicon" aria-hidden="true">✦</span><div><span id="ctLauncherLicenseStatus" class="ct-lo-kicker">Checking license</span><h2 id="ctLauncherLicenseShop" class="ct-lo-shop">CARTECH Workshop</h2><span id="ctLauncherLicenseProfile" class="ct-lo-sub">Your workshop subscription</span></div></div>
+          <div id="ctLauncherLicenseProgressWrap" class="ct-lo-progress" hidden><div class="ct-lo-progress-label"><span>Subscription remaining</span><span id="ctLauncherLicensePercent">—</span></div><div id="ctLauncherLicenseProgress" class="ct-lo-track" role="progressbar" aria-label="Subscription time remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div></div>
+        </div>
+        <div class="ct-lo-timer"><small>TIME REMAINING</small><strong id="ctLauncherLicenseCountdown" aria-live="off">—</strong><span id="ctLauncherLicenseEnd">Checking expiry…</span></div>
       </section>
-      <h2 class="ct-lo-section-title">Your workshop access</h2>
-      <div class="ct-lo-cards"><section class="ct-lo-card"><strong>License status</strong><p>This is your workshop subscription shared by authorized staff.</p><span id="ctLauncherLicenseSummary">Checking status…</span></section><section class="ct-lo-card"><strong>Remaining time</strong><p>Your subscription continues until the expiry recorded by CARTECH.</p><span id="ctLauncherLicenseExpiry">Checking expiry…</span></section><section class="ct-lo-card"><strong>Renew or top up</strong><p>See the real CARTECH plans and payment steps for your workshop.</p><span>Open plans using the button below</span></section></div>
-      <div class="ct-lo-actions"><p>The dashboard opens when you choose to continue.</p><div class="ct-lo-buttons"><button type="button" onclick="CartechAccess.openLicenseStore()">View plans / Top up</button><button type="button" class="ct-lo-proceed" onclick="CartechAccess.proceedFromLicenseOverview()">Proceed to Main Dashboard →</button></div></div>
+      <div class="ct-lo-details"><section class="ct-lo-detail"><small>LICENSE STARTED</small><strong id="ctLauncherLicenseStart">Checking start…</strong><span id="ctLauncherLicenseSummary">Checking status…</span></section><section class="ct-lo-detail"><small>EXPIRES ON</small><strong id="ctLauncherLicenseExpiry">Checking expiry…</strong><span>Philippine time · CARTECH subscription</span></section></div>
+      <aside class="ct-lo-renew"><div><strong>Need more time?</strong><p>Top up your active key without losing its remaining time. View the current CARTECH plans and payment steps.</p></div><button type="button" onclick="CartechAccess.openLicenseStore()">View plans / Top up →</button></aside>
+      <footer class="ct-lo-actions"><p>Based on the latest online license check.</p><button type="button" class="ct-lo-proceed" onclick="CartechAccess.proceedFromLicenseOverview()">Proceed to Main Dashboard <span aria-hidden="true">→</span></button></footer>
     </main>
   </section>
 
@@ -7500,7 +7541,7 @@ window.CartechAccess = (() => {
   let programEndsAt = DEFAULT_PROGRAM_ENDS_AT;
   const agreementVersion = 'cartech-dry-run-2026-09-07-v3';
   const licenseAgreementVersion = 'cartech-key-activation-no-agreement-v61';
-  const buildId = 'cartech-launcher-license-first-v029';
+  const buildId = 'cartech-launcher-centered-v030';
   const ACCOUNT_VERIFY_INTERVAL_MS = 5 * 60 * 1000;
   const LICENSE_GATE_POLL_INTERVAL_MS = 60 * 1000;
   const LICENSE_EXPIRY_REFRESH_WINDOW_MS = 90 * 1000;
@@ -8721,8 +8762,8 @@ window.CartechAccess = (() => {
     licenseOverviewShownForLogin = false;
     if (!byId('ctLauncherLicenseScreen').hidden) {
       byId('ctLauncherLicenseScreen').hidden = true;
-      window.CartechLauncher?.openWorkspace?.();
     }
+    window.CartechLauncher?.showLogin?.();
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true;
     byId('ctTesterTermsAccepted').checked = false; byId('ctTesterTermsAccepted').disabled = false;
     if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
@@ -8918,6 +8959,16 @@ window.CartechAccess = (() => {
     const label = Number.isFinite(expiresAt) && expiresAt > 0 ? philippineDate(expiresAt) : 'Expiry unavailable';
     byId('ctLauncherLicenseEnd').textContent = `Expires ${label}`;
     byId('ctLauncherLicenseExpiry').textContent = label;
+    const startsAt = Date.parse(String(tenantAccessSnapshot?.license_starts_at || ''));
+    const hasWindow = Number.isFinite(startsAt) && Number.isFinite(expiresAt) && startsAt < expiresAt;
+    byId('ctLauncherLicenseStart').textContent = hasWindow ? philippineDate(startsAt) : 'Start time unavailable';
+    byId('ctLauncherLicenseProgressWrap').hidden = !hasWindow;
+    if (hasWindow) {
+      const percent = Math.max(0, Math.min(100, Math.round((expiresAt - now()) / (expiresAt - startsAt) * 100)));
+      byId('ctLauncherLicensePercent').textContent = `${percent}%`;
+      byId('ctLauncherLicenseProgress').firstElementChild.style.width = `${percent}%`;
+      byId('ctLauncherLicenseProgress').setAttribute('aria-valuenow', String(percent));
+    }
     byId('ctLauncherLicenseStatus').textContent = paidLicenseActive() ? 'License status · active' : 'Workshop access · active';
     byId('ctLauncherLicenseShop').textContent = tenantAccessSnapshot?.shop_name || 'CARTECH Workshop';
     byId('ctLauncherLicenseProfile').textContent = `Workshop ID: ${currentShopId}`;
@@ -8925,10 +8976,9 @@ window.CartechAccess = (() => {
     byId('ctLauncherLicenseUser').textContent = `${currentRole.toUpperCase()} · ${currentUser}`;
   }
   function proceedFromLicenseOverview() {
-    if (byId('ctLauncherLicenseScreen').hidden || !['admin','developer'].includes(currentRole) || !identityValid()) return;
+    if (byId('ctLauncherLicenseScreen').hidden || !['admin','developer'].includes(currentRole) || !sessionValid()) return;
     licenseOverviewShownForLogin = true;
     byId('ctLauncherLicenseScreen').hidden = true;
-    window.CartechLauncher?.openWorkspace?.();
     enterWorkspace();
   }
   function enterWorkspace() {
@@ -8947,6 +8997,7 @@ window.CartechAccess = (() => {
       return;
     }
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
+    window.CartechLauncher?.openWorkspace?.();
     getAudioContext(); bootApp(); refresh();
     queueMicrotask(() => window.CartechLicenseExtras?.refresh?.(true));
     if (currentRole !== 'tester') void sendPresenceHeartbeat(true);
