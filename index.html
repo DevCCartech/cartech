@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-developer-support-v68">
+  <meta name="cartech-build" content="cartech-developer-support-v69">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - Developer Chat Support v68 · Low egress · Partial / Full inspection</title>
+  <title>CARTECH - Developer Chat Support v69 · Low egress · Partial / Full inspection</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -5173,6 +5173,12 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
     let heartbeatTick = 0;
     let isFetchingNetwork = false;
+    // The five-minute queue check remains active, but a small database revision
+    // prevents downloading photo-heavy job rows when no visible job has changed.
+    // An absent RPC always falls back to the original full queue request.
+    let queueRevisionScope = '';
+    let queueRevision = null;
+    let queueRevisionUnsupported = false;
 
     async function pullData(forceTelemetry = false) {
       if (!window.CartechAccess?.sessionValid()) return;
@@ -5180,6 +5186,13 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       if (isFetchingNetwork) return;
       isFetchingNetwork = true;
       const requestUser = currentUser;
+      const requestShop = currentShopId;
+      const requestRole = currentRole;
+      const requestScope = `${requestShop}:${requestRole}:${requestUser}`;
+      if (forceTelemetry) {
+        queueRevisionScope = '';
+        queueRevision = null;
+      }
 
       heartbeatTick++;
       if (forceTelemetry || heartbeatTick % 5 === 0) {
@@ -5200,6 +5213,28 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           endpoint += `&status=in.(waiting,inprogress,waiting_parts)&limit=100`;
         }
 
+        let receivedRevision = null;
+        if (!forceTelemetry && !queueRevisionUnsupported) {
+          // This SQL function selects only IDs and Postgres row versions. A row
+          // version changes on every edit, including changes to photos or chat.
+          try {
+            const result = await cartechRpc('cartech_queue_revision_v69', {
+              p_shop_id:requestShop,
+              p_mechanic:requestRole === 'workshop' ? requestUser.toLowerCase() : null
+            });
+            if (requestScope !== `${currentShopId}:${currentRole}:${currentUser}` ||
+                !window.CartechAccess?.sessionValid()) return;
+            if (result.error) {
+              if (['PGRST202', '42883'].includes(result.error.code)) queueRevisionUnsupported = true;
+            } else if (typeof result.data === 'string') {
+              receivedRevision = result.data;
+              if (queueRevisionScope === requestScope && queueRevision === receivedRevision) return;
+            }
+          } catch (_) {
+            // Retry a regular queue fetch if the revision request fails.
+          }
+        }
+
         const res = await cartechFetch(endpoint, {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         });
@@ -5212,8 +5247,11 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
               return;
             }
 
-            if (currentUser !== requestUser || !window.CartechAccess?.sessionValid()) return;
+            if (requestScope !== `${currentShopId}:${currentRole}:${currentUser}` ||
+                !window.CartechAccess?.sessionValid()) return;
             state = data;
+            queueRevisionScope = receivedRevision === null ? '' : requestScope;
+            queueRevision = receivedRevision;
             backupLoadedInspections();
             render();
             updateAlarmState();
