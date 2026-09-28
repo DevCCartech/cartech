@@ -1971,6 +1971,273 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 .ct-lo-actions button.ct-lo-proceed { min-height:43px; background:#0d9e75; border-color:#0d9e75; font-size:12px; }
 @media(max-width:760px) { .ct-lo-head{padding:14px 18px}.ct-lo-main{padding:20px 18px}.ct-lo-hero{grid-template-columns:1fr;padding:18px}.ct-lo-timer{width:100%}.ct-lo-details{grid-template-columns:1fr}.ct-lo-renew{align-items:stretch;flex-direction:column}.ct-lo-actions{align-items:stretch;flex-direction:column}.ct-lo-actions button{width:100%} }
 </style>
+<style id="ct-license-ai-style">
+  #ctLicenseAiDialog{width:min(460px,calc(100% - 24px));max-height:min(700px,calc(100dvh - 32px));padding:0;border:1px solid #40506a;border-radius:16px;background:#0b1529;color:#f2f6fc;box-shadow:0 25px 80px #020815a8;overflow:hidden}
+  #ctLicenseAiDialog::backdrop{background:#020916c9;backdrop-filter:blur(5px)}
+  .ct-ai-head{display:flex;align-items:center;gap:11px;padding:17px 18px;background:#182941;border-bottom:1px solid #33465f}
+  .ct-ai-head i{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:11px;background:#58401d;color:#ffcc62;font-size:18px}
+  .ct-ai-head strong{display:block;font-size:14px}.ct-ai-head small{display:block;margin-top:3px;color:#afc0d7;font-size:10px}
+  .ct-ai-head button{margin-left:auto;border:0;border-radius:7px;background:#2c4059;color:white;min-width:42px;height:30px;padding:0 9px;font-size:11px;font-weight:750;cursor:pointer}
+  .ct-ai-note{margin:0;padding:11px 17px;background:#292519;color:#f7dba0;font-size:11px;line-height:1.5}
+  #ctLicenseAiMessages{display:flex;flex-direction:column;gap:10px;height:min(360px,48dvh);min-height:200px;overflow:auto;padding:17px}
+  .ct-ai-bubble{max-width:88%;padding:11px 12px;border-radius:12px;background:#20334e;color:#eaf0fa;border:1px solid #3c536f;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+  .ct-ai-bubble[data-from="you"]{align-self:flex-end;background:#c77712;color:white;border-color:#e19525}
+  .ct-ai-shortcuts{display:flex;gap:6px;flex-wrap:wrap;padding:0 17px 12px}
+  .ct-ai-shortcuts button{border:1px solid #8d682e;background:#3c2e1d;color:#ffdd8a;border-radius:100px;padding:7px 10px;font-size:10px;font-weight:700;cursor:pointer}
+  #ctLicenseAiForm{display:flex;gap:8px;border-top:1px solid #30415a;padding:12px 17px 16px}
+  #ctLicenseAiInput{flex:1;min-width:0;border:1px solid #45607e;border-radius:9px;background:#182941;color:white;padding:11px;font-size:12px;outline:none}
+  #ctLicenseAiInput:focus{border-color:#f3aa31}#ctLicenseAiForm button{border:0;border-radius:9px;padding:0 15px;background:#f4a222;color:#1d2a39;font-weight:800;cursor:pointer}
+  #ctLicenseAiForm button:disabled,.ct-ai-shortcuts button:disabled{opacity:.55;cursor:wait}
+  .ct-ai-store-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 26px 20px;border-top:1px solid #34465d}
+  .ct-ai-store-link button{border:1px solid #855a1f;border-radius:8px;background:#372918;color:#ffd17a;padding:9px 13px;cursor:pointer;font-size:12px;font-weight:750}
+  .ct-ai-store-link button:hover{background:#48351f}
+  .ct-ai-access-note{margin:0;color:#e6b96a;font-size:11px;line-height:1.4}
+  #ctLicenseStoreDialog .ct-topup-access-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px;padding:11px;border:1px solid #3a4b66;border-radius:10px;background:#0d1727}
+  #ctLicenseStoreDialog .ct-topup-access-summary[hidden]{display:none!important}
+  #ctLicenseStoreDialog .ct-topup-access-summary span{display:block;color:#a8b8ce;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+  #ctLicenseStoreDialog .ct-topup-access-summary strong{display:block;margin-top:5px;color:#f5c263;font-size:12px;overflow-wrap:anywhere}
+  #ctLicenseExpiryWarning .ct-license-topup-action{background:#f97316;color:#fff;border:1px solid #ea580c;box-shadow:0 5px 14px rgba(234,88,12,.2)}
+  #ctLicenseExpiryWarning .ct-license-topup-action:hover{background:#ea580c}
+  #ctLicenseExpiryWarning .ct-license-time-left{display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:100px;padding:8px 11px;border:1px solid #f1d29a;border-radius:9px;background:#0f172a;color:#fbbf24}
+  #ctLicenseExpiryWarning .ct-license-time-left span{color:#9fb0c3;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+  #ctLicenseExpiryWarning .ct-license-time-left strong{font:800 13px/1.2 ui-monospace,monospace;white-space:nowrap}
+  @media(max-width:640px){#ctLicenseExpiryWarning .ct-license-time-left{width:100%;flex-direction:row;align-items:center;justify-content:space-between}}
+  @media(max-width:620px){.ct-ai-head{padding:13px}.ct-ai-store-link{align-items:stretch;flex-direction:column;padding:13px 18px 17px}.ct-ai-store-link button{width:100%}#ctLicenseStoreDialog .ct-topup-access-summary{grid-template-columns:1fr}}
+</style>
+<style id="ct-license-reference-ui-style">
+  #ctLicenseExtras.has-expiry{border:0;background:transparent;box-shadow:none;overflow:visible}
+  #ctLicenseExpiryWarning[hidden]{display:none!important}
+  #ctLicenseExpiryWarning{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:112px;margin:0;padding:20px 22px;overflow:hidden;border:1px solid rgba(245,158,11,.45);border-radius:18px;background:linear-gradient(105deg,#0b1329 0%,#132238 53%,#3b1d0c 100%);color:#fff;box-shadow:0 16px 34px rgba(57,32,8,.16)}
+  #ctLicenseExpiryWarning:before,#ctLicenseExpiryWarning:after{position:absolute;z-index:-1;content:"";pointer-events:none;border-radius:999px;filter:blur(25px)}
+  #ctLicenseExpiryWarning:before{width:200px;height:130px;right:9%;top:-84px;background:rgba(245,158,11,.13)}
+  #ctLicenseExpiryWarning:after{width:180px;height:120px;left:28%;bottom:-102px;background:rgba(249,115,22,.13)}
+  #ctLicenseExpiryWarning .ct-license-expiry-icon{display:grid;place-items:center;flex:none;width:48px;height:48px;border:1px solid rgba(251,191,36,.42);border-radius:15px;background:rgba(245,158,11,.16);color:#fbbf24;font-size:20px;box-shadow:0 8px 24px rgba(120,53,15,.24);animation:ctLicenseExpiryPulse 2.4s ease-in-out infinite}
+  @keyframes ctLicenseExpiryPulse{0%,100%{transform:scale(1);box-shadow:0 8px 24px rgba(120,53,15,.24)}50%{transform:scale(1.035);box-shadow:0 8px 30px rgba(245,158,11,.22)}}
+  #ctLicenseExpiryWarning .ct-license-expiry-main{position:relative;z-index:1;flex:1;min-width:0}
+  #ctLicenseExpiryWarning .ct-license-expiry-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+  #ctLicenseExpiryWarning .ct-license-expiry-badge{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border:1px solid rgba(245,158,11,.28);border-radius:999px;background:rgba(245,158,11,.13);color:#fcd34d;font-size:9px;font-weight:850;letter-spacing:.09em;text-transform:uppercase}
+  #ctLicenseExpiryWarning .ct-license-expiry-pulse{width:6px;height:6px;border-radius:50%;background:#fbbf24;box-shadow:0 0 0 4px rgba(251,191,36,.11);animation:ctLicenseDotPulse 1.8s ease-out infinite}
+  @keyframes ctLicenseDotPulse{0%{box-shadow:0 0 0 0 rgba(251,191,36,.46)}100%{box-shadow:0 0 0 7px rgba(251,191,36,0)}}
+  #ctLicenseExpiryWarning .ct-license-workshop-label{color:#a7b6c9;font-size:10px;font-weight:650}
+  #ctLicenseExpiryWarning .ct-license-expiry-title{display:block;color:#fff;font-size:15px;font-weight:850;line-height:1.4;letter-spacing:-.01em}
+  #ctLicenseExpiryWarning .ct-license-expiry-title span{color:#fbbf24;text-decoration:underline;text-decoration-color:rgba(251,191,36,.38);text-underline-offset:4px}
+  #ctLicenseExpiryWarning #ctLicenseExpiryCopy{margin:4px 0 0;color:#c1cbd8;font-size:11px;line-height:1.5}
+  #ctLicenseExpiryWarning .ct-license-countdown-card{position:relative;z-index:1;display:flex;flex:none;flex-direction:column;align-items:flex-end;justify-content:center;min-width:114px;padding:10px 12px;border:1px solid #334155;border-radius:12px;background:rgba(2,6,23,.72);text-align:right}
+  #ctLicenseExpiryWarning .ct-license-countdown-card>span{color:#9aa8ba;font-size:8px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+  #ctLicenseExpiryWarning .ct-license-countdown-card time{margin-top:3px;color:#fbbf24;font:850 17px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.035em;white-space:nowrap}
+  #ctLicenseExpiryWarning .ct-license-expiry-action{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;min-height:44px;padding:0 17px;border:1px solid rgba(253,186,116,.45);border-radius:12px;background:linear-gradient(110deg,#f59e0b,#f97316);color:#fff;font-size:11px;font-weight:850;white-space:nowrap;box-shadow:0 8px 20px rgba(194,65,12,.24);transition:transform .16s ease,filter .16s ease}
+  #ctLicenseExpiryWarning .ct-license-expiry-action:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  #ctLicenseExpiryWarning .ct-license-expiry-action:focus-visible,#ctLicenseStoreDialog :focus-visible{outline:3px solid #fbbf24;outline-offset:3px}
+  #ctLicenseStoreDialog{width:min(680px,calc(100% - 24px))!important;max-height:min(92dvh,860px)!important;border:1px solid #715126!important;border-radius:19px!important;background:linear-gradient(155deg,#15243a 0%,#0b1526 62%,#111827 100%)!important;color:#e2e8f0!important;font-family:inherit!important;box-shadow:0 28px 90px rgba(0,0,0,.62),0 0 0 1px rgba(251,191,36,.07)!important}
+  #ctLicenseStoreDialog[open]{display:flex;flex-direction:column;overflow:hidden}
+  #ctLicenseStoreDialog.is-topup-mode{width:min(680px,calc(100% - 24px))!important}
+  #ctLicenseStoreDialog .ct-dialog-head{padding:20px 22px!important;border-bottom:1px solid #39485c!important;background:linear-gradient(110deg,#182941,#111b2c)!important}
+  #ctLicenseStoreDialog .ct-dialog-head h2{font-family:inherit!important;font-size:19px!important;font-weight:850!important;line-height:1.3!important;color:#f8fafc!important;letter-spacing:-.025em!important}
+  #ctLicenseStoreDialog .ct-dialog-head h2:before{content:none!important}
+  #ctLicenseStoreDialog .ct-dialog-head p{margin-top:4px!important;color:#acbdd2!important;font-family:inherit!important;font-size:11px!important;line-height:1.5!important}
+  #ctLicenseStoreDialog .ct-license-store-body{flex:1 1 auto;min-height:0;max-height:none;overflow:auto;padding:18px 22px 22px!important}
+  #ctLicenseStoreDialog .ct-topup-access-summary{margin-bottom:14px!important;padding:13px!important;border:1px solid rgba(245,158,11,.3)!important;border-radius:13px!important;background:linear-gradient(100deg,rgba(245,158,11,.1),rgba(15,23,42,.75))!important}
+  #ctLicenseStoreDialog .ct-topup-access-summary span{color:#aebdd0!important;font-size:9px!important}
+  #ctLicenseStoreDialog .ct-topup-access-summary strong{color:#fcd34d!important;font-size:12px!important}
+  #ctLicenseStoreDialog.is-topup-mode .ct-purchase-roadmap{display:none!important}
+  #ctLicenseStoreDialog .ct-license-store-intro{margin:0 0 11px!important}
+  #ctLicenseStoreDialog .ct-license-store-intro h3{color:#f8fafc!important;font-size:14px!important}
+  #ctLicenseStoreDialog .ct-license-store-intro h3:before{content:none!important}
+  #ctLicenseStoreDialog .ct-license-store-intro p{color:#aebdd0!important;font-size:10px!important;line-height:1.5!important}
+  #ctLicenseStoreDialog .ct-license-plans{gap:10px!important}
+  #ctLicenseStoreDialog .ct-license-plan{min-height:160px!important;padding:15px!important;border:1px solid #3b4b65!important;border-radius:13px!important;background:rgba(9,18,32,.88)!important}
+  #ctLicenseStoreDialog .ct-license-plan strong{color:#f8fafc!important;font-size:17px!important}
+  #ctLicenseStoreDialog .ct-license-plan small{color:#b7c5d7!important;font-size:10px!important}
+  #ctLicenseStoreDialog .ct-license-plan-price{color:#f8fafc!important;font-size:22px!important}
+  #ctLicenseStoreDialog .ct-license-plan.is-selected{border-color:#f59e0b!important;background:rgba(120,53,15,.22)!important;box-shadow:0 0 0 2px rgba(245,158,11,.28)!important}
+  #ctLicenseStoreDialog .ct-license-plan:hover:not(:disabled){border-color:#fb923c!important}
+  #ctLicenseStoreDialog .ct-license-payment{border:1px solid #3b4b65!important;border-radius:13px!important;background:rgba(8,16,29,.88)!important}
+  #ctLicenseStoreDialog .ct-license-payment-status{border-radius:10px!important}
+  #ctLicenseStoreDialog .ct-ai-store-link{padding:13px 22px 17px!important;border-top:1px solid #39485c!important;background:rgba(5,11,20,.42)!important}
+  #ctLicenseStoreDialog .ct-ai-store-link button{border:1px solid rgba(251,191,36,.38)!important;border-radius:10px!important;background:rgba(245,158,11,.13)!important;color:#fcd34d!important;padding:10px 14px!important;font-size:11px!important}
+  #ctLicenseStoreDialog .ct-ai-store-link button:hover{background:rgba(245,158,11,.22)!important}
+  @media(max-width:760px){#ctLicenseExpiryWarning{flex-wrap:wrap;gap:12px;padding:16px}#ctLicenseExpiryWarning .ct-license-expiry-main{flex-basis:calc(100% - 66px)}#ctLicenseExpiryWarning .ct-license-countdown-card{flex:1;align-items:center;text-align:center}#ctLicenseExpiryWarning .ct-license-expiry-action{flex:1}}
+  @media(max-width:520px){#ctLicenseExtras.has-expiry{margin:12px 16px 0}#ctLicenseExpiryWarning{align-items:flex-start}#ctLicenseExpiryWarning .ct-license-expiry-icon{width:42px;height:42px;border-radius:13px}#ctLicenseExpiryWarning .ct-license-expiry-title{font-size:13px}#ctLicenseExpiryWarning .ct-license-countdown-card,#ctLicenseExpiryWarning .ct-license-expiry-action{min-width:0;width:100%;flex-basis:100%}#ctLicenseStoreDialog .ct-dialog-head{padding:17px 17px 14px!important}#ctLicenseStoreDialog .ct-license-store-body{padding:15px 17px 18px!important}#ctLicenseStoreDialog.is-topup-mode .ct-license-plans{grid-template-columns:1fr!important}#ctLicenseStoreDialog.is-topup-mode .ct-license-plan{min-height:144px!important}#ctLicenseStoreDialog .ct-ai-store-link{align-items:stretch;flex-direction:column;padding:12px 17px 15px!important}#ctLicenseStoreDialog .ct-ai-store-link button{width:100%}}
+  @media(prefers-reduced-motion:reduce){#ctLicenseExpiryWarning *,#ctLicenseExpiryWarning:before,#ctLicenseExpiryWarning:after{animation:none!important;transition:none!important}}
+</style>
+<style id="ct-license-reference-layout-v2">
+  #notificationPermissionBanner{display:none!important}
+  #ctNavAiSupport[hidden],#ctHeaderAiSupport[hidden],#ctLicenseBannerSupport[hidden],#ctFloatingAiSupport[hidden]{display:none!important}
+  #ctSidebar #ctNavAiSupport{color:#a9c8ff;background:rgba(37,99,235,.1);border-color:rgba(96,165,250,.27)}
+  #ctSidebar #ctNavAiSupport>i{color:#60a5fa}
+  #ctSidebar #ctNavAiSupport:hover{color:#d9e8ff;background:rgba(37,99,235,.19);border-color:rgba(96,165,250,.48)}
+  #ctSidebar #ctNavAiSupport[aria-current=page]{background:linear-gradient(90deg,rgba(37,99,235,.25),rgba(30,64,175,.16));border-color:rgba(96,165,250,.45)}
+  #ctSidebar .ct-ai-nav-dot{width:7px;height:7px;margin-left:auto;border-radius:50%;background:#60a5fa;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+  .ct-topbar .ct-header-ai-support{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 11px;border:1px solid #bfdbfe;border-radius:10px;background:#eff6ff;color:#2563eb;font-size:11px;font-weight:800;white-space:nowrap;transition:background .15s ease,border-color .15s ease}
+  .ct-topbar .ct-header-ai-support:hover{background:#dbeafe;border-color:#93c5fd}
+  .ct-topbar .ct-header-ai-support i{font-size:12px}
+  .ct-topbar .ct-header-signout{min-height:34px;padding:0 11px;border:1px solid #dce3ed;border-radius:9px;background:white;color:#526174;font-size:11px;font-weight:700;white-space:nowrap}
+  .ct-topbar .ct-header-signout:hover{background:#f5f7fa;color:#172337}
+  #ctLicenseExpiryWarning{min-height:88px;padding:13px 16px;gap:11px;border-radius:14px;box-shadow:0 10px 24px rgba(57,32,8,.12)}
+  #ctLicenseExpiryWarning:before{width:160px;height:100px;top:-66px}
+  #ctLicenseExpiryWarning:after{width:145px;height:90px;bottom:-74px}
+  #ctLicenseExpiryWarning .ct-license-expiry-icon{width:40px;height:40px;border-radius:12px;font-size:16px}
+  #ctLicenseExpiryWarning .ct-license-expiry-meta{gap:7px;margin-bottom:4px}
+  #ctLicenseExpiryWarning .ct-license-expiry-badge{padding:3px 7px;font-size:8px}
+  #ctLicenseExpiryWarning .ct-license-workshop-label{font-size:9px}
+  #ctLicenseExpiryWarning .ct-license-expiry-title{font-size:13px;line-height:1.3}
+  #ctLicenseExpiryWarning #ctLicenseExpiryCopy{margin-top:3px;font-size:10px;line-height:1.4}
+  #ctLicenseExpiryWarning .ct-license-countdown-card{min-width:96px;padding:7px 9px;border-radius:10px}
+  #ctLicenseExpiryWarning .ct-license-countdown-card>span{font-size:7px}
+  #ctLicenseExpiryWarning .ct-license-countdown-card time{font-size:14px}
+  #ctLicenseExpiryWarning .ct-license-expiry-action,#ctLicenseExpiryWarning .ct-license-banner-support{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;min-height:36px;padding:0 11px;border-radius:10px;font-size:10px;font-weight:850;white-space:nowrap;transition:filter .15s ease,transform .15s ease}
+  #ctLicenseExpiryWarning .ct-license-expiry-action{border:1px solid rgba(253,186,116,.45);background:linear-gradient(110deg,#f59e0b,#f97316);color:#fff;box-shadow:0 6px 16px rgba(194,65,12,.22)}
+  #ctLicenseExpiryWarning .ct-license-expiry-action:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  #ctLicenseExpiryWarning .ct-license-banner-support{border:1px solid rgba(96,165,250,.38);background:rgba(30,64,175,.22);color:#bfdbfe}
+  #ctLicenseExpiryWarning .ct-license-banner-support:hover{background:rgba(37,99,235,.34);border-color:rgba(147,197,253,.58)}
+  #ctLicenseExpiryWarning .ct-license-expiry-action:focus-visible,#ctLicenseExpiryWarning .ct-license-banner-support:focus-visible,.ct-topbar .ct-header-ai-support:focus-visible,.ct-topbar .ct-header-signout:focus-visible,#ctSidebar #ctNavAiSupport:focus-visible,#ctFloatingAiSupport:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}
+  #ctFloatingAiSupport{position:fixed;right:22px;bottom:20px;z-index:70;display:inline-flex;align-items:center;gap:9px;min-height:48px;padding:0 17px;border:1px solid rgba(147,197,253,.38);border-radius:999px;background:linear-gradient(110deg,#2563eb,#4f46e5);color:#fff;font-size:12px;font-weight:850;box-shadow:0 12px 32px rgba(30,64,175,.32);transition:transform .15s ease,filter .15s ease}
+  #ctFloatingAiSupport:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  #ctFloatingAiSupport i{font-size:15px}
+  @media(max-width:760px){#ctLicenseExpiryWarning{flex-wrap:wrap;gap:9px;padding:12px}#ctLicenseExpiryWarning .ct-license-expiry-main{flex:1 1 calc(100% - 52px)}#ctLicenseExpiryWarning .ct-license-countdown-card,#ctLicenseExpiryWarning .ct-license-banner-support,#ctLicenseExpiryWarning .ct-license-expiry-action{flex:1 1 100px;min-width:0}#ctLicenseExpiryWarning .ct-license-countdown-card{align-items:center;text-align:center}#ctLicenseExpiryWarning .ct-license-banner-support,#ctLicenseExpiryWarning .ct-license-expiry-action{padding:0 8px;font-size:9px}}
+  @media(max-width:620px){.ct-topbar .ct-header-ai-support{width:36px;min-width:36px;padding:0}.ct-topbar .ct-header-ai-support span{display:none}.ct-topbar .ct-top-actions{gap:5px}.ct-topbar .ct-header-signout{padding:0 8px}#ctLicenseExtras.has-expiry{margin:12px 16px 0}#ctLicenseExpiryWarning{align-items:flex-start}#ctLicenseExpiryWarning .ct-license-countdown-card{flex-direction:row;justify-content:space-between}#ctFloatingAiSupport{right:14px;bottom:14px;min-height:44px;padding:0 14px;font-size:11px}}
+  @media(max-width:420px){#ctLicenseExpiryWarning .ct-license-banner-support,#ctLicenseExpiryWarning .ct-license-expiry-action{flex-basis:calc(50% - 5px)}#ctLicenseExpiryWarning .ct-license-countdown-card{flex-basis:100%}#ctLicenseExpiryWarning .ct-license-expiry-action{font-size:9px;padding:0 6px}}
+</style>
+<style id="ct-compact-reference-layout-v3">
+  @media(min-width:1241px){
+    #appShell{padding-left:246px}
+    #ctSidebar{width:246px;padding:12px 14px 13px;background:#0e1931;box-shadow:none}
+  }
+  @media(max-width:1240px) and (min-width:761px){
+    #appShell{padding-left:196px}
+    #ctSidebar{width:196px;padding:14px 11px;background:#0e1931;box-shadow:none}
+  }
+  #ctSidebar .ct-brand{gap:9px;padding:0 6px 15px;margin-bottom:19px;border-bottom:1px solid #26324b}
+  #ctSidebar .ct-brand-mark{width:39px;height:39px;border-radius:10px;font-size:17px}
+  #ctSidebar .ct-brand strong{font-size:17px;letter-spacing:.02em}
+  #ctSidebar .ct-brand small{font-size:9px;margin-top:3px;letter-spacing:.15em}
+  #ctSidebar .ct-location{margin:0 3px 18px;padding:10px 9px;gap:9px;border-radius:10px;background:#16233d;border-color:#2b3854;box-shadow:none}
+  #ctSidebar .ct-location strong{font-size:11px;font-weight:750}
+  #ctSidebar .ct-location small{font-size:10px;margin-top:2px}
+  #ctSidebar .ct-location>i{font-size:13px}
+  #ctSidebar .ct-nav-label{margin:8px 0 7px 11px;font-size:9px;letter-spacing:.12em;color:#8090ae}
+  #ctSidebar .ct-nav .ct-nav-label{margin:8px 0 2px 11px}
+  #ctSidebar .ct-nav{gap:3px}
+  #ctSidebar .ct-nav button{min-height:36px;padding:7px 9px;gap:8px;border-radius:8px;font-size:11px;line-height:1.25;white-space:nowrap}
+  #ctSidebar .ct-nav button>i{width:16px;font-size:13px}
+  #ctSidebar .ct-nav button[aria-current=page]{color:#ffbf48;background:#1b2943;border-color:#624c25;box-shadow:none}
+  #ctSidebar .ct-nav button[aria-current=page]>i{color:#fbbf24}
+  #ctSidebar #ctNavAiSupport{color:#b7ccff;background:rgba(37,99,235,.08);border-color:rgba(96,165,250,.2)}
+  #ctSidebar #ctNavAiSupport>i{color:#76a8ff}
+  #ctSidebar #ctNavAiSupport .ct-ai-nav-dot{width:6px;height:6px;margin-left:auto;border-radius:50%;background:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+  #ctSidebar #ctNavLicenseTopup{color:#ffd17b;background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.19)}
+  #ctSidebar #ctNavLicenseTopup>i{color:#fbbf24}
+  #ctSidebar .ct-sidebar-space{min-height:18px}
+  #ctSidebar .ct-capacity{margin:12px 0 0;padding:9px 10px;border-radius:9px;background:#15223b;border-color:#283651;box-shadow:none}
+  #ctSidebar .ct-capacity>p{font-size:9px;letter-spacing:.06em}
+  #ctSidebar .ct-capacity-value{margin:7px 0}
+  #ctSidebar .ct-capacity-value strong{font-size:20px}
+  #ctSidebar .ct-capacity-value span,#ctSidebar .ct-capacity>small{font-size:10px}
+  #ctSidebar .ct-capacity>small{margin-top:7px}
+  #ctSidebar .ct-profile{display:none}
+
+  .ct-topbar{min-height:52px;padding:8px 22px;gap:12px;flex-wrap:nowrap;background:#fff;box-shadow:none;backdrop-filter:none}
+  .ct-topbar .ct-topbar-context{display:flex;align-items:center;gap:11px;min-width:0;color:#8793a5;font-size:10px;white-space:nowrap}
+  .ct-topbar-context .ct-sync-chip{padding:5px 9px;font-size:10px}
+  .ct-topbar .ct-top-actions{order:2;margin-left:auto;gap:6px;flex-wrap:nowrap}
+  .ct-topbar .ct-staff-chip{padding:5px 8px;border-radius:8px;background:#f8fafc;font-size:10px;white-space:nowrap}
+  .ct-topbar .ct-icon-button{width:32px;height:32px;min-height:32px;border:1px solid #e4e9f0;border-radius:8px;background:#f8fafc}
+  .ct-topbar .ct-icon-button i{font-size:13px}
+  .ct-topbar .ct-header-ai-support{width:32px;min-width:32px;height:32px;min-height:32px;padding:0;border-radius:8px}
+  .ct-topbar .ct-header-ai-support span{display:none}
+  .ct-topbar #ctDate{display:none}
+  .ct-topbar #ctTesterCountdown{display:none!important}
+  body.ct-tester-mode .ct-topbar #ctTesterCountdown{display:inline-flex!important;min-width:100px;padding:6px 9px;font-size:15px}
+  .ct-topbar #ctAccessExitButton{min-height:30px;padding:5px 3px;border:0;background:transparent;box-shadow:none;color:#526174;font-size:10px;font-weight:650}
+  .ct-topbar #ctAccessExitButton:hover{background:transparent;color:#172337}
+  #ctTesterBanner[hidden]{display:none!important}
+
+  #ctLicenseExtras{margin:18px 23px 0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+  #ctLicenseExtras.has-expiry{margin-top:18px}
+  #ctLicenseExpiryWarning{min-height:98px;padding:14px 18px;gap:10px;border-radius:12px;box-shadow:0 7px 18px rgba(20,34,55,.07)}
+  #ctLicenseExpiryWarning .ct-license-expiry-icon{width:40px;height:40px;border-radius:11px;font-size:15px}
+  #ctLicenseExpiryWarning .ct-license-expiry-meta{gap:7px;margin-bottom:3px}
+  #ctLicenseExpiryWarning .ct-license-expiry-badge{padding:3px 7px;font-size:8px}
+  #ctLicenseExpiryWarning .ct-license-workshop-label{font-size:9px}
+  #ctLicenseExpiryWarning .ct-license-expiry-title{font-size:14px;line-height:1.3}
+  #ctLicenseExpiryWarning #ctLicenseExpiryCopy{margin-top:3px;font-size:10px;line-height:1.4}
+  #ctLicenseExpiryWarning .ct-license-countdown-card{min-width:110px;min-height:48px;padding:6px 9px;border-radius:10px}
+  #ctLicenseExpiryWarning .ct-license-countdown-card>span{font-size:7px}
+  #ctLicenseExpiryWarning .ct-license-countdown-card time{font-size:15px}
+  #ctLicenseExpiryWarning .ct-license-expiry-action,#ctLicenseExpiryWarning .ct-license-banner-support{min-height:36px;padding:0 11px;border-radius:9px;font-size:10px}
+  #ctLicenseExpiryWarning .ct-license-expiry-action{box-shadow:0 4px 11px rgba(194,65,12,.16)}
+  #ctLicenseExpiryWarning .ct-license-banner-support{width:34px;min-width:34px;padding:0;border-radius:9px}
+  #ctLicenseExpiryWarning .ct-license-banner-support span{display:none}
+  #ctLicenseExpiryWarning .ct-license-banner-support i{font-size:12px}
+
+  #viewOffice{max-width:1580px;padding:18px 23px 22px}
+  #viewOffice .ct-team-strip{grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;margin:0 0 18px;padding:14px 16px;border-radius:13px;box-shadow:0 3px 10px rgba(24,48,76,.035)}
+  #viewOffice .ct-team-strip-head{grid-column:1;align-self:center}
+  #viewOffice .ct-team-strip-head h3{font-size:13px}
+  #viewOffice .ct-team-strip-head p{font-size:10px;margin-top:3px}
+  #viewOffice .ct-team-strip-actions{grid-column:2;grid-row:1;flex-direction:row;align-items:center;justify-content:flex-end;gap:8px;padding:0;border:0}
+  #viewOffice .ct-team-strip-actions #officeRemainingMechanicBadge{margin:0!important;padding:6px 9px!important;border-radius:999px!important;font-size:9px!important;white-space:nowrap}
+  #viewOffice .ct-team-strip-actions .ct-button{width:auto;min-height:32px;padding:6px 10px;font-size:10px;border-radius:8px}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars{grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars>div{height:80px;min-height:80px;min-width:0;padding:8px 9px;border-radius:9px;gap:7px;box-shadow:none}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars>div>div:first-child>div{width:30px;height:30px;font-size:11px}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars>div>div:nth-child(2)>div:first-child>span:first-child{font-size:11px}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars>div>div:nth-child(2)>div:first-child>span:nth-child(2){font-size:8px;padding:2px 4px}
+  #viewOffice .ct-team-strip #messengerSidebarAvatars>div>div:nth-child(2)>div:last-child{font-size:10px;margin-top:3px}
+  #viewOffice .ct-stats{gap:10px;margin:0 0 19px}
+  #viewOffice .ct-stat{min-height:69px;padding:9px 11px;border-radius:10px;box-shadow:none!important}
+  #viewOffice .ct-stat-top{gap:5px;font-size:9px;line-height:1.15}
+  #viewOffice .ct-stat-step{width:18px;height:18px;font-size:8px;border-radius:5px}
+  #viewOffice .ct-stat-top i{width:21px;height:21px;border-radius:7px;font-size:11px}
+  #viewOffice .ct-stat-bottom{gap:6px;margin-top:6px}
+  #viewOffice .ct-stat-bottom strong{font-size:23px;line-height:1}
+  #viewOffice .ct-stat-bottom small{font-size:9px;line-height:1.25}
+  #viewOffice .ct-stat:after{left:11px;height:2px}
+  #viewOffice .ct-queue-panel{padding:14px;border-radius:13px;box-shadow:0 3px 10px rgba(24,48,76,.035)}
+  #viewOffice .ct-queue-tools{margin-bottom:11px;gap:10px}
+  #viewOffice .ct-queue-tools h3{font-size:16px}
+  #viewOffice .ct-board-subtitle{font-size:10px}
+  #viewOffice .ct-search{min-height:36px;font-size:11px}
+  #viewOffice .ct-tabs{margin-bottom:11px;padding:4px;border-radius:9px}
+  #viewOffice .ct-tab{min-height:30px;padding:6px 9px;font-size:10px}
+  #viewOffice #officeQueueList{gap:9px;min-height:170px}
+  #ctFloatingAiSupport{display:none!important}
+
+  @media(max-width:1050px) and (min-width:761px){
+    #viewOffice .ct-team-strip #messengerSidebarAvatars{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+    #viewOffice .ct-team-strip-actions{gap:5px}
+    #viewOffice .ct-team-strip-actions #officeRemainingMechanicBadge{font-size:8px!important}
+  }
+  @media(max-width:760px){
+    #appShell{padding-left:0}
+    #ctSidebar{width:240px;padding:13px 13px 14px}
+    .ct-topbar{min-height:50px;padding:7px 10px;gap:6px;flex-wrap:nowrap}
+    .ct-topbar .ct-topbar-context{gap:6px;font-size:9px}
+    .ct-topbar-context>span:last-child{display:none}
+    .ct-topbar .ct-top-actions{gap:3px;flex-wrap:nowrap}
+    .ct-topbar .ct-staff-chip{display:none}
+    .ct-topbar .ct-icon-button{width:29px;height:29px;min-height:29px}
+    .ct-topbar .ct-header-ai-support{width:29px;min-width:29px;height:29px;min-height:29px}
+    .ct-topbar #ctAccessExitButton{font-size:9px;padding:4px 2px}
+    #ctLicenseExtras,#ctLicenseExtras.has-expiry{margin:12px 13px 0}
+    #ctLicenseExpiryWarning{flex-wrap:wrap;gap:8px;padding:12px;min-height:0}
+    #ctLicenseExpiryWarning .ct-license-expiry-main{flex:1 1 calc(100% - 52px)}
+    #ctLicenseExpiryWarning .ct-license-countdown-card{flex:1 1 100%;flex-direction:row;align-items:center;justify-content:space-between;text-align:left}
+    #ctLicenseExpiryWarning .ct-license-banner-support,#ctLicenseExpiryWarning .ct-license-expiry-action{flex:1 1 40%;min-width:0}
+    #ctLicenseExpiryWarning .ct-license-expiry-action{font-size:9px;padding:0 7px}
+    #ctLicenseExpiryWarning .ct-license-banner-support{width:auto;min-width:0}
+    #ctLicenseExpiryWarning .ct-license-banner-support span{display:inline}
+    #viewOffice{padding:14px 13px 20px}
+    #viewOffice .ct-team-strip{grid-template-columns:1fr;padding:12px;margin-bottom:13px}
+    #viewOffice .ct-team-strip-head{grid-column:1}
+    #viewOffice .ct-team-strip-actions{grid-column:1;grid-row:auto;flex-wrap:wrap;justify-content:flex-start;padding-top:8px;border-top:1px solid #edf1f5}
+    #viewOffice .ct-team-strip #messengerSidebarAvatars{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+    #viewOffice .ct-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:13px}
+    #viewOffice .ct-stat{min-height:66px;padding:8px 9px}
+    #viewOffice .ct-stat-bottom small{display:inline;font-size:8px}
+    #viewOffice .ct-queue-panel{padding:11px}
+  }
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -2213,7 +2480,9 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
         <button id="ctNavQueue" type="button" onclick="CartechUI.navigate('queue')"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Jobs & inspections <span id="ctNavActive" class="ct-nav-count">0</span></button>
         <button id="ctNavParts" type="button" onclick="CartechUI.navigate('parts')"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Parts requests <span id="ctNavPartsCount" class="ct-nav-count ct-warm">0</span></button>
         <button id="ctNavTeam" type="button" onclick="CartechUI.openTeam()"><i class="fa-solid fa-user-group" aria-hidden="true"></i>Team overview</button>
+        <button id="ctNavAiSupport" class="ct-nav-ai-support" type="button" onclick="CartechLicenseChat.open()" hidden><i class="fa-solid fa-robot" aria-hidden="true"></i>Contact AI Support<span class="ct-ai-nav-dot" aria-hidden="true"></span></button>
         <button id="ctNavLicenseTopup" type="button" onclick="CartechAccess.openLicenseStore()" hidden><i class="fa-solid fa-wallet" aria-hidden="true"></i>License top up <span class="ct-nav-count ct-warm">+</span></button>
+        <p id="ctNavManagementLabel" class="ct-nav-label">Management</p>
         <button id="ctNavWorkshop" type="button" onclick="CartechUI.navigate('workshop')" hidden><i class="fa-solid fa-wrench" aria-hidden="true"></i>Mechanic workspace</button>
         <button id="ctNavControl" type="button" onclick="CartechUI.navigate('control')" hidden><i class="fa-solid fa-sliders" aria-hidden="true"></i>Team & access</button>
       </nav>
@@ -2251,7 +2520,10 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     <header class="ct-topbar no-print">
       <button id="ctMenuButton" class="ct-icon-button ct-mobile-menu" type="button" onclick="CartechUI.toggleMenu()" aria-label="Open navigation" aria-expanded="false" aria-controls="ctSidebar"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
       <div class="ct-breadcrumb"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Workspace</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="ctBreadcrumb">Workshop</strong></div>
-      <div class="ct-top-actions"><span class="ct-sync-chip"><i class="fa-solid fa-circle" aria-hidden="true"></i> Live workspace</span><span id="ctDate" class="ct-date"></span><span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
+      <div class="ct-topbar-context"><span class="ct-sync-chip"><i class="fa-solid fa-circle" aria-hidden="true"></i> Live workspace</span><span>Office workspace</span></div>
+      <div class="ct-top-actions">
+        <button type="button" id="ctHeaderAiSupport" class="ct-header-ai-support" onclick="CartechLicenseChat.open()" aria-label="Office AI Support" title="Office AI Support" hidden><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Office AI Support</span></button>
+        <span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
         <button type="button" class="ct-icon-button" onclick="enableCartechAlerts()" title="Enable live notification sounds and pop-ups" aria-label="Enable live alerts"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
         <button type="button" id="ctInboxButton" class="ct-icon-button" onclick="CartechUI.openInbox()" aria-label="Unread messages"><span id="wsBellIcon"><i class="fa-regular fa-bell" aria-hidden="true"></i></span><span id="ctUnreadCount" class="ct-bell-count" hidden>0</span></button>
       </div>
@@ -2275,9 +2547,19 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     </div>
 
     <section id="ctLicenseExtras" class="no-print" hidden aria-live="polite">
-      <div id="ctLicenseExpiryWarning" class="ct-license-extra-row" hidden>
-        <span class="ct-license-extra-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></span>
-        <div class="ct-license-extra-copy"><strong id="ctLicenseExpiryTitle">License renewal reminder</strong><span id="ctLicenseExpiryCopy"></span></div>
+      <div id="ctLicenseExpiryWarning" class="ct-license-expiry-banner" hidden>
+        <span class="ct-license-expiry-icon"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i></span>
+        <div class="ct-license-expiry-main">
+          <div class="ct-license-expiry-meta">
+            <span class="ct-license-expiry-badge"><span class="ct-license-expiry-pulse"></span>License Expiry Warning</span>
+            <span id="ctLicenseWorkshopLabel" class="ct-license-workshop-label">Main workshop</span>
+          </div>
+          <strong class="ct-license-expiry-title">Your workshop license expires in <span id="ctLicenseExpiryTitle">2 days</span></strong>
+          <p id="ctLicenseExpiryCopy">Top up or activate a valid key before the workshop license expires.</p>
+        </div>
+        <div class="ct-license-countdown-card"><span>Time Remaining</span><time id="ctLicenseRemainingTime" aria-label="License time remaining">--:--:--</time></div>
+        <button id="ctLicenseBannerSupport" class="ct-license-banner-support" type="button" onclick="CartechLicenseChat.open()" aria-label="Contact Support" title="Contact Support" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Contact Support</span></button>
+        <button id="ctLicenseTopupBannerButton" class="ct-license-expiry-action" type="button" onclick="CartechAccess.openLicenseStore()"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Top Up License</button>
       </div>
       <div id="ctLicensePaymentWarning" class="ct-license-extra-row is-payment" hidden>
         <span class="ct-license-extra-icon"><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
@@ -2826,9 +3108,18 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
         </dialog>
     </section>
   <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
-    <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p>Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
-    <div class="ct-license-store-body"><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose a plan</li><li>Pay with GCash</li><li>Upload receipt</li><li>Receive your key</li></ol><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Choose the duration that fits your workshop. Check the price, remaining stock, and assigned company before paying.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
+    <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p id="ctLicenseStoreSubtitle">Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+    <div class="ct-license-store-body"><section id="ctTopupAccessSummary" class="ct-topup-access-summary" hidden aria-live="polite"><div><span>Active license plan</span><strong>Workshop license</strong></div><div><span>Current expiry</span><strong id="ctTopupCurrentExpiry">—</strong></div></section><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose a plan</li><li>Pay with GCash</li><li>Upload receipt</li><li>Receive your key</li></ol><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Choose the duration that fits your workshop. Check the price, remaining stock, and assigned company before paying.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
+    <div class="ct-ai-store-link"><p id="ctLicenseAiAccessNote" class="ct-ai-access-note" role="status" hidden></p><button id="ctLicenseAiStoreButton" type="button" onclick="CartechLicenseChat.open()"><i class="fa-regular fa-comments" aria-hidden="true"></i> Contact Support</button></div>
   </dialog>
+  <dialog id="ctLicenseAiDialog" aria-labelledby="ctLicenseAiTitle" aria-describedby="ctLicenseAiNote">
+    <div class="ct-ai-head"><i class="fa-solid fa-comments" aria-hidden="true"></i><div><strong id="ctLicenseAiTitle">CARTECH AI Support</strong><small>Office support assistant · OpenAI replies</small></div><button type="button" onclick="CartechLicenseChat.close()" aria-label="Close AI Support">‹ Back</button></div>
+    <p class="ct-ai-note" id="ctLicenseAiNote">You’re chatting with CARTECH AI, not a human moderator. It can answer license, renewal, plan, activation, and payment-request questions. It cannot verify GCash payments, issue keys, or forward messages to staff. Ayaw i-send ang password, OTP, full license key, or GCash reference.</p>
+    <div id="ctLicenseAiMessages" role="log" aria-live="polite" aria-label="License support chat"></div>
+    <div class="ct-ai-shortcuts"><button type="button" onclick="CartechLicenseChat.ask('How do I renew my license?')">Renew license</button><button type="button" onclick="CartechLicenseChat.ask('Why is my payment request pending?')">Payment pending</button><button type="button" onclick="CartechLicenseChat.ask('What should I do if my license expired?')">Expired license</button></div>
+    <form id="ctLicenseAiForm" onsubmit="CartechLicenseChat.submit(event)"><input id="ctLicenseAiInput" autocomplete="off" maxlength="500" placeholder="Type your license question…" aria-label="Type your license question" required><button type="submit">Send</button></form>
+  </dialog>
+  <button id="ctFloatingAiSupport" class="ct-floating-ai-support" type="button" onclick="CartechLicenseChat.open()" hidden><i class="fa-solid fa-robot" aria-hidden="true"></i><span>Ask CARTECH AI</span></button>
 
   <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="CARTECH account access">
     <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> <span id="ctAccessModeLabel">CARTECH dry run</span></span><span id="ctAccessCaption" class="ct-tester-caption">Shared dry-run schedule</span></div>
@@ -6638,6 +6929,12 @@ window.CartechUI = (() => {
     byId('ctNavParts').hidden = !officeViewer();
     byId('ctNavTeam').hidden = !canManage;
     byId('ctNavLicenseTopup').hidden = !(officeViewer() && currentRole !== 'tester' && currentRole !== 'workshop');
+    byId('ctNavManagementLabel').hidden = !(isElevated || currentRole === 'workshop');
+    const canUseAiSupport = window.CartechAccess?.licenseSupportAllowed?.() === true;
+    byId('ctNavAiSupport').hidden = !canUseAiSupport;
+    byId('ctHeaderAiSupport').hidden = !canUseAiSupport;
+    byId('ctLicenseBannerSupport').hidden = !canUseAiSupport;
+    byId('ctFloatingAiSupport').hidden = !canUseAiSupport;
     byId('ctNavWorkshop').hidden = !(isElevated || currentRole === 'workshop');
     byId('ctNavControl').hidden = !isElevated;
     byId('ctSidebarCapacity').hidden = !canManage;
@@ -8206,7 +8503,12 @@ window.CartechAccess = (() => {
     dialog.classList.toggle('is-topup-mode', activePaid);
     dialog.classList.remove('has-topup-selection');
     byId('ctTopupPaymentDetails')?.remove();
-    if (byId('ctLicenseStoreTitle')) byId('ctLicenseStoreTitle').textContent = activePaid ? 'Top up your active CARTECH license' : 'Buy a CARTECH workshop license';
+    if (byId('ctLicenseStoreTitle')) byId('ctLicenseStoreTitle').textContent = activePaid ? 'License Top Up Portal' : 'Buy a CARTECH workshop license';
+    if (byId('ctLicenseStoreSubtitle')) byId('ctLicenseStoreSubtitle').textContent = activePaid
+      ? 'Extend your active workshop license with a verified CARTECH top-up.'
+      : 'Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.';
+    if (byId('ctTopupAccessSummary')) byId('ctTopupAccessSummary').hidden = !activePaid;
+    if (activePaid && byId('ctTopupCurrentExpiry')) byId('ctTopupCurrentExpiry').textContent = philippineDate(expiry);
     const roadmap = Array.from(document.querySelectorAll('#ctLicenseStoreDialog .ct-purchase-roadmap li'));
     if (roadmap[2]) roadmap[2].textContent = activePaid ? 'Enter reference' : 'Upload receipt';
     if (roadmap[3]) roadmap[3].textContent = activePaid ? 'Time added' : 'Receive your key';
@@ -8638,6 +8940,9 @@ window.CartechAccess = (() => {
     if (action === 'view') return true;
     return currentRole !== 'tester' && account.readOnly !== true;
   }
+  function licenseSupportAllowed() {
+    return ['office','admin','developer'].includes(currentRole) && can('view');
+  }
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid();
   }
@@ -8757,6 +9062,7 @@ window.CartechAccess = (() => {
     localStorage.removeItem('cartech_auth_user'); localStorage.removeItem('cartech_auth_role');
   }
   function signOut(reason = 'logout') {
+    window.CartechLicenseChat?.clear?.();
     const wasTester = currentRole === 'tester' || verifiedRole === 'tester';
     authGeneration++; agreementAccepted = false; agreementPreview = false; underDevPreview = false; agreementBusy = false; developerLoginOpen = false; clearConsent();
     licenseOverviewShownForLogin = false;
@@ -9533,7 +9839,7 @@ window.CartechAccess = (() => {
     void checkPaymentResult(true);
     startPaymentPolling();
   }
-  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.assign(api, { proceedFromLicenseOverview, cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
@@ -9915,9 +10221,16 @@ refresh();show('overview');
 window.CartechLicenseExtras = (() => {
   const allowedRoles = new Set(['office','admin','developer']);
   let busy = false, lastReadAt = 0, currentOffer = null;
+  let expiryCountdownAt = 0, expiryCountdownInterval = 0;
   const el = id => document.getElementById(id);
   function roleCanClaim() { return allowedRoles.has(String(currentRole || '').toLowerCase()) && Boolean(currentUser); }
   function money(value) { return new Intl.NumberFormat('en-PH', { style:'currency', currency:'PHP' }).format(Number(value) || 0); }
+  function expiryTimestamp(value) {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric > 0) return numeric < 100000000000 ? numeric * 1000 : numeric;
+    const parsed = Date.parse(String(value || ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
   function duration(minutes) {
     const value = Number(minutes) || 0;
     if (value % 1440 === 0) return `${value / 1440} day${value === 1440 ? '' : 's'}`;
@@ -9926,20 +10239,48 @@ window.CartechLicenseExtras = (() => {
   }
   function syncRoot() {
     const root = el('ctLicenseExtras');
-    if (root) root.hidden = !['ctLicenseExpiryWarning','ctLicensePaymentWarning','ctLicenseBonusOffer'].some(id => !el(id)?.hidden);
+    const hasExpiry = Boolean(el('ctLicenseExpiryWarning') && !el('ctLicenseExpiryWarning').hidden);
+    if (root) {
+      root.classList.toggle('has-expiry', hasExpiry);
+      root.hidden = !['ctLicenseExpiryWarning','ctLicensePaymentWarning','ctLicenseBonusOffer'].some(id => !el(id)?.hidden);
+    }
+  }
+  function renderExpiryCountdown() {
+    const node = el('ctLicenseRemainingTime');
+    if (!node) return;
+    if (!(expiryCountdownAt > 0)) {
+      const snapshotExpiry = expiryTimestamp(tenantAccessSnapshot?.license_expires_at);
+      if (snapshotExpiry > 0) expiryCountdownAt = snapshotExpiry;
+    }
+    const seconds = Math.max(0, Math.ceil((expiryCountdownAt - Date.now()) / 1000));
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    const pad = value => String(value).padStart(2, '0');
+    node.textContent = `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+    if (!seconds && expiryCountdownInterval) { clearInterval(expiryCountdownInterval); expiryCountdownInterval = 0; }
+  }
+  function setExpiryCountdown(timestamp) {
+    expiryCountdownAt = expiryTimestamp(timestamp);
+    if (expiryCountdownAt && !expiryCountdownInterval) expiryCountdownInterval = setInterval(renderExpiryCountdown, 1000);
+    if (!expiryCountdownAt && expiryCountdownInterval) { clearInterval(expiryCountdownInterval); expiryCountdownInterval = 0; }
+    renderExpiryCountdown();
   }
   function renderAccess(access = tenantAccessSnapshot) {
     const expiryRow = el('ctLicenseExpiryWarning'), paymentRow = el('ctLicensePaymentWarning');
     const status = String(access?.status || '').toLowerCase();
-    const expires = Date.parse(String(access?.license_expires_at || ''));
-    const remaining = Number.isFinite(expires) ? expires - Date.now() : Infinity;
-    const showExpiry = access?.valid === true && access?.access_kind === 'license' && remaining > 0 && remaining <= 2 * 86400000;
+    const expires = expiryTimestamp(access?.license_expires_at);
+    const remaining = expires > 0 ? expires - Date.now() : NaN;
+    const showExpiry = access?.valid === true && access?.access_kind === 'license' && Number.isFinite(remaining) && remaining > 0 && remaining <= 2 * 86400000;
     if (expiryRow) expiryRow.hidden = !showExpiry;
     if (showExpiry) {
-      const hours = Math.max(1, Math.ceil(remaining / 3600000));
-      el('ctLicenseExpiryTitle').textContent = hours <= 24 ? 'License expires within 24 hours' : 'License expires within 2 days';
-      el('ctLicenseExpiryCopy').textContent = `Your CARTECH license expires ${philippineDate(expires)}. Renew or buy a key to continue using the system.`;
-    }
+      const days = Math.max(1, Math.ceil(remaining / 86400000));
+      el('ctLicenseExpiryTitle').textContent = `${days} day${days === 1 ? '' : 's'}`;
+      el('ctLicenseExpiryCopy').textContent = 'Top up or activate a valid key before the workshop license expires.';
+      const workshopLabel = el('ctLicenseWorkshopLabel');
+      if (workshopLabel) workshopLabel.textContent = String(access?.shop_name || 'Main workshop');
+      setExpiryCountdown(expires);
+    } else setExpiryCountdown(0);
     if (paymentRow) paymentRow.hidden = status !== 'payment_paused';
     if (status === 'payment_paused') el('ctLicensePaymentCopy').textContent = 'Your license has an unpaid balance. Access stays paused until the developer marks the payment as cleared.';
     if (!roleCanClaim()) { currentOffer = null; if (el('ctLicenseBonusOffer')) el('ctLicenseBonusOffer').hidden = true; }
@@ -9994,6 +10335,114 @@ window.CartechLicenseExtras = (() => {
   el('ctLicenseBonusClaim')?.addEventListener('click', () => void claim());
   renderAccess(tenantAccessSnapshot);
   return { renderAccess, refresh, claim };
+})();
+</script>
+<script id="ct-license-ai-chat">
+// The OpenAI secret stays server-side in the Supabase Edge Function.
+window.CartechLicenseChat = (() => {
+  const dialog = document.getElementById('ctLicenseAiDialog');
+  const messages = document.getElementById('ctLicenseAiMessages');
+  const input = document.getElementById('ctLicenseAiInput');
+  const sendButton = document.querySelector('#ctLicenseAiForm button[type="submit"]');
+  const shortcuts = [...document.querySelectorAll('#ctLicenseAiDialog .ct-ai-shortcuts button')];
+  const accessNote = document.getElementById('ctLicenseAiAccessNote');
+  const conversation = [];
+  let busy = false;
+
+  function supportAllowed() {
+    return window.CartechAccess?.licenseSupportAllowed?.() === true;
+  }
+  function authVersion() {
+    return window.CartechAccess?.authGeneration?.() ?? -1;
+  }
+  function bubble(value, from) {
+    const node = document.createElement('div');
+    node.className = 'ct-ai-bubble';
+    node.dataset.from = from;
+    node.textContent = String(value);
+    messages.append(node);
+    messages.scrollTop = messages.scrollHeight;
+  }
+  function open() {
+    if (!supportAllowed()) {
+      if (accessNote) {
+        accessNote.textContent = 'AI support needs an active Office, Admin, or Developer sign-in.';
+        accessNote.hidden = false;
+      }
+      return false;
+    }
+    if (accessNote) accessNote.hidden = true;
+    if (!messages.childElementCount) bubble('Hi! I can help with license top up, voucher questions, billing, activation, and workshop queue. Unsa imong pangutana?', 'ai');
+    if (!dialog.open) dialog.showModal();
+    input.focus();
+    return true;
+  }
+  function close() { if (dialog.open) dialog.close(); }
+  function clear() {
+    close();
+    messages.replaceChildren();
+    conversation.length = 0;
+    input.value = '';
+  }
+  function errorText(error) {
+    const status = error?.context?.status;
+    if (status === 429) return 'The AI chat limit has been reached. Please try again later.';
+    if (status === 401 || status === 403) return 'Your CARTECH sign-in or workshop access needs to be renewed.';
+    if (status === 404) return 'The CARTECH AI service is not deployed yet. Ask the developer to deploy the cartech-license-ai Supabase function.';
+    return 'CARTECH AI is unavailable right now. Check the connection and try again.';
+  }
+  function containsSensitiveValue(value) {
+    return /\bCT[-\s]?[A-Z0-9]{4,}[-\s][A-Z0-9-]{10,}\b/i.test(value) ||
+      /\b(?:password|passcode|otp|one[- ]time code|gcash reference)\s*[:#=\-]\s*\S+/i.test(value);
+  }
+  async function ask(value) {
+    const question = String(value || '').trim().slice(0, 500);
+    if (!question || busy) return;
+    if (!supportAllowed()) {
+      if (accessNote) {
+        accessNote.textContent = 'AI support needs an active Office, Admin, or Developer sign-in.';
+        accessNote.hidden = false;
+      }
+      return;
+    }
+    if (containsSensitiveValue(question)) {
+      bubble('Please do not send a full license key, password, OTP, or GCash reference. Ask without sensitive details.', 'ai');
+      return;
+    }
+    const version = authVersion();
+    const user = String(currentUser || '');
+    const role = String(currentRole || '');
+    bubble(question, 'you');
+    input.value = '';
+    conversation.push({ role:'user', content:question });
+    busy = true;
+    sendButton.disabled = true;
+    shortcuts.forEach(button => { button.disabled = true; });
+    try {
+      await ensureDeviceAuth();
+      if (!supabaseClient) throw new Error('Supabase is unavailable');
+      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !supportAllowed()) return;
+      const { data, error } = await supabaseClient.functions.invoke('cartech-license-ai', {
+        body: { messages:conversation.slice(-6) }
+      });
+      if (error) throw error;
+      if (typeof data?.answer !== 'string' || !data.answer.trim()) throw new Error('AI returned no answer');
+      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !dialog.open || !supportAllowed()) return;
+      const answer = data.answer.trim().slice(0, 1800);
+      bubble(answer, 'ai');
+      conversation.push({ role:'assistant', content:answer.slice(0, 500) });
+    } catch (error) {
+      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !dialog.open) return;
+      conversation.pop();
+      bubble(errorText(error), 'ai');
+    } finally {
+      busy = false;
+      sendButton.disabled = false;
+      shortcuts.forEach(button => { button.disabled = false; });
+    }
+  }
+  function submit(event) { event?.preventDefault(); void ask(input.value); return false; }
+  return { open, close, clear, ask, submit };
 })();
 </script>
 </body>
