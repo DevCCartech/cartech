@@ -6,7 +6,7 @@
   <meta name="cartech-build" content="cartech-developer-support-v65">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - Developer Chat Support v65</title>
+  <title>CARTECH - Developer Chat Support v66 · Admin after-hours login</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -9019,12 +9019,15 @@ window.CartechAccess = (() => {
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid();
   }
+  function afterHoursSignInAllowed(user, role) {
+    return role === 'developer' || role === 'admin' || user === 'bot';
+  }
   function restrictions(user, acc) {
     if (!workshopAccessActive()) { signOut('license-expired'); return false; }
     if (acc.role === 'tester') return true;
     if (isUserOnHoliday(user)) { triggerHolidayLockout(); return false; }
     const hour = Number(new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Manila', hour:'2-digit', hourCycle:'h23'}).format(new Date()));
-    if (!['developer', 'admin'].includes(acc.role) && user !== 'bot' && (hour < 8 || hour >= 17)) {
+    if (!afterHoursSignInAllowed(user, acc.role) && (hour < 8 || hour >= 17)) {
       loginError('SHOP IS CLOSED (8:00 AM – 5:00 PM)', 'Please sign in during shop hours.'); return false;
     }
     return true;
@@ -9065,9 +9068,9 @@ window.CartechAccess = (() => {
       if (mode !== 'password') { clearRememberedDevice(); clearAuth(); }
       loginError('INVALID CREDENTIALS', 'Invalid username or password. Please try again.'); return false;
     }
-    if (window.CartechShopHours && !window.CartechShopHours.isOpen() && acc.role !== 'developer' && user !== 'bot') {
+    if (window.CartechShopHours && !window.CartechShopHours.isOpen() && !afterHoursSignInAllowed(user, acc.role)) {
       clearAuth();
-      loginError('SHOP IS CLOSED', 'Staff sign-in is available from 8:00 AM to 5:00 PM Philippine time. Only developer and bot test accounts can sign in after hours.');
+      loginError('SHOP IS CLOSED', 'Office, mechanic, and tester sign-in is available from 8:00 AM to 5:00 PM Philippine time. Admin, developer, and bot test accounts can sign in after hours.');
       return false;
     }
     if (mode !== 'password' && !rememberedSignIn(user, acc.role)) {
