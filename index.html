@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-mobile-license-roles-v64">
+  <meta name="cartech-build" content="cartech-developer-support-v65">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - License Portal v63</title>
+  <title>CARTECH - Developer Chat Support v65</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -2004,6 +2004,50 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   @media(max-width:640px){#ctLicenseExpiryWarning .ct-license-time-left{width:100%;flex-direction:row;align-items:center;justify-content:space-between}}
   @media(max-width:620px){.ct-ai-head{padding:13px}.ct-ai-store-link{align-items:stretch;flex-direction:column;padding:13px 18px 17px}.ct-ai-store-link button{width:100%}#ctLicenseStoreDialog .ct-topup-access-summary{grid-template-columns:1fr}}
 </style>
+<style id="ct-developer-support-style">
+  #ctLicenseAiDialog[open]{display:flex;flex-direction:column;width:min(520px,calc(100% - 18px));height:min(680px,calc(100dvh - 24px));max-height:calc(100dvh - 24px)}
+  #ctLicenseAiDialog .ct-ai-head{flex:none;padding:12px 15px}
+  #ctLicenseAiDialog .ct-ai-note{flex:none;padding:9px 15px;font-size:10px}
+  #ctLicenseAiDialog #ctLicenseAiMessages{flex:1;height:auto;min-height:80px;padding:13px;overscroll-behavior:contain}
+  #ctSupportAuth[hidden],#ctSupportThreadList[hidden],#ctLicenseAiMessages[hidden],#ctLicenseAiForm[hidden],#ctSupportBadge[hidden],#ctSupportNavBadge[hidden],#ctSupportRenewalBadge[hidden],#ctSupportRenewalButton[hidden],#ctSupportChatStatus[hidden],#ctSupportAuthError[hidden],#ctSupportReceiptName[hidden]{display:none!important}
+  .ct-support-auth{padding:19px;overflow:auto;flex:1;color:#eff5ff}
+  .ct-support-auth>strong{display:block;font-size:14px}
+  .ct-support-auth>p{color:#b7c7dc;font-size:11px;line-height:1.55;margin:8px 0 14px}
+  #ctSupportAuthForm{display:grid;gap:9px}
+  #ctSupportAuthForm input,.ct-support-compose-tools select{min-height:39px;border:1px solid #445a78;border-radius:8px;padding:8px 10px;background:#162943;color:#f8fbff;font-size:12px}
+  #ctSupportAuthForm button{min-height:40px;border:0;border-radius:8px;background:#f4a222;color:#1d2a39;font-weight:800;cursor:pointer}
+  .ct-support-threads{display:flex;gap:7px;max-height:118px;overflow:auto;flex:none;padding:9px 13px;border-bottom:1px solid #31435c}
+  .ct-support-thread{flex:none;min-width:125px;max-width:165px;text-align:left;padding:8px 10px;border:1px solid #425879;border-radius:9px;background:#1a304e;color:#e8f0fd;cursor:pointer}
+  .ct-support-thread[aria-current="true"]{border-color:#f4a222;background:#39412f}
+  .ct-support-thread strong,.ct-support-thread small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ct-support-thread strong{font-size:12px}.ct-support-thread small{font-size:10px;color:#aebed3;margin-top:3px}
+  .ct-support-thread em{font-style:normal;color:#ffd987;font-size:10px}
+  .ct-support-empty{color:#aebed3;font-size:12px;line-height:1.6;padding:10px}
+  .ct-support-time{display:block;opacity:.72;font-size:9px;margin-top:5px}
+  .ct-support-bubble-attachment{display:block;border:1px solid currentColor;background:transparent;border-radius:7px;padding:6px 8px;margin-top:8px;color:inherit;font-size:11px;cursor:pointer}
+  #ctLicenseAiForm{display:flex;flex-direction:column;gap:8px;padding:10px 13px 13px;flex:none}
+  .ct-support-compose-tools,.ct-support-compose-row{display:flex;gap:8px;align-items:center}
+  .ct-support-compose-tools select{flex:1;min-width:0;min-height:33px;font-size:11px}
+  .ct-support-attach{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:33px;padding:5px 9px;border:1px solid #876532;border-radius:8px;color:#ffda8b;font-size:10px;white-space:nowrap}
+  #ctLicenseAiForm #ctLicenseAiInput{flex:1;resize:none;min-width:0;min-height:50px;max-height:100px;padding:8px 10px;font-family:inherit;font-size:12px;line-height:1.35}
+  #ctLicenseAiForm .ct-support-compose-row button{min-height:50px;padding:0 14px}
+  .ct-support-status,.ct-support-file{margin:0;padding:7px 13px;color:#ffd387;background:#372b1d;font-size:10px;line-height:1.45;overflow-wrap:anywhere}
+  .ct-support-file{padding:0;color:#c5d4e7;background:transparent}
+  .ct-topbar #ctHeaderAiSupport{position:relative}
+  .ct-support-badge{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 4px;border-radius:999px;background:#e11d48;color:#fff;font-size:10px;line-height:1;font-weight:900;box-shadow:0 0 0 3px #fff;animation:ctSupportBlink 1.3s ease-in-out infinite}
+  #ctNavAiSupport .ct-support-badge{margin-left:auto;box-shadow:0 0 0 3px #17243b}
+  #ctSupportRenewalButton{display:inline-flex;align-items:center;gap:8px;margin-top:11px;min-height:36px;padding:6px 11px;border:1px solid #8f6933;border-radius:8px;background:#352716;color:#ffce7f;font-size:11px;font-weight:750;cursor:pointer}
+  #ctSupportRenewalBadge{box-shadow:none}
+  @keyframes ctSupportBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.12)}}
+  #ctSupportReceiptDialog{width:min(640px,calc(100% - 20px));max-height:92dvh;padding:13px;border:1px solid #40506a;border-radius:13px;background:#0c172b;color:#f7fafc}
+  #ctSupportReceiptDialog::backdrop{background:#020916cf}
+  #ctSupportReceiptDialog>div{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  #ctSupportReceiptDialog button,#ctSupportReceiptDialog a{border:1px solid #4c6789;border-radius:8px;padding:7px 11px;background:#1d3352;color:#fff;cursor:pointer;font-size:11px;text-decoration:none}
+  #ctSupportReceiptDialog img{display:block;max-width:100%;max-height:70dvh;margin:auto;object-fit:contain}
+  #ctSupportReceiptDialog a{display:inline-block;margin-top:10px}
+  @media(max-width:620px){#ctSupportBadge:not([hidden]){display:inline-flex!important;position:absolute;top:-7px;right:-7px}#ctLicenseAiDialog .ct-ai-note{font-size:10px}#ctLicenseAiDialog[open]{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)}}
+  @media(prefers-reduced-motion:reduce){.ct-support-badge{animation:none}}
+</style>
 <style id="ct-license-reference-ui-style">
   #ctLicenseExtras.has-expiry{border:0;background:transparent;box-shadow:none;overflow:visible}
   #ctLicenseExpiryWarning[hidden]{display:none!important}
@@ -2480,7 +2524,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
         <button id="ctNavQueue" type="button" onclick="CartechUI.navigate('queue')"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Jobs & inspections <span id="ctNavActive" class="ct-nav-count">0</span></button>
         <button id="ctNavParts" type="button" onclick="CartechUI.navigate('parts')"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Parts requests <span id="ctNavPartsCount" class="ct-nav-count ct-warm">0</span></button>
         <button id="ctNavTeam" type="button" onclick="CartechUI.openTeam()"><i class="fa-solid fa-user-group" aria-hidden="true"></i>Team overview</button>
-        <button id="ctNavAiSupport" class="ct-nav-ai-support" type="button" onclick="CartechLicenseChat.open()" hidden><i class="fa-solid fa-robot" aria-hidden="true"></i>Contact AI Support<span class="ct-ai-nav-dot" aria-hidden="true"></span></button>
+        <button id="ctNavAiSupport" class="ct-nav-ai-support" type="button" onclick="CartechSupportChat.open()" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i>Developer Chat Support<span id="ctSupportNavBadge" class="ct-support-badge" hidden>0</span></button>
         <button id="ctNavLicenseTopup" type="button" onclick="CartechAccess.openLicenseStore()" hidden><i class="fa-solid fa-wallet" aria-hidden="true"></i>License top up <span class="ct-nav-count ct-warm">+</span></button>
         <p id="ctNavManagementLabel" class="ct-nav-label">Management</p>
         <button id="ctNavWorkshop" type="button" onclick="CartechUI.navigate('workshop')" hidden><i class="fa-solid fa-wrench" aria-hidden="true"></i>Mechanic workspace</button>
@@ -2522,7 +2566,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       <div class="ct-breadcrumb"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Workspace</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="ctBreadcrumb">Workshop</strong></div>
       <div class="ct-topbar-context"><span class="ct-sync-chip"><i class="fa-solid fa-circle" aria-hidden="true"></i> Live workspace</span><span>Office workspace</span></div>
       <div class="ct-top-actions">
-        <button type="button" id="ctHeaderAiSupport" class="ct-header-ai-support" onclick="CartechLicenseChat.open()" aria-label="Office AI Support" title="Office AI Support" hidden><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Office AI Support</span></button>
+        <button type="button" id="ctHeaderAiSupport" class="ct-header-ai-support" onclick="CartechSupportChat.open()" aria-label="Developer Chat Support" title="Developer Chat Support" hidden><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Developer Chat Support</span><span id="ctSupportBadge" class="ct-support-badge" hidden>0</span></button>
         <span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
         <button type="button" class="ct-icon-button" onclick="enableCartechAlerts()" title="Enable live notification sounds and pop-ups" aria-label="Enable live alerts"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
         <button type="button" id="ctInboxButton" class="ct-icon-button" onclick="CartechUI.openInbox()" aria-label="Unread messages"><span id="wsBellIcon"><i class="fa-regular fa-bell" aria-hidden="true"></i></span><span id="ctUnreadCount" class="ct-bell-count" hidden>0</span></button>
@@ -2558,7 +2602,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
           <p id="ctLicenseExpiryCopy">Top up or activate a valid key before the workshop license expires.</p>
         </div>
         <div class="ct-license-countdown-card"><span>Time Remaining</span><time id="ctLicenseRemainingTime" aria-label="License time remaining">--:--:--</time></div>
-        <button id="ctLicenseBannerSupport" class="ct-license-banner-support" type="button" onclick="CartechLicenseChat.open()" aria-label="Contact Support" title="Contact Support" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Contact Support</span></button>
+        <button id="ctLicenseBannerSupport" class="ct-license-banner-support" type="button" onclick="CartechSupportChat.open()" aria-label="Contact Developer Support" title="Contact Developer Support" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Contact Support</span></button>
         <button id="ctLicenseTopupBannerButton" class="ct-license-expiry-action" type="button" onclick="CartechAccess.openLicenseStore()"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Top Up License</button>
       </div>
       <div id="ctLicensePaymentWarning" class="ct-license-extra-row is-payment" hidden>
@@ -2973,7 +3017,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
                 </div>
             </div>
             <span class="text-xs font-mono font-semibold text-slate-400 bg-slate-800/80 border border-slate-700/50 px-2.5 py-1 rounded-md">
-                PORTAL - v63
+                PORTAL - v65
             </span>
         </header>
 
@@ -2988,6 +3032,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
                 <p id="ctDevelopmentMessage" class="text-sm text-slate-400 leading-relaxed">
                     This workshop has no active license. The owner or authorized manager must activate or renew one workshop license to restore office and mechanic sign-in.
                 </p>
+                <button id="ctSupportRenewalButton" type="button" onclick="CartechSupportChat.open()" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i> Developer Chat Support <span id="ctSupportRenewalBadge" class="ct-support-badge" hidden>0</span></button>
             </div>
 
             <!-- License Status Card -->
@@ -3110,16 +3155,31 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
   <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
     <div class="ct-dialog-head"><div><h2 id="ctLicenseStoreTitle">Buy a CARTECH workshop license</h2><p id="ctLicenseStoreSubtitle">Choose a term for your workshop. One purchase unlocks the registered office and mechanic devices.</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
     <div class="ct-license-store-body"><section id="ctTopupAccessSummary" class="ct-topup-access-summary" hidden aria-live="polite"><div><span>Active license plan</span><strong>Workshop license</strong></div><div><span>Current expiry</span><strong id="ctTopupCurrentExpiry">—</strong></div></section><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose a plan</li><li>Pay with GCash</li><li>Upload receipt</li><li>Receive your key</li></ol><div class="ct-license-store-intro"><h3>Choose your plan</h3><p>Choose the duration that fits your workshop. Check the price, remaining stock, and assigned company before paying.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash receipt.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash receipt and reference number.</li><li>Return here, upload the receipt, and wait for developer verification.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Payment verification:</strong> your receipt is a request only. A key is generated after the developer confirms the real GCash transaction.</div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><div class="ct-license-payment-followup-grid"><div><label for="ctLicensePaymentShopName">Company or shop name</label><input id="ctLicensePaymentShopName" type="text" autocomplete="organization" placeholder="Enter company or shop name"></div><div><label for="ctLicensePaymentOwner">Owner username</label><input id="ctLicensePaymentOwner" type="text" maxlength="40" autocomplete="username" placeholder="shopowner"></div></div><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" autocomplete="off" placeholder="Enter the reference shown by GCash"><label for="ctLicensePaymentReceipt" style="margin-top:8px">Payment receipt image</label><input id="ctLicensePaymentReceipt" type="file" accept="image/*"><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit payment request</button><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentRequest()">Copy request</button></div><p class="ct-license-payment-followup-note">The developer will check the amount and reference in GCash before approving. Never upload an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctOpenGcashButton" type="button" class="ct-button ct-primary" onclick="CartechAccess.openGcash()"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Show payment details</button><button id="ctReturnFromGcashButton" type="button" class="ct-button" onclick="CartechAccess.returnFromGcash()">I’ve paid — upload receipt</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div>
-    <div class="ct-ai-store-link"><p id="ctLicenseAiAccessNote" class="ct-ai-access-note" role="status" hidden></p><button id="ctLicenseAiStoreButton" type="button" onclick="CartechLicenseChat.open()"><i class="fa-regular fa-comments" aria-hidden="true"></i> Contact Support</button></div>
+    <div class="ct-ai-store-link"><p id="ctLicenseAiAccessNote" class="ct-ai-access-note" role="status" hidden></p><button id="ctLicenseAiStoreButton" type="button" onclick="CartechSupportChat.open()"><i class="fa-regular fa-comments" aria-hidden="true"></i> Contact Developer Support</button></div>
   </dialog>
   <dialog id="ctLicenseAiDialog" aria-labelledby="ctLicenseAiTitle" aria-describedby="ctLicenseAiNote">
-    <div class="ct-ai-head"><i class="fa-solid fa-comments" aria-hidden="true"></i><div><strong id="ctLicenseAiTitle">CARTECH AI Support</strong><small>Office support assistant · OpenAI replies</small></div><button type="button" onclick="CartechLicenseChat.close()" aria-label="Close AI Support">‹ Back</button></div>
-    <p class="ct-ai-note" id="ctLicenseAiNote">You’re chatting with CARTECH AI, not a human moderator. It can answer license, renewal, plan, activation, and payment-request questions. It cannot verify GCash payments, issue keys, or forward messages to staff. Ayaw i-send ang password, OTP, full license key, or GCash reference.</p>
-    <div id="ctLicenseAiMessages" role="log" aria-live="polite" aria-label="License support chat"></div>
-    <div class="ct-ai-shortcuts"><button type="button" onclick="CartechLicenseChat.ask('How do I renew my license?')">Renew license</button><button type="button" onclick="CartechLicenseChat.ask('Why is my payment request pending?')">Payment pending</button><button type="button" onclick="CartechLicenseChat.ask('What should I do if my license expired?')">Expired license</button></div>
-    <form id="ctLicenseAiForm" onsubmit="CartechLicenseChat.submit(event)"><input id="ctLicenseAiInput" autocomplete="off" maxlength="500" placeholder="Type your license question…" aria-label="Type your license question" required><button type="submit">Send</button></form>
+    <div class="ct-ai-head"><i class="fa-solid fa-comments" aria-hidden="true"></i><div><strong id="ctLicenseAiTitle">Developer Chat Support</strong><small>Private messages · Office / Admin ↔ Developer</small></div><button type="button" onclick="CartechSupportChat.close()" aria-label="Close support chat">‹ Back</button></div>
+    <p class="ct-ai-note" id="ctLicenseAiNote">Send questions, bug reports, or license-renewal requests here. Attach a payment screenshot for review; the developer checks payment before sending a license key. Never send a password or OTP.</p>
+    <section id="ctSupportAuth" class="ct-support-auth" hidden>
+      <strong>Connect your support inbox</strong><p>Enter your CARTECH staff password to open private messages. Developers also enter the private support PIN from the Supabase setup.</p>
+      <form id="ctSupportAuthForm" onsubmit="CartechSupportChat.signIn(event)">
+        <input id="ctSupportPassword" type="password" autocomplete="current-password" placeholder="CARTECH password" aria-label="CARTECH password" required>
+        <input id="ctSupportPin" type="password" autocomplete="off" placeholder="Private developer support PIN" aria-label="Developer support PIN" hidden>
+        <button type="submit">Connect</button>
+      </form>
+      <p id="ctSupportAuthError" class="ct-support-status" role="alert" hidden></p>
+    </section>
+    <div id="ctSupportThreadList" class="ct-support-threads" aria-label="Staff support conversations" hidden></div>
+    <div id="ctLicenseAiMessages" role="log" aria-live="polite" aria-label="Developer support conversation"></div>
+    <p id="ctSupportChatStatus" class="ct-support-status" role="status" hidden></p>
+    <form id="ctLicenseAiForm" onsubmit="CartechSupportChat.submit(event)">
+      <div class="ct-support-compose-tools"><select id="ctSupportTopic" aria-label="Support topic"><option value="question">Question</option><option value="bug">Report a bug</option><option value="renewal">Renew license / payment</option></select><label class="ct-support-attach"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> Attach screenshot<input id="ctSupportReceipt" type="file" accept="image/png,image/jpeg,image/webp" onchange="CartechSupportChat.fileChanged()" hidden></label></div>
+      <div class="ct-support-compose-row"><textarea id="ctLicenseAiInput" maxlength="1000" rows="2" placeholder="Write your message to the developer…" aria-label="Message to developer" required></textarea><button type="submit">Send</button></div>
+      <span id="ctSupportReceiptName" class="ct-support-file" hidden></span>
+    </form>
   </dialog>
-  <button id="ctFloatingAiSupport" class="ct-floating-ai-support" type="button" onclick="CartechLicenseChat.open()" hidden><i class="fa-solid fa-robot" aria-hidden="true"></i><span>Ask CARTECH AI</span></button>
+  <dialog id="ctSupportReceiptDialog" class="ct-support-receipt-dialog" aria-label="Payment proof or screenshot"><div><strong>Attached screenshot</strong><button type="button" onclick="CartechSupportChat.closeReceipt()" aria-label="Close screenshot">Close</button></div><img id="ctSupportReceiptImage" alt="Attached payment proof or bug screenshot"><a id="ctSupportReceiptDownload" download="cartech-support-screenshot.jpg">Download screenshot</a></dialog>
+  <button id="ctFloatingAiSupport" class="ct-floating-ai-support" type="button" onclick="CartechSupportChat.open()" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Support chat</span></button>
 
   <aside id="ctTesterBanner" class="ct-tester-banner" hidden aria-label="CARTECH account access">
     <div><span class="ct-tester-tag"><i class="fa-solid fa-flask" aria-hidden="true"></i> <span id="ctAccessModeLabel">CARTECH dry run</span></span><span id="ctAccessCaption" class="ct-tester-caption">Shared dry-run schedule</span></div>
@@ -6934,7 +6994,7 @@ window.CartechUI = (() => {
     byId('ctNavAiSupport').hidden = !canUseAiSupport;
     byId('ctHeaderAiSupport').hidden = !canUseAiSupport;
     byId('ctLicenseBannerSupport').hidden = !canUseAiSupport;
-    byId('ctFloatingAiSupport').hidden = !canUseAiSupport;
+    byId('ctFloatingAiSupport').hidden = true;
     byId('ctNavWorkshop').hidden = !(isElevated || currentRole === 'workshop');
     byId('ctNavControl').hidden = !isElevated;
     byId('ctSidebarCapacity').hidden = !canManage;
@@ -7849,7 +7909,7 @@ window.CartechAccess = (() => {
   let agreementAccepted = false, agreementPreview = false, underDevPreview = false, agreementBusy = false;
   let developerLoginOpen = false, authGeneration = 0, phoneLayout = null;
   let licenseOverviewShownForLogin = false;
-  let renewalAuthorized = false, renewalUser = null, renewalPassword = null;
+  let renewalAuthorized = false, renewalUser = null, renewalPassword = null, renewalRole = null;
   const allowedRoles = ['developer', 'admin', 'office', 'workshop', 'tester'];
   const nowMono = () => typeof performance !== 'undefined' ? performance.now() : Date.now();
   let clockBase = Date.now(), monoBase = nowMono(), clockOffset = 0, highestTime = clockBase;
@@ -8824,7 +8884,8 @@ window.CartechAccess = (() => {
           initRememberedDeviceUI();
           loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is unlocked on web and installed apps.`);
           const account = renewalUser, password = renewalPassword;
-          renewalAuthorized = false; renewalUser = renewalPassword = null;
+          renewalAuthorized = false; renewalUser = renewalPassword = renewalRole = null;
+          window.CartechSupportChat?.clear?.();
           if (account && password) void authenticate(account, password).catch(error =>
             loginError('SIGN-IN REQUIRED', error.message || 'Sign in again to continue.'));
           window.CartechShopHours?.refresh?.();
@@ -8944,7 +9005,16 @@ window.CartechAccess = (() => {
     return currentRole !== 'tester' && account.readOnly !== true;
   }
   function licenseSupportAllowed() {
+    if (renewalAuthorized && renewalUser && ['admin','developer'].includes(renewalRole)
+        && byId('ctUnderDevelopment')?.hidden === false && !underDevPreview) return true;
     return ['office','admin','developer'].includes(currentRole) && can('view');
+  }
+  function supportContext() {
+    if (renewalAuthorized && renewalUser && ['admin','developer'].includes(renewalRole)
+        && byId('ctUnderDevelopment')?.hidden === false && !underDevPreview)
+      return { user:renewalUser, role:renewalRole, shop:currentShopId, auth:authGeneration };
+    return { user:String(currentUser || '').toLowerCase(), role:String(currentRole || ''),
+      shop:String(currentShopId || ''), auth:authGeneration };
   }
   function testerAllowed() {
     return currentRole === 'tester' && sessionValid();
@@ -8981,9 +9051,10 @@ window.CartechAccess = (() => {
         loginError('LICENSE EXPIRED', 'Ask the admin to reactivate the workshop key. The app will unlock after renewal.');
         return false;
       }
-      renewalAuthorized = true; renewalUser = user; renewalPassword = password;
+      renewalAuthorized = true; renewalUser = user; renewalPassword = password; renewalRole = check.account_role;
       byId('loginPassword').value = '';
       showDevelopment(false);
+      void window.CartechSupportChat?.start?.(password);
       return true;
     }
     if (mode !== 'password' && !rememberedSignIn(user)) { signOut('updated'); return false; }
@@ -9029,7 +9100,9 @@ window.CartechAccess = (() => {
     byId('loginAuthError').classList.add('hidden');
     byId('holidayLockoutModal')?.classList.add('hidden');
     if (!identityValid()) return false;
-    enterWorkspace(); return true;
+    enterWorkspace();
+    void window.CartechSupportChat?.start?.(mode === 'password' ? password : null);
+    return true;
   }
   async function login(event) {
     event?.preventDefault(); event?.stopPropagation();
@@ -9065,7 +9138,7 @@ window.CartechAccess = (() => {
     localStorage.removeItem('cartech_auth_user'); localStorage.removeItem('cartech_auth_role');
   }
   function signOut(reason = 'logout') {
-    window.CartechLicenseChat?.clear?.();
+    window.CartechSupportChat?.clear?.();
     const wasTester = currentRole === 'tester' || verifiedRole === 'tester';
     authGeneration++; agreementAccepted = false; agreementPreview = false; underDevPreview = false; agreementBusy = false; developerLoginOpen = false; clearConsent();
     licenseOverviewShownForLogin = false;
@@ -9084,7 +9157,7 @@ window.CartechAccess = (() => {
     try { sessionStorage.removeItem(signInKey); } catch (_) {}
     currentUser = currentRole = verifiedUser = verifiedRole = null; accountSnapshot = null;
     window.CartechLicenseExtras?.renderAccess?.(tenantAccessSnapshot);
-    renewalAuthorized = false; renewalUser = renewalPassword = null;
+    renewalAuthorized = false; renewalUser = renewalPassword = renewalRole = null;
     previews.clear();
     state = []; completedArchive = []; isCompletedLoaded = false; previousJobStatuses = {};
     window.CartechDiagnostics?.resetSession();
@@ -9353,6 +9426,7 @@ window.CartechAccess = (() => {
     byId('ctTesterWelcome').hidden = true;
     byId('appShell').classList.add('hidden'); byId('appShell').inert = true;
     byId('loginScreen').classList.add('hidden'); byId('ctUnderDevelopment').hidden = false;
+    byId('ctSupportRenewalButton').hidden = preview || !renewalAuthorized;
     byId('ctDevelopmentPreviewBadge').hidden = !preview;
     byId('ctDevelopmentPreviewBadge').textContent = testingLicense ? 'Device-only license test' : 'Developer preview';
     byId('ctDevelopmentPreviewClose').hidden = !preview || testingLicense;
@@ -9368,7 +9442,8 @@ window.CartechAccess = (() => {
     if (wasHidden) { window.scrollTo?.({ top:0, behavior:'instant' }); byId('ctDevelopmentTitle').focus(); }
   }
   function cancelRenewal() {
-    renewalAuthorized = false; renewalUser = renewalPassword = null;
+    renewalAuthorized = false; renewalUser = renewalPassword = renewalRole = null;
+    window.CartechSupportChat?.clear?.();
     void cartechRpc('cartech_renewal_sign_out').catch(() => {});
     byId('ctUnderDevelopment').hidden = true;
     byId('loginScreen').classList.remove('hidden');
@@ -9846,7 +9921,7 @@ window.CartechAccess = (() => {
     void checkPaymentResult(true);
     startPaymentPolling();
   }
-  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, supportContext, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.assign(api, { proceedFromLicenseOverview, cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
@@ -10347,129 +10422,400 @@ window.CartechLicenseExtras = (() => {
   return { renderAccess, refresh, claim };
 })();
 </script>
-<script id="ct-license-ai-chat">
-// The OpenAI secret stays server-side in the Supabase Edge Function.
-window.CartechLicenseChat = (() => {
-  const dialog = document.getElementById('ctLicenseAiDialog');
-  const messages = document.getElementById('ctLicenseAiMessages');
-  const input = document.getElementById('ctLicenseAiInput');
-  const sendButton = document.querySelector('#ctLicenseAiForm button[type="submit"]');
-  const shortcuts = [...document.querySelectorAll('#ctLicenseAiDialog .ct-ai-shortcuts button')];
-  const accessNote = document.getElementById('ctLicenseAiAccessNote');
-  const conversation = [];
-  let busy = false;
+<script id="ct-developer-support-script">
+// Private developer support. Supabase SQL functions validate the staff login;
+// the browser never writes support rows or payment screenshots directly.
+window.CartechSupportChat = (() => {
+  const el = id => document.getElementById(id);
+  const dialog = el('ctLicenseAiDialog');
+  const messages = el('ctLicenseAiMessages');
+  const input = el('ctLicenseAiInput');
+  const form = el('ctLicenseAiForm');
+  const authPanel = el('ctSupportAuth');
+  const threadList = el('ctSupportThreadList');
+  const photoInput = el('ctSupportReceipt');
+  let identity = null, selectedThread = '', threads = [], busy = false;
+  let generation = 0, requestNo = 0, photoUrl = '', logoutPending = Promise.resolve();
 
-  function supportAllowed() {
-    return window.CartechAccess?.licenseSupportAllowed?.() === true;
+  const allowed = () => window.CartechAccess?.licenseSupportAllowed?.() === true;
+  const current = () => window.CartechAccess?.supportContext?.() ||
+    { user:String(currentUser || '').toLowerCase(), role:String(currentRole || ''),
+      shop:String(currentShopId || ''), auth:window.CartechAccess?.authGeneration?.() };
+  const same = snapshot => {
+    const active = current();
+    return allowed() && snapshot.user === active.user && snapshot.role === active.role
+      && snapshot.shop === active.shop && snapshot.auth === active.auth;
+  };
+  const matched = snapshot => same(snapshot) && identity?.username === snapshot.user
+    && identity?.role === snapshot.role && identity?.shop_id === snapshot.shop;
+
+  function status(value, target = 'ctSupportChatStatus') {
+    const node = el(target);
+    if (!node) return;
+    node.textContent = value || '';
+    node.hidden = !value;
   }
-  function authVersion() {
-    return window.CartechAccess?.authGeneration?.() ?? -1;
+  function badges(value) {
+    const count = Math.max(0, Number(value) || 0);
+    for (const id of ['ctSupportBadge', 'ctSupportNavBadge', 'ctSupportRenewalBadge']) {
+      const node = el(id);
+      node.textContent = count > 99 ? '99+' : String(count);
+      node.hidden = count === 0;
+    }
+    const button = el('ctHeaderAiSupport');
+    button?.setAttribute('aria-label', count ? `Developer Chat Support: ${count} unread message${count === 1 ? '' : 's'}` : 'Developer Chat Support');
   }
-  function bubble(value, from) {
-    const node = document.createElement('div');
-    node.className = 'ct-ai-bubble';
-    node.dataset.from = from;
-    node.textContent = String(value);
-    messages.append(node);
+  function toggleAuth(show) {
+    authPanel.hidden = !show;
+    messages.hidden = show;
+    form.hidden = show || (identity?.role === 'developer' && !selectedThread);
+    threadList.hidden = show || identity?.role !== 'developer';
+    const pin = el('ctSupportPin');
+    pin.hidden = current().role !== 'developer';
+    pin.required = !pin.hidden;
+    if (show) {
+      messages.replaceChildren();
+      threadList.replaceChildren();
+      if (dialog.open) el('ctSupportPassword')?.focus();
+    }
+  }
+  function errorMessage(error) {
+    if (error?.code === '42883' || /could not find.*cartech_support_|function.*cartech_support_/i.test(error?.message || ''))
+      return 'Support setup is missing. Run cartech-developer-support.sql in the Supabase SQL Editor.';
+    return error?.message || 'Could not connect to support. Check your internet connection and try again.';
+  }
+  async function rpc(name, values = {}) {
+    await ensureDeviceAuth();
+    if (!supabaseClient) throw new Error('The workshop connection is unavailable.');
+    const { data, error } = await supabaseClient.rpc(name, values);
+    if (error) throw error;
+    return data;
+  }
+  function renderThreads() {
+    threadList.replaceChildren();
+    if (!identity || identity.role !== 'developer') return;
+    threadList.hidden = false;
+    if (!threads.length) {
+      const node = document.createElement('span');
+      node.className = 'ct-support-empty';
+      node.textContent = 'No staff messages yet. New requests will appear here.';
+      threadList.append(node);
+      form.hidden = true;
+      return;
+    }
+    for (const item of threads) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'ct-support-thread';
+      button.setAttribute('aria-current', String(item.username === selectedThread));
+      const name = document.createElement('strong');
+      name.textContent = item.username;
+      const preview = document.createElement('small');
+      preview.textContent = item.preview || 'Message';
+      button.append(name, preview);
+      if (Number(item.unread) > 0) {
+        const tag = document.createElement('em');
+        tag.textContent = `${item.unread} new`;
+        button.append(tag);
+      }
+      button.onclick = () => {
+        selectedThread = item.username;
+        form.hidden = false;
+        renderThreads();
+        void loadThread();
+      };
+      threadList.append(button);
+    }
+  }
+  function messageTime(value) {
+    const date = new Date(value);
+    return Number.isFinite(date.getTime()) ? date.toLocaleString('en-PH',
+      { timeZone:'Asia/Manila', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '';
+  }
+  function renderMessages(rows) {
+    messages.replaceChildren();
+    if (!rows.length) {
+      const empty = document.createElement('p');
+      empty.className = 'ct-support-empty';
+      empty.textContent = identity.role === 'developer' ? 'No messages in this conversation.'
+        : 'Your private chat with the developer starts here. Send a question, report a bug, or request license renewal.';
+      messages.append(empty);
+      return;
+    }
+    for (const item of rows) {
+      const bubble = document.createElement('div');
+      bubble.className = 'ct-ai-bubble';
+      bubble.dataset.from = item.sender_username === identity.username ? 'you' : 'developer';
+      const label = document.createElement('strong');
+      label.textContent = `${item.sender_username === identity.username ? 'You' : item.sender_username} · ${item.topic}`;
+      label.style.display = 'block';
+      label.style.fontSize = '10px';
+      label.style.marginBottom = '4px';
+      const content = document.createElement('span');
+      content.textContent = item.body;
+      bubble.append(label, content);
+      if (item.has_receipt) {
+        const attach = document.createElement('button');
+        attach.type = 'button';
+        attach.className = 'ct-support-bubble-attachment';
+        attach.textContent = 'View attached screenshot';
+        attach.onclick = () => void viewReceipt(item.id);
+        bubble.append(attach);
+      }
+      const time = document.createElement('small');
+      time.className = 'ct-support-time';
+      time.textContent = messageTime(item.created_at);
+      bubble.append(time);
+      messages.append(bubble);
+    }
     messages.scrollTop = messages.scrollHeight;
   }
-  function open() {
-    if (!supportAllowed()) {
-      if (accessNote) {
-        accessNote.textContent = 'AI support needs an active Office, Admin, or Developer sign-in.';
-        accessNote.hidden = false;
+  async function loadThread() {
+    if (!identity || !dialog.open) return;
+    const snapshot = current(), target = identity.role === 'developer' ? selectedThread : identity.username;
+    if (!target || !matched(snapshot)) return;
+    const at = generation;
+    try {
+      const rows = await rpc('cartech_support_thread', { p_username:target });
+      if (at !== generation || !matched(snapshot) || !dialog.open
+        || (identity.role === 'developer' && selectedThread !== target)) return;
+      renderMessages(Array.isArray(rows) ? rows : []);
+      const unreadHere = identity.role === 'developer'
+        ? Number(threads.find(item => item.username === target)?.unread || 0)
+        : Number(identity.unread || 0);
+      if (unreadHere > 0) {
+        await rpc('cartech_support_read', { p_username:target });
+        if (at !== generation || !matched(snapshot)) return;
+        identity.unread = Math.max(0, Number(identity.unread || 0) - unreadHere);
+        const item = threads.find(thread => thread.username === target);
+        if (item) item.unread = 0;
+        badges(identity.unread);
+        renderThreads();
+      }
+      status('');
+    } catch (error) {
+      if (at === generation && dialog.open) status(errorMessage(error));
+    }
+  }
+  async function refresh() {
+    if (!allowed()) return;
+    const snapshot = current(), at = generation, id = ++requestNo;
+    try {
+      await logoutPending;
+      const data = await rpc('cartech_support_summary');
+      if (at !== generation || id !== requestNo || !same(snapshot)) return;
+      if (!data?.ok || data.username !== snapshot.user || data.role !== snapshot.role
+        || data.shop_id !== snapshot.shop) {
+        identity = null;
+        selectedThread = '';
+        badges(0);
+        if (dialog.open) toggleAuth(true);
+        return;
+      }
+      identity = data;
+      threads = Array.isArray(data.threads) ? data.threads : [];
+      badges(data.unread);
+      if (data.role === 'developer' && (!selectedThread || !threads.some(item => item.username === selectedThread))) {
+        selectedThread = threads.find(item => Number(item.unread) > 0)?.username || threads[0]?.username || '';
+      }
+      if (dialog.open) {
+        toggleAuth(false);
+        renderThreads();
+        await loadThread();
+      }
+    } catch (error) {
+      if (at !== generation || !same(snapshot)) return;
+      if (dialog.open) status(errorMessage(error), identity ? 'ctSupportChatStatus' : 'ctSupportAuthError');
+    }
+  }
+  async function connect(password, pin = '') {
+    const snapshot = current(), at = ++generation;
+    try {
+      await logoutPending;
+      const data = await rpc('cartech_support_login', {
+        p_shop_id:snapshot.shop, p_user:snapshot.user, p_password:password,
+        p_developer_pin:pin || null
+      });
+      if (at !== generation || !same(snapshot)) return false;
+      if (!data?.ok) throw new Error('Incorrect staff password or developer PIN.');
+      identity = data;
+      el('ctSupportPassword').value = '';
+      el('ctSupportPin').value = '';
+      status('', 'ctSupportAuthError');
+      await refresh();
+      return true;
+    } catch (error) {
+      if (at === generation && same(snapshot) && dialog.open) {
+        identity = null;
+        toggleAuth(true);
+        status(errorMessage(error), 'ctSupportAuthError');
       }
       return false;
     }
-    if (accessNote) accessNote.hidden = true;
-    if (!messages.childElementCount) bubble('Hi! I can help with license top up, voucher questions, billing, activation, and workshop queue. Unsa imong pangutana?', 'ai');
+  }
+  async function start(password = null) {
+    if (!allowed()) return;
+    if (password && current().role !== 'developer') await connect(password);
+    else await refresh();
+  }
+  function open() {
+    if (!allowed()) {
+      const note = el('ctLicenseAiAccessNote');
+      if (note) { note.textContent = 'Sign in as Office, Admin, or Developer to use support.'; note.hidden = false; }
+      return false;
+    }
+    el('ctLicenseAiAccessNote').hidden = true;
     if (!dialog.open) dialog.showModal();
-    input.focus();
+    if (identity && matched(current())) {
+      toggleAuth(false);
+      renderThreads();
+      void loadThread();
+      input.focus();
+    } else toggleAuth(true);
+    void refresh();
     return true;
   }
-  function close() { if (dialog.open) dialog.close(); }
+  function close() {
+    if (dialog.open) dialog.close();
+    closeReceipt();
+  }
   function clear() {
+    generation++;
+    requestNo++;
+    identity = null;
+    selectedThread = '';
+    threads = [];
+    input.value = '';
+    photoInput.value = '';
+    input.required = true;
+    fileChanged();
+    status('');
+    badges(0);
     close();
-    messages.replaceChildren();
-    conversation.length = 0;
-    input.value = '';
+    if (supabaseClient) logoutPending = logoutPending.then(() =>
+      supabaseClient.rpc('cartech_support_logout')).catch(() => {});
   }
-  async function errorText(error) {
-    const status = error?.context?.status;
-    let code = '', retryAfter = 0;
-    if (error?.context?.clone) {
-      try {
-        const details = await error.context.clone().json();
-        code = String(details?.code || '');
-        retryAfter = Number(details?.retry_after_seconds) || 0;
-      } catch (_) {}
+  async function signIn(event) {
+    event?.preventDefault();
+    if (busy || !allowed()) return false;
+    const password = el('ctSupportPassword').value;
+    const pin = el('ctSupportPin').value;
+    if (!password || (current().role === 'developer' && !pin)) {
+      status('Enter your staff password and, for developer accounts, the support PIN.', 'ctSupportAuthError');
+      return false;
     }
-    if (code === 'missing_openai_key') return 'AI support needs setup. Please notify your developer (missing API key).';
-    if (code === 'openai_key') return 'AI support needs its API key checked. Please notify your developer.';
-    if (code === 'openai_quota') return 'AI support has reached its API credit or spending limit. Please notify your developer.';
-    if (code === 'openai_rate_limit') return 'The AI service is receiving too many requests. Please try again in a few minutes.';
-    if (code === 'chat_limit') return `This device has reached the AI chat limit. Please try again in about ${Math.max(1, Math.ceil(retryAfter / 60))} minute${retryAfter > 60 ? 's' : ''}.`;
-    if (code === 'openai_error' || code === 'openai_timeout') return 'OpenAI did not respond. Please try again shortly.';
-    if (status === 429) return 'The AI chat limit has been reached. Please try again later.';
-    if (status === 401 || status === 403) return 'Your CARTECH sign-in or workshop access needs to be renewed.';
-    if (status === 404) return 'The CARTECH AI service is not deployed yet. Ask the developer to deploy the cartech-license-ai Supabase function.';
-    if (status >= 500) return `AI support had a service error (${status}). Please notify your developer.`;
-    if (error?.name === 'FunctionsFetchError' || error?.name === 'FunctionsRelayError') return 'The browser could not reach CARTECH AI. Check the connection and the function deployment.';
-    if (error?.message === 'AI returned no answer') return 'AI support returned an incomplete response. Please notify your developer.';
-    return 'CARTECH AI is unavailable right now. Check the connection and try again.';
-  }
-  function containsSensitiveValue(value) {
-    return /\bCT[-\s]?[A-Z0-9]{4,}[-\s][A-Z0-9-]{10,}\b/i.test(value) ||
-      /\b(?:password|passcode|otp|one[- ]time code|gcash reference)\s*[:#=\-]\s*\S+/i.test(value);
-  }
-  async function ask(value) {
-    const question = String(value || '').trim().slice(0, 500);
-    if (!question || busy) return;
-    if (!supportAllowed()) {
-      if (accessNote) {
-        accessNote.textContent = 'AI support needs an active Office, Admin, or Developer sign-in.';
-        accessNote.hidden = false;
-      }
-      return;
-    }
-    if (containsSensitiveValue(question)) {
-      bubble('Please do not send a full license key, password, OTP, or GCash reference. Ask without sensitive details.', 'ai');
-      return;
-    }
-    const version = authVersion();
-    const user = String(currentUser || '');
-    const role = String(currentRole || '');
-    bubble(question, 'you');
-    input.value = '';
-    conversation.push({ role:'user', content:question });
     busy = true;
-    sendButton.disabled = true;
-    shortcuts.forEach(button => { button.disabled = true; });
-    try {
-      await ensureDeviceAuth();
-      if (!supabaseClient) throw new Error('Supabase is unavailable');
-      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !supportAllowed()) return;
-      const { data, error } = await supabaseClient.functions.invoke('cartech-license-ai', {
-        body: { messages:conversation.slice(-6) }
-      });
-      if (error) throw error;
-      if (typeof data?.answer !== 'string' || !data.answer.trim()) throw new Error('AI returned no answer');
-      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !dialog.open || !supportAllowed()) return;
-      const answer = data.answer.trim().slice(0, 1800);
-      bubble(answer, 'ai');
-      conversation.push({ role:'assistant', content:answer.slice(0, 500) });
-    } catch (error) {
-      if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !dialog.open) return;
-      conversation.pop();
-      bubble(await errorText(error), 'ai');
-    } finally {
-      busy = false;
-      sendButton.disabled = false;
-      shortcuts.forEach(button => { button.disabled = false; });
-    }
+    el('ctSupportAuthForm').querySelector('button').disabled = true;
+    try { await connect(password, pin); }
+    finally { busy = false; el('ctSupportAuthForm').querySelector('button').disabled = false; }
+    return false;
   }
-  function submit(event) { event?.preventDefault(); void ask(input.value); return false; }
-  return { open, close, clear, ask, submit };
+  function fileChanged() {
+    const file = photoInput.files?.[0];
+    const node = el('ctSupportReceiptName');
+    input.required = !file;
+    node.hidden = !file;
+    node.textContent = file ? `Screenshot ready: ${file.name} (up to 800 KB after resize)` : '';
+  }
+  async function imageData(file) {
+    if (!/^image\/(png|jpeg|webp)$/i.test(file.type || '') || file.size > 8 * 1024 * 1024)
+      throw new Error('Choose a PNG, JPG, or WebP screenshot smaller than 8 MB.');
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      const picture = new Image();
+      await new Promise((resolve, reject) => {
+        picture.onload = resolve;
+        picture.onerror = reject;
+        picture.src = objectUrl;
+      });
+      if (!picture.naturalWidth || !picture.naturalHeight) throw new Error('Screenshot could not be read.');
+      const scale = Math.min(1, 1600 / Math.max(picture.naturalWidth, picture.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(picture.naturalWidth * scale);
+      canvas.height = Math.round(picture.naturalHeight * scale);
+      const context = canvas.getContext('2d');
+      context.fillStyle = '#fff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(picture, 0, 0, canvas.width, canvas.height);
+      for (const quality of [.86, .75, .63, .5]) {
+        const data = canvas.toDataURL('image/jpeg', quality);
+        if (data.length < 1050000) return data;
+      }
+      throw new Error('Screenshot is too detailed. Crop it to the receipt or bug and try again.');
+    } finally { URL.revokeObjectURL(objectUrl); }
+  }
+  async function submit(event) {
+    event?.preventDefault();
+    if (!identity || !matched(current()) || busy) return false;
+    const target = identity.role === 'developer' ? selectedThread : identity.username;
+    if (!target) return false;
+    const file = photoInput.files?.[0];
+    const body = input.value.trim() || (file ? 'Screenshot attached for review.' : '');
+    if (!body) return false;
+    if (/\b(?:password|passcode|otp|one.time code)\s*[:#=\-]\s*\S+/i.test(body)) {
+      status('Do not send passwords or OTPs in support chat.');
+      return false;
+    }
+    const snapshot = current(), at = generation;
+    busy = true;
+    form.querySelector('button[type="submit"]').disabled = true;
+    status('Sending…');
+    try {
+      const receipt = file ? await imageData(file) : null;
+      if (at !== generation || !matched(snapshot)) return false;
+      await rpc('cartech_support_send', {
+        p_username:target, p_topic:identity.role === 'developer' ? 'reply' : el('ctSupportTopic').value,
+        p_body:body.slice(0, 1000), p_receipt_data:receipt
+      });
+      if (at !== generation || !matched(snapshot)) return false;
+      input.value = '';
+      photoInput.value = '';
+      fileChanged();
+      status('Message sent to ' + (identity.role === 'developer' ? target : 'the developer') + '.');
+      await loadThread();
+      await refresh();
+    } catch (error) {
+      if (at === generation && matched(snapshot)) status(errorMessage(error));
+    } finally { busy = false; form.querySelector('button[type="submit"]').disabled = false; }
+    return false;
+  }
+  async function viewReceipt(messageId) {
+    if (!identity || !matched(current())) return;
+    const snapshot = current(), at = generation;
+    try {
+      status('Opening screenshot…');
+      const data = await rpc('cartech_support_receipt', { p_message_id:messageId });
+      if (at !== generation || !matched(snapshot) || !dialog.open || typeof data !== 'string'
+        || !/^data:image\/(jpeg|png|webp);base64,/.test(data)) return;
+      closeReceipt();
+      const bytes = atob(data.slice(data.indexOf(',') + 1));
+      const buffer = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) buffer[i] = bytes.charCodeAt(i);
+      const type = data.slice(5, data.indexOf(';'));
+      photoUrl = URL.createObjectURL(new Blob([buffer], { type }));
+      el('ctSupportReceiptImage').src = photoUrl;
+      el('ctSupportReceiptDownload').href = photoUrl;
+      el('ctSupportReceiptDialog').showModal();
+      status('');
+    } catch (error) { status(errorMessage(error)); }
+  }
+  function closeReceipt() {
+    const viewer = el('ctSupportReceiptDialog');
+    if (viewer.open) viewer.close();
+    el('ctSupportReceiptImage').removeAttribute('src');
+    el('ctSupportReceiptDownload').removeAttribute('href');
+    if (photoUrl) URL.revokeObjectURL(photoUrl);
+    photoUrl = '';
+  }
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void submit(event); }
+  });
+  window.addEventListener('focus', () => { if (allowed()) void refresh(); });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && allowed()) void refresh();
+  });
+  setInterval(() => { if (!document.hidden && allowed()) void refresh(); }, 25000);
+  return { open, close, clear, start, signIn, submit, fileChanged, closeReceipt };
 })();
 </script>
 </body>
