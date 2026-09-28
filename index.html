@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-developer-support-v65">
+  <meta name="cartech-build" content="cartech-developer-support-v68">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - Developer Chat Support v67 · Partial / Full inspection</title>
+  <title>CARTECH - Developer Chat Support v68 · Low egress · Partial / Full inspection</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -10510,6 +10510,7 @@ window.CartechSupportChat = (() => {
   }) : null;
   let identity = null, selectedThread = '', threads = [], busy = false;
   let generation = 0, requestNo = 0, photoUrl = '', logoutPending = Promise.resolve();
+  let lastSupportCheckAt = Date.now();
   const rememberedKey = 'cartech_support_trusted_developer_v67';
   function rememberedDeveloper() {
     try { return JSON.parse(localStorage.getItem(rememberedKey) || 'null'); }
@@ -10704,6 +10705,7 @@ window.CartechSupportChat = (() => {
   }
   async function refresh() {
     if (!allowed()) return;
+    lastSupportCheckAt = Date.now();
     const snapshot = current(), at = generation, id = ++requestNo;
     try {
       await logoutPending;
@@ -10936,7 +10938,12 @@ window.CartechSupportChat = (() => {
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && allowed()) void refresh();
   });
-  setInterval(() => { if (!document.hidden && allowed()) void refresh(); }, 25000);
+  // Keep an open chat responsive. When it is closed, check for unread messages
+  // around every three minutes; returning to the app still checks immediately.
+  setInterval(() => {
+    if (document.hidden || !allowed()) return;
+    if (dialog.open || Date.now() - lastSupportCheckAt >= 180000) void refresh();
+  }, 25000);
   return { open, close, clear, forgetDevice, start, signIn, submit, fileChanged, closeReceipt };
 })();
 </script>
