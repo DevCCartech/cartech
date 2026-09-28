@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-office-work-hours-v24-low-egress">
+  <meta name="cartech-build" content="cartech-mobile-license-roles-v64">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Portal v63</title>
@@ -8480,6 +8480,9 @@ window.CartechAccess = (() => {
     paymentResultTimer = setInterval(() => { void checkPaymentResult(true); }, 30000);
   }
   async function openLicenseStore() {
+    // The public purchase screen is available before sign-in. Once signed in,
+    // only staff who manage the license may open the top-up flow.
+    if (currentUser && !['office','admin','developer'].includes(String(currentRole || '').toLowerCase())) return false;
     const expiry = licenseExpiry();
     const activePaid = paidLicenseActive();
     cartechPurchaseMode = activePaid ? 'topup' : 'renewal';
@@ -9080,6 +9083,7 @@ window.CartechAccess = (() => {
     if (['expired', 'revoked', 'program-ended', 'license-expired', 'license-required'].includes(reason)) clearRememberedDevice();
     try { sessionStorage.removeItem(signInKey); } catch (_) {}
     currentUser = currentRole = verifiedUser = verifiedRole = null; accountSnapshot = null;
+    window.CartechLicenseExtras?.renderAccess?.(tenantAccessSnapshot);
     renewalAuthorized = false; renewalUser = renewalPassword = null;
     previews.clear();
     state = []; completedArchive = []; isCompletedLoaded = false; previousJobStatuses = {};
@@ -9305,7 +9309,10 @@ window.CartechAccess = (() => {
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
     window.CartechLauncher?.openWorkspace?.();
     getAudioContext(); bootApp(); refresh();
-    queueMicrotask(() => window.CartechLicenseExtras?.refresh?.(true));
+    queueMicrotask(() => {
+      window.CartechLicenseExtras?.renderAccess?.(tenantAccessSnapshot);
+      window.CartechLicenseExtras?.refresh?.(true);
+    });
     if (currentRole !== 'tester') void sendPresenceHeartbeat(true);
   }
   async function acceptAgreement(event) {
@@ -10242,7 +10249,7 @@ window.CartechLicenseExtras = (() => {
     const hasExpiry = Boolean(el('ctLicenseExpiryWarning') && !el('ctLicenseExpiryWarning').hidden);
     if (root) {
       root.classList.toggle('has-expiry', hasExpiry);
-      root.hidden = !['ctLicenseExpiryWarning','ctLicensePaymentWarning','ctLicenseBonusOffer'].some(id => !el(id)?.hidden);
+      root.hidden = !roleCanClaim() || !['ctLicenseExpiryWarning','ctLicensePaymentWarning','ctLicenseBonusOffer'].some(id => !el(id)?.hidden);
     }
   }
   function renderExpiryCountdown() {
@@ -10268,10 +10275,11 @@ window.CartechLicenseExtras = (() => {
   }
   function renderAccess(access = tenantAccessSnapshot) {
     const expiryRow = el('ctLicenseExpiryWarning'), paymentRow = el('ctLicensePaymentWarning');
+    const mayManage = roleCanClaim();
     const status = String(access?.status || '').toLowerCase();
     const expires = expiryTimestamp(access?.license_expires_at);
     const remaining = expires > 0 ? expires - Date.now() : NaN;
-    const showExpiry = access?.valid === true && access?.access_kind === 'license' && Number.isFinite(remaining) && remaining > 0 && remaining <= 2 * 86400000;
+    const showExpiry = mayManage && access?.valid === true && access?.access_kind === 'license' && Number.isFinite(remaining) && remaining > 0 && remaining <= 2 * 86400000;
     if (expiryRow) expiryRow.hidden = !showExpiry;
     if (showExpiry) {
       const days = Math.max(1, Math.ceil(remaining / 86400000));
@@ -10281,19 +10289,21 @@ window.CartechLicenseExtras = (() => {
       if (workshopLabel) workshopLabel.textContent = String(access?.shop_name || 'Main workshop');
       setExpiryCountdown(expires);
     } else setExpiryCountdown(0);
-    if (paymentRow) paymentRow.hidden = status !== 'payment_paused';
-    if (status === 'payment_paused') el('ctLicensePaymentCopy').textContent = 'Your license has an unpaid balance. Access stays paused until the developer marks the payment as cleared.';
-    if (!roleCanClaim()) { currentOffer = null; if (el('ctLicenseBonusOffer')) el('ctLicenseBonusOffer').hidden = true; }
+    if (paymentRow) paymentRow.hidden = !mayManage || status !== 'payment_paused';
+    if (mayManage && status === 'payment_paused') el('ctLicensePaymentCopy').textContent = 'Your license has an unpaid balance. Access stays paused until the developer marks the payment as cleared.';
+    if (!mayManage) { currentOffer = null; if (el('ctLicenseBonusOffer')) el('ctLicenseBonusOffer').hidden = true; }
     syncRoot();
-    if (roleCanClaim() && access?.shop_id && access?.access_kind === 'license') void refresh(false);
+    if (mayManage && access?.shop_id && access?.access_kind === 'license') void refresh(false);
   }
   async function refresh(force = false) {
     if (!roleCanClaim() || !currentShopId || busy) return;
     if (!force && Date.now() - lastReadAt < 1800000) return;
+    const viewer = currentUser, role = currentRole, shop = currentShopId;
     busy = true;
     try {
       const result = await cartechRpc('cartech_get_license_extras', { p_shop_id:currentShopId });
       if (result.error) throw result.error;
+      if (!roleCanClaim() || currentUser !== viewer || currentRole !== role || currentShopId !== shop) return;
       const extra = tenantResult(result.data) || {};
       lastReadAt = Date.now();
       currentOffer = extra.offer_id ? extra : null;
@@ -10315,7 +10325,7 @@ window.CartechLicenseExtras = (() => {
     } finally { busy = false; }
   }
   async function claim() {
-    if (!currentOffer?.offer_id || busy) return;
+    if (!roleCanClaim() || !currentOffer?.offer_id || busy) return;
     const button = el('ctLicenseBonusClaim');
     if (button) { button.disabled = true; button.textContent = 'Claiming…'; }
     busy = true;
@@ -10384,11 +10394,28 @@ window.CartechLicenseChat = (() => {
     conversation.length = 0;
     input.value = '';
   }
-  function errorText(error) {
+  async function errorText(error) {
     const status = error?.context?.status;
+    let code = '', retryAfter = 0;
+    if (error?.context?.clone) {
+      try {
+        const details = await error.context.clone().json();
+        code = String(details?.code || '');
+        retryAfter = Number(details?.retry_after_seconds) || 0;
+      } catch (_) {}
+    }
+    if (code === 'missing_openai_key') return 'AI support needs setup. Please notify your developer (missing API key).';
+    if (code === 'openai_key') return 'AI support needs its API key checked. Please notify your developer.';
+    if (code === 'openai_quota') return 'AI support has reached its API credit or spending limit. Please notify your developer.';
+    if (code === 'openai_rate_limit') return 'The AI service is receiving too many requests. Please try again in a few minutes.';
+    if (code === 'chat_limit') return `This device has reached the AI chat limit. Please try again in about ${Math.max(1, Math.ceil(retryAfter / 60))} minute${retryAfter > 60 ? 's' : ''}.`;
+    if (code === 'openai_error' || code === 'openai_timeout') return 'OpenAI did not respond. Please try again shortly.';
     if (status === 429) return 'The AI chat limit has been reached. Please try again later.';
     if (status === 401 || status === 403) return 'Your CARTECH sign-in or workshop access needs to be renewed.';
     if (status === 404) return 'The CARTECH AI service is not deployed yet. Ask the developer to deploy the cartech-license-ai Supabase function.';
+    if (status >= 500) return `AI support had a service error (${status}). Please notify your developer.`;
+    if (error?.name === 'FunctionsFetchError' || error?.name === 'FunctionsRelayError') return 'The browser could not reach CARTECH AI. Check the connection and the function deployment.';
+    if (error?.message === 'AI returned no answer') return 'AI support returned an incomplete response. Please notify your developer.';
     return 'CARTECH AI is unavailable right now. Check the connection and try again.';
   }
   function containsSensitiveValue(value) {
@@ -10434,7 +10461,7 @@ window.CartechLicenseChat = (() => {
     } catch (error) {
       if (version !== authVersion() || user !== String(currentUser || '') || role !== String(currentRole || '') || !dialog.open) return;
       conversation.pop();
-      bubble(errorText(error), 'ai');
+      bubble(await errorText(error), 'ai');
     } finally {
       busy = false;
       sendButton.disabled = false;
