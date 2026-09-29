@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,7 +12,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/cartech-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./icons/cartech-192.png">
-  <title>CARTECH Developer Payment PWA</title>
+  <title>CARTECH Developer Billing & License Control v72</title>
   <style>
     :root{color-scheme:light;--navy:#12243a;--ink:#172337;--muted:#66768a;--line:#dce4ed;--page:#edf2f6;--white:#fff;--orange:#f56d32;--teal:#087f80;--red:#b42338;--green:#087a57;--gold:#966619}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#edf3f7,#f8fafc);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
@@ -45,6 +44,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     .license-control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.license-tool{border:1px solid var(--line);background:#f8fafc;border-radius:12px;padding:13px}.license-tool h4{margin:0 0 4px;font-size:12px}.license-tool>p{margin:0 0 10px;font-size:10px;color:var(--muted)}
     .license-tool label{display:grid;gap:4px;margin-top:8px;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#52657a}.license-tool input,.license-tool select,.license-tool textarea{width:100%;border:1px solid #cfd9e4;border-radius:8px;padding:8px 9px;background:#fff;color:var(--ink);font:12px inherit}.license-tool textarea{min-height:62px;resize:vertical}.license-tool .btn{width:100%;margin-top:10px}.license-tool-note{font-size:10px;color:var(--muted);margin-top:8px}.license-alert{border-radius:9px;padding:9px 10px;background:#fff4e8;color:#8a4b10;font-size:11px}.license-alert.payment-paused{background:#fff1f2;color:var(--red)}
     @media(max-width:1100px){.license-control-grid{grid-template-columns:1fr}.license-manager{padding-top:13px}}
+    .pill.provisional{background:#563618;color:#ffd59d;border:1px solid #a87235}
+    .request.provisional{background:#2b241c;border-color:#b87934}
+    .request.provisional .request-note{color:#ffe0b1}
+    .request.provisional .btn.primary{background:#0b7659;border-color:#2aab85}
 </style>
 </head>
 <body>
@@ -53,11 +56,11 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     <aside>
       <div class="brand"><span class="mark">C</span><div><strong>CARTECH</strong><small>PAYMENT REVIEW</small></div></div>
       <nav class="ct-dev-nav" aria-label="Developer sections"><a href="#developerAccess"><span>01</span> Developer access</a><a href="#planSettingsCard"><span>02</span> Plans &amp; stock</a><a href="#licenseControl"><span>03</span> License keys</a><a href="#paymentReviewAnchor"><span>04</span> Payment requests</a></nav><div class="side-note"><strong>Developer-only console</strong><p>Review QR/GCash receipts here. Check the real transaction in your GCash app before approving a key.</p></div>
-      <div class="side-note"><strong>What approval does</strong><p>Approval calls the secure Supabase RPC, creates the shop owner login, and returns the license key once.</p></div>
+      <div class="side-note"><strong>Temporary keys</strong><p>New buyers may receive a 24-hour key before payment review. Confirm the actual GCash transaction to unlock the purchased term, or revoke and block the request.</p></div>
       <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payments &amp; workshop licenses</h1><p>Verify the amount and GCash reference, then issue a CARTECH license.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v1 · Payment console</span></div></header>
+      <header class="top"><div><h1>Payments &amp; workshop licenses</h1><p>Verify GCash transactions and confirm or revoke temporary keys.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v72 · Payment console</span></div></header>
       <section id="developerAccess" class="card">
         <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
         <div class="card-body">
@@ -71,12 +74,21 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         <div class="card-head"><div class="section-heading"><div><h2>Plans for sale — edit customer page</h2><p>Set price and availability. Choose a company, or choose <strong>Open to anyone</strong>. Only Available plans appear on the customer page.</p><p id="planSettingsHeaderStatus" class="plan-settings-summary">Editor minimized. Tap “Edit customer plans” to open it.</p></div><div class="top-actions"><span class="section-badge">Shared online</span><button id="minimizePlansButton" class="btn quiet" type="button">Minimize editor ↑</button></div></div></div>
         <div class="card-body"><div class="toolbar"><button id="loadPlanSettingsButton" class="btn primary" type="button">Load plan settings</button><button id="savePlanSettingsButton" class="btn" type="button">Save plan settings</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="planSettingsStatus" class="status">Load the settings, then choose which plans are available.</p><div id="planSettingsList" class="plan-settings-list"><div class="empty">Enter the manager secret, then load plan settings.</div></div></div>
       </section>
+      <section id="dauisTest" class="card" style="margin-top:20px">
+        <div class="card-head"><h2>Dauis branch · one-day test</h2><p>Creates a separate CARTECH Dauis workshop, an alex owner login, and a one-day license. Does not charge or approve a GCash payment.</p></div>
+        <div class="card-body">
+          <p class="status">Enter the developer secret above, then create the test only once. The owner password and license key are shown once after issuance. Keep them private.</p>
+          <div class="toolbar"><button id="createDauisTestButton" class="btn primary" type="button">Create Dauis 1-day test</button></div>
+          <p id="dauisTestStatus" class="status" role="status">No Dauis test created from this page.</p>
+          <div id="dauisTestResult" class="result" hidden></div>
+        </div>
+      </section>
       <section id="licenseControl" class="card license-control-card" style="margin-top:20px">
         <div class="card-head"><div class="section-heading"><div><h2>License time, payment &amp; bonus control</h2><p>Edit the exact expiry, pause access for an unpaid balance, or offer claimable extra time to the office.</p></div><span class="section-badge">Developer only</span></div></div>
         <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Open “Manage this running key” to change its expiry, payment state, or claimable bonus. Revoke a running key before permanently deleting it. Workshop jobs and account data remain safe.</p></div>
       </section>
       <div id="paymentReviewAnchor"></div><section id="incomingRequestsCard" class="card" style="margin-top:20px" hidden>
-        <div class="card-head"><h2>Incoming GCash requests</h2><p>New pending payment requests appear here after the developer secret is accepted.</p></div>
+        <div class="card-head"><h2>Incoming GCash requests</h2><p>Amber temporary keys still need a real GCash transaction check. Unconfirmed keys expire after 24 hours.</p></div>
         <div class="card-body"><div id="requests" class="requests"><div class="empty">No requests loaded yet.</div></div><div id="result" class="result" hidden></div></div>
       </section>
       <section id="topupRequestsCard" class="card" style="margin-top:20px" hidden>
@@ -114,6 +126,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     let topupRequests = [];
     let previousPending = null;
     let loadBusy = false;
+    let reviewBusy = false;
     let licenseLoadBusy = false;
     const receiptLoading = {};
     const BUYER_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
@@ -460,27 +473,38 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       const root = byId('requests');
       const visibleRequests = requests.filter(row => !(row.status === 'approved' && !row.license_id));
       byId('incomingRequestsCard').hidden = visibleRequests.length === 0;
-      const pending = visibleRequests.filter(row => row.status === 'pending').length;
-      byId('pendingCount').textContent = `${pending} pending`;
+      const pending = visibleRequests.filter(row => row.status === 'pending' || (row.status === 'approved' && row.provisional_issued_at && !row.provisional_confirmed_at && !row.provisional_rejected_at)).length;
+      byId('pendingCount').textContent = `${pending} to review`;
       byId('totalCount').textContent = `${visibleRequests.length} total`;
       byId('lastLoaded').textContent = visibleRequests.length ? `Loaded ${new Date().toLocaleTimeString()}` : 'No active requests';
       if (!visibleRequests.length) { root.innerHTML = ''; return; }
       root.innerHTML = visibleRequests.map(row => {
-        const status = ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
+        const provisional = row.status === 'approved' && row.provisional_issued_at && !row.provisional_confirmed_at && !row.provisional_rejected_at;
+        const status = provisional ? 'provisional' : ['pending','approved','rejected'].includes(row.status) ? row.status : 'pending';
         const receipt = row.receipt_data && /^data:image\//i.test(row.receipt_data) ? row.receipt_data : '';
         const hasReceipt = Boolean(receipt || row.has_receipt);
-        const cleanup = `<div class="cleanup-actions">${hasReceipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
-        const action = status === 'pending'
+        const cleanup = provisional ? '' : `<div class="cleanup-actions">${hasReceipt ? `<button class="btn quiet" type="button" data-clear-receipt="${esc(row.request_id)}">Remove receipt</button>` : ''}<button class="btn danger" type="button" data-delete-request="${esc(row.request_id)}" data-request-status="${esc(status)}">Delete record</button></div>`;
+        const action = provisional
+          ? `<div class="actions"><button class="btn primary" data-provisional-approve="${esc(row.request_id)}">Confirm GCash payment</button><button class="btn danger" data-provisional-reject="${esc(row.request_id)}">Revoke key &amp; block account</button><p class="request-note">Key issued ${esc(date(row.provisional_issued_at))}. Temporary access ends ${esc(date(row.provisional_expires_at))} unless confirmed.</p></div>`
+          : status === 'pending'
           ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
           : status === 'approved'
             ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
             : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
+        const proofState = String(row.proof_check?.state || '');
+        const proofView = proofState === 'details_match'
+          ? '<p class="request-note proof-details-match">AI matched the image reference and amount. Check the actual GCash transaction before approval.</p>'
+          : proofState === 'needs_review'
+            ? '<p class="request-note proof-needs-review">AI could not match all image details. Review in GCash.</p>'
+            : proofState === 'unavailable'
+              ? '<p class="request-note">AI check unavailable. Review in GCash.</p>'
+              : '';
         const receiptView = receipt
           ? `<a href="${esc(receipt)}" target="_blank" rel="noopener"><img class="receipt" src="${esc(receipt)}" alt="GCash receipt for ${esc(row.shop_name)}"></a>`
           : hasReceipt
             ? `<button class="btn quiet" type="button" data-load-receipt="${esc(row.request_id)}" ${receiptLoading[row.request_id] ? 'disabled' : ''}>${receiptLoading[row.request_id] ? 'Loading receipt…' : 'View receipt'}</button>`
             : '<div class="empty">No receipt image</div>';
-        return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receiptView}${action}</div></article>`;
+        return `<article class="request ${status}"><div><h3>${esc(row.shop_name)} <span class="pill ${status}">${esc(provisional ? 'temporary · unverified' : status)}</span></h3><dl class="request-meta"><div><dt>Plan</dt><dd>${esc(row.duration_code)} · ${esc(amount(row.amount_pesos))}</dd></div><div><dt>Owner username</dt><dd>${esc(row.owner_username)}</dd></div><div><dt>GCash reference</dt><dd>${esc(row.gcash_reference)}</dd></div><div><dt>Submitted</dt><dd>${esc(date(row.created_at))}</dd></div><div><dt>Request ID</dt><dd>${esc(row.request_id)}</dd></div><div><dt>License</dt><dd>${esc(row.license_id || 'Not issued')}</dd></div></dl></div><div class="request-side">${receiptView}${proofView}${action}</div></article>`;
       }).join('');
     }
 
@@ -517,23 +541,38 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         const result = await rpc('cartech_list_license_payment_request_meta', { p_admin_secret: adminSecret });
         if (result.error) throw result.error;
         const next = Array.isArray(result.data) ? result.data : [];
-        const nextPending = next.filter(row => row.status === 'pending').length;
+        const provisionalResult = await rpc('cartech_list_provisional_reviews_v72', { p_admin_secret: adminSecret });
+        if (provisionalResult.error) throw provisionalResult.error;
+        const provisionalByRequest = new Map((provisionalResult.data || []).map(row => [row.request_id, row]));
+        next.forEach(row => Object.assign(row, provisionalByRequest.get(row.request_id) || {}));
+        const nextPending = next.filter(row => row.status === 'pending' || (row.status === 'approved' && row.provisional_issued_at && !row.provisional_confirmed_at && !row.provisional_rejected_at)).length;
         if (previousPending !== null && nextPending > previousPending && 'Notification' in window && Notification.permission === 'granted') new Notification('CARTECH payment received', { body:`${nextPending - previousPending} new payment request${nextPending - previousPending === 1 ? '' : 's'}.` });
         previousPending = nextPending;
+        if (next.some(row => row.status === 'pending')) {
+          try {
+            const checks = await rpc('cartech_list_payment_proof_checks', { p_admin_secret: adminSecret });
+            if (!checks.error) {
+              const byRequest = new Map((checks.data || []).map(check => [check.request_id, check]));
+              next.forEach(row => { row.proof_check = byRequest.get(row.request_id) || null; });
+            }
+          } catch (_) { /* Older Supabase installations continue to load requests. */ }
+        }
         requests = next;
         render();
-        if (!silent) setStatus('Requests loaded. Verify each amount and reference in GCash before approving.');
+        if (!silent) setStatus('Requests loaded. Verify each real GCash transaction before confirming a temporary key.');
       } catch (error) { if (!silent) setStatus(error?.message || 'Could not load payment requests.', true); }
       finally { loadBusy = false; }
     }
 
     async function review(requestId, decision) {
+      if (reviewBusy) return;
       const row = requests.find(item => item.request_id === requestId);
       if (!row) return;
       if (decision === 'approve' && !confirm(`Confirm that ${amount(row.amount_pesos)} was received in GCash for ${row.shop_name}? A real license key and owner password will be generated.`)) return;
       if (decision === 'reject' && !confirm(`Reject the payment request for ${row.shop_name}?`)) return;
-      const note = prompt('Optional note for your records:', decision === 'approve' ? 'Payment verified in GCash' : 'Payment not verified') || '';
+      const note = decision === 'approve' ? 'Payment verified in GCash' : (prompt('Reason for rejection:', 'Payment not verified') || 'Payment not verified');
       const button = document.querySelector(`[data-${decision}="${CSS.escape(requestId)}"]`); if (button) button.disabled = true;
+      reviewBusy = true;
       setStatus(`${decision === 'approve' ? 'Generating the license key' : 'Rejecting the request'}…`);
       try {
         const result = await rpc('cartech_review_license_payment_request', { p_admin_secret: secret(), p_request_id: requestId, p_decision: decision, p_review_note: note });
@@ -544,6 +583,28 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         await loadRequests(true);
         await loadLicenses(true);
       } catch (error) { setStatus(error?.message || 'Could not review this request.', true); if (button) button.disabled = false; }
+      finally { reviewBusy = false; }
+    }
+
+    async function reviewProvisional(requestId, decision) {
+      if (reviewBusy) return;
+      const row = requests.find(item => item.request_id === requestId);
+      if (!row || !row.provisional_issued_at || row.provisional_confirmed_at || row.provisional_rejected_at) return;
+      if (decision === 'approve' && !confirm(`Confirm that ${amount(row.amount_pesos)} for reference ${row.gcash_reference} was received in your real GCash transactions? This unlocks the purchased plan on the SAME key.`)) return;
+      if (decision === 'reject' && !confirm(`Revoke the temporary key for ${row.shop_name} and block this account from another temporary key? Check GCash first.`)) return;
+      const note = decision === 'approve' ? 'GCash payment confirmed in developer transaction history' : (prompt('Reason for revocation:', 'GCash payment not received') || 'GCash payment not received');
+      reviewBusy = true;
+      try {
+        const result = await rpc('cartech_review_provisional_license_v72', {
+          p_admin_secret: secret(), p_request_id: requestId,
+          p_decision: decision, p_review_note: note
+        });
+        if (result.error) throw result.error;
+        byId('result').hidden = true;
+        setStatus(decision === 'approve' ? 'Payment confirmed. The same license key now has the full purchased term.' : 'Temporary key revoked, stock returned, and this account blocked from another temporary key.');
+        await loadRequests(true); await loadLicenses(true);
+      } catch (error) { setStatus(error?.message || 'Could not review temporary key.', true); }
+      finally { reviewBusy = false; }
     }
 
     function showIssued(issued, requestId = '') {
@@ -583,7 +644,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         const handoff = rowData(handoffResult.data);
         const token = String(handoff?.handoff_token || '').trim();
         if (!/^[a-f0-9]{48}$/i.test(token)) throw new Error('The buyer handoff token was not created.');
-        const buyerUrl = new URL('index.html', location.href);
+        const buyerUrl = new URL('../index.html', location.href);
         buyerUrl.searchParams.set('cartech_handoff', token);
         const link = buyerUrl.href;
         const notified = notifyOpenBuyerTabs(token);
@@ -677,7 +738,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       } catch(error){setStatus(error?.message || 'Could not load receipt.',true);}
     }
     async function copyValue(id) { const text = byId(id)?.textContent || ''; if (!text) return; try { await navigator.clipboard.writeText(text); setStatus('Copied. Keep the license key private.'); } catch (_) { setStatus('Select and copy the value manually.'); } }
-    async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Android/browser notifications enabled while this app is open.' : 'Notifications were not enabled.'); }
+    async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Phone/browser notifications enabled while this console is open.' : 'Notifications were not enabled.'); }
 
     async function refreshAll(showMessage = true) {
       saveRememberedSecret();
@@ -716,7 +777,6 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         setStatus('App opened, but offline installation is unavailable on this host.', true);
       }));
     }
-
     restoreRememberedSecret();
     byId('editPlansButton').addEventListener('click', () => {
       const card = byId('planSettingsCard');
@@ -727,6 +787,54 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     byId('adminSecret').addEventListener('input', () => { if (byId('rememberSecret').checked) saveRememberedSecret(); });
     byId('rememberSecret').addEventListener('change', saveRememberedSecret);
     byId('clearSecretButton').addEventListener('click', clearRememberedSecret);
+    async function createDauisTest() {
+      const button = byId('createDauisTestButton');
+      const status = byId('dauisTestStatus');
+      const output = byId('dauisTestResult');
+      const adminSecret = secret();
+      if (!adminSecret) { status.textContent = 'Enter the developer manager secret above first.'; return; }
+      if (!window.crypto?.getRandomValues) { status.textContent = 'Secure password generation is unavailable on this page.'; return; }
+      button.disabled = true;
+      status.classList.remove('error');
+      status.textContent = 'Checking whether Dauis already has a license…';
+      try {
+        const previous = await rpc('cartech_list_licenses', { p_admin_secret: adminSecret });
+        const licenses = Array.isArray(previous.data) ? previous.data : [];
+        if (licenses.some(row => String(row.shop_id || '').toLowerCase() === 'cartech-dauis' || String(row.shop_name || '').trim().toLowerCase() === 'cartech dauis')) {
+          throw new Error('CARTECH Dauis already has a license record. Review it in License keys instead of creating a duplicate branch.');
+        }
+        if (!confirm('Create a NEW CARTECH Dauis branch, alex admin login, and a one-day test key? This writes to the live database.')) return;
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        const password = 'CT-' + Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+        status.textContent = 'Creating the Dauis test branch…';
+        const issued = await rpc('cartech_issue_one_day_license', {
+          p_admin_secret: adminSecret,
+          p_shop_name: 'CARTECH Dauis',
+          p_duration_code: '1_day',
+          p_owner_username: 'alex',
+          p_owner_password: password,
+          p_notes: 'Dauis branch one-day test · developer issued',
+          p_existing_shop_id: null
+        });
+        const row = Array.isArray(issued.data) ? issued.data[0] : issued.data;
+        if (!row?.license_key) throw new Error('The license response did not include a key. Check License keys before retrying.');
+        const details = `Workshop: ${row.shop_name || 'CARTECH Dauis'}\nShop ID: ${row.shop_id || ''}\nOwner username: alex\nTemporary password: ${password}\nLicense key: ${row.license_key}`;
+        output.hidden = false;
+        output.replaceChildren();
+        const heading = document.createElement('strong'); heading.textContent = 'Copy these details now';
+        const pre = document.createElement('pre'); pre.style.whiteSpace = 'pre-wrap'; pre.style.overflowWrap = 'anywhere'; pre.textContent = details;
+        const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'btn primary'; copy.textContent = 'Copy login and key';
+        copy.addEventListener('click', async () => { try { await navigator.clipboard.writeText(details); copy.textContent = 'Copied'; } catch (_) { copy.textContent = 'Select and copy the text above'; } });
+        output.append(heading, pre, copy);
+        status.textContent = row.shop_id === 'cartech-dauis' ? 'Dauis test created. Activate the key on a separate device/profile, then sign in as alex.' : `Issued to ${row.shop_id}. Confirm the shop ID before using the Dauis site selector.`;
+        await loadLicenses(true);
+      } catch (error) {
+        status.textContent = error?.message || 'The Dauis test could not be created.';
+        status.classList.add('error');
+      } finally { button.disabled = false; }
+    }
+    byId('createDauisTestButton').addEventListener('click', () => void createDauisTest());
     byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
     byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
     byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
@@ -736,7 +844,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     byId('dockRefreshButton').addEventListener('click', () => void refreshAll(true));
     byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); } });
     window.addEventListener('beforeunload', saveRememberedSecret);
-    byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
+    byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const temporaryApprove = event.target.closest('[data-provisional-approve]'); if (temporaryApprove) void reviewProvisional(temporaryApprove.dataset.provisionalApprove, 'approve'); const temporaryReject = event.target.closest('[data-provisional-reject]'); if (temporaryReject) void reviewProvisional(temporaryReject.dataset.provisionalReject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
     byId('topupRequests').addEventListener('click', event => { const receipt=event.target.closest('[data-topup-receipt]'); if(receipt) void viewTopupReceipt(receipt.dataset.topupReceipt); const approve=event.target.closest('[data-topup-approve]'); if(approve) void reviewTopup(approve.dataset.topupApprove,'approve',approve); const reject=event.target.closest('[data-topup-reject]'); if(reject) void reviewTopup(reject.dataset.topupReject,'reject',reject); });
     byId('licenseList').addEventListener('click', event => {
       const revoke = event.target.closest('[data-license-revoke]'); if (revoke) void revokeLicense(revoke.dataset.licenseRevoke, revoke);
@@ -748,12 +856,16 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       const repair = event.target.closest('[data-license-repair-shop]'); if (repair) void repairShopAccess(repair.dataset.licenseRepairShop, repair);
     });
     byId('result').addEventListener('click', event => { const copy = event.target.closest('[data-copy-value]'); if (copy) void copyValue(copy.dataset.copyValue); const publish = event.target.closest('[data-publish-delivery]'); if (publish) void publishDelivery(publish.dataset.publishDelivery); const reissue = event.target.closest('[data-reissue-delivery]'); if (reissue) void reissueDelivery(reissue.dataset.reissueDelivery); });
-    // Load once on app start when this private device already has the manager
-    // secret. Deliberately no background polling: payment-list RPC responses previously
-    // included receipt images, so refreshing every 30 seconds caused avoidable
-    // PostgREST egress. Use the visible Load buttons, and open a receipt only
-    // when it is needed.
-    if (secret() && navigator.onLine) void refreshAll(false);
+    // Only metadata is polled. Receipt images stay lazy-loaded on demand.
+    let lastAutoLoad = 0;
+    const refreshVisibleRequests = () => {
+      if (document.hidden || !navigator.onLine || !secret() || loadBusy || reviewBusy || Date.now() - lastAutoLoad < 60000) return;
+      lastAutoLoad = Date.now();
+      void loadRequests(true);
+    };
+    setInterval(refreshVisibleRequests, 90000);
+    document.addEventListener('visibilitychange', refreshVisibleRequests);
+    if (secret()) { lastAutoLoad = Date.now(); void loadRequests(true); }
   </script>
 </body>
 </html>
