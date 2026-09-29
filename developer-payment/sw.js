@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cartech-developer-payment-pwa-v1';
+const CACHE_NAME = 'cartech-developer-payment-pwa-v72';
 const APP_SHELL = [
   './',
   './index.html',
