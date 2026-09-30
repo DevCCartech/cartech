@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-payment-review-v74">
+  <meta name="cartech-build" content="cartech-license-renewal-v77">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Wizard v74 · Low egress</title>
@@ -2445,8 +2445,85 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 @media(prefers-reduced-motion:reduce){.ct-access-notice *{animation:none!important;transition:none!important}}
 </style>
 
+<style id="ctPauseStylesV79">
+  #ctPauseScreen[hidden] { display:none!important }
+  body.ct-pause-locked { overflow:hidden!important }
+  #ctPauseScreen { position:fixed; inset:0; z-index:999999; display:flex; flex-direction:column; overflow-y:auto; color:#e2e8f0; background:radial-gradient(circle at 50% 20%,#ef444440,transparent 55%),radial-gradient(circle at 85% 85%,#06b6d433,transparent 50%),radial-gradient(circle at 15% 75%,#a855f726,transparent 50%),#060911; font-family:Inter,system-ui,sans-serif }
+  #ctPauseScreen:before { content:""; position:fixed; inset:0; pointer-events:none; background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px); background-size:32px 32px }
+  #ctPauseScreen * { box-sizing:border-box }
+  .ct-pause-header,.ct-pause-footer { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px clamp(16px,4vw,32px); background:#02061799; border-bottom:1px solid #ffffff1a }
+  .ct-pause-brand { display:flex; align-items:center; gap:13px; color:#fff; font-size:16px; font-weight:900; letter-spacing:.06em }
+  .ct-pause-brand i { display:grid; place-items:center; width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#0f172a; box-shadow:0 8px 25px #f59e0b33 }
+  .ct-pause-brand small { display:block; margin-top:3px; color:#94a3b8; font-size:11px; font-weight:500; letter-spacing:0 }
+  .ct-pause-brand em { display:inline-block; padding:3px 7px; border:1px solid #f59e0b44; border-radius:99px; background:#f59e0b1a; color:#fbbf24; font-style:normal; font-size:10px; vertical-align:middle }
+  .ct-pause-badge { display:flex; align-items:center; gap:9px; border:1px solid #ef444466; border-radius:99px; padding:8px 13px; background:#ef44441a; color:#f87171; font-size:11px; font-weight:800; letter-spacing:.07em }
+  .ct-pause-dot { display:inline-block; flex:none; width:9px; height:9px; border-radius:50%; background:#ef4444; box-shadow:0 0 12px #ef4444; animation:ctPauseDot 1.8s ease-in-out infinite }
+  .ct-pause-main { position:relative; z-index:1; width:100%; max-width:704px; margin:auto; padding:28px 16px 36px }
+  .ct-pause-glow { padding:2px; border-radius:24px; background:linear-gradient(135deg,#ef4444e6,#06b6d4e6); box-shadow:0 0 35px #ef444466,0 0 60px #06b6d440; animation:ctPauseGlow 4s ease-in-out infinite alternate }
+  .ct-pause-panel { overflow:hidden; padding:clamp(24px,4vw,36px); border-radius:22px; background:#0b0f19eb; backdrop-filter:blur(24px) }
+  .ct-pause-pill-row { display:flex; justify-content:center; margin-bottom:24px }
+  .ct-pause-pill { display:inline-flex; align-items:center; gap:10px; padding:9px 19px; border:1px solid #ef4444cc; border-radius:99px; background:#ef444433; color:#fca5a5; box-shadow:0 0 20px #ef444499; font-size:12px; font-weight:850; text-transform:uppercase; letter-spacing:.06em; text-shadow:0 0 12px #ef444499 }
+  .ct-pause-pill i { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:#dc2626; color:#fff; font-size:11px; box-shadow:0 5px 12px #ef444477 }
+  .ct-pause-message { margin-bottom:22px; padding:clamp(20px,3vw,28px); border:1px solid #ef44444d; border-radius:17px; background:#121826bf; box-shadow:inset 0 0 15px #0009 }
+  .ct-pause-byline { display:flex; align-items:center; gap:12px; padding-bottom:15px; margin-bottom:16px; border-bottom:1px solid #ffffff1a }
+  .ct-pause-avatar { display:grid; place-items:center; flex:none; width:42px; height:42px; border-radius:50%; color:#fff; background:linear-gradient(135deg,#3b82f6,#4f46e5); font-size:12px; font-weight:900; box-shadow:0 8px 20px #3b82f64d }
+  .ct-pause-byline strong { color:#fff; font-size:14px }
+  .ct-pause-byline small { display:block; margin-top:3px; color:#94a3b8; font-size:12px }
+  .ct-pause-quote { margin-left:auto; color:#475569; font-size:30px }
+  .ct-pause-message p { margin:0 0 13px; color:#cbd5e1; font-size:13px; line-height:1.65 }
+  .ct-pause-message p:last-child { margin-bottom:0 }
+  .ct-pause-urgent { display:flex; align-items:start; gap:10px; padding:15px; border:1px solid #f59e0b80; border-radius:12px; background:#f59e0b1a; color:#fde68a; box-shadow:0 9px 26px #f59e0b1a; font-size:13px; line-height:1.5 }
+  .ct-pause-urgent i { margin-top:2px; color:#fbbf24 }
+  .ct-pause-signature { margin-top:18px!important }
+  .ct-pause-signature strong { color:#fff; font-size:14px }
+  .ct-pause-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin:0 0 22px; padding:17px; border:1px solid #06b6d466; border-radius:17px; background:#0f172acc; box-shadow:0 9px 25px #06b6d41a }
+  .ct-pause-facts div { padding:0 10px; min-width:0 }
+  .ct-pause-facts div+div { border-left:1px solid #ffffff1a }
+  .ct-pause-facts small { display:block; margin-bottom:6px; color:#94a3b8; font-size:10px; font-weight:850; text-transform:uppercase; letter-spacing:.08em }
+  .ct-pause-facts strong { display:block; color:#fff; font-size:13px; overflow-wrap:anywhere }
+  #ctPauseState { color:#f87171; text-shadow:0 0 12px #ef444499 }
+  #ctPauseState:before { content:""; display:inline-block; width:8px; height:8px; margin-right:7px; border-radius:50%; background:#ef4444; animation:ctPauseDot 1.8s ease-in-out infinite }
+  .ct-pause-actions { display:flex; gap:12px }
+  .ct-pause-actions a,.ct-pause-actions button { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 18px; border-radius:12px; color:#fff; font-size:13px; font-weight:750; text-decoration:none; cursor:pointer; transition:transform .15s ease,background .15s ease }
+  .ct-pause-actions a { flex:1; border:1px solid #3b82f6; background:linear-gradient(110deg,#2563eb,#4f46e5); box-shadow:0 8px 22px #2563eb66 }
+  .ct-pause-actions button { border:1px solid #ffffff33; background:#1e293be6 }
+  .ct-pause-actions a:hover,.ct-pause-actions button:hover { transform:scale(1.02) }
+  .ct-pause-check { display:block; margin:21px auto 0; padding:4px; border:0; background:none; color:#94a3b8; font-size:12px; text-decoration:underline; text-underline-offset:4px; cursor:pointer }
+  .ct-pause-check:hover { color:#e2e8f0 }
+  #ctPauseFeedback:not(:empty) { margin:15px 0 0; padding:12px; border:1px solid #10b98180; border-radius:11px; background:#10b98126; color:#a7f3d0; font-size:12px; text-align:center }
+  .ct-pause-footer { justify-content:center; border-top:1px solid #ffffff12; border-bottom:0; color:#64748b; font-size:11px; text-align:center }
+  .ct-pause-footer strong { color:#cbd5e1 }
+  @keyframes ctPauseGlow { from { box-shadow:0 0 30px #ef444466,0 0 50px #06b6d440 } to { box-shadow:0 0 55px #ef4444bf,0 0 85px #06b6d480 } }
+  @keyframes ctPauseDot { 50% { opacity:.45; transform:scale(.85) } }
+  @media(max-width:600px) { .ct-pause-header { flex-wrap:wrap }.ct-pause-facts { grid-template-columns:1fr }.ct-pause-facts div { padding:7px 0 }.ct-pause-facts div+div { border-left:0; border-top:1px solid #ffffff1a }.ct-pause-actions { flex-direction:column }.ct-pause-actions > * { width:100% } }
+  @media(prefers-reduced-motion:reduce) { #ctPauseScreen * { animation:none!important; transition:none!important } }
+</style>
+
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
+<section id="ctPauseScreen" hidden aria-labelledby="ctPauseTitle">
+  <header class="ct-pause-header">
+    <div class="ct-pause-brand"><i class="fa-solid fa-wrench" aria-hidden="true"></i><span>CARTECH <em>WORKSHOP OPERATIONS</em><small>Automotive Management System</small></span></div>
+    <div class="ct-pause-badge"><span class="ct-pause-dot" aria-hidden="true"></span>SERVICE PAUSED</div>
+  </header>
+  <main class="ct-pause-main"><div class="ct-pause-glow"><div class="ct-pause-panel">
+    <div class="ct-pause-pill-row"><div class="ct-pause-pill"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span id="ctPauseTitle">System Access Paused</span></div></div>
+    <div class="ct-pause-message">
+      <div class="ct-pause-byline"><span class="ct-pause-avatar">CJ</span><span><strong>A Message from the Developer</strong><small>Charl Jun V. — Lead Developer</small></span><i class="ct-pause-quote fa-solid fa-quote-right" aria-hidden="true"></i></div>
+      <p>To everyone using CARTECH, thank you for trusting this system to support your workshop.</p>
+      <p>Running CARTECH includes hosting, maintenance, and support costs. Access for this workshop depends on its verified license status.</p>
+      <p id="ctPauseExplanation">Access is waiting for a verified payment. Contact me on Facebook and I will set the agreed number of days.</p>
+      <div class="ct-pause-urgent"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span id="ctPauseUrgent">Message me on Facebook. After I confirm payment and set the timer, this same workshop will reopen. No new key or password is needed.</span></div>
+      <p class="ct-pause-signature">Warm regards,<br><strong>Charl Jun V.</strong></p>
+    </div>
+    <div class="ct-pause-facts"><div><small>Workshop</small><strong id="ctPauseShop">Cartech Autoservice</strong></div><div><small>License status</small><strong id="ctPauseState">Not active</strong></div><div><small>Next step</small><strong id="ctPauseNext">Contact developer</strong></div></div>
+    <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact Facebook Developer Charl</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy Quick Message</button></div>
+    <p id="ctPauseFeedback" role="status" aria-live="polite"></p>
+    <button class="ct-pause-check" type="button" onclick="CartechAccess.checkPauseAccess()">Check access after payment</button>
+  </div></div></main>
+  <footer class="ct-pause-footer">© 2026 CARTECH Systems • Lead Developer: <strong>Charl Jun V.</strong></footer>
+</section>
+
 
   <div id="liveAlertStack" class="fixed top-3 right-3 left-3 sm:left-auto sm:w-[390px] z-[10000] space-y-2 pointer-events-none" aria-live="assertive" aria-atomic="true"></div>
 
@@ -8362,6 +8439,52 @@ window.CartechAccess = (() => {
     return { title:entry[0], body:entry[1], state:entry[2], next:entry[3],
       shop:String(access?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : currentShopId || 'Workshop')) };
   }
+  function renderConditionalPause(access) {
+    const screen = byId('ctPauseScreen');
+    if (!screen) return;
+    const status = String(access?.status || '').toLowerCase();
+    const show = access?.valid === false && String(access?.shop_id || '') === CARTECH_MAIN_SHOP_ID
+      && ['not_started','expired','revoked','payment_paused','operational_paused'].includes(status);
+    screen.hidden = !show;
+    document.body.classList.toggle('ct-pause-locked', show);
+    const login = byId('loginScreen');
+    const portal = byId('ctUnderDevelopment');
+    if (login) login.inert = show;
+    if (portal) portal.inert = show;
+    if (!show) return;
+    const messages = {
+      not_started:['Not active','Access is waiting for a verified payment. Contact me on Facebook and I will set the agreed number of days.','Contact developer'],
+      expired:['Expired','The CARTECH Main Workshop access period has ended. Contact me on Facebook about renewal, then I will set the agreed number of days after checking payment.','Contact developer'],
+      revoked:['Revoked','This workshop license was revoked. Contact me to review access before making a payment.','Contact developer'],
+      payment_paused:['Payment hold','The license service reports a payment hold. Contact me to resolve the account status.','Review account'],
+      operational_paused:['Temporarily paused','The workshop was paused for an operational reason. Contact me to review and resume it.','Contact developer']
+    };
+    const copy = messages[status];
+    byId('ctPauseTitle').textContent = 'System Access Paused';
+    byId('ctPauseExplanation').textContent = copy[1];
+    byId('ctPauseShop').textContent = access.shop_name || 'CARTECH Main Workshop';
+    byId('ctPauseState').textContent = copy[0];
+    byId('ctPauseNext').textContent = copy[2];
+    byId('ctPauseUrgent').textContent = ['expired','not_started'].includes(status)
+      ? 'Message me on Facebook. After I confirm payment and set the timer, this same workshop will reopen. No new key or password is needed.'
+      : 'Contact me to review this status before making a payment. The workshop will reopen when its verified access is restored.';
+  }
+  async function copyPauseRequest() {
+    const request = 'Hi Charl Jun V., please help me with access to CARTECH for cartech-main. Please advise the payment details and agreed duration if a renewal is needed.';
+    try {
+      await navigator.clipboard.writeText(request);
+      byId('ctPauseFeedback').textContent = 'Message copied. Open Facebook and paste it to Charl.';
+    } catch (_) {
+      byId('ctPauseFeedback').textContent = request;
+    }
+  }
+  async function checkPauseAccess() {
+    byId('ctPauseFeedback').textContent = 'Checking the latest workshop license…';
+    const active = await refreshLicenseStatus(true);
+    if (!active && !byId('ctPauseScreen').hidden)
+      byId('ctPauseFeedback').textContent = 'Access has not been restored yet. Check again after payment verification.';
+  }
+
   function renderServiceNotice(access) {
     const model = serviceNoticeModel(access);
     const loginNotice = byId('ctServiceNoticeLogin');
@@ -8403,6 +8526,7 @@ window.CartechAccess = (() => {
     }
     renderLicensePortal(access);
     renderServiceNotice(access);
+    renderConditionalPause(access);
     renderOperationalPausePanel(access);
     updateLicenseAgreementButton();
   }
@@ -8481,7 +8605,7 @@ window.CartechAccess = (() => {
       }
       return workshopAccessActive();
     } catch (error) {
-      updateLicenseGate(null);
+      updateLicenseGate(tenantAccessSnapshot);
       if (!workshopAccessActive() && !underDevPreview) showDevelopment(false);
       return false;
     } finally { licenseBusy = false; updateLicenseAgreementButton(); }
@@ -10530,6 +10654,7 @@ window.CartechAccess = (() => {
     });
   }
   const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, proceedToPayment, backToLicensePlans, showPaymentProofStep, paymentReceiptChanged, autoApplyPaymentKey, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, showLicensePlansFromPayment, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, supportContext, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  Object.assign(api, { copyPauseRequest, checkPauseAccess });
   Object.assign(api, { proceedFromLicenseOverview, cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
