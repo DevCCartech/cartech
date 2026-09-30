@@ -2487,9 +2487,9 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-pause-facts strong { display:block; color:#fff; font-size:13px; overflow-wrap:anywhere }
   #ctPauseState { color:#f87171; text-shadow:0 0 12px #ef444499 }
   #ctPauseState:before { content:""; display:inline-block; width:8px; height:8px; margin-right:7px; border-radius:50%; background:#ef4444; animation:ctPauseDot 1.8s ease-in-out infinite }
-  .ct-pause-actions { display:flex; gap:12px }
+  .ct-pause-actions { display:flex; gap:12px; flex-wrap:wrap }
   .ct-pause-actions a,.ct-pause-actions button { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 18px; border-radius:12px; color:#fff; font-size:13px; font-weight:750; text-decoration:none; cursor:pointer; transition:transform .15s ease,background .15s ease }
-  .ct-pause-actions a { flex:1; border:1px solid #3b82f6; background:linear-gradient(110deg,#2563eb,#4f46e5); box-shadow:0 8px 22px #2563eb66 }
+  .ct-pause-actions a { flex:1 1 180px; border:1px solid #3b82f6; background:linear-gradient(110deg,#2563eb,#4f46e5); box-shadow:0 8px 22px #2563eb66 }
   .ct-pause-actions button { border:1px solid #ffffff33; background:#1e293be6 }
   .ct-pause-actions a:hover,.ct-pause-actions button:hover { transform:scale(1.02) }
   .ct-pause-check { display:block; margin:21px auto 0; padding:4px; border:0; background:none; color:#94a3b8; font-size:12px; text-decoration:underline; text-underline-offset:4px; cursor:pointer }
@@ -2555,7 +2555,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       </div>
     </details>
     <div class="ct-pause-facts"><div><small>Workshop</small><strong id="ctPauseShop">Cartech Autoservice</strong></div><div><small>License status</small><strong id="ctPauseState">Not active</strong></div><div><small>Next step</small><strong id="ctPauseNext">Contact developer</strong></div></div>
-    <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact Facebook Developer Charl</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy Quick Message</button></div>
+    <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact Facebook Developer Charl</a><a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" aria-label="Contact Developer Charl on Facebook 2"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook 2 - Developer Charl</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy Quick Message</button></div>
     <p id="ctPauseFeedback" role="status" aria-live="polite"></p>
     <button class="ct-pause-check" type="button" onclick="CartechAccess.checkPauseAccess()">Check access after payment</button>
   </div></div></main>
@@ -2642,7 +2642,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       <p id="ctServiceNoticeLoginBody">Check the workshop license to continue.</p>
       <div class="ct-access-message"><strong>A message from the developer</strong><p>Thank you for using CARTECH. Hosting, maintenance and support have ongoing costs. The registered owner can sign in below to review the workshop license and renewal options.</p></div>
       <div class="ct-access-facts"><div><span>Workshop</span><strong id="ctServiceNoticeLoginShop">CARTECH</strong></div><div><span>License state</span><strong id="ctServiceNoticeLoginState">Checking</strong></div><div><span>Next step</span><strong id="ctServiceNoticeLoginNext">Owner sign-in</strong></div></div>
-      <div class="ct-access-actions"><button type="button" onclick="document.getElementById('loginUsername')?.focus()"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Owner sign-in below</button><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a></div>
+      <div class="ct-access-actions"><button type="button" onclick="document.getElementById('loginUsername')?.focus()"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Owner sign-in below</button><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a><a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" aria-label="Contact developer on Facebook 2"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer (Facebook 2)</a></div>
     </section>
     <div id="loginCardWrapper" class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto transition-transform">
       
@@ -3332,7 +3332,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
               <p id="ctServiceNoticePortalBody">Check the workshop license to continue.</p>
               <div class="ct-access-message"><strong>A message from the developer</strong><p>Thank you for using CARTECH. Hosting, maintenance and support have ongoing costs. Use the verified license options below, or contact me if you need help restoring access.</p></div>
               <div class="ct-access-facts"><div><span>Workshop</span><strong id="ctServiceNoticePortalShop">CARTECH</strong></div><div><span>License state</span><strong id="ctServiceNoticePortalState">Checking</strong></div><div><span>Next step</span><strong id="ctServiceNoticePortalNext">Renew license</strong></div></div>
-              <div class="ct-access-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a></div>
+              <div class="ct-access-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a><a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" aria-label="Contact developer on Facebook 2"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer (Facebook 2)</a></div>
             </section>
 
             <!-- License Status Card -->
