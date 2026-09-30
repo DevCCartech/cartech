@@ -2409,6 +2409,42 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 #ctLicenseStoreDialog .ct-wizard-success.is-provisional .ct-wizard-key code{color:#fbbf24}
 
 </style>
+
+<style id="ct-service-notice-v75">
+/* License state notice shared by the web page and installed launcher. */
+#loginScreen.has-access-notice{flex-direction:column;gap:18px;justify-content:flex-start;padding:24px 12px;background:radial-gradient(circle at 12% 8%,#71332344,transparent 40%),radial-gradient(circle at 90% 90%,#193c5b66,transparent 48%),#07111f}
+#loginScreen.has-access-notice #loginCardWrapper{margin:0 auto}
+.ct-access-notice{width:min(100%,860px);box-sizing:border-box;margin:0 auto;border:1px solid #96504c;border-radius:22px;background:#101c2e;color:#f2f6fc;box-shadow:0 22px 65px #0007;padding:25px;position:relative;overflow:hidden}
+.ct-access-notice:before{content:'';position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#ef6b3a,#f8a33e,#a84649)}
+.ct-access-notice[hidden]{display:none!important}
+.ct-access-notice-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #ffffff1a}
+.ct-access-brand{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:800;letter-spacing:.05em}
+.ct-access-brand i{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#ef7b27;color:#fff}
+.ct-access-brand small{display:block;margin-top:2px;color:#aec1d7;font-size:10px;font-weight:700;letter-spacing:.09em}
+.ct-access-chip{border:1px solid #e9776c66;border-radius:99px;padding:7px 11px;background:#692c3340;color:#ffb7ad;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.ct-access-heading{display:flex;align-items:center;gap:14px;margin:23px 0 13px}
+.ct-access-heading>i{display:grid;place-items:center;width:49px;height:49px;flex:none;border-radius:15px;background:#7c3037;color:#ffd5cc;font-size:21px}
+.ct-access-heading h2{margin:0;color:#fff;font-size:clamp(22px,4vw,31px);line-height:1.2;font-weight:800;letter-spacing:-.035em}
+.ct-access-heading small{color:#faab86;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.11em}
+.ct-access-notice p{color:#c3cfdf;font-size:14px;line-height:1.7;margin:0}
+.ct-access-message{margin:21px 0;padding:17px 18px;border:1px solid #ffffff20;border-radius:15px;background:#1b293e}
+.ct-access-message strong{display:block;color:#fff;font-size:13px;margin-bottom:7px}
+.ct-access-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 20px}
+.ct-access-facts div{padding:13px;border:1px solid #ffffff20;border-radius:12px;background:#122238}
+.ct-access-facts span{display:block;color:#90a9c1;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.ct-access-facts strong{display:block;margin-top:5px;color:#f6f8fc;font-size:13px;line-height:1.4}
+.ct-access-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ct-access-actions a,.ct-access-actions button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 15px;border:1px solid #fb8739;border-radius:11px;background:#d75a23;color:#fff;font-size:13px;font-weight:800;text-decoration:none;cursor:pointer}
+.ct-access-actions a:hover,.ct-access-actions button:hover{background:#ed7033}
+.ct-access-actions button{background:#1b304a;border-color:#52708e}
+.ct-access-actions button:hover{background:#294566}
+#ctUnderDevelopment .ct-reference-main{max-width:860px}
+#ctUnderDevelopment .ct-access-notice{width:100%;margin:0;background:#16253b;box-shadow:none;border-color:#85454b;padding:20px}
+#ctUnderDevelopment .ct-access-facts strong{color:#f6f8fc}
+@media(max-width:650px){.ct-access-notice{padding:17px}.ct-access-facts{grid-template-columns:1fr}.ct-access-heading{align-items:flex-start}.ct-access-heading>i{width:42px;height:42px}.ct-access-actions>*{width:100%}}
+@media(prefers-reduced-motion:reduce){.ct-access-notice *{animation:none!important;transition:none!important}}
+</style>
+
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
@@ -2481,6 +2517,18 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 
   <!-- 1. AUTH SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
+
+    <section id="ctServiceNoticeLogin" class="ct-access-notice" hidden aria-labelledby="ctServiceNoticeLoginTitle">
+      <div class="ct-access-notice-head">
+        <div class="ct-access-brand"><i class="fa-solid fa-wrench" aria-hidden="true"></i><span>CARTECH<small>HYBRID QUEUE · WORKSHOP ACCESS</small></span></div>
+        <span class="ct-access-chip">Action required</span>
+      </div>
+      <div class="ct-access-heading"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><small>Workshop status</small><h2 id="ctServiceNoticeLoginTitle">Access paused</h2></div></div>
+      <p id="ctServiceNoticeLoginBody">Check the workshop license to continue.</p>
+      <div class="ct-access-message"><strong>A message from the developer</strong><p>Thank you for using CARTECH. Hosting, maintenance and support have ongoing costs. The registered owner can sign in below to review the workshop license and renewal options.</p></div>
+      <div class="ct-access-facts"><div><span>Workshop</span><strong id="ctServiceNoticeLoginShop">CARTECH</strong></div><div><span>License state</span><strong id="ctServiceNoticeLoginState">Checking</strong></div><div><span>Next step</span><strong id="ctServiceNoticeLoginNext">Owner sign-in</strong></div></div>
+      <div class="ct-access-actions"><button type="button" onclick="document.getElementById('loginUsername')?.focus()"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Owner sign-in below</button><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a></div>
+    </section>
     <div id="loginCardWrapper" class="w-full max-w-sm backdrop-blur-xl bg-white/95 p-6 md:p-8 rounded-3xl border border-white/40 shadow-2xl space-y-4 my-auto transition-transform">
       
       <div class="flex items-center justify-center space-x-2.5 pb-3 border-b border-slate-200/60">
@@ -3161,6 +3209,16 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
                 </p>
                 <button id="ctSupportRenewalButton" type="button" onclick="CartechSupportChat.open()" hidden><i class="fa-solid fa-comments" aria-hidden="true"></i> Developer Chat Support <span id="ctSupportRenewalBadge" class="ct-support-badge" hidden>0</span></button>
             </div>
+
+
+            <section id="ctServiceNoticePortal" class="ct-access-notice" hidden aria-labelledby="ctServiceNoticePortalTitle">
+              <div class="ct-access-notice-head"><div class="ct-access-brand"><i class="fa-solid fa-wrench" aria-hidden="true"></i><span>CARTECH<small>HYBRID QUEUE · LICENSE ACCESS</small></span></div><span class="ct-access-chip">Action required</span></div>
+              <div class="ct-access-heading"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><small>Workshop status</small><h2 id="ctServiceNoticePortalTitle">Access paused</h2></div></div>
+              <p id="ctServiceNoticePortalBody">Check the workshop license to continue.</p>
+              <div class="ct-access-message"><strong>A message from the developer</strong><p>Thank you for using CARTECH. Hosting, maintenance and support have ongoing costs. Use the verified license options below, or contact me if you need help restoring access.</p></div>
+              <div class="ct-access-facts"><div><span>Workshop</span><strong id="ctServiceNoticePortalShop">CARTECH</strong></div><div><span>License state</span><strong id="ctServiceNoticePortalState">Checking</strong></div><div><span>Next step</span><strong id="ctServiceNoticePortalNext">Renew license</strong></div></div>
+              <div class="ct-access-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact developer</a></div>
+            </section>
 
             <!-- License Status Card -->
             <div id="ctLicenseState" class="bg-innerCardBg border border-slate-800 rounded-xl p-5 sm:p-6 relative transition-all duration-300" aria-label="Workshop license status">
@@ -8291,6 +8349,38 @@ window.CartechAccess = (() => {
     track.hidden = model.percent === null;
     if (model.percent !== null) { track.setAttribute('aria-valuenow', String(Math.round(model.percent))); byId('ctLicenseTermFill').style.width = model.percent + '%'; }
   }
+  function serviceNoticeModel(access) {
+    const status = String(access?.status || '').toLowerCase();
+    const states = {
+      expired: ['Workshop license expired', 'The verified workshop license has ended. The owner can sign in and renew it to restore access.', 'Expired', 'Renew license'],
+      revoked: ['Workshop license revoked', 'The verified workshop license has been revoked. Contact the developer for a review or a replacement.', 'Revoked', 'Contact developer'],
+      payment_paused: ['Workshop payment required', 'The license service reports a payment hold for this workshop. Review the payment status or contact the developer.', 'Payment hold', 'Review payment'],
+      operational_paused: ['Workshop temporarily paused', 'The registered owner or developer can resume this workshop after confirming the pause reason.', 'Temporarily paused', 'Owner resume']
+    };
+    const entry = states[status];
+    if (!entry || access?.valid === true) return null;
+    return { title:entry[0], body:entry[1], state:entry[2], next:entry[3],
+      shop:String(access?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : currentShopId || 'Workshop')) };
+  }
+  function renderServiceNotice(access) {
+    const model = serviceNoticeModel(access);
+    const loginNotice = byId('ctServiceNoticeLogin');
+    const portalNotice = byId('ctServiceNoticePortal');
+    if (loginNotice) loginNotice.hidden = !model;
+    if (portalNotice) portalNotice.hidden = !model;
+    byId('loginScreen')?.classList.toggle('has-access-notice', !!model);
+    if (!model) return;
+    for (const variant of ['Login','Portal']) {
+      for (const field of ['Title','Body','Shop','State','Next']) {
+        const el = byId('ctServiceNotice' + variant + field);
+        if (el) el.textContent = model[field.toLowerCase()];
+      }
+    }
+    const title = byId('ctDevelopmentTitle');
+    const message = byId('ctDevelopmentMessage');
+    if (title) title.textContent = model.title;
+    if (message) message.textContent = model.body;
+  }
   function updateLicenseGate(access = tenantAccessSnapshot) {
     const shopName = access?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : 'Not activated');
     const starts = Date.parse(String(access?.license_starts_at || ''));
@@ -8312,6 +8402,7 @@ window.CartechAccess = (() => {
       state.classList.add(access?.valid === true ? 'ct-license-state-active' : ['revoked','expired','payment_paused','operational_paused'].includes(access?.status) ? 'ct-license-state-blocked' : 'ct-license-state-required');
     }
     renderLicensePortal(access);
+    renderServiceNotice(access);
     renderOperationalPausePanel(access);
     updateLicenseAgreementButton();
   }
@@ -9936,8 +10027,8 @@ window.CartechAccess = (() => {
     byId('ctDevelopmentPreviewClose').hidden = !preview || testingLicense;
     byId('ctLicenseTestReset').hidden = !testingLicense;
     byId('ctDevelopmentSignIn').hidden = true;
-    setText('ctDevelopmentTitle', 'YOUR LICENSE EXPIRED');
-    setText('ctDevelopmentMessage', 'To continue using CARTECH, renew your workshop license. Enter the new key below.');
+    setText('ctDevelopmentTitle', 'Workshop license portal');
+    setText('ctDevelopmentMessage', 'Check the verified workshop license below. The registered owner can renew access here.');
     if (wasHidden && !preview && !licenseBusy) {
       byId('ctLicenseInput').value = '';
       message('ctLicenseMessage', 'The license key is used once by the owner. Other connected devices will unlock automatically.');
