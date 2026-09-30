@@ -70,6 +70,14 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           <div class="summary"><span id="pendingCount" class="pill pending">0 pending</span><span id="totalCount" class="pill">0 total</span><span id="lastLoaded" class="pill">Not loaded</span></div>
         </div>
       </section>
+      <section id="verifiedRenewalCard" class="card" style="margin-top:20px">
+        <div class="card-head"><h2>CARTECH Main · manual payment timer</h2><p>For <strong>cartech-main</strong> only. Check the actual GCash transaction, then set the paid amount and exact number of days. This starts or extends the existing workshop license; no new key or password is sent.</p></div>
+        <div class="card-body">
+          <div class="toolbar" style="margin-top:12px"><label style="flex:1;min-width:130px">Days to add<input id="verifiedDays" class="input" type="number" min="1" max="365" step="1" value="7" style="width:100%;margin-top:5px"></label><label style="flex:1;min-width:130px">Amount paid (₱)<input id="verifiedAmount" class="input" type="number" min="0.01" max="1000000" step="0.01" value="420" style="width:100%;margin-top:5px"></label><label style="flex:2;min-width:200px">Real GCash reference<input id="verifiedReference" class="input" style="width:100%;margin-top:5px" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="10–20 digits from GCash"></label></div>
+          <div class="toolbar" style="margin-top:12px"><button id="applyVerifiedPlanButton" class="btn primary" type="button">Confirm payment &amp; set timer</button></div>
+          <p id="verifiedRenewalStatus" class="status" role="status">No payment has been verified from this panel. Do not approve a screenshot alone.</p>
+        </div>
+      </section>
       <section id="planSettingsCard" class="card plan-settings-card plan-editor-collapsed" style="margin-top:20px">
         <div class="card-head"><div class="section-heading"><div><h2>Plans for sale — edit customer page</h2><p>Set price and availability. Choose a company, or choose <strong>Open to anyone</strong>. Only Available plans appear on the customer page.</p><p id="planSettingsHeaderStatus" class="plan-settings-summary">Editor minimized. Tap “Edit customer plans” to open it.</p></div><div class="top-actions"><span class="section-badge">Shared online</span><button id="minimizePlansButton" class="btn quiet" type="button">Minimize editor ↑</button></div></div></div>
         <div class="card-body"><div class="toolbar"><button id="loadPlanSettingsButton" class="btn primary" type="button">Load plan settings</button><button id="savePlanSettingsButton" class="btn" type="button">Save plan settings</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="planSettingsStatus" class="status">Load the settings, then choose which plans are available.</p><div id="planSettingsList" class="plan-settings-list"><div class="empty">Enter the manager secret, then load plan settings.</div></div></div>
@@ -242,6 +250,39 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         stock_qty: wholeStock(row.querySelector('[data-plan-field="stock_remaining"]')?.value, 0)
       }));
     }
+    let verifiedPlanBusy = false;
+    async function applyVerifiedPlan() {
+      if (verifiedPlanBusy) return;
+      const days = Number(byId('verifiedDays').value);
+      const paid = Number(byId('verifiedAmount').value);
+      const reference = String(byId('verifiedReference').value || '').trim();
+      if (!secret()) { byId('verifiedRenewalStatus').textContent = 'Enter the developer manager secret above first.'; return; }
+      if (!Number.isInteger(days) || days < 1 || days > 365) { byId('verifiedRenewalStatus').textContent = 'Set a whole number of days from 1 to 365.'; return; }
+      if (!Number.isFinite(paid) || paid <= 0 || paid > 1000000 || !String(byId('verifiedAmount').value).trim()) { byId('verifiedRenewalStatus').textContent = 'Enter the verified amount actually paid in pesos.'; return; }
+      if (!/^[0-9]{10,20}$/.test(reference)) { byId('verifiedRenewalStatus').textContent = 'Enter the real 10–20 digit GCash transaction reference.'; return; }
+      if (!confirm(`Have you checked GCash itself for reference ${reference} and payment ₱${paid.toLocaleString('en-PH')}? Add ${days} day(s) to cartech-main now?`)) return;
+      verifiedPlanBusy = true;
+      byId('applyVerifiedPlanButton').disabled = true;
+      byId('verifiedRenewalStatus').textContent = 'Setting the verified payment timer…';
+      try {
+        const response = await rpc('cartech_apply_manual_days_v78', {
+          p_admin_secret: secret(), p_shop_id: 'cartech-main',
+          p_days: days, p_amount_pesos: paid, p_gcash_reference: reference
+        });
+        if (response.error) throw response.error;
+        const applied = rowData(response.data);
+        const success = `₱${Number(applied.price_pesos).toLocaleString('en-PH')} recorded. ${applied.days_added} day(s) added to cartech-main. Expires ${date(applied.new_expires_at)}. The buyer can tap Check access; no key is needed.`;
+        byId('verifiedReference').value = '';
+        await loadLicenses(true);
+        byId('verifiedRenewalStatus').textContent = success;
+      } catch (error) {
+        byId('verifiedRenewalStatus').textContent = error?.message || 'The timer was not set. Check the payment and try again.';
+      } finally {
+        verifiedPlanBusy = false;
+        byId('applyVerifiedPlanButton').disabled = false;
+      }
+    }
+
     async function loadPlanSettings(silent = false) {
       const adminSecret = secret();
       if (!adminSecret) { if (!silent) setPlanStatus('Enter the private manager secret first.', true); return; }
@@ -836,6 +877,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     }
     byId('createDauisTestButton').addEventListener('click', () => void createDauisTest());
     byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('applyVerifiedPlanButton').addEventListener('click', () => void applyVerifiedPlan());
     byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
     byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
     byId('savePlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void savePlanSettings(); });
