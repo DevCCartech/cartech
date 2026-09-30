@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-provisional-license-v72">
+  <meta name="cartech-build" content="cartech-buyer-activation-v73">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - License Wizard v72 · Low egress</title>
+  <title>CARTECH - License Wizard v73 · Low egress</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -8601,6 +8601,8 @@ window.CartechAccess = (() => {
     if (panel) {
       panel.hidden = true;
       panel.innerHTML = '';
+      delete panel.dataset.requestId;
+      delete panel.dataset.provisional;
       delete panel.dataset.key;
       delete panel.dataset.ownerPassword;
       delete panel.dataset.shopId;
@@ -8673,6 +8675,8 @@ window.CartechAccess = (() => {
     if (updates) { updates.hidden = false; if (updates.dataset.status !== status) updates.open = status !== 'pending'; updates.dataset.status = status; }
     if (byId('ctPaymentUpdateLabel')) byId('ctPaymentUpdateLabel').textContent = status === 'approved' ? 'Payment confirmed' : status === 'provisional' ? 'Temporary key · awaiting review' : status === 'rejected' ? 'Key revoked / needs attention' : 'Pending';
     panel.hidden = false;
+    panel.dataset.requestId = result.request_id || '';
+    panel.dataset.provisional = result.provisional_expires_at ? '1' : '';
     panel.dataset.key = result.license_key || '';
     panel.dataset.ownerPassword = result.owner_password || '';
     panel.dataset.shopId = result.shop_id || '';
@@ -8712,7 +8716,7 @@ window.CartechAccess = (() => {
     }
     const key = escapeHTML(result.license_key);
     const password = escapeHTML(result.owner_password || '—');
-    panel.innerHTML = `<h4>${temporary ? 'Temporary key issued — GCash review pending' : 'Payment confirmed — license active'}</h4><p>${temporary ? (temporaryExpired ? 'The 24-hour access period ended. Wait for the developer to confirm the payment before using this key again.' : 'You may use this key now for up to 24 hours. The developer has NOT yet verified the payment and can revoke the key if the payment is not received.') : 'The developer confirmed the GCash payment. Your purchased plan is now active.'}</p><div class="ct-license-delivery-key"><code>${key}</code><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('key')">Copy key</button></div><dl><dt>Workshop</dt><dd>${escapeHTML(result.shop_name)}</dd><dt>Shop ID</dt><dd>${escapeHTML(result.shop_id)}</dd><dt>Owner login</dt><dd>${escapeHTML(result.owner_username)}</dd><dt>Temporary password</dt><dd>${password}</dd><dt>Plan</dt><dd>${escapeHTML(result.duration_code)} · ₱${Number(result.amount_pesos || 0).toLocaleString('en-PH')}</dd></dl><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.copyPaymentDelivery('all')">Copy login details</button></div><p>Change the temporary password after signing in. ${temporary ? 'Keep your GCash transaction record for developer review.' : ''}</p>`;
+    panel.innerHTML = `<h4>${temporary ? 'Temporary key issued — GCash review pending' : 'Payment confirmed — license active'}</h4><p>${temporary ? (temporaryExpired ? 'The 24-hour access period ended. Wait for the developer to confirm the payment before using this key again.' : 'You may use this key now for up to 24 hours. The developer has NOT yet verified the payment and can revoke the key if the payment is not received.') : 'The developer confirmed the GCash payment. Your purchased plan is now active.'}</p><div class="ct-license-delivery-key"><code>${key}</code><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('key')">Copy key</button></div><dl><dt>Workshop</dt><dd>${escapeHTML(result.shop_name)}</dd><dt>Shop ID</dt><dd>${escapeHTML(result.shop_id)}</dd><dt>Owner login</dt><dd>${escapeHTML(result.owner_username)}</dd><dt>Temporary password</dt><dd>${password}</dd><dt>Plan</dt><dd>${escapeHTML(result.duration_code)} · ₱${Number(result.amount_pesos || 0).toLocaleString('en-PH')}</dd></dl><div class="ct-license-payment-followup-actions">${temporary && !temporaryExpired ? '<button type="button" class="ct-button ct-primary" onclick="CartechAccess.autoApplyPaymentKey()">Activate this new workshop</button>' : ''}<button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('all')">Copy login details</button></div><p>Change the temporary password after signing in. ${temporary ? 'Keep your GCash transaction record for developer review.' : ''}</p>`;
     const input = byId('ctLicenseInput');
     if (input) {
       input.value = result.license_key;
@@ -8774,13 +8778,13 @@ window.CartechAccess = (() => {
       if (note) note.textContent = 'Temporary access expired. Wait for the developer to confirm GCash payment.';
       return;
     }
-    if (!renewalAuthorized) {
+    if (panel.dataset.provisional === '1') {
       const owner = String(panel.dataset.owner || '');
       const password = String(panel.dataset.ownerPassword || '');
       if (!owner || !password) { if (note) note.textContent = 'Sign in as the owner or admin to activate this key.'; return; }
       // A brand-new workshop has no active tenant yet, so its owner cannot
       // sign in until the issued key has activated that tenant on the server.
-      buyerCredentials = { owner, password };
+      buyerCredentials = { owner, password, requestId:String(panel.dataset.requestId || '') };
     }
     if (!buyerCredentials && (!renewalAuthorized || !renewalUser)) {
       if (note) note.textContent = 'Sign in as an admin or developer, then press Auto-Apply again.';
@@ -9132,7 +9136,7 @@ window.CartechAccess = (() => {
   }
   function referencePaymentIdentity(plan, isTopup) {
     const knownShop = String(tenantAccessSnapshot?.shop_name || '').trim();
-    const knownOwner = String(tenantAccessSnapshot?.owner_username || currentUser || '').trim().toLowerCase();
+    const knownOwner = String(tenantAccessSnapshot?.owner_username || renewalUser || currentUser || '').trim().toLowerCase();
     if (isTopup) return { shop:knownShop || 'CARTECH Autoservice', owner:knownOwner };
     if (!referenceOnlyBuyerIdentity) {
       const bytes = new Uint8Array(8);
@@ -9142,7 +9146,7 @@ window.CartechAccess = (() => {
       referenceOnlyBuyerIdentity = { shop:`CARTECH Buyer ${token.slice(0, 8).toUpperCase()}`, owner:`buyer_${token.slice(0, 12)}` };
     }
     const assignedShop = String(plan?.buyer_shop_name || selectedLicenseBuyer || '').trim();
-    const canReuseShop = !!currentUser && !!knownShop && (!assignedShop || assignedShop.toLowerCase() === knownShop.toLowerCase());
+    const canReuseShop = !!(currentUser || (renewalAuthorized && renewalUser)) && !!knownShop && (!assignedShop || assignedShop.toLowerCase() === knownShop.toLowerCase());
     return {
       shop:assignedShop || (canReuseShop ? knownShop : referenceOnlyBuyerIdentity.shop),
       owner:canReuseShop && /^[a-z0-9][a-z0-9_.-]{2,39}$/.test(knownOwner)
@@ -9252,14 +9256,20 @@ window.CartechAccess = (() => {
     message('ctLicenseMessage', 'Checking the key and activating this workshop…');
     try {
       const authSession = await ensureDeviceAuth();
-      const result = await cartechRpc('cartech_activate_shop_license', {
-        p_license_key:key,
-        p_accepted_by:acceptedBy,
-        p_terms_version:licenseAgreementVersion
-      });
+      const result = buyerCredentials
+        ? await cartechRpc('cartech_activate_provisional_buyer_v73', {
+            p_request_id:buyerCredentials.requestId,
+            p_license_key:key,
+            p_terms_version:licenseAgreementVersion
+          })
+        : await cartechRpc('cartech_activate_shop_license', {
+            p_license_key:key,
+            p_accepted_by:acceptedBy,
+            p_terms_version:licenseAgreementVersion
+          });
       if (result.error) {
-        if (result.error.code === '42883' || /cartech_activate_shop_license/i.test(result.error.message || '')) {
-          throw new Error('Install the CARTECH v29 Supabase upgrade first, then try this key again.');
+        if (result.error.code === '42883' || /cartech_activate_(shop_license|provisional_buyer_v73)/i.test(result.error.message || '')) {
+          throw new Error('The workshop license activation service is unavailable. Ask the developer to install the matching CARTECH SQL update.');
         }
         throw result.error;
       }
@@ -9314,7 +9324,7 @@ window.CartechAccess = (() => {
           byId('authBoxForgot').classList.add('hidden');
           byId('authBoxLogin').classList.remove('hidden');
           initRememberedDeviceUI();
-          loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is unlocked on web and installed apps.`);
+          loginError('WORKSHOP LICENSE ACTIVE', `${access.shop_name || access.shop_id} is ready. Sign in with the owner details.`);
           const account = buyerCredentials?.owner || renewalUser;
           const password = buyerCredentials?.password || renewalPassword;
           renewalAuthorized = false; renewalUser = renewalPassword = renewalRole = null;
