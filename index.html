@@ -2465,6 +2465,10 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-pause-pill { display:inline-flex; align-items:center; gap:10px; padding:9px 19px; border:1px solid #ef4444cc; border-radius:99px; background:#ef444433; color:#fca5a5; box-shadow:0 0 20px #ef444499; font-size:12px; font-weight:850; text-transform:uppercase; letter-spacing:.06em; text-shadow:0 0 12px #ef444499 }
   .ct-pause-pill i { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:#dc2626; color:#fff; font-size:11px; box-shadow:0 5px 12px #ef444477 }
   .ct-pause-message { margin-bottom:22px; padding:clamp(20px,3vw,28px); border:1px solid #ef44444d; border-radius:17px; background:#121826bf; box-shadow:inset 0 0 15px #0009 }
+  .ct-pause-message summary { list-style:none; cursor:pointer }
+  .ct-pause-message summary::-webkit-details-marker { display:none }
+  .ct-pause-expand { display:none!important }
+  .ct-pause-chevron { display:none!important }
   .ct-pause-byline { display:flex; align-items:center; gap:12px; padding-bottom:15px; margin-bottom:16px; border-bottom:1px solid #ffffff1a }
   .ct-pause-avatar { display:grid; place-items:center; flex:none; width:42px; height:42px; border-radius:50%; color:#fff; background:linear-gradient(135deg,#3b82f6,#4f46e5); font-size:12px; font-weight:900; box-shadow:0 8px 20px #3b82f64d }
   .ct-pause-byline strong { color:#fff; font-size:14px }
@@ -2495,7 +2499,39 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-pause-footer strong { color:#cbd5e1 }
   @keyframes ctPauseGlow { from { box-shadow:0 0 30px #ef444466,0 0 50px #06b6d440 } to { box-shadow:0 0 55px #ef4444bf,0 0 85px #06b6d480 } }
   @keyframes ctPauseDot { 50% { opacity:.45; transform:scale(.85) } }
-  @media(max-width:600px) { .ct-pause-header { flex-wrap:wrap }.ct-pause-facts { grid-template-columns:1fr }.ct-pause-facts div { padding:7px 0 }.ct-pause-facts div+div { border-left:0; border-top:1px solid #ffffff1a }.ct-pause-actions { flex-direction:column }.ct-pause-actions > * { width:100% } }
+  @media(max-width:700px) {
+    .ct-pause-header { padding:10px 14px; gap:7px }
+    .ct-pause-brand { font-size:14px; gap:8px }
+    .ct-pause-brand i { width:34px; height:34px; border-radius:9px }
+    .ct-pause-brand em { font-size:8px; padding:2px 5px }
+    .ct-pause-brand small { font-size:9px; margin-top:1px }
+    .ct-pause-badge { padding:6px 9px; font-size:9px }
+    .ct-pause-main { padding:12px 10px 16px }
+    .ct-pause-panel { padding:16px }
+    .ct-pause-pill-row { margin-bottom:14px }
+    .ct-pause-pill { padding:7px 12px; font-size:11px }
+    .ct-pause-message { padding:14px; margin-bottom:14px }
+    .ct-pause-message:not([open]) .ct-pause-byline { margin:0; padding:0; border:0 }
+    .ct-pause-message:not([open]) .ct-pause-expand { display:block!important; margin-top:3px; color:#93c5fd }
+    .ct-pause-chevron { display:block!important; margin-left:auto; color:#93c5fd; font-size:13px }
+    .ct-pause-message[open] .ct-pause-chevron { transform:rotate(180deg) }
+    .ct-pause-quote { display:none!important }
+    .ct-pause-facts { padding:12px 8px; margin-bottom:14px }
+    .ct-pause-facts div { padding:0 6px }
+    .ct-pause-facts small { font-size:9px; margin-bottom:3px }
+    .ct-pause-facts strong { font-size:11px }
+    .ct-pause-actions { gap:8px }
+    .ct-pause-actions a,.ct-pause-actions button { min-height:42px; padding:9px 11px; font-size:11px }
+    .ct-pause-check { margin-top:10px }
+    .ct-pause-footer { padding:10px 12px }
+  }
+  @media(max-width:430px) {
+    .ct-pause-header { flex-wrap:wrap }
+    .ct-pause-brand em { display:none }
+    .ct-pause-facts { grid-template-columns:repeat(3,minmax(0,1fr)) }
+    .ct-pause-actions { flex-direction:column }
+    .ct-pause-actions > * { width:100% }
+  }
   @media(prefers-reduced-motion:reduce) { #ctPauseScreen * { animation:none!important; transition:none!important } }
 </style>
 
@@ -2508,14 +2544,16 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   </header>
   <main class="ct-pause-main"><div class="ct-pause-glow"><div class="ct-pause-panel">
     <div class="ct-pause-pill-row"><div class="ct-pause-pill"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span id="ctPauseTitle">System Access Paused</span></div></div>
-    <div class="ct-pause-message">
-      <div class="ct-pause-byline"><span class="ct-pause-avatar">CJ</span><span><strong>A Message from the Developer</strong><small>Charl Jun V. — Lead Developer</small></span><i class="ct-pause-quote fa-solid fa-quote-right" aria-hidden="true"></i></div>
+    <details id="ctPauseDeveloperMessage" class="ct-pause-message" open>
+      <summary class="ct-pause-byline"><span class="ct-pause-avatar">CJ</span><span><strong>A Message from the Developer</strong><small>Charl Jun V. — Lead Developer</small><small class="ct-pause-expand">Tap to read full message</small></span><i class="ct-pause-quote fa-solid fa-quote-right" aria-hidden="true"></i><i class="ct-pause-chevron fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
+      <div class="ct-pause-message-body">
       <p>To everyone using CARTECH, thank you for trusting this system to support your workshop.</p>
       <p>Running CARTECH includes hosting, maintenance, and support costs. Access for this workshop depends on its verified license status.</p>
       <p id="ctPauseExplanation">Access is waiting for a verified payment. Contact me on Facebook and I will set the agreed number of days.</p>
       <div class="ct-pause-urgent"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span id="ctPauseUrgent">Message me on Facebook. After I confirm payment and set the timer, this same workshop will reopen. No new key or password is needed.</span></div>
       <p class="ct-pause-signature">Warm regards,<br><strong>Charl Jun V.</strong></p>
-    </div>
+      </div>
+    </details>
     <div class="ct-pause-facts"><div><small>Workshop</small><strong id="ctPauseShop">Cartech Autoservice</strong></div><div><small>License status</small><strong id="ctPauseState">Not active</strong></div><div><small>Next step</small><strong id="ctPauseNext">Contact developer</strong></div></div>
     <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact Facebook Developer Charl</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy Quick Message</button></div>
     <p id="ctPauseFeedback" role="status" aria-live="polite"></p>
@@ -8439,6 +8477,7 @@ window.CartechAccess = (() => {
     return { title:entry[0], body:entry[1], state:entry[2], next:entry[3],
       shop:String(access?.shop_name || (currentShopId === CARTECH_MAIN_SHOP_ID ? 'CARTECH Main Workshop' : currentShopId || 'Workshop')) };
   }
+  let pauseMessageAutoInitialized = false;
   function renderConditionalPause(access) {
     const screen = byId('ctPauseScreen');
     if (!screen) return;
@@ -8452,6 +8491,18 @@ window.CartechAccess = (() => {
     if (login) login.inert = show;
     if (portal) portal.inert = show;
     if (!show) return;
+    if (!pauseMessageAutoInitialized) {
+      const message = byId('ctPauseDeveloperMessage');
+      if (message && typeof window !== 'undefined' && window.matchMedia) {
+        const compact = window.matchMedia('(max-width:700px)');
+        let manuallyToggled = false;
+        const fit = () => { if (!manuallyToggled) message.open = !compact.matches; };
+        message.querySelector('summary')?.addEventListener('click', () => { manuallyToggled = true; });
+        compact.addEventListener?.('change', fit);
+        fit();
+      }
+      pauseMessageAutoInitialized = true;
+    }
     const messages = {
       not_started:['Not active','Access is waiting for a verified payment. Contact me on Facebook and I will set the agreed number of days.','Contact developer'],
       expired:['Expired','The CARTECH Main Workshop access period has ended. Contact me on Facebook about renewal, then I will set the agreed number of days after checking payment.','Contact developer'],
