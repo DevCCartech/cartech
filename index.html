@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-buyer-activation-v73">
+  <meta name="cartech-build" content="cartech-payment-review-v74">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CARTECH - License Wizard v73 · Low egress</title>
+  <title>CARTECH - License Wizard v74 · Low egress</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -2345,6 +2345,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 #ctLicenseStoreDialog .ct-proof-label span{font-size:9px;color:#a2b0c2;font-weight:500}
 #ctLicenseStoreDialog .ct-proof-selection{margin-top:5px!important;color:#aebbd0!important;font-size:10px!important}
 #ctLicenseStoreDialog .ct-license-purchase-footer[hidden],#ctLicenseStoreDialog .ct-wizard-waiting[hidden],#ctLicenseStoreDialog .ct-wizard-success[hidden]{display:none!important}
+#ctPaymentRetry[hidden],#ctPaymentRequestNotice[hidden]{display:none!important}
 #ctLicenseStoreDialog .ct-license-purchase-footer{display:flex;justify-content:flex-end;padding:11px 18px;border-top:1px solid #2c394e;background:#0f1829}
 #ctLicenseStoreDialog .ct-license-purchase-footer button{min-height:34px;padding:7px 13px;border:1px solid #fa7139;border-radius:9px;background:#fa7139;color:#fff;font-size:10px;font-weight:800;box-shadow:0 5px 16px #d8492022}
 #ctLicenseStoreDialog .ct-license-purchase-footer button:disabled{opacity:.48;cursor:default}
@@ -3280,7 +3281,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     </section>
   <dialog id="ctLicenseStoreDialog" class="ct-dialog ct-license-store-dialog" aria-labelledby="ctLicenseStoreTitle">
     <div class="ct-dialog-head"><span class="ct-wizard-brand-icon" aria-hidden="true"><i class="fa-solid fa-cart-shopping"></i></span><div><h2 id="ctLicenseStoreTitle">CARTECH License Acquisition Wizard</h2><p id="ctLicenseStoreSubtitle">Official Philippine Dealer Renewal</p></div><button type="button" class="ct-icon-button" onclick="CartechAccess.closeLicenseStore()" aria-label="Close license plans"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
-    <div class="ct-license-store-body"><section id="ctTopupAccessSummary" class="ct-topup-access-summary" hidden aria-live="polite"><div><span>Active license plan</span><strong>Workshop license</strong></div><div><span>Current expiry</span><strong id="ctTopupCurrentExpiry">—</strong></div></section><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose Plan</li><li>GCash Payment</li><li>Upload Receipt</li><li>Get Key</li></ol><div class="ct-license-store-intro"><h3>Select Your License Duration</h3><p>Pick a plan matching your workshop budget.</p></div><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash reference number.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash reference number.</li><li>Return here, upload the receipt and reference to receive a temporary key.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Important:</strong> a temporary key may be issued after submission. The developer still verifies the real GCash payment.</div><div id="ctWizardQrNext" class="ct-wizard-qr-next" hidden><button type="button" class="ct-button ct-primary" onclick="CartechAccess.showPaymentProofStep()">Next: Upload Receipt <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" inputmode="numeric" autocomplete="off" placeholder="Enter the reference shown by GCash"><div id="ctLicenseProofField"><label for="ctLicensePaymentReceipt" class="ct-proof-label">GCash receipt screenshot <span>(required for instant key)</span></label><div id="ctProofDropZone" class="ct-proof-drop-zone"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><strong>Click to upload or drag a screenshot here</strong><small>JPG, PNG or WebP · up to 3 MB</small><input id="ctLicensePaymentReceipt" type="file" accept="image/jpeg,image/png,image/webp" onchange="CartechAccess.paymentReceiptChanged()" aria-label="Upload GCash receipt screenshot"></div><p id="ctProofSelection" class="ct-proof-selection">Upload a clear GCash receipt to request a temporary key. Only the developer can confirm payment.</p></div><label id="ctProvisionalConsent" class="ct-provisional-consent"><input id="ctProvisionalConsentCheck" type="checkbox"><span>I confirm I paid the correct amount to the GCash number above and entered my real reference. False payment details can lead to the key being revoked and this account being blocked.</span></label><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit &amp; Get Temporary Key</button></div><p class="ct-license-payment-followup-note">Temporary access lasts up to 24 hours until the developer checks the real GCash transaction. Never share an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctLicensePaymentBackButton" type="button" class="ct-button" onclick="CartechAccess.backToLicensePlans()">Change plan</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div><div id="ctWizardWaiting" class="ct-wizard-waiting" hidden role="status"><span class="ct-wizard-waiting-icon"><i class="fa-solid fa-clock-rotate-left"></i></span><h3>Payment review in progress</h3><p id="ctWizardWaitingText">The developer will check the GCash transaction. This screen updates automatically; you can close it and return later on this device.</p><p id="ctWizardScanText" class="ct-wizard-scan-note" hidden></p><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close for now</button></div><div id="ctWizardSuccess" class="ct-wizard-success" hidden aria-live="polite"><span class="ct-wizard-success-icon"><i class="fa-solid fa-check"></i></span><h3 id="ctWizardSuccessTitle">Temporary Key Issued</h3><p id="ctWizardSuccessCopy">Your key works for up to 24 hours while the developer checks the actual GCash payment.</p><div class="ct-wizard-key-label">YOUR OFFICIAL CARTECH LICENSE KEY</div><div class="ct-wizard-key"><code id="ctWizardLicenseKey"></code></div><div class="ct-wizard-success-actions"><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery(&#39;key&#39;)"><i class="fa-solid fa-copy"></i> Copy Key</button><button type="button" class="ct-button ct-primary" onclick="CartechAccess.autoApplyPaymentKey()"><i class="fa-solid fa-bolt"></i> Auto-Apply to Terminal</button></div><p id="ctWizardApplyNote" class="ct-wizard-apply-note">The owner login and password are in Payment updates. If payment is rejected, this key is revoked.</p></div><div class="ct-license-purchase-footer" id="ctLicensePurchaseFooter"><button id="ctProceedPayment" type="button" disabled onclick="CartechAccess.proceedToPayment()">Proceed to Payment <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+    <div class="ct-license-store-body"><section id="ctTopupAccessSummary" class="ct-topup-access-summary" hidden aria-live="polite"><div><span>Active license plan</span><strong>Workshop license</strong></div><div><span>Current expiry</span><strong id="ctTopupCurrentExpiry">—</strong></div></section><ol class="ct-purchase-roadmap" aria-label="How to buy"><li>Choose Plan</li><li>GCash Payment</li><li>Upload Receipt</li><li>Get Key</li></ol><div class="ct-license-store-intro"><h3>Select Your License Duration</h3><p>Pick a plan matching your workshop budget.</p></div><p id="ctPaymentRequestNotice" class="ct-wizard-apply-note" role="status" hidden></p><div id="ctLicensePlans" class="ct-license-plans" role="list" aria-label="Available license plans"></div><section id="ctLicensePayment" class="ct-license-payment" hidden aria-live="polite"><div class="ct-license-payment-head"><div><h3>Pay with GCash</h3><p>Send the selected fixed amount to the developer’s GCash account. Keep this CARTECH page open while you pay.</p></div><div class="ct-license-payment-plan"><span>Selected plan</span><strong id="ctLicensePaymentPlan">—</strong></div></div><div class="ct-license-gcash-row"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><small>GCash recipient</small><strong id="ctGcashNumber">09936801829</strong></div><button id="ctCopyGcashButton" type="button" class="ct-button" onclick="CartechAccess.copyGcashNumber()">Copy</button></div><div id="ctLicenseQrPanel" class="ct-license-qr" hidden><div id="ctLicenseQrVisual" class="ct-license-qr-placeholder">QR image will be added by the developer.</div><div class="ct-license-qr-copy"><h4>Scan to pay with GCash</h4><p id="ctLicenseQrText">Scan the plan QR code, verify the recipient, then save the GCash reference number.</p><button id="ctDownloadQrButton" type="button" class="ct-button" onclick="CartechAccess.downloadPaymentQr()" hidden><i class="fa-solid fa-download" aria-hidden="true"></i> Download QR</button></div></div><ol class="ct-license-payment-steps"><li>Scan the plan QR code or send the exact amount to <strong>09936801829</strong>.</li><li>Confirm that the amount and recipient match the selected plan.</li><li>Save the GCash reference number.</li><li>Return here, upload the receipt and reference to receive a temporary key.</li></ol><div id="ctLicensePaymentStatus" class="ct-license-payment-status"><strong>Important:</strong> a temporary key may be issued after submission. The developer still verifies the real GCash payment.</div><div id="ctWizardQrNext" class="ct-wizard-qr-next" hidden><button type="button" class="ct-button ct-primary" onclick="CartechAccess.showPaymentProofStep()">Next: Upload Receipt <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div><div id="ctLicensePaymentFollowup" class="ct-license-payment-followup" hidden><label for="ctLicensePaymentReference">GCash reference number</label><input id="ctLicensePaymentReference" type="text" maxlength="80" inputmode="numeric" autocomplete="off" placeholder="Enter the reference shown by GCash"><div id="ctLicenseProofField"><label for="ctLicensePaymentReceipt" class="ct-proof-label">GCash receipt screenshot <span>(required for instant key)</span></label><div id="ctProofDropZone" class="ct-proof-drop-zone"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><strong>Click to upload or drag a screenshot here</strong><small>JPG, PNG or WebP · up to 3 MB</small><input id="ctLicensePaymentReceipt" type="file" accept="image/jpeg,image/png,image/webp" onchange="CartechAccess.paymentReceiptChanged()" aria-label="Upload GCash receipt screenshot"></div><p id="ctProofSelection" class="ct-proof-selection">Upload a clear GCash receipt to request a temporary key. Only the developer can confirm payment.</p></div><label id="ctProvisionalConsent" class="ct-provisional-consent"><input id="ctProvisionalConsentCheck" type="checkbox"><span>I confirm I paid the correct amount to the GCash number above and entered my real reference. False payment details can lead to the key being revoked and this account being blocked.</span></label><div class="ct-license-payment-followup-actions"><button type="button" class="ct-button ct-primary" onclick="CartechAccess.submitPaymentRequest()">Submit &amp; Get Temporary Key</button></div><p class="ct-license-payment-followup-note">Temporary access lasts up to 24 hours until the developer checks the real GCash transaction. Never share an OTP or password.</p></div><div class="ct-license-payment-actions"><button id="ctLicensePaymentBackButton" type="button" class="ct-button" onclick="CartechAccess.backToLicensePlans()">Change plan</button><button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close</button></div></section></div><div id="ctWizardWaiting" class="ct-wizard-waiting" hidden role="status"><span class="ct-wizard-waiting-icon"><i class="fa-solid fa-clock-rotate-left"></i></span><h3 id="ctWizardWaitingTitle">Payment review in progress</h3><p id="ctWizardWaitingText">The developer will check the GCash transaction. This screen updates automatically; you can close it and return later on this device.</p><p id="ctWizardScanText" class="ct-wizard-scan-note" hidden></p><button id="ctPaymentRetry" type="button" class="ct-button" onclick="CartechAccess.checkPaymentResult(false)" hidden>Retry check</button> <button type="button" class="ct-button" onclick="CartechAccess.showLicensePlansFromPayment()">View plans</button> <button type="button" class="ct-button" onclick="CartechAccess.closeLicenseStore()">Close for now</button></div><div id="ctWizardSuccess" class="ct-wizard-success" hidden aria-live="polite"><span class="ct-wizard-success-icon"><i class="fa-solid fa-check"></i></span><h3 id="ctWizardSuccessTitle">Temporary Key Issued</h3><p id="ctWizardSuccessCopy">Your key works for up to 24 hours while the developer checks the actual GCash payment.</p><div class="ct-wizard-key-label">YOUR OFFICIAL CARTECH LICENSE KEY</div><div class="ct-wizard-key"><code id="ctWizardLicenseKey"></code></div><div class="ct-wizard-success-actions"><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery(&#39;key&#39;)"><i class="fa-solid fa-copy"></i> Copy Key</button><button type="button" class="ct-button ct-primary" onclick="CartechAccess.autoApplyPaymentKey()"><i class="fa-solid fa-bolt"></i> Auto-Apply to Terminal</button></div><p id="ctWizardApplyNote" class="ct-wizard-apply-note">The owner login and password are in Payment updates. If payment is rejected, this key is revoked.</p></div><div class="ct-license-purchase-footer" id="ctLicensePurchaseFooter"><button id="ctProceedPayment" type="button" disabled onclick="CartechAccess.proceedToPayment()">Proceed to Payment <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
     <div class="ct-ai-store-link"><p id="ctLicenseAiAccessNote" class="ct-ai-access-note" role="status" hidden></p><button id="ctLicenseAiStoreButton" type="button" onclick="CartechSupportChat.open()"><i class="fa-regular fa-comments" aria-hidden="true"></i> Contact Developer Support</button></div>
   </dialog>
   <dialog id="ctLicenseAiDialog" aria-labelledby="ctLicenseAiTitle" aria-describedby="ctLicenseAiNote">
@@ -3618,6 +3619,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     const CARTECH_PAYMENT_HANDOFF_CHANNEL = 'cartech_license_payment_handoff_channel_v1';
     const CARTECH_PAYMENT_HANDOFF_SIGNAL_KEY = 'cartech_license_payment_handoff_signal_v1';
     let paymentResultTimer = 0;
+    let paymentCheckSequence = 0;
+    let paymentReviewDismissed = false;
     let paymentHandoffChannel = null;
     window.addEventListener('storage', event => {
       if (event.key !== CARTECH_PLAN_UPDATE_SIGNAL_KEY) return;
@@ -3753,7 +3756,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       if (access && ['revoked', 'expired', 'payment_paused'].includes(String(access.status || '').toLowerCase())) {
         const licenseInput = byId('ctLicenseInput');
         if (licenseInput) licenseInput.value = '';
-        blockPaymentDelivery();
+        // License expiry does not establish the status of a renewal payment.
+        // Verify any saved request separately before displaying its review state.
       }
       if (access?.valid === true && access.shop_id) {
         const previousShop = currentShopId;
@@ -8586,15 +8590,16 @@ window.CartechAccess = (() => {
     else anchor.after(panel);
     return panel;
   }
-  function paymentDeliveryAlreadyConsumed(access = tenantAccessSnapshot) {
-    if (!access) return false;
-    const status = String(access.status || '').toLowerCase();
-    if (['revoked', 'expired'].includes(status)) return true;
-    if (access.valid !== true) return false;
-    if (access.access_kind !== 'license') return false;
-    return Boolean(access.license_starts_at || access.license_activated_at || access.activated_at || access.started_at || access.activated === true);
+  function showLicensePlansFromPayment() {
+    paymentReviewDismissed = true;
+    const wizard = byId('ctLicenseStoreDialog');
+    wizard?.classList.remove('is-waiting', 'is-complete');
+    if (byId('ctWizardWaiting')) byId('ctWizardWaiting').hidden = true;
+    if (byId('ctWizardSuccess')) byId('ctWizardSuccess').hidden = true;
+    if (byId('ctLicensePurchaseFooter')) byId('ctLicensePurchaseFooter').hidden = cartechPurchaseMode === 'topup';
+    updateWizardStep(0);
   }
-  function clearPaymentDelivery() {
+  function hidePaymentDelivery() {
     const updates = byId('ctPaymentUpdates');
     if (updates) { updates.hidden = true; updates.open = false; delete updates.dataset.status; }
     const panel = byId('ctLicensePaymentResult');
@@ -8609,9 +8614,28 @@ window.CartechAccess = (() => {
       delete panel.dataset.owner;
       delete panel.dataset.shopName;
     }
-    try { localStorage.removeItem(CARTECH_PAYMENT_REQUEST_KEY); } catch (_) {}
-    try { localStorage.removeItem(CARTECH_PAYMENT_HANDOFF_KEY); } catch (_) {}
+    showLicensePlansFromPayment();
+    if (byId('ctWizardLicenseKey')) byId('ctWizardLicenseKey').textContent = '';
+  }
+  function clearPaymentDelivery() {
+    paymentCheckSequence += 1;
+    hidePaymentDelivery();
+    for (const key of [CARTECH_PAYMENT_REQUEST_KEY, CARTECH_PAYMENT_HANDOFF_KEY, CARTECH_TOPUP_REQUEST_KEY]) {
+      try { localStorage.removeItem(key); } catch (_) {}
+    }
     if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+  }
+  function savedPaymentLookup() {
+    // A new handoff takes priority over any older request on this device.
+    for (const [key, rpc, param, kind] of [
+      [CARTECH_PAYMENT_HANDOFF_KEY, 'cartech_get_buyer_handoff', 'p_handoff_token', 'license'],
+      [CARTECH_PAYMENT_REQUEST_KEY, 'cartech_get_license_payment_result_v72', 'p_request_id', 'license'],
+      [CARTECH_TOPUP_REQUEST_KEY, 'cartech_get_license_topup_result', 'p_request_id', 'topup']
+    ]) {
+      const value = String(localStorage.getItem(key) || '').trim();
+      if (value) return { key, value, rpc, param, kind };
+    }
+    return null;
   }
   function isPaymentHandoffToken(value) {
     return /^[a-f0-9]{48}$/i.test(String(value || '').trim());
@@ -8621,15 +8645,17 @@ window.CartechAccess = (() => {
     if (!isPaymentHandoffToken(value)) return false;
     try {
       localStorage.setItem(CARTECH_PAYMENT_HANDOFF_KEY, value);
+      localStorage.removeItem(CARTECH_PAYMENT_REQUEST_KEY);
+      localStorage.removeItem(CARTECH_TOPUP_REQUEST_KEY);
       localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY);
     } catch (_) {}
     return true;
   }
   function receivePaymentHandoffToken(token) {
     if (!storePaymentHandoffToken(token)) return false;
-    renderPaymentDelivery({ status:'pending' });
-    void checkPaymentResult(false);
+    paymentReviewDismissed = false;
     startPaymentPolling();
+    void checkPaymentResult(false);
     return true;
   }
   function listenForPaymentHandoff() {
@@ -8670,7 +8696,8 @@ window.CartechAccess = (() => {
       clearPaymentDelivery();
       return;
     }
-    const status = String(result.status || 'pending');
+    const status = String(result.status || '').toLowerCase();
+    if (!['pending', 'rejected', 'approved', 'provisional'].includes(status)) return;
     const updates = byId('ctPaymentUpdates');
     if (updates) { updates.hidden = false; if (updates.dataset.status !== status) updates.open = status !== 'pending'; updates.dataset.status = status; }
     if (byId('ctPaymentUpdateLabel')) byId('ctPaymentUpdateLabel').textContent = status === 'approved' ? 'Payment confirmed' : status === 'provisional' ? 'Temporary key · awaiting review' : status === 'rejected' ? 'Key revoked / needs attention' : 'Pending';
@@ -8684,36 +8711,39 @@ window.CartechAccess = (() => {
     panel.dataset.shopName = result.shop_name || '';
     if (status === 'pending') {
       panel.innerHTML = '<h4>Payment request received</h4><p>The developer is checking your GCash payment. This page updates automatically after approval.</p>';
-      if (result.request_kind !== 'topup' && byId('ctLicenseStoreDialog')?.open) renderWizardWaiting();
+      if (!paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) renderWizardWaiting();
       return;
     }
     if (status === 'rejected') {
       panel.innerHTML = `<h4>Payment request needs attention</h4><p>${escapeHTML(result.review_note || 'The developer did not approve this payment request. Contact the developer before sending another payment.')}</p>`;
-      if (byId('ctWizardWaitingText')) byId('ctWizardWaitingText').textContent = result.review_note || 'Payment was not verified. The temporary key was revoked. Contact Developer Support.';
-      const rejectedWizard = byId('ctLicenseStoreDialog');
-      if (rejectedWizard?.open && result.provisional_expires_at) {
-        rejectedWizard.classList.remove('is-complete'); rejectedWizard.classList.add('is-waiting');
-        byId('ctWizardWaiting').hidden = false; byId('ctWizardSuccess').hidden = true;
+      if (!paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) {
+        renderWizardWaiting('Payment request needs attention', result.review_note || 'Payment was not verified. Contact Developer Support before paying again.');
       }
       if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
       return;
     }
     if (status === 'approved' && result.request_kind === 'topup') {
       panel.innerHTML = `<h4>Top-up approved — time added</h4><p><strong>${escapeHTML(String(result.days_added || 0))} day(s)</strong> were added to the current workshop license. New expiry: <strong>${escapeHTML(philippineDate(Date.parse(String(result.new_expires_at || ''))))}</strong>.</p>`;
+      if (!paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) {
+        renderWizardWaiting('Top-up approved', `${Number(result.days_added) || 0} days were added to your workshop license. Close this window to check your access.`);
+      }
       try { localStorage.removeItem(CARTECH_TOPUP_REQUEST_KEY); } catch (_) {}
       if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
       void refreshLicenseStatus(true);
       return;
     }
-    if (!['approved', 'provisional'].includes(status) || !result.license_key) return;
-    const temporary = status === 'provisional';
-    const temporaryExpired = temporary && result.provisional_expires_at && Date.parse(result.provisional_expires_at) <= Date.now();
-    // A fresh developer handoff must be shown even when this shop already has
-    // an active older license. The handoff is cleared after this key is used.
-    if (!temporary && !result.provisional_expires_at && !localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) && paymentDeliveryAlreadyConsumed()) {
-      clearPaymentDelivery();
+    if (!result.license_key) {
+      const title = status === 'approved' ? 'Payment approved — key delivery pending' : 'Key delivery unavailable';
+      const text = status === 'approved'
+        ? 'The developer approved this payment. Waiting for the developer to send the license key.'
+        : 'The temporary key details could not be loaded. Retry or contact Developer Support.';
+      panel.innerHTML = `<h4>${escapeHTML(title)}</h4><p>${escapeHTML(text)}</p>`;
+      if (!paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) renderWizardWaiting(title, text, true);
       return;
     }
+    const temporary = status === 'provisional';
+    const temporaryExpired = temporary && result.provisional_expires_at && Date.parse(result.provisional_expires_at) <= Date.now();
+    // A verified renewal can be ready while the previous license is expired.
     const key = escapeHTML(result.license_key);
     const password = escapeHTML(result.owner_password || '—');
     panel.innerHTML = `<h4>${temporary ? 'Temporary key issued — GCash review pending' : 'Payment confirmed — license active'}</h4><p>${temporary ? (temporaryExpired ? 'The 24-hour access period ended. Wait for the developer to confirm the payment before using this key again.' : 'You may use this key now for up to 24 hours. The developer has NOT yet verified the payment and can revoke the key if the payment is not received.') : 'The developer confirmed the GCash payment. Your purchased plan is now active.'}</p><div class="ct-license-delivery-key"><code>${key}</code><button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('key')">Copy key</button></div><dl><dt>Workshop</dt><dd>${escapeHTML(result.shop_name)}</dd><dt>Shop ID</dt><dd>${escapeHTML(result.shop_id)}</dd><dt>Owner login</dt><dd>${escapeHTML(result.owner_username)}</dd><dt>Temporary password</dt><dd>${password}</dd><dt>Plan</dt><dd>${escapeHTML(result.duration_code)} · ₱${Number(result.amount_pesos || 0).toLocaleString('en-PH')}</dd></dl><div class="ct-license-payment-followup-actions">${temporary && !temporaryExpired ? '<button type="button" class="ct-button ct-primary" onclick="CartechAccess.autoApplyPaymentKey()">Activate this new workshop</button>' : ''}<button type="button" class="ct-button" onclick="CartechAccess.copyPaymentDelivery('all')">Copy login details</button></div><p>Change the temporary password after signing in. ${temporary ? 'Keep your GCash transaction record for developer review.' : ''}</p>`;
@@ -8725,7 +8755,7 @@ window.CartechAccess = (() => {
     }
     if (byId('ctWizardLicenseKey')) byId('ctWizardLicenseKey').textContent = result.license_key;
     const wizard = byId('ctLicenseStoreDialog');
-    if (wizard?.open && byId('ctWizardSuccess')) {
+    if (!paymentReviewDismissed && wizard?.open && byId('ctWizardSuccess')) {
       wizard.classList.remove('is-waiting');
       wizard.classList.add('is-complete');
       byId('ctWizardWaiting').hidden = true;
@@ -8741,9 +8771,13 @@ window.CartechAccess = (() => {
     }
     if (!temporary && paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
   }
-  function renderWizardWaiting() {
+  function renderWizardWaiting(title = 'Payment review in progress', text = 'The developer will check the GCash transaction. This screen updates automatically; you can close it and return later on this device.', retry = false) {
     const wizard = byId('ctLicenseStoreDialog');
     if (!wizard || cartechPurchaseMode === 'topup') return;
+    if (byId('ctWizardWaitingTitle')) byId('ctWizardWaitingTitle').textContent = title;
+    if (byId('ctWizardWaitingText')) byId('ctWizardWaitingText').textContent = text;
+    if (byId('ctPaymentRetry')) byId('ctPaymentRetry').hidden = !retry;
+    if (byId('ctWizardScanText')) byId('ctWizardScanText').hidden = true;
     wizard.classList.add('is-waiting');
     wizard.classList.remove('is-complete');
     if (byId('ctWizardWaiting')) byId('ctWizardWaiting').hidden = false;
@@ -8808,34 +8842,49 @@ window.CartechAccess = (() => {
     catch (_) { byId('ctLicensePaymentStatus').textContent = text; }
   }
   async function checkPaymentResult(silent = false) {
-    const topupRequestId = String(localStorage.getItem(CARTECH_TOPUP_REQUEST_KEY) || '').trim();
-    const handoffToken = String(localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || '').trim();
-    const requestId = String(localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || '').trim();
-    if ((!topupRequestId && !handoffToken && !requestId) || !supabaseClient) return null;
+    const lookup = savedPaymentLookup();
+    if (!lookup) {
+      clearPaymentDelivery();
+      return null;
+    }
+    const sequence = ++paymentCheckSequence;
+    const isCurrent = () => sequence === paymentCheckSequence && localStorage.getItem(lookup.key) === lookup.value;
+    const showNotice = text => {
+      const notice = byId('ctPaymentRequestNotice');
+      if (notice) { notice.textContent = text; notice.hidden = false; }
+    };
+    if (!silent && !paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) {
+      renderWizardWaiting('Checking saved request…', 'Checking whether this device has a payment request.');
+    }
     try {
-      if (topupRequestId) {
-        const topup = await cartechRpc('cartech_get_license_topup_result', { p_request_id:topupRequestId });
-        if (topup.error) throw topup.error;
-        const topupRow = Array.isArray(topup.data) ? topup.data[0] : topup.data;
-        if (topupRow) renderPaymentDelivery({ ...topupRow, request_kind:'topup' });
-        return topupRow || null;
-      }
-      if (!handoffToken) await ensureDeviceAuth();
-      const result = handoffToken
-        ? await cartechRpc('cartech_get_buyer_handoff', { p_handoff_token: handoffToken })
-        : await cartechRpc('cartech_get_license_payment_result_v72', { p_request_id: requestId });
-      if (result.error) {
-        if (result.error.code === '42883' || /cartech_(get_license_payment_result_v72|get_buyer_handoff)/i.test(result.error.message || '')) {
-          if (!silent) byId('ctLicensePaymentStatus').innerHTML = '<strong>Delivery setup needed:</strong> run the v72 provisional license SQL in Supabase.';
-          return null;
-        }
-        throw result.error;
-      }
+      if (!supabaseClient) throw new Error('The payment service is unavailable. Check your connection and retry.');
+      const result = await cartechRpc(lookup.rpc, { [lookup.param]:lookup.value });
+      if (!isCurrent()) return null;
+      if (result.error) throw result.error;
       const row = Array.isArray(result.data) ? result.data[0] : result.data;
-      if (row) renderPaymentDelivery(row);
-      return row || null;
+      if (!row || ['not_found', 'deleted', 'missing'].includes(String(row.status || '').toLowerCase())) {
+        // Empty results also cover requests unavailable to this device session.
+        // Remove only this device's stale pointer; never alter payment records.
+        localStorage.removeItem(lookup.key);
+        hidePaymentDelivery();
+        if (savedPaymentLookup()) { paymentReviewDismissed = false; return checkPaymentResult(silent); }
+        if (paymentResultTimer) { clearInterval(paymentResultTimer); paymentResultTimer = 0; }
+        showNotice('No payment request is available on this device. Choose a plan to continue. If you already paid, contact Developer Support before paying again.');
+        return null;
+      }
+      if (!['pending', 'approved', 'provisional', 'rejected'].includes(String(row.status || '').toLowerCase())) {
+        throw new Error('The saved request status could not be confirmed. Retry or contact Developer Support.');
+      }
+      localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY);
+      if (byId('ctPaymentRequestNotice')) byId('ctPaymentRequestNotice').hidden = true;
+      renderPaymentDelivery(lookup.kind === 'topup' ? { ...row, request_kind:'topup' } : row);
+      return row;
     } catch (error) {
-      if (!silent) byId('ctLicensePaymentStatus').innerHTML = `<strong>Could not check payment status:</strong> ${escapeHTML(error?.message || 'Try again.')}`;
+      if (!isCurrent()) return null;
+      const text = 'Could not check the saved payment request. Your saved reference is kept. Check your connection and retry, or contact Developer Support.';
+      showNotice(text);
+      if (!paymentReviewDismissed && byId('ctLicenseStoreDialog')?.open) renderWizardWaiting('Payment status unavailable', text, true);
+      if (!silent && byId('ctLicensePaymentStatus')) byId('ctLicensePaymentStatus').textContent = text;
       return null;
     }
   }
@@ -8848,6 +8897,8 @@ window.CartechAccess = (() => {
     // The public purchase screen is available before sign-in. Once signed in,
     // only staff who manage the license may open the top-up flow.
     if (currentUser && !['office','admin','developer'].includes(String(currentRole || '').toLowerCase())) return false;
+    paymentReviewDismissed = false;
+    if (byId('ctPaymentRequestNotice')) byId('ctPaymentRequestNotice').hidden = true;
     const expiry = licenseExpiry();
     const activePaid = paidLicenseActive();
     cartechPurchaseMode = activePaid ? 'topup' : 'renewal';
@@ -8900,7 +8951,10 @@ window.CartechAccess = (() => {
     byId('ctLicenseStoreDialog')?.classList.remove('is-waiting','is-complete');
     updateWizardStep(0);
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.hidden = false;
-    if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY) || localStorage.getItem(CARTECH_TOPUP_REQUEST_KEY)) { renderPaymentDelivery({ status:'pending' }); void checkPaymentResult(true); startPaymentPolling(); }
+    if (savedPaymentLookup()) {
+      startPaymentPolling();
+      await checkPaymentResult(false);
+    } else clearPaymentDelivery();
   }
   function closeLicenseStore() {
     const dialog = byId('ctLicenseStoreDialog');
@@ -9208,12 +9262,15 @@ window.CartechAccess = (() => {
           });
       if (result.error) throw result.error;
       const request = Array.isArray(result.data) ? result.data[0] : result.data;
+      if (!request?.request_id) throw new Error('The server did not confirm a payment request. Check the status before submitting again.');
       status.innerHTML = `<strong>${isTopup ? 'Top-up' : 'Payment'} request submitted.</strong> Request <strong>${escapeHTML(request?.request_id || 'received')}</strong> was received. ${isTopup ? 'Purchased time is added after developer approval.' : 'Checking whether a 24-hour temporary key can be issued now.'}`;
       if (request?.request_id) {
         try { localStorage.removeItem(CARTECH_PAYMENT_DELIVERY_BLOCKED_KEY); } catch (_) {}
         try { localStorage.removeItem(CARTECH_PAYMENT_HANDOFF_KEY); } catch (_) {}
+        localStorage.removeItem(isTopup ? CARTECH_PAYMENT_REQUEST_KEY : CARTECH_TOPUP_REQUEST_KEY);
         localStorage.setItem(isTopup ? CARTECH_TOPUP_REQUEST_KEY : CARTECH_PAYMENT_REQUEST_KEY, request.request_id);
-        renderPaymentDelivery({ status:'pending' });
+        paymentReviewDismissed = false;
+        renderPaymentDelivery({ status:'pending', request_id:request.request_id, request_kind:isTopup ? 'topup' : 'license' });
         startPaymentPolling();
       }
       if (submit) submit.textContent = 'Request submitted';
@@ -10363,10 +10420,9 @@ window.CartechAccess = (() => {
   applyProgramEnd(featureFlags?.dryRunEndsAt);
   roleChanged(); refresh(); checkExpiry();
   void refreshLicenseStatus(true).then(() => refresh());
-  if (localStorage.getItem(CARTECH_PAYMENT_HANDOFF_KEY) || localStorage.getItem(CARTECH_PAYMENT_REQUEST_KEY)) {
-    renderPaymentDelivery({ status:'pending' });
-    void checkPaymentResult(true);
+  if (savedPaymentLookup()) {
     startPaymentPolling();
+    void checkPaymentResult(true);
   }
   const receiptDropZone = byId('ctProofDropZone');
   if (receiptDropZone) {
@@ -10382,7 +10438,7 @@ window.CartechAccess = (() => {
       paymentReceiptChanged();
     });
   }
-  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, proceedToPayment, backToLicensePlans, showPaymentProofStep, paymentReceiptChanged, autoApplyPaymentKey, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, supportContext, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
+  const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, proceedToPayment, backToLicensePlans, showPaymentProofStep, paymentReceiptChanged, autoApplyPaymentKey, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, showLicensePlansFromPayment, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, supportContext, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.assign(api, { proceedFromLicenseOverview, cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
