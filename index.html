@@ -2469,6 +2469,9 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-pause-message summary::-webkit-details-marker { display:none }
   .ct-pause-expand { display:none!important }
   .ct-pause-chevron { display:none!important }
+  .ct-pause-message:not([open]) .ct-pause-byline { margin:0; padding:0; border:0 }
+  .ct-pause-message:not([open]) .ct-pause-expand { display:block!important; margin-top:3px; color:#93c5fd }
+  .ct-pause-message:not([open]) .ct-pause-chevron { display:block!important; margin-left:auto; color:#93c5fd; font-size:13px }
   .ct-pause-byline { display:flex; align-items:center; gap:12px; padding-bottom:15px; margin-bottom:16px; border-bottom:1px solid #ffffff1a }
   .ct-pause-avatar { display:grid; place-items:center; flex:none; width:42px; height:42px; border-radius:50%; color:#fff; background:linear-gradient(135deg,#3b82f6,#4f46e5); font-size:12px; font-weight:900; box-shadow:0 8px 20px #3b82f64d }
   .ct-pause-byline strong { color:#fff; font-size:14px }
@@ -2511,8 +2514,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     .ct-pause-pill-row { margin-bottom:14px }
     .ct-pause-pill { padding:7px 12px; font-size:11px }
     .ct-pause-message { padding:14px; margin-bottom:14px }
-    .ct-pause-message:not([open]) .ct-pause-byline { margin:0; padding:0; border:0 }
-    .ct-pause-message:not([open]) .ct-pause-expand { display:block!important; margin-top:3px; color:#93c5fd }
     .ct-pause-chevron { display:block!important; margin-left:auto; color:#93c5fd; font-size:13px }
     .ct-pause-message[open] .ct-pause-chevron { transform:rotate(180deg) }
     .ct-pause-quote { display:none!important }
@@ -2520,8 +2521,8 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     .ct-pause-facts div { padding:0 6px }
     .ct-pause-facts small { font-size:9px; margin-bottom:3px }
     .ct-pause-facts strong { font-size:11px }
-    .ct-pause-actions { gap:8px }
-    .ct-pause-actions a,.ct-pause-actions button { min-height:42px; padding:9px 11px; font-size:11px }
+    .ct-pause-actions { flex-direction:column; gap:8px }
+    .ct-pause-actions a,.ct-pause-actions button { flex:0 0 auto; width:100%; min-height:44px; padding:10px 12px; font-size:12px }
     .ct-pause-check { margin-top:10px }
     .ct-pause-footer { padding:10px 12px }
   }
@@ -2529,8 +2530,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     .ct-pause-header { flex-wrap:wrap }
     .ct-pause-brand em { display:none }
     .ct-pause-facts { grid-template-columns:repeat(3,minmax(0,1fr)) }
-    .ct-pause-actions { flex-direction:column }
-    .ct-pause-actions > * { width:100% }
   }
   @media(prefers-reduced-motion:reduce) { #ctPauseScreen * { animation:none!important; transition:none!important } }
 </style>
@@ -8495,10 +8494,13 @@ window.CartechAccess = (() => {
       const message = byId('ctPauseDeveloperMessage');
       if (message && typeof window !== 'undefined' && window.matchMedia) {
         const compact = window.matchMedia('(max-width:700px)');
+        const standalone = window.matchMedia('(display-mode: standalone)');
+        const android = /Android/i.test(window.navigator?.userAgent || '');
         let manuallyToggled = false;
-        const fit = () => { if (!manuallyToggled) message.open = !compact.matches; };
+        const fit = () => { if (!manuallyToggled) message.open = !(compact.matches || standalone.matches || android || window.navigator?.standalone === true); };
         message.querySelector('summary')?.addEventListener('click', () => { manuallyToggled = true; });
         compact.addEventListener?.('change', fit);
+        standalone.addEventListener?.('change', fit);
         fit();
       }
       pauseMessageAutoInitialized = true;
