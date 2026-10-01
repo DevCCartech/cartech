@@ -2490,9 +2490,9 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-pause-facts strong { display:block; color:#fff; font-size:13px; overflow-wrap:anywhere }
   #ctPauseState { color:#f87171; text-shadow:0 0 12px #ef444499 }
   #ctPauseState:before { content:""; display:inline-block; width:8px; height:8px; margin-right:7px; border-radius:50%; background:#ef4444; animation:ctPauseDot 1.8s ease-in-out infinite }
-  .ct-pause-actions { display:flex; gap:12px; flex-wrap:wrap }
-  .ct-pause-actions a,.ct-pause-actions button { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 18px; border-radius:12px; color:#fff; font-size:13px; font-weight:750; text-decoration:none; cursor:pointer; transition:transform .15s ease,background .15s ease }
-  .ct-pause-actions a { flex:1 1 180px; border:1px solid #3b82f6; background:linear-gradient(110deg,#2563eb,#4f46e5); box-shadow:0 8px 22px #2563eb66 }
+  .ct-pause-actions { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px }
+  .ct-pause-actions a,.ct-pause-actions button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-width:0; min-height:42px; padding:9px 10px; border-radius:10px; color:#fff; font-size:12px; font-weight:750; text-decoration:none; cursor:pointer; transition:transform .15s ease,background .15s ease }
+  .ct-pause-actions a { border:1px solid #3b82f6; background:linear-gradient(110deg,#2563eb,#4f46e5); box-shadow:0 5px 15px #2563eb44 }
   .ct-pause-actions button { border:1px solid #ffffff33; background:#1e293be6 }
   .ct-pause-actions a:hover,.ct-pause-actions button:hover { transform:scale(1.02) }
   .ct-pause-check { display:block; margin:21px auto 0; padding:4px; border:0; background:none; color:#94a3b8; font-size:12px; text-decoration:underline; text-underline-offset:4px; cursor:pointer }
@@ -2521,8 +2521,8 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     .ct-pause-facts div { padding:0 6px }
     .ct-pause-facts small { font-size:9px; margin-bottom:3px }
     .ct-pause-facts strong { font-size:11px }
-    .ct-pause-actions { flex-direction:column; gap:8px }
-    .ct-pause-actions a,.ct-pause-actions button { flex:0 0 auto; width:100%; min-height:44px; padding:10px 12px; font-size:12px }
+    .ct-pause-actions { gap:8px }
+    .ct-pause-actions a,.ct-pause-actions button { min-height:42px; padding:8px 6px; font-size:11px }
     .ct-pause-check { margin-top:10px }
     .ct-pause-footer { padding:10px 12px }
   }
@@ -2530,6 +2530,8 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     .ct-pause-header { flex-wrap:wrap }
     .ct-pause-brand em { display:none }
     .ct-pause-facts { grid-template-columns:repeat(3,minmax(0,1fr)) }
+    .ct-pause-actions { grid-template-columns:repeat(2,minmax(0,1fr)) }
+    .ct-pause-actions button { grid-column:1 / -1 }
   }
   @media(prefers-reduced-motion:reduce) { #ctPauseScreen * { animation:none!important; transition:none!important } }
 </style>
@@ -2554,7 +2556,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       </div>
     </details>
     <div class="ct-pause-facts"><div><small>Workshop</small><strong id="ctPauseShop">Cartech Autoservice</strong></div><div><small>License status</small><strong id="ctPauseState">Not active</strong></div><div><small>Next step</small><strong id="ctPauseNext">Contact developer</strong></div></div>
-    <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Contact Facebook Developer Charl</a><a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" aria-label="Contact Developer Charl on Facebook 2"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook 2 - Developer Charl</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy Quick Message</button></div>
+    <div class="ct-pause-actions"><a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" aria-label="Contact Developer Charl on Facebook 1"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook 1</a><a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" aria-label="Contact Developer Charl on Facebook 2"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook 2</a><button type="button" onclick="CartechAccess.copyPauseRequest()"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy message</button></div>
     <p id="ctPauseFeedback" role="status" aria-live="polite"></p>
     <button class="ct-pause-check" type="button" onclick="CartechAccess.checkPauseAccess()">Check access after payment</button>
   </div></div></main>
