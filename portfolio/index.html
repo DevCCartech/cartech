@@ -12,10 +12,8 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#fff7ed',
                             500: '#f97316',
                             600: '#ea580c',
-                            900: '#7c2d12',
                         }
                     }
                 }
@@ -33,19 +31,30 @@
             font-family: 'JetBrains Mono', monospace;
         }
         .glass-card {
-            background: rgba(17, 24, 39, 0.75);
+            background: rgba(17, 24, 39, 0.8);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-card:hover {
             border-color: rgba(249, 115, 22, 0.4);
         }
+        /* Heartbeat Animation */
+        @keyframes heartbeat {
+            0% { transform: scale(1); opacity: 1; }
+            25% { transform: scale(1.3); opacity: 0.8; }
+            35% { transform: scale(1); opacity: 1; }
+            45% { transform: scale(1.2); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-heartbeat {
+            animation: heartbeat 1.8s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-[#0b0f17] text-slate-100 selection:bg-orange-500 selection:text-white">
 
     <!-- NAVIGATION HEADER -->
-    <header class="sticky top-0 z-40 bg-[#0b0f17]/90 backdrop-blur-md border-b border-slate-800/80">
+    <header class="sticky top-0 z-40 bg-[#0b0f17]/95 backdrop-blur-md border-b border-slate-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-white shadow-lg shadow-orange-500/20 text-lg">
@@ -54,73 +63,80 @@
                 <div>
                     <h1 class="font-bold text-slate-100 text-lg leading-tight flex items-center gap-2">
                         Charl Jun V.
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="relative flex h-2.5 w-2.5">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
                     </h1>
-                    <p class="text-xs text-slate-400 font-medium">Full-Stack & Systems Architecture Developer</p>
+                    <p class="text-xs text-slate-400 font-medium">Full-Stack & Systems Architect</p>
                 </div>
             </div>
 
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
                 <a href="#about" class="hover:text-orange-400 transition-colors">About</a>
-                <a href="#projects" class="hover:text-orange-400 transition-colors">Projects</a>
-                <a href="#skills" class="hover:text-orange-400 transition-colors">Skills</a>
-                <a href="#server-note" class="hover:text-orange-400 transition-colors">Server Note</a>
+                <a href="#projects" class="hover:text-orange-400 transition-colors">Projects Showcase</a>
+                <a href="#contact" class="hover:text-orange-400 transition-colors">Contact Developer</a>
             </nav>
 
-            <a href="https://devccartech.github.io/cartech/" target="_blank" class="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all shadow-lg shadow-orange-500/25">
-                Launch Live CARTECH
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="https://www.facebook.com/charljun1" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-all">
+                    <svg class="w-4 h-4 fill-blue-500" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://devccartech.github.io/cartech/" target="_blank" class="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-all shadow-lg shadow-orange-500/25">
+                    CARTECH Live
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- HERO SECTION -->
-    <section id="about" class="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" class="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-7 space-y-6">
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold code-font">
-                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Custom SaaS & Enterprise Systems
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> Live Production Software Systems
                 </div>
-                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none">
-                    Building Scalable <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">Business Platforms</span> & Local ERPs.
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                    Custom Enterprise Software <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">& Business SaaS Systems</span>
                 </h2>
                 <p class="text-slate-400 text-base sm:text-lg max-w-2xl leading-relaxed">
-                    Specialized in building automated diagnostic tools, Sari-Sari Store POS systems, school setups, and custom management platforms designed for efficiency and operational scale.
+                    Engineering reliable applications for workshop diagnostics, retail POS, education ERPs, and local government platforms. Built with real-time data integrity and custom integrations.
                 </p>
 
                 <div class="flex flex-wrap items-center gap-4 pt-2">
-                    <a href="#projects" class="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold transition-all shadow-lg shadow-orange-500/20">
-                        Explore 6 Core Projects
+                    <a href="#projects" class="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/20">
+                        View Software Showcase
                     </a>
-                    <a href="#server-note" class="px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition-all">
-                        Hosting & Server Status
+                    <a href="https://www.facebook.com/mylovemanily" target="_blank" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold border border-slate-700 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4 fill-blue-400" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        Main FB Contact
                     </a>
                 </div>
             </div>
 
-            <!-- QUICK STATS CARD -->
+            <!-- PROFILE CARD -->
             <div class="lg:col-span-5">
-                <div class="glass-card rounded-2xl p-6 space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800">
                     <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Developer Snapshot</span>
-                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">Available for Hire</span>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">System Architect Profile</span>
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> Active Status
+                        </span>
                     </div>
 
-                    <div class="space-y-4 text-sm">
+                    <div class="space-y-3.5 text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-400">Lead Developer:</span>
-                            <span class="font-medium text-slate-200">Charl Jun V.</span>
+                            <span class="text-slate-400">Developer Name:</span>
+                            <span class="font-semibold text-white">Charl Jun V.</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-400">Core Stack:</span>
-                            <span class="font-medium text-slate-200 code-font">Node.js, Express, React, PHP</span>
+                            <span class="text-slate-400">Primary Systems:</span>
+                            <span class="font-medium text-slate-200 code-font">CARTECH, TindahanHQ, AcademiaOne</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-400">Key Automation:</span>
-                            <span class="font-medium text-slate-200">GCash SMS Webhook / Cipher Decrypt</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-400">Hosting Strategy:</span>
-                            <span class="font-medium text-amber-400">GitHub Pages / License System</span>
+                            <span class="text-slate-400">Specialization:</span>
+                            <span class="font-medium text-slate-200">SaaS & Desktop ERP Integration</span>
                         </div>
                     </div>
                 </div>
@@ -128,33 +144,36 @@
         </div>
     </section>
 
-    <!-- PROJECTS SECTION -->
+    <!-- PROJECTS SHOWCASE SECTION -->
     <section id="projects" class="py-16 bg-slate-900/40 border-y border-slate-800/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                 <div>
                     <h3 class="text-3xl font-bold text-white">Software Applications Showcase</h3>
-                    <p class="text-slate-400 text-sm mt-1">Select a project to open details, view technical specs, or launch live apps.</p>
+                    <p class="text-slate-400 text-sm mt-1">Tap "View Case Study" or "Details" on any card to view active software previews.</p>
                 </div>
 
                 <!-- CATEGORY FILTER BUTTONS -->
                 <div class="flex flex-wrap gap-2" id="filter-container">
-                    <button onclick="filterProjects('all')" class="filter-btn active-filter px-4 py-2 rounded-xl text-xs font-semibold bg-orange-500 text-white transition-all">All Projects</button>
-                    <button onclick="filterProjects('saas')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">SaaS Tools</button>
-                    <button onclick="filterProjects('local')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">Local Business</button>
-                    <button onclick="filterProjects('gov')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">EdTech & Govt</button>
+                    <button onclick="filterProjects('all', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-orange-500 text-white transition-all">All Systems</button>
+                    <button onclick="filterProjects('saas', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">SaaS & Logistics</button>
+                    <button onclick="filterProjects('local', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">Retail & Health</button>
+                    <button onclick="filterProjects('gov', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">EdTech & Government</button>
                 </div>
             </div>
 
-            <!-- PROJECTS GRID (6 CORE PROJECTS) -->
+            <!-- PROJECTS GRID -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <!-- 1. CARTECH -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="saas">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs font-semibold code-font">Automotive SaaS</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 142 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">CARTECH Diagnostic SaaS</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -162,10 +181,10 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <a href="https://devccartech.github.io/cartech/" target="_blank" class="flex-1 text-center py-2.5 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-all">
+                        <a href="https://devccartech.github.io/cartech/" target="_blank" class="flex-1 text-center py-2.5 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-all shadow-md">
                             Launch Live
                         </a>
-                        <button onclick="openModal('modal-cartech')" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-cartech')" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             Details
                         </button>
                     </div>
@@ -174,9 +193,12 @@
                 <!-- 2. TINDAHANHQ -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="local">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold code-font">Retail POS</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 78 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">TindahanHQ POS</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -184,7 +206,7 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <button onclick="openModal('modal-tindahan')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-tindahan')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             View Case Study
                         </button>
                     </div>
@@ -193,9 +215,12 @@
                 <!-- 3. ACADEMIAONE -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="gov">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold code-font">School ERP</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 18 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">AcademiaOne</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -203,7 +228,7 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <button onclick="openModal('modal-academia')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-academia')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             View Case Study
                         </button>
                     </div>
@@ -212,9 +237,12 @@
                 <!-- 4. AUTOFLEET -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="saas">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-semibold code-font">Logistics</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 8 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">AutoFleet Platform</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -222,7 +250,7 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <button onclick="openModal('modal-autofleet')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-autofleet')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             View Case Study
                         </button>
                     </div>
@@ -231,9 +259,12 @@
                 <!-- 5. MEDICARE -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="local">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs font-semibold code-font">Healthcare</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 13 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">MediCare EMR System</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -241,7 +272,7 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <button onclick="openModal('modal-medicare')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-medicare')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             View Case Study
                         </button>
                     </div>
@@ -250,9 +281,12 @@
                 <!-- 6. BARANGAYCONNECT -->
                 <div class="project-card glass-card rounded-2xl p-6 flex flex-col justify-between" data-category="gov">
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <span class="px-3 py-1 rounded-full bg-teal-500/10 text-teal-400 text-xs font-semibold code-font">Gov Portal</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <!-- HEARTBEAT ACTIVE USERS -->
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 7 users online
+                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-white">BarangayConnect</h4>
                         <p class="text-slate-400 text-sm leading-relaxed">
@@ -260,7 +294,7 @@
                         </p>
                     </div>
                     <div class="pt-6 mt-6 border-t border-slate-800/80 flex items-center gap-3">
-                        <button onclick="openModal('modal-barangay')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+                        <button onclick="openModal('modal-barangay')" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 cursor-pointer">
                             View Case Study
                         </button>
                     </div>
@@ -270,35 +304,21 @@
         </div>
     </section>
 
-    <!-- HEARTFELT DEVELOPER NOTICE / SERVER COST TRANSPARENCY -->
-    <section id="server-note" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="glass-card rounded-3xl p-8 md:p-10 border border-orange-500/30 relative overflow-hidden">
-            <div class="absolute -right-12 -top-12 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="flex items-center gap-3 text-orange-400 text-xs font-bold uppercase tracking-wider mb-4 code-font">
-                <span class="w-2 h-2 rounded-full bg-orange-500"></span> A Message Regarding System Hosting & Service Access
-            </div>
-
-            <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4">
-                Transparent Server Infrastructure & Hosting Model
-            </h3>
-
-            <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
-                <p>
-                    To maintain maximum system uptime, fast database queries, and uninterrupted service for each client deployment (such as <strong class="text-white">CARTECH</strong>, <strong class="text-white">TindahanHQ</strong>, or <strong class="text-white">AcademiaOne</strong>), active server hosting incurs a standard operational cost of approximately <span class="text-orange-400 font-bold">$25.00/month</span> per environment.
-                </p>
-                <p>
-                    If a project's active server subscription or monthly license reaches its term limit, access may temporarily pause or display a developer notice until verified access is restored. This model ensures that server infrastructure costs are sustained fairly across all live enterprise clients.
-                </p>
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-slate-400 text-xs">
-                    <span>Developer Direct Contact:</span>
-                    <strong class="text-white font-semibold">Charl Jun V.</strong>
-                </div>
-                <a href="https://github.com/DevCcartech/cartech" target="_blank" class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-all shadow-md">
-                    Contact via GitHub Repo
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-3xl p-8 md:p-10 border border-slate-800 text-center space-y-6">
+            <h3 class="text-3xl font-extrabold text-white">Get in Touch / Request System Demo</h3>
+            <p class="text-slate-400 text-sm max-w-xl mx-auto">
+                Looking for custom business software, POS setups, or workshop management systems? Reach out directly on Facebook:
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 pt-2">
+                <a href="https://www.facebook.com/mylovemanily" target="_blank" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20">
+                    <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    facebook.com/mylovemanily
+                </a>
+                <a href="https://www.facebook.com/charljun1" target="_blank" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-700 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-blue-400" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    facebook.com/charljun1
                 </a>
             </div>
         </div>
@@ -307,79 +327,273 @@
     <!-- FOOTER -->
     <footer class="py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4">
-            <p>© 2026 Charl Jun V. All software rights reserved. Built with Tailwind CSS.</p>
+            <p>© 2026 Charl Jun V. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- MODAL POPUPS FOR DETAILED CASE STUDIES -->
+    <!-- MODAL DIALOGS WITH SOFTWARE SHOWCASE PREVIEWS -->
+
     <!-- 1. CARTECH MODAL -->
-    <div id="modal-cartech" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700">
-            <button onclick="closeModal('modal-cartech')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
-            <span class="px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs font-semibold code-font">Automotive SaaS & License System</span>
+    <div id="modal-cartech" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-cartech')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs font-semibold code-font">Automotive SaaS</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 142 users online
+                </span>
+            </div>
             <h3 class="text-2xl font-bold text-white">CARTECH Workshop Terminal</h3>
+            
+            <!-- SOFTWARE UI PREVIEW -->
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">CARTECH v3.4 [LIVE DASHBOARD]</span>
+                    <span class="text-emerald-400">GCash SMS Webhook Connected</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">ACTIVE JOBS</div>
+                        <div class="text-orange-400 font-bold text-sm">24 Repair Orders</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">PARTS INVENTORY</div>
+                        <div class="text-emerald-400 font-bold text-sm">1,240 Items</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">LICENSE STATUS</div>
+                        <div class="text-amber-400 font-bold text-sm">Matrix Decrypted</div>
+                    </div>
+                </div>
+            </div>
+
             <p class="text-slate-300 text-sm leading-relaxed">
                 Full automotive workshop diagnostic portal built for repair shops. Features real-time job ticket tracking, auto parts inventory, mechanics billing, and an automated GCash SMS payment verification system that decrypts software license keys automatically.
             </p>
-            <div class="space-y-2 text-xs text-slate-400">
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Automated GCash SMS Webhook Verification</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Matrix Cipher Decrypt Key Generation</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Job Order & Invoice Printing</div>
-            </div>
             <div class="pt-4 border-t border-slate-800 flex items-center gap-3">
                 <a href="https://devccartech.github.io/cartech/" target="_blank" class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs">
-                    Launch Live App
+                    Launch Live System
                 </a>
-                <a href="https://github.com/DevCcartech/cartech" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold">
-                    View GitHub Repository
-                </a>
+                <button onclick="closeModal('modal-cartech')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close</button>
             </div>
         </div>
     </div>
 
     <!-- 2. TINDAHANHQ MODAL -->
-    <div id="modal-tindahan" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700">
-            <button onclick="closeModal('modal-tindahan')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
-            <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold code-font">Point-of-Sale & Ledger</span>
-            <h3 class="text-2xl font-bold text-white">TindahanHQ - Sari-Sari Store POS</h3>
+    <div id="modal-tindahan" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-tindahan')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold code-font">Retail POS</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 78 users online
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">TindahanHQ POS & Utang Ledger</h3>
+            
+            <!-- SOFTWARE UI PREVIEW -->
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">TindahanHQ POS Terminal</span>
+                    <span class="text-amber-400">Inventory Sync Active</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">TODAY'S REVENUE</div>
+                        <div class="text-emerald-400 font-bold text-sm">₱14,850.00</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">UTANG LEDGER</div>
+                        <div class="text-amber-400 font-bold text-sm">₱3,210.00</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">LOW STOCK ALERTS</div>
+                        <div class="text-rose-400 font-bold text-sm">4 Items</div>
+                    </div>
+                </div>
+            </div>
+
             <p class="text-slate-300 text-sm leading-relaxed">
                 Tailored point-of-sale solution for local retail and neighborhood store owners. Streamlines daily inventory management, calculates real-time profit margins, and provides a digitised "Utang" credit tracking ledger for regular store patrons.
             </p>
-            <div class="space-y-2 text-xs text-slate-400">
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Utang / Customer Credit Balance Tracker</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Low-Stock Automated Warning System</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Daily Cash Flow & Revenue Analytics</div>
-            </div>
             <div class="pt-4 border-t border-slate-800">
-                <button onclick="closeModal('modal-tindahan')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold">Close Preview</button>
+                <button onclick="closeModal('modal-tindahan')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close Showcase</button>
             </div>
         </div>
     </div>
 
     <!-- 3. ACADEMIAONE MODAL -->
-    <div id="modal-academia" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700">
-            <button onclick="closeModal('modal-academia')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
-            <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold code-font">School Setup & ERP</span>
-            <h3 class="text-2xl font-bold text-white">AcademiaOne School System</h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-                All-in-one school management suite built to handle student enrollment, subject grading, tuition fee ledger tracking, and hardware-integrated RFID gate attendance scanning.
-            </p>
-            <div class="space-y-2 text-xs text-slate-400">
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Hardware RFID Scanner Gate Tap Reader</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Automated SMS Alerts to Parents</div>
-                <div class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Student Portal & Grade Book Management</div>
+    <div id="modal-academia" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-academia')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold code-font">School ERP</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 18 users online
+                </span>
             </div>
+            <h3 class="text-2xl font-bold text-white">AcademiaOne School Suite</h3>
+            
+            <!-- SOFTWARE UI PREVIEW -->
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">AcademiaOne Gate & Attendance</span>
+                    <span class="text-blue-400">RFID Hardware Ready</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">REGISTERED STUDENTS</div>
+                        <div class="text-blue-400 font-bold text-sm">1,450</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">TODAY'S TAP SCANS</div>
+                        <div class="text-emerald-400 font-bold text-sm">1,382 Taps</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">SMS ALERTS SENT</div>
+                        <div class="text-amber-400 font-bold text-sm">1,382 SMS</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed">
+                All-in-one school management suite built to handle student enrollment, subject grading, tuition fee ledger tracking, and hardware-integrated RFID gate attendance scanning with automated SMS parent notifications.
+            </p>
             <div class="pt-4 border-t border-slate-800">
-                <button onclick="closeModal('modal-academia')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold">Close Preview</button>
+                <button onclick="closeModal('modal-academia')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close Showcase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. AUTOFLEET MODAL -->
+    <div id="modal-autofleet" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-autofleet')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-semibold code-font">Logistics</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 8 users online
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">AutoFleet Operations Platform</h3>
+            
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">Fleet Tracker Terminal</span>
+                    <span class="text-purple-400">GPS Stream Active</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">ACTIVE VEHICLES</div>
+                        <div class="text-purple-400 font-bold text-sm">38 Trucks</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">FUEL CONSUMPTION</div>
+                        <div class="text-emerald-400 font-bold text-sm">Optimal</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">SCHEDULED MAINTENANCE</div>
+                        <div class="text-amber-400 font-bold text-sm">2 Vehicles</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed">
+                Enterprise fleet tracking software managing vehicle maintenance schedules, fuel logs, driver assignments, and automated expense reporting.
+            </p>
+            <div class="pt-4 border-t border-slate-800">
+                <button onclick="closeModal('modal-autofleet')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close Showcase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. MEDICARE MODAL -->
+    <div id="modal-medicare" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-medicare')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs font-semibold code-font">Healthcare</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 13 users online
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">MediCare EMR Clinic Portal</h3>
+            
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">MediCare EMR v2.1</span>
+                    <span class="text-rose-400">HIPAA Compliant Record Engine</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">PATIENT QUEUE</div>
+                        <div class="text-rose-400 font-bold text-sm">12 Waiting</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">PRESCRIPTIONS</div>
+                        <div class="text-emerald-400 font-bold text-sm">45 Issued Today</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">DOCTORS ON DUTY</div>
+                        <div class="text-blue-400 font-bold text-sm">4 Staff</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed">
+                Digital Clinic Management portal for outpatient record tracking, prescription generation, appointment queueing, and billing history.
+            </p>
+            <div class="pt-4 border-t border-slate-800">
+                <button onclick="closeModal('modal-medicare')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close Showcase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. BARANGAYCONNECT MODAL -->
+    <div id="modal-barangay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 relative border border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-barangay')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+            <div class="flex items-center justify-between pr-6">
+                <span class="px-3 py-1 rounded-full bg-teal-500/10 text-teal-400 text-xs font-semibold code-font">Gov Portal</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-heartbeat"></span> 7 users online
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">BarangayConnect Public Service</h3>
+            
+            <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                    <span class="font-mono">Barangay Digital Desk</span>
+                    <span class="text-teal-400">Citizen Database Active</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">CLEARANCE REQUESTS</div>
+                        <div class="text-teal-400 font-bold text-sm">18 Pending</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">REGISTERED RESIDENTS</div>
+                        <div class="text-emerald-400 font-bold text-sm">8,420 Residents</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">ISSUED CERTIFICATES</div>
+                        <div class="text-amber-400 font-bold text-sm">14 Today</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed">
+                Public service portal enabling automated clearance requests, certificate generation, resident census databases, and incident reporting.
+            </p>
+            <div class="pt-4 border-t border-slate-800">
+                <button onclick="closeModal('modal-barangay')" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer">Close Showcase</button>
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT FOR CATEGORY FILTERS & MODALS -->
     <script>
-        function filterProjects(category) {
+        function filterProjects(category, btnElement) {
             const cards = document.querySelectorAll('.project-card');
             const buttons = document.querySelectorAll('.filter-btn');
 
@@ -387,8 +601,9 @@
                 btn.classList.remove('bg-orange-500', 'text-white');
                 btn.classList.add('bg-slate-800', 'text-slate-300');
             });
-            event.target.classList.remove('bg-slate-800', 'text-slate-300');
-            event.target.classList.add('bg-orange-500', 'text-white');
+            
+            btnElement.classList.remove('bg-slate-800', 'text-slate-300');
+            btnElement.classList.add('bg-orange-500', 'text-white');
 
             cards.forEach(card => {
                 if (category === 'all' || card.getAttribute('data-category') === category) {
@@ -400,11 +615,17 @@
         }
 
         function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
     </script>
 </body>
