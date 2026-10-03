@@ -13,6 +13,72 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+  <style>html.ct-handoff-verifying body{visibility:hidden}</style>
+  <script>
+    // A buyer URL must be verified by the server before the app is shown.
+    // An already activated workshop session can still open its launcher without
+    // reusing the short-lived delivery link; its license is checked separately.
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const supplied = params.has('cartech_handoff');
+      const token = (params.get('cartech_handoff') || '').trim().toLowerCase();
+      let savedToken = '';
+      let hasPreviousAccess = false;
+      let hasActivatedAccess = false;
+      try {
+        savedToken = localStorage.getItem('cartech_license_payment_handoff_v1') || '';
+        hasActivatedAccess = localStorage.getItem('cartech_shop_license_v1') === 'activated'
+          || Boolean(localStorage.getItem('cartech_auth_user') && localStorage.getItem('cartech_auth_role'));
+        hasPreviousAccess = hasActivatedAccess
+          || Boolean(localStorage.getItem('cartech_license_payment_request_v1'))
+          || Boolean(localStorage.getItem('cartech_license_topup_request_v1'));
+      } catch (_) {}
+      const checkToken = supplied ? token : (!hasPreviousAccess ? savedToken : '');
+      const portfolio = reason => {
+        const target = new URL('portfolio/', location.href);
+        if (reason) { target.searchParams.set('link', reason); target.hash = 'cartech-license'; }
+        location.replace(target.href);
+      };
+      if (!checkToken) {
+        if (supplied || !hasPreviousAccess) portfolio(supplied ? 'expired' : '');
+        return;
+      }
+      document.documentElement.classList.add('ct-handoff-verifying');
+      if (!/^[a-f0-9]{48}$/.test(checkToken)) {
+        try { localStorage.removeItem('cartech_license_payment_handoff_v1'); } catch (_) {}
+        portfolio('expired');
+        return;
+      }
+      const endpoint = 'https://thqoydzuthttyybwijgq.supabase.co/rest/v1/rpc/';
+      const key = 'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK';
+      const rpc = async (name, body) => {
+        const response = await fetch(endpoint + name, {
+          method:'POST', headers:{apikey:key, 'Content-Type':'application/json'},
+          body:JSON.stringify(body), cache:'no-store'
+        });
+        if (!response.ok) throw new Error('Link verification unavailable');
+        return response.json();
+      };
+      (async () => {
+        try {
+          const result = await rpc('cartech_get_buyer_handoff', {p_handoff_token:checkToken});
+          const delivery = Array.isArray(result) ? result[0] : result;
+          if (delivery?.status !== 'approved' || !delivery.license_key || !delivery.shop_id) {
+            try { localStorage.removeItem('cartech_license_payment_handoff_v1'); } catch (_) {}
+            portfolio('expired');
+            return;
+          }
+          // The workshop license is checked by the app's authenticated access
+          // flow; this public check only validates the short-lived buyer URL.
+          document.documentElement.classList.remove('ct-handoff-verifying');
+        } catch (_) {
+          // Network errors must not make an unverified link look valid.
+          portfolio('check-failed');
+        }
+      })();
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -8483,6 +8549,18 @@ window.CartechAccess = (() => {
     const screen = byId('ctPauseScreen');
     if (!screen) return;
     const status = String(access?.status || '').toLowerCase();
+    let returnToPortfolio = new URLSearchParams(window.location.search).get('from') === 'portfolio';
+    try {
+      if (returnToPortfolio) localStorage.setItem('cartech_portfolio_return_v1', '1');
+      else returnToPortfolio = localStorage.getItem('cartech_portfolio_return_v1') === '1';
+    } catch (_) {}
+    if (returnToPortfolio && access?.valid === false && status === 'expired') {
+      const portfolio = new URL('portfolio/', window.location.href);
+      portfolio.searchParams.set('license', 'expired');
+      portfolio.hash = 'cartech-license';
+      window.location.replace(portfolio.href);
+      return;
+    }
     const show = access?.valid === false && String(access?.shop_id || '') === CARTECH_MAIN_SHOP_ID
       && ['not_started','expired','revoked','payment_paused','operational_paused'].includes(status);
     screen.hidden = !show;
