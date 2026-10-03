@@ -100,7 +100,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         </div>
       </section>
       <section id="verifiedRenewalCard" class="card" style="margin-top:20px">
-        <div class="card-head"><h2>CARTECH Main · manual payment timer</h2><p>For <strong>cartech-main</strong> only. Check the actual GCash transaction, then set the paid amount and exact number of days. This starts or extends the existing workshop license; no new key or password is sent.</p></div>
+        <div class="card-head"><h2>CARTECH Main · manual payment timer</h2><p>For <strong>cartech-main</strong> only, with an existing non-revoked license. Check the actual GCash transaction before setting paid time. This does not generate a buyer link. For a private buyer link, use an approved payment request with an issued license below.</p></div>
         <div class="card-body">
           <div class="toolbar" style="margin-top:12px"><label style="flex:1;min-width:130px">Days to add<input id="verifiedDays" class="input" type="number" min="1" max="365" step="1" value="7" style="width:100%;margin-top:5px"></label><label style="flex:1;min-width:130px">Amount paid (₱)<input id="verifiedAmount" class="input" type="number" min="0.01" max="1000000" step="0.01" value="420" style="width:100%;margin-top:5px"></label><label style="flex:2;min-width:200px">Real GCash reference<input id="verifiedReference" class="input" style="width:100%;margin-top:5px" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="10–20 digits from GCash"></label></div>
           <div class="toolbar" style="margin-top:12px"><button id="applyVerifiedPlanButton" class="btn primary" type="button">Confirm payment &amp; set timer</button></div>
@@ -125,7 +125,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Open “Manage this running key” to change its expiry, payment state, or claimable bonus. Revoke a running key before permanently deleting it. Workshop jobs and account data remain safe.</p></div>
       </section>
       <div id="paymentReviewAnchor"></div><section id="incomingRequestsCard" class="card" style="margin-top:20px" hidden>
-        <div class="card-head"><h2>Incoming GCash requests</h2><p>Amber temporary keys still need a real GCash transaction check. Unconfirmed keys expire after 24 hours.</p></div>
+        <div class="card-head"><h2>Incoming GCash requests</h2><p>Generate buyer link appears only after a payment is approved and a license is issued. Old approved records without a license are shown for review but cannot produce a working link.</p></div>
         <div class="card-body"><div id="requests" class="requests"><div class="empty">No requests loaded yet.</div></div><div id="result" class="result" hidden></div></div>
       </section>
       <section id="topupRequestsCard" class="card" style="margin-top:20px" hidden>
@@ -344,7 +344,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         await loadLicenses(true);
         byId('verifiedRenewalStatus').textContent = success;
       } catch (error) {
-        byId('verifiedRenewalStatus').textContent = error?.message || 'The timer was not set. Check the payment and try again.';
+        const message = error?.message || 'The timer was not set. Check the payment and try again.';
+        byId('verifiedRenewalStatus').textContent = /active workshop license needs developer review/i.test(message)
+          ? 'CARTECH Main’s selected license is revoked or missing. No paid time was added. Do not retry this transaction as a test. This timer cannot generate buyer links; use an approved payment request with an issued license below, or review the revoked key before any renewal.'
+          : message;
       } finally {
         verifiedPlanBusy = false;
         byId('applyVerifiedPlanButton').disabled = false;
@@ -580,12 +583,13 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
 
     function render() {
       const root = byId('requests');
-      const visibleRequests = requests.filter(row => !(row.status === 'approved' && !row.license_id));
+      const visibleRequests = requests; // Show incomplete old approvals so they cannot silently disappear.
       byId('incomingRequestsCard').hidden = visibleRequests.length === 0;
       const pending = visibleRequests.filter(row => row.status === 'pending' || (row.status === 'approved' && row.provisional_issued_at && !row.provisional_confirmed_at && !row.provisional_rejected_at)).length;
       byId('pendingCount').textContent = `${pending} to review`;
       byId('totalCount').textContent = `${visibleRequests.length} total`;
-      byId('lastLoaded').textContent = visibleRequests.length ? `Loaded ${new Date().toLocaleTimeString()}` : 'No active requests';
+      const readyLinks = visibleRequests.filter(row => row.status === 'approved' && row.license_id).length;
+      byId('lastLoaded').textContent = readyLinks ? `${readyLinks} buyer link ready` : 'No buyer link ready';
       if (!visibleRequests.length) { root.innerHTML = ''; return; }
       root.innerHTML = visibleRequests.map(row => {
         const provisional = row.status === 'approved' && row.provisional_issued_at && !row.provisional_confirmed_at && !row.provisional_rejected_at;
@@ -597,6 +601,8 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           ? `<div class="actions"><button class="btn primary" data-provisional-approve="${esc(row.request_id)}">Confirm GCash payment</button><button class="btn danger" data-provisional-reject="${esc(row.request_id)}">Revoke key &amp; block account</button><p class="request-note">Key issued ${esc(date(row.provisional_issued_at))}. Temporary access ends ${esc(date(row.provisional_expires_at))} unless confirmed.</p></div>`
           : status === 'pending'
           ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
+          : status === 'approved' && !row.license_id
+            ? `<div class="actions"><p class="request-note"><strong>Buyer link unavailable:</strong> this older approved record has no issued license. Review the original payment and license before taking any action.</p>${cleanup}</div>`
           : status === 'approved'
             ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Generate buyer link (v85)</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
             : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
