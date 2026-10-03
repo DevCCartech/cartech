@@ -8549,12 +8549,8 @@ window.CartechAccess = (() => {
     const screen = byId('ctPauseScreen');
     if (!screen) return;
     const status = String(access?.status || '').toLowerCase();
-    let returnToPortfolio = new URLSearchParams(window.location.search).get('from') === 'portfolio';
-    try {
-      if (returnToPortfolio) localStorage.setItem('cartech_portfolio_return_v1', '1');
-      else returnToPortfolio = localStorage.getItem('cartech_portfolio_return_v1') === '1';
-    } catch (_) {}
-    if (returnToPortfolio && access?.valid === false && status === 'expired') {
+    if (access?.valid === false && status === 'expired'
+        && String(access?.shop_id || '') === CARTECH_MAIN_SHOP_ID) {
       const portfolio = new URL('portfolio/', window.location.href);
       portfolio.searchParams.set('license', 'expired');
       portfolio.hash = 'cartech-license';
