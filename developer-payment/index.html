@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="ct-auth-locked">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -49,8 +49,37 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     .request.provisional .request-note{color:#ffe0b1}
     .request.provisional .btn.primary{background:#0b7659;border-color:#2aab85}
 </style>
+<style>
+  .ct-auth-locked #pwaStatus, .ct-auth-locked .shell, .ct-auth-locked .mobile-dock { display:none!important; }
+  html:not(.ct-auth-locked) #developerLoginGate { display:none!important; }
+  .ct-login-shell { min-height:100vh; display:grid; place-items:center; padding:22px; background:radial-gradient(circle at top,#203650,#0b1322 65%); }
+  .ct-login-card { width:min(100%,430px); padding:30px; border:1px solid #37506b; border-radius:22px; background:#152238; color:#e5edf8; box-shadow:0 22px 70px #0007; }
+  .ct-login-mark { width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:#d9500d;color:white;font-size:25px;font-weight:900; }
+  .ct-login-card h1 { font-size:23px; margin:18px 0 5px; }
+  .ct-login-card p { color:#a5b5cb; font-size:13px; }
+  .ct-login-card label { display:block; margin:20px 0 7px; font-weight:700; font-size:12px; }
+  .ct-login-card .input { width:100%; }
+  .ct-login-card .btn { width:100%; margin-top:13px; min-height:44px; }
+  .ct-login-card a { display:inline-block; margin-top:20px; color:#a5b5cb; font-size:12px; }
+  #developerLoginStatus { min-height:20px; margin:12px 0 0; }
+  #developerLoginStatus.error { color:#ff9aaa; }
+</style>
 </head>
 <body>
+  <div id="developerLoginGate" class="ct-login-shell">
+    <div class="ct-login-card">
+      <div class="ct-login-mark" aria-hidden="true">C</div>
+      <h1>CARTECH Developer Login</h1>
+      <p>Enter the private manager secret to open payment and license controls. This device will not remember it.</p>
+      <form id="developerLoginForm">
+        <label for="developerLoginSecret">Private manager secret</label>
+        <input id="developerLoginSecret" class="input" type="password" autocomplete="off" required aria-describedby="developerLoginStatus">
+        <button id="developerLoginSubmit" class="btn primary" type="submit">Unlock developer dashboard</button>
+        <p id="developerLoginStatus" role="status" aria-live="polite">Your secret is checked by the server.</p>
+      </form>
+      <a href="../portfolio/">← Back to portfolio</a>
+    </div>
+  </div>
   <div id="pwaStatus" class="pwa-status"><span class="pwa-status-label"><strong id="networkState">Online</strong> · Live data loads only when requested.</span><span class="pwa-status-actions"><button id="quickRefreshButton" class="btn quiet" type="button">Refresh data</button><button id="installAppButton" class="btn primary install-button" type="button" hidden>Install app</button></span></div>
   <div class="shell">
     <aside>
@@ -62,11 +91,11 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     <main>
       <header class="top"><div><h1>Payments &amp; workshop licenses</h1><p>Verify GCash transactions and confirm or revoke temporary keys.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v72 · Payment console</span></div></header>
       <section id="developerAccess" class="card">
-        <div class="card-head"><h2>Developer access</h2><p>The secret is used only for the secure RPC call. This private device remembers it automatically unless you turn that option off.</p></div>
+        <div class="card-head"><h2>Developer access</h2><p>Unlocked on this tab after server verification. The manager secret is not saved on this device.</p></div>
         <div class="card-body">
-          <div class="toolbar"><input id="adminSecret" class="input secret" type="password" autocomplete="off" placeholder="Private manager secret"><button id="loadButton" class="btn primary" type="button">Load requests</button><button id="notifyButton" class="btn" type="button">Enable phone notifications</button></div>
-          <div class="remember-row"><label><input id="rememberSecret" type="checkbox" checked> Remember on this device</label><button id="clearSecretButton" class="btn quiet" type="button">Clear saved secret</button><span>Use only on your private phone or computer.</span></div>
-          <div id="status" class="status">Enter the manager secret, then load payment requests.</div>
+          <div class="toolbar"><button id="loadButton" class="btn primary" type="button">Refresh requests</button><button id="notifyButton" class="btn" type="button">Enable phone notifications</button><button id="lockDashboardButton" class="btn quiet" type="button">Lock dashboard</button></div>
+          <div id="status" class="status">Developer login verified.</div>
+          <div id="buyerLinkBox" hidden style="margin-top:10px"><label for="buyerLinkOutput" style="display:block;font-size:11px;margin-bottom:6px;font-weight:700">CARTECH v85 private buyer link · send only to the buyer</label><div class="toolbar"><input id="buyerLinkOutput" class="input" type="text" readonly aria-label="Private buyer link"><button id="copyBuyerLinkButton" class="btn primary" type="button">Copy buyer link</button></div></div>
           <div class="summary"><span id="pendingCount" class="pill pending">0 pending</span><span id="totalCount" class="pill">0 total</span><span id="lastLoaded" class="pill">Not loaded</span></div>
         </div>
       </section>
@@ -175,25 +204,64 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     function setStatus(text, error = false) { const node = byId('status'); node.textContent = text; node.classList.toggle('error', error); }
     function amount(value) { return `₱${Number(value || 0).toLocaleString('en-PH')}`; }
     function date(value) { const parsed = new Date(value); return Number.isNaN(parsed.getTime()) ? '—' : parsed.toLocaleString('en-PH', { dateStyle:'medium', timeStyle:'short' }); }
-    function secret() { return String(byId('adminSecret').value || '').trim(); }
-    function saveRememberedSecret() {
-      try {
-        const remember = byId('rememberSecret').checked;
-        if (remember && secret()) localStorage.setItem(SECRET_STORAGE_KEY, secret());
-        else if (!remember) localStorage.removeItem(SECRET_STORAGE_KEY);
-      } catch (_) { /* Private browsing or blocked storage: keep using the input normally. */ }
+    let activeManagerSecret = '';
+    let dashboardUnlocked = false;
+    let loginBusy = false;
+    let dashboardIdleTimer = null;
+    const DASHBOARD_IDLE_MS = 15 * 60 * 1000;
+    function secret() { return dashboardUnlocked ? activeManagerSecret : ''; }
+    function resetDashboardIdle() {
+      if (!dashboardUnlocked) return;
+      clearTimeout(dashboardIdleTimer);
+      dashboardIdleTimer = setTimeout(lockDashboard, DASHBOARD_IDLE_MS);
     }
-    function restoreRememberedSecret() {
-      try {
-        const saved = localStorage.getItem(SECRET_STORAGE_KEY) || '';
-        if (saved) { byId('adminSecret').value = saved; byId('rememberSecret').checked = true; }
-      } catch (_) { /* Storage is optional. */ }
+    function lockDashboard() {
+      dashboardUnlocked = false;
+      clearTimeout(dashboardIdleTimer);
+      activeManagerSecret = '';
+      byId('developerLoginSecret').value = '';
+      byId('developerLoginStatus').textContent = 'Enter your private manager secret to continue.';
+      byId('developerLoginStatus').classList.remove('error');
+      byId('buyerLinkOutput').value = '';
+      byId('buyerLinkBox').hidden = true;
+      byId('result').innerHTML = '';
+      byId('result').hidden = true;
+      byId('licenseList').innerHTML = '';
+      byId('topupRequests').innerHTML = '';
+      requests = [];
+      topupRequests = [];
+      render();
+      document.documentElement.classList.add('ct-auth-locked');
+      byId('developerLoginSecret').focus();
     }
-    function clearRememberedSecret() {
-      try { localStorage.removeItem(SECRET_STORAGE_KEY); } catch (_) { /* Ignore blocked storage. */ }
-      byId('adminSecret').value = '';
-      byId('rememberSecret').checked = false;
-      setStatus('Saved manager secret cleared from this device.');
+    async function loginDeveloper(event) {
+      event.preventDefault();
+      if (loginBusy) return;
+      const entered = byId('developerLoginSecret').value.trim();
+      if (!entered) return;
+      const button = byId('developerLoginSubmit');
+      const status = byId('developerLoginStatus');
+      loginBusy = true;
+      button.disabled = true;
+      status.textContent = 'Checking developer access…';
+      status.classList.remove('error');
+      try {
+        // This RPC rejects an invalid manager secret, even when there are no requests.
+        await rpc('cartech_list_license_payment_request_meta', { p_admin_secret: entered });
+        activeManagerSecret = entered;
+        byId('developerLoginSecret').value = '';
+        dashboardUnlocked = true;
+        document.documentElement.classList.remove('ct-auth-locked');
+        setStatus('Developer login verified. Loading live data…');
+        resetDashboardIdle();
+        void refreshAll(false).then(() => { if (dashboardUnlocked) setStatus('Developer dashboard ready. Verify each payment in GCash before approving.'); });
+      } catch (_) {
+        status.textContent = 'Login failed. Check the private manager secret and your connection.';
+        status.classList.add('error');
+      } finally {
+        loginBusy = false;
+        button.disabled = false;
+      }
     }
     function setPlanStatus(text, error = false) { const node = byId('planSettingsStatus'); if (node) { node.textContent = text; node.classList.toggle('error', error); } }
     function wholeStock(value, fallback = 0) {
@@ -530,7 +598,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           : status === 'pending'
           ? `<div class="actions"><button class="btn primary" data-approve="${esc(row.request_id)}">Approve &amp; generate key</button><button class="btn danger" data-reject="${esc(row.request_id)}">Reject request</button>${cleanup}</div>`
           : status === 'approved'
-            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Send to buyer page</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
+            ? `<div class="actions"><button class="btn primary" data-handoff="${esc(row.request_id)}">Generate buyer link (v85)</button>${cleanup}<p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p></div>`
             : `<div class="actions">${cleanup}</div><p class="request-note">Reviewed ${esc(date(row.reviewed_at))}${row.review_note ? ` · ${esc(row.review_note)}` : ''}</p>`;
         const proofState = String(row.proof_check?.state || '');
         const proofView = proofState === 'details_match'
@@ -654,7 +722,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       box.dataset.requestId = requestId;
       box.dataset.licenseKey = issued?.license_key || '';
       box.dataset.ownerPassword = issued?.owner_password || '';
-      box.innerHTML = `<h3>License created — copy these details now</h3><div class="key-box"><code id="issuedKey">${esc(issued?.license_key || '')}</code><button class="btn" data-copy-value="issuedKey">Copy key</button></div><dl><dt>Workshop</dt><dd>${esc(issued?.shop_name)}</dd><dt>Shop ID</dt><dd>${esc(issued?.shop_id)}</dd><dt>Owner login</dt><dd>${esc(issued?.owner_username)}</dd><dt>Temporary password</dt><dd>${esc(issued?.owner_password)}</dd><dt>Term</dt><dd>${esc(issued?.duration_code)} · ${esc(amount(issued?.amount_pesos))}</dd></dl><div class="actions"><button class="btn primary" data-publish-delivery="${esc(requestId)}">Send to buyer page</button></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="repairShopId" class="input" style="flex:1;min-width:180px" value="cartech-main" placeholder="Original shop ID"><button class="btn" data-reissue-delivery="${esc(requestId)}">Repair existing shop</button></div><p id="repairStatus" class="status" style="margin-top:9px" hidden></p><p class="warning">Use Repair existing shop only when this payment accidentally created a new empty tenant. Enter the original ID, such as cartech-main. Run the v5 HANDOFF Supabase migration first.</p>`;
+      box.innerHTML = `<h3>License created — copy these details now</h3><div class="key-box"><code id="issuedKey">${esc(issued?.license_key || '')}</code><button class="btn" data-copy-value="issuedKey">Copy key</button></div><dl><dt>Workshop</dt><dd>${esc(issued?.shop_name)}</dd><dt>Shop ID</dt><dd>${esc(issued?.shop_id)}</dd><dt>Owner login</dt><dd>${esc(issued?.owner_username)}</dd><dt>Temporary password</dt><dd>${esc(issued?.owner_password)}</dd><dt>Term</dt><dd>${esc(issued?.duration_code)} · ${esc(amount(issued?.amount_pesos))}</dd></dl><div class="actions"><button class="btn primary" data-publish-delivery="${esc(requestId)}">Generate buyer link (v85)</button></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="repairShopId" class="input" style="flex:1;min-width:180px" value="cartech-main" placeholder="Original shop ID"><button class="btn" data-reissue-delivery="${esc(requestId)}">Repair existing shop</button></div><p id="repairStatus" class="status" style="margin-top:9px" hidden></p><p class="warning">Use Repair existing shop only when this payment accidentally created a new empty tenant. Enter the original ID, such as cartech-main. Run the v5 HANDOFF Supabase migration first.</p>`;
       box.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
 
@@ -687,7 +755,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         if (!/^[a-f0-9]{48}$/i.test(token)) throw new Error('The buyer handoff token was not created.');
         const buyerUrl = new URL('../index.html', location.href);
         buyerUrl.searchParams.set('cartech_handoff', token);
+        buyerUrl.searchParams.set('from', 'portfolio');
         const link = buyerUrl.href;
+        byId('buyerLinkOutput').value = link;
+        byId('buyerLinkBox').hidden = false;
         const notified = notifyOpenBuyerTabs(token);
         let copied = false;
         try { await navigator.clipboard.writeText(link); copied = true; } catch (_) {}
@@ -696,13 +767,13 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         if (popup) { try { popup.opener = null; } catch (_) {} }
         setStatus(opened
           ? `Sent to buyer page. ${notified ? 'The open buyer tab was notified and the new buyer page was opened.' : 'The buyer page was opened.'}${copied ? ' The secure link was copied.' : ''}`
-          : `${notified ? 'The open buyer tab was notified. ' : ''}${copied ? 'The secure link was copied; paste it into a new tab.' : 'Allow popups and click again.'}`,
+          : `${notified ? 'The open buyer tab was notified. ' : ''}${copied ? 'The secure link was copied; paste it into a new tab.' : 'Copy the private link shown above.'}`,
           !opened && !copied && !notified);
         if (button) { button.textContent = opened ? 'Open buyer page again' : (copied ? 'Buyer link copied — open again' : 'Try again'); button.disabled = false; }
         return true;
       } catch (error) {
         setStatus(error?.message || 'Could not send the key to the buyer page.', true);
-        if (button) { button.textContent = 'Send to buyer page'; button.disabled = false; }
+        if (button) { button.textContent = 'Generate buyer link (v85)'; button.disabled = false; }
         return false;
       }
     }
@@ -782,9 +853,8 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     async function enableNotifications() { if (!('Notification' in window)) { setStatus('This browser does not support notifications.', true); return; } const permission = await Notification.requestPermission(); setStatus(permission === 'granted' ? 'Phone/browser notifications enabled while this console is open.' : 'Notifications were not enabled.'); }
 
     async function refreshAll(showMessage = true) {
-      saveRememberedSecret();
       if (!navigator.onLine) { setStatus('Offline. Reconnect to load live payment and license records.', true); return; }
-      if (!secret()) { setStatus('Enter the private manager secret first.', true); byId('adminSecret')?.focus(); return; }
+      if (!secret()) { setStatus('Open Developer Login first.', true); return; }
       if (showMessage) setStatus('Refreshing live payment and license data…');
       await Promise.allSettled([loadRequests(true), loadTopups(true), loadLicenses(true), loadPlanSettings(true)]);
       if (showMessage) setStatus('Live data refreshed. Receipts are loaded only when you open them.');
@@ -818,16 +888,17 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         setStatus('App opened, but offline installation is unavailable on this host.', true);
       }));
     }
-    restoreRememberedSecret();
+    // Remove a manager secret stored by older versions on this device.
+    try { localStorage.removeItem(SECRET_STORAGE_KEY); } catch (_) {}
+    byId('developerLoginForm').addEventListener('submit', event => void loginDeveloper(event));
+    byId('lockDashboardButton').addEventListener('click', lockDashboard);
+    for (const type of ['pointerdown', 'keydown']) document.addEventListener(type, resetDashboardIdle);
     byId('editPlansButton').addEventListener('click', () => {
       const card = byId('planSettingsCard');
       const open = Boolean(card?.classList.contains('plan-editor-collapsed'));
       setPlanEditorOpen(open, open);
     });
     byId('minimizePlansButton').addEventListener('click', () => setPlanEditorOpen(false));
-    byId('adminSecret').addEventListener('input', () => { if (byId('rememberSecret').checked) saveRememberedSecret(); });
-    byId('rememberSecret').addEventListener('change', saveRememberedSecret);
-    byId('clearSecretButton').addEventListener('click', clearRememberedSecret);
     async function createDauisTest() {
       const button = byId('createDauisTestButton');
       const status = byId('dauisTestStatus');
@@ -876,16 +947,15 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       } finally { button.disabled = false; }
     }
     byId('createDauisTestButton').addEventListener('click', () => void createDauisTest());
-    byId('loadButton').addEventListener('click', () => { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('loadButton').addEventListener('click', () => { void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
     byId('applyVerifiedPlanButton').addEventListener('click', () => void applyVerifiedPlan());
-    byId('loadLicensesButton').addEventListener('click', () => { saveRememberedSecret(); void loadLicenses(false); });
-    byId('loadPlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void loadPlanSettings(false); });
-    byId('savePlanSettingsButton').addEventListener('click', () => { saveRememberedSecret(); void savePlanSettings(); });
+    byId('loadLicensesButton').addEventListener('click', () => { void loadLicenses(false); });
+    byId('loadPlanSettingsButton').addEventListener('click', () => { void loadPlanSettings(false); });
+    byId('savePlanSettingsButton').addEventListener('click', () => { void savePlanSettings(); });
     byId('notifyButton').addEventListener('click', () => void enableNotifications());
     byId('quickRefreshButton').addEventListener('click', () => void refreshAll(true));
     byId('dockRefreshButton').addEventListener('click', () => void refreshAll(true));
-    byId('adminSecret').addEventListener('keydown', event => { if (event.key === 'Enter') { saveRememberedSecret(); void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); } });
-    window.addEventListener('beforeunload', saveRememberedSecret);
+    byId('copyBuyerLinkButton').addEventListener('click', async () => { const link = byId('buyerLinkOutput').value; if (!link) return; try { await navigator.clipboard.writeText(link); setStatus('Private buyer link copied. Send it only to the approved buyer.'); } catch (_) { byId('buyerLinkOutput').select(); setStatus('Select and copy the private buyer link shown above.'); } });
     byId('requests').addEventListener('click', event => { const receipt = event.target.closest('[data-load-receipt]'); if (receipt) void loadReceipt(receipt.dataset.loadReceipt, receipt); const approve = event.target.closest('[data-approve]'); if (approve) void review(approve.dataset.approve, 'approve'); const reject = event.target.closest('[data-reject]'); if (reject) void review(reject.dataset.reject, 'reject'); const temporaryApprove = event.target.closest('[data-provisional-approve]'); if (temporaryApprove) void reviewProvisional(temporaryApprove.dataset.provisionalApprove, 'approve'); const temporaryReject = event.target.closest('[data-provisional-reject]'); if (temporaryReject) void reviewProvisional(temporaryReject.dataset.provisionalReject, 'reject'); const handoff = event.target.closest('[data-handoff]'); if (handoff) void sendBuyerHandoff(handoff.dataset.handoff, handoff); const clear = event.target.closest('[data-clear-receipt]'); if (clear) void clearReceipt(clear.dataset.clearReceipt, clear); const remove = event.target.closest('[data-delete-request]'); if (remove) void deletePaymentRequest(remove.dataset.deleteRequest, remove); });
     byId('topupRequests').addEventListener('click', event => { const receipt=event.target.closest('[data-topup-receipt]'); if(receipt) void viewTopupReceipt(receipt.dataset.topupReceipt); const approve=event.target.closest('[data-topup-approve]'); if(approve) void reviewTopup(approve.dataset.topupApprove,'approve',approve); const reject=event.target.closest('[data-topup-reject]'); if(reject) void reviewTopup(reject.dataset.topupReject,'reject',reject); });
     byId('licenseList').addEventListener('click', event => {
