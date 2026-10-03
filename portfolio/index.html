@@ -1,1155 +1,1043 @@
 <!DOCTYPE html>
 <html lang="en" class="dark scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charl Jun V. - Systems Developer & Software Showcase</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            500: '#f97316',
-                            600: '#ea580c',
-                            dark: '#0b0f17',
-                            card: '#111827',
-                            border: '#1e293b'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts & Lucide Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b0f17;
-            color: #e2e8f0;
-        }
-        .code-font {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .glass-card {
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            border-color: rgba(249, 115, 22, 0.4);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px -10px rgba(249, 115, 22, 0.15);
-        }
-        .glass-modal {
-            background: rgba(11, 15, 23, 0.96);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #facc15 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f17;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
-        }
-    </style>
-</head>
-<body class="min-h-screen bg-[#0b0f17] text-slate-100 selection:bg-orange-500 selection:text-white flex flex-col justify-between relative overflow-x-hidden">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charl Jun V. | Lead Systems Architect & Developer Showcase</title>
 
-    <!-- HEADER NAVBAR -->
-    <header class="sticky top-0 z-40 bg-[#0b0f17]/95 backdrop-blur-md border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-white shadow-lg shadow-orange-500/20 text-lg">
-                    CJ
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
+            darkbg: '#080C14',
+            darkcard: '#0F172A',
+            darkborder: '#1E293B',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080C14;
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-orange {
+      box-shadow: 0 0 35px -5px rgba(249, 115, 22, 0.25);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #080C14;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #f97316;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-white custom-scrollbar">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo & Title -->
+      <a href="#about" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-amber-500 to-amber-400 flex items-center justify-center font-extrabold text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
+          CJ
+        </div>
+        <div>
+          <div class="font-bold text-sm tracking-wide text-white flex items-center gap-2">
+            Charl Jun V.
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="System Engine Online"></span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-mono">Lead Systems Architect & Full-Stack Developer</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
+        <a href="#about" class="hover:text-brand-500 transition-colors">ABOUT</a>
+        <a href="#projects" class="hover:text-brand-500 transition-colors">SOFTWARE SHOWCASE</a>
+        <a href="#cartech" class="hover:text-brand-500 transition-colors">CARTECH SAAS</a>
+        <a href="#techstack" class="hover:text-brand-500 transition-colors font-mono">&lt;TECH STACK/&gt;</a>
+        <a href="#vouches" class="hover:text-brand-500 transition-colors">CLIENT VOUCHES</a>
+      </nav>
+
+      <!-- Action & License Badge -->
+      <div class="flex items-center gap-3">
+        <a href="#cartech-license" class="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-brand-600 hover:bg-brand-500 transition-all items-center gap-1.5">
+          <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Buy CARTECH
+        </a>
+        <a href="../developer-payment/#developerAccess" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 hover:text-white transition-all border border-slate-700 flex items-center gap-1.5" aria-label="Developer Login">
+          <i data-lucide="lock-keyhole" class="w-3.5 h-3.5 text-brand-400"></i>
+          <span>Developer Login</span>
+        </a>
+
+        <!-- Social Facebook Links Dropdown/Buttons -->
+        <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg text-slate-300 bg-slate-800/80 hover:bg-brand-600 hover:text-white transition-all border border-slate-700" title="Primary Facebook Profile">
+          <i data-lucide="facebook" class="w-4 h-4 text-blue-400 group-hover:text-white"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-16 w-full">
+
+    <p id="cartech-expired-notice" class="hidden rounded-2xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-200" role="status">
+      Your CARTECH access has expired. Contact the developer below to renew, then open the new private buyer link.
+      <a href="#cartech-license" class="font-bold underline">Contact developer</a>
+    </p>
+
+    <!-- HERO / SYSTEM ARCHITECT SECTION -->
+    <section id="about" class="pt-2">
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Left Hero Column -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
+            <i data-lucide="cpu" class="w-3.5 h-3.5 text-brand-500"></i>
+            <span>Enterprise Software Systems & SaaS Architect</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+            Engineering High-Performance <br class="hidden sm:block">
+            <span class="bg-gradient-to-r from-brand-500 via-amber-400 to-amber-200 bg-clip-text text-transparent">SaaS & Enterprise Systems</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
+            Specializing in complete end-to-end software solutions—from automotive workshop diagnostics (<strong class="text-brand-400">CARTECH</strong>) and multi-branch retail POS to municipal e-governance and school ERP engines. Built with absolute integrity, real-time sync, and rock-solid execution.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="#cartech" class="px-5 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-600 via-amber-600 to-amber-500 hover:from-brand-500 hover:to-amber-400 shadow-xl shadow-brand-500/20 transition-all flex items-center gap-2">
+              <i data-lucide="wrench" class="w-4 h-4"></i>
+              Explore CARTECH SaaS Demo
+            </a>
+            <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-xl text-xs font-semibold text-slate-200 bg-slate-800/90 hover:bg-slate-700 hover:text-white transition-all border border-slate-700 flex items-center gap-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-blue-400"></i>
+              Contact Charl Jun V.
+            </a>
+          </div>
+
+          <!-- Quick Metrics Grid -->
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 max-w-xl font-mono">
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-slate-800">
+              <div class="text-2xl font-black text-white">4+</div>
+              <div class="text-[11px] text-slate-400 font-sans mt-0.5">Flagship ERP Platforms</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-slate-800">
+              <div class="text-2xl font-black text-emerald-400">99.9%</div>
+              <div class="text-[11px] text-slate-400 font-sans mt-0.5">Uptime Stability</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-slate-800">
+              <div class="text-2xl font-black text-amber-400">&lt;50ms</div>
+              <div class="text-[11px] text-slate-400 font-sans mt-0.5">API Response Latency</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Developer Profile Card -->
+        <div class="lg:col-span-5">
+          <div class="glass-panel rounded-2xl p-6 border border-slate-800 relative overflow-hidden shadow-2xl glow-orange">
+            <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-amber-600 flex items-center justify-center font-bold text-white text-lg shadow-md">
+                  CJ
                 </div>
                 <div>
-                    <h1 class="font-bold text-slate-100 text-lg leading-tight flex items-center gap-2">
-                        Charl Jun V.
-                        <span class="relative flex h-2.5 w-2.5" title="Available for Custom Projects & Source Code Purchase">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
-                    </h1>
-                    <p class="text-xs text-slate-400 font-medium">Full-Stack & Systems Architect</p>
+                  <h3 class="text-base font-bold text-white">Charl Jun V.</h3>
+                  <p class="text-xs text-brand-400 font-mono">Lead Systems Architect</p>
                 </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">AVAILABLE FOR HIRE</span>
             </div>
 
-            <nav class="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-slate-300">
-                <a href="#about" class="hover:text-orange-400 transition-colors">About</a>
-                <a href="#system-note" class="hover:text-orange-400 transition-colors">Architecture</a>
-                <a href="#projects" class="hover:text-orange-400 transition-colors">Projects Showcase</a>
-                <a href="#vouches" class="hover:text-orange-400 transition-colors">Client Vouches</a>
-                <a href="#contact" class="hover:text-orange-400 transition-colors">Contact Developer</a>
-            </nav>
+            <div class="space-y-3.5 text-xs">
+              <div class="flex justify-between items-center py-1">
+                <span class="text-slate-400">Primary Core Stack:</span>
+                <span class="font-bold text-white font-mono">PHP, Laravel, React, Node.js</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">Flagship SaaS:</span>
+                <span class="font-semibold text-brand-400">CARTECH Diagnostic ERP</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">Database Integrity:</span>
+                <span class="text-slate-200 font-mono">MySQL, PostgreSQL, Redis</span>
+              </div>
+              
+              <div class="pt-3 border-t border-slate-800/80 space-y-2">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Official Contacts</div>
+                <div class="flex flex-col gap-2 pt-1">
+                  <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:border-brand-500/50 transition-all text-slate-300 hover:text-white group">
+                    <span class="flex items-center gap-2">
+                      <i data-lucide="facebook" class="w-4 h-4 text-blue-400"></i>
+                      <span>facebook.com/charljun1</span>
+                    </span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100"></i>
+                  </a>
+                  <a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:border-brand-500/50 transition-all text-slate-300 hover:text-white group">
+                    <span class="flex items-center gap-2">
+                      <i data-lucide="facebook" class="w-4 h-4 text-blue-400"></i>
+                      <span>facebook.com/mylovemanily</span>
+                    </span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100"></i>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CARTECH V85 BUYER AND DEVELOPER WORKFLOW -->
+    <section id="cartech-license" class="scroll-mt-24 glass-panel rounded-3xl border border-brand-500/30 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6 sm:p-8 space-y-5">
+      <span class="inline-flex rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-400">CARTECH v85 · Workshop access</span>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">Get CARTECH for your workshop</h2>
+      <p class="max-w-2xl text-sm leading-relaxed text-slate-300">Message Charl for the current plan and payment details. After your payment is checked, you receive a private CARTECH access link. Your access runs for the approved term; contact Charl here when it expires.</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white hover:bg-blue-500"><i data-lucide="facebook" class="w-4 h-4"></i> Facebook 1 · charljun1</a>
+        <a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-blue-500/50 bg-blue-500/10 px-5 py-3 text-xs font-bold text-blue-200 hover:bg-blue-500/20"><i data-lucide="facebook" class="w-4 h-4"></i> Facebook 2 · mylovemanily</a>
+        <button id="copyCartechSalesLink" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-5 py-3 text-xs font-bold text-white hover:bg-slate-700"><i data-lucide="copy" class="w-4 h-4"></i> Copy purchase page</button>
+      </div>
+      <p id="cartechSalesFeedback" class="text-xs text-slate-400" role="status" aria-live="polite">The activation link is created after payment approval.</p>
+      <div class="border-t border-slate-800 pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="max-w-xl text-xs text-slate-400"><strong class="text-white">For the developer:</strong> Log in with your private manager secret, review the payment request, then select <strong class="text-white">Generate buyer link (v85)</strong> on an approved request. Copy and send that private link to the buyer.</p>
+        <a href="../developer-payment/#developerAccess" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-500/50 bg-brand-500/10 px-5 py-3 text-xs font-bold text-brand-400 hover:bg-brand-500/20"><i data-lucide="lock-keyhole" class="w-4 h-4"></i> Developer Login</a>
+      </div>
+    </section>
+
+    <!-- FLAGSHIP SECTION: CARTECH DIAGNOSTIC SAAS -->
+    <section id="cartech" class="space-y-6 pt-4 scroll-mt-20">
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-brand-500/30 bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950 relative overflow-hidden shadow-2xl">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold uppercase tracking-wider font-mono">Flagship SaaS System</span>
+              <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Live Production Ready
+              </span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
+              <i data-lucide="wrench" class="w-8 h-8 text-brand-500"></i>
+              CARTECH Diagnostic SaaS & Auto Repair ERP
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 max-w-2xl">
+              Turnkey workshop automation software designed for auto repair centers, diagnostic mechanics, and vehicle service advisors.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3 shrink-0">
+            <button onclick="openCartechInteractiveDemo()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-amber-500 hover:from-brand-500 hover:to-amber-400 text-white font-bold text-xs shadow-xl shadow-brand-500/20 transition-all flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-4 h-4"></i>
+              Launch Interactive CARTECH Demo
+            </button>
+          </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6">
+          
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-brand-500/40 transition-all">
+            <div class="p-2.5 rounded-lg bg-brand-500/10 text-brand-400 border border-brand-500/20 w-fit">
+              <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white">Job Order Tracking</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Real-time status updates on vehicle intake, diagnostic logs, labor estimates, and completion timelines.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-brand-500/40 transition-all">
+            <div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 w-fit">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white">Mechanic Dispatch</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Automated work order assignment to bay mechanics with commission & task time logs.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-brand-500/40 transition-all">
+            <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-fit">
+              <i data-lucide="boxes" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white">Parts & Inventory</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Automated stock deduction upon job order issuance and instant supplier re-order notifications.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-brand-500/40 transition-all">
+            <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 w-fit">
+              <i data-lucide="receipt" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white">Billing & Invoicing</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">1-click itemized repair invoices, parts warranties, and direct customer SMS notifications.</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SOFTWARE SHOWCASE CATALOG -->
+    <section id="projects" class="space-y-6 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+          <span class="text-xs font-bold tracking-widest uppercase text-brand-500 font-mono">Product Suite</span>
+          <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Enterprise Software Applications</h2>
+          <p class="text-xs text-slate-400 mt-1">Explore live systems engineered by Charl Jun V. Click any card for details and workflow demos.</p>
+        </div>
+
+        <!-- Filter & Search Bar Controls -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Search Input -->
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="project-search" oninput="filterProjects()" placeholder="Search system name or stack..." class="pl-8 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 w-44 sm:w-56">
+          </div>
+
+          <!-- Category Filter Buttons -->
+          <div class="flex gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
+            <button onclick="setCategoryFilter('all')" id="filter-all" class="px-2.5 py-1 rounded font-medium text-white bg-brand-600 transition-all">All</button>
+            <button onclick="setCategoryFilter('saas')" id="filter-saas" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition-all">SaaS</button>
+            <button onclick="filterProjectsCategory('pos')" id="filter-pos" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition-all">Retail</button>
+            <button onclick="filterProjectsCategory('edtech')" id="filter-edtech" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition-all">EdTech & LGU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS SHOWCASE GRID -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6" id="projects-container">
+
+        <!-- PROJECT 1: CARTECH SaaS -->
+        <div class="project-card saas glass-card rounded-2xl p-6 border border-slate-800 hover:border-brand-500/50 transition-all flex flex-col justify-between space-y-4 group">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/20 text-[10px] font-bold font-mono">FLAGSHIP SAAS</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Production System
+              </span>
+            </div>
 
             <div class="flex items-center gap-3">
-                <a href="https://www.facebook.com/charljun.vidal" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-all">
-                    <i data-lucide="facebook" class="w-4 h-4 text-blue-400"></i>
-                    <span class="hidden sm:inline">Facebook</span>
-                </a>
-                <a href="https://devccartech.github.io/cartech/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-semibold text-xs transition-all shadow-lg shadow-orange-500/25 flex items-center gap-1.5">
-                    <span>CARTECH Live</span>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
+              <div class="p-3 rounded-xl bg-brand-500/10 text-brand-500 border border-brand-500/20">
+                <i data-lucide="wrench" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white group-hover:text-brand-400 transition-colors">CARTECH Diagnostic SaaS</h3>
+                <p class="text-xs text-slate-400">Automotive Workshop ERP & Diagnostics</p>
+              </div>
             </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Complete auto shop operational suite featuring vehicle diagnostic error logs, job orders, mechanic dispatch, parts inventory deduction, and customer SMS updates.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">PHP 8.2</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Laravel</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">MySQL</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Tailwind CSS</span>
+            </div>
+          </div>
+
+          <button onclick="openProjectModal('cartech')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-brand-600 hover:text-white text-slate-200 text-xs font-bold transition-all border border-slate-700 flex items-center justify-center gap-2">
+            <span>View Full Details & Live Demo</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
-    </header>
 
-    <!-- HERO SECTION -->
-    <section id="about" class="relative pt-12 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div class="lg:col-span-7 space-y-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    <span>Live Production Software Systems & Turnkey SaaS</span>
-                </div>
-                
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                    Custom <span class="gradient-text">Enterprise Software</span> & Business SaaS Systems
-                </h1>
-
-                <p class="text-slate-300 text-base leading-relaxed max-w-2xl">
-                    Engineering reliable applications for workshop diagnostics, retail POS, education ERPs, and local government platforms. Built with real-time data integrity and custom integrations.
-                </p>
-
-                <div class="flex flex-wrap items-center gap-4 pt-2">
-                    <a href="#projects" class="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/30 flex items-center gap-2">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
-                        <span>View Software Showcase</span>
-                    </a>
-                    <a href="#vouches" class="px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition-all flex items-center gap-2">
-                        <i data-lucide="star" class="w-4 h-4 text-amber-400"></i>
-                        <span>Read Verified Client Vouches</span>
-                    </a>
-                </div>
-
-                <!-- Stats counter bar -->
-                <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80">
-                    <div>
-                        <div class="text-2xl font-bold text-white code-font">6+</div>
-                        <div class="text-xs text-slate-400">Production Systems</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl font-bold text-emerald-400 code-font">100%</div>
-                        <div class="text-xs text-slate-400">Client Satisfaction</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl font-bold text-orange-400 code-font">Real-Time</div>
-                        <div class="text-xs text-slate-400">Live Auto-Sync</div>
-                    </div>
-                </div>
+        <!-- PROJECT 2: TindahanHQ POS -->
+        <div class="project-card pos glass-card rounded-2xl p-6 border border-slate-800 hover:border-emerald-500/50 transition-all flex flex-col justify-between space-y-4 group">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold font-mono">RETAIL & ERP</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Active System
+              </span>
             </div>
 
-            <!-- SYSTEM ARCHITECT PROFILE NOTE CARD -->
-            <div id="system-note" class="lg:col-span-5">
-                <div class="glass-card rounded-2xl p-6 relative overflow-hidden border-orange-500/20">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                    
-                    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                        <div class="flex items-center gap-2.5">
-                            <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                                <i data-lucide="cpu" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-100 text-sm">System Architect Profile</h3>
-                                <p class="text-[11px] text-slate-400">Engineering Standards & Stack</p>
-                            </div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active Status
-                        </span>
-                    </div>
-
-                    <div class="py-4 space-y-3 text-xs text-slate-300 leading-relaxed">
-                        <p>
-                            <strong class="text-white">Developer Name:</strong> Charl Jun V.
-                        </p>
-                        <p>
-                            <strong class="text-white">Primary Systems:</strong> CARTECH, TindahanHQ, AcademiaOne
-                        </p>
-                        <p>
-                            <strong class="text-white">Specialization:</strong> SaaS & Desktop ERP Integration
-                        </p>
-                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-2 code-font text-[11px]">
-                            <div class="flex justify-between items-center text-slate-400">
-                                <span>Architecture:</span>
-                                <span class="text-orange-400">RESTful / WebSockets / Cloud Sync</span>
-                            </div>
-                            <div class="flex justify-between items-center text-slate-400">
-                                <span>Database:</span>
-                                <span class="text-emerald-400">PostgreSQL / SQLite / Realtime DB</span>
-                            </div>
-                            <div class="flex justify-between items-center text-slate-400">
-                                <span>Deployment:</span>
-                                <span class="text-cyan-400">GitHub Pages / Vercel / Docker</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-2 flex items-center justify-between border-t border-slate-800/80 text-[11px]">
-                        <span class="text-slate-400 flex items-center gap-1">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i> Verified Developer
-                        </span>
-                        <a href="https://www.facebook.com/charljun.vidal" target="_blank" class="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1">
-                            Main FB Contact <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                        </a>
-                    </div>
-                </div>
+            <div class="flex items-center gap-3">
+              <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">TindahanHQ POS & Multi-Branch ERP</h3>
+                <p class="text-xs text-slate-400">Retail Point-of-Sale & Credit Ledger</p>
+              </div>
             </div>
 
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Multi-branch POS software built for local retail stores. Includes high-speed barcode scanning, daily net profit calculations, inventory tracking, and customer credit ('Utang') ledgers.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Node.js</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">React</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Express</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">PostgreSQL</span>
+            </div>
+          </div>
+
+          <button onclick="openProjectModal('tindahan')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 text-xs font-bold transition-all border border-slate-700 flex items-center justify-center gap-2">
+            <span>View Full Details & Live Demo</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
+
+        <!-- PROJECT 3: AcademiaOne -->
+        <div class="project-card edtech glass-card rounded-2xl p-6 border border-slate-800 hover:border-sky-500/50 transition-all flex flex-col justify-between space-y-4 group">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] font-bold font-mono">EDTECH ERP</span>
+              <span class="px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+                Deployed
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="p-3 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white group-hover:text-sky-400 transition-colors">AcademiaOne School Management</h3>
+                <p class="text-xs text-slate-400">Student Portal & Grading Platform</p>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Integrated school management portal for online subject registration, teacher gradebooks, transcript PDF exports, and tuition balance alerts.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">PHP</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Laravel</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">MySQL</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Tailwind</span>
+            </div>
+          </div>
+
+          <button onclick="openProjectModal('academia')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-sky-600 hover:text-white text-slate-200 text-xs font-bold transition-all border border-slate-700 flex items-center justify-center gap-2">
+            <span>View Full Details & Live Demo</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- PROJECT 4: GovServe LGU Portal -->
+        <div class="project-card edtech glass-card rounded-2xl p-6 border border-slate-800 hover:border-amber-500/50 transition-all flex flex-col justify-between space-y-4 group">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold font-mono">GOVERNMENT PORTAL</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                LGU Operational
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <i data-lucide="building-2" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">GovServe LGU Portal</h3>
+                <p class="text-xs text-slate-400">Clearances & Resident Information System</p>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Municipal and barangay portal for processing official permit requests, resident census records, incident blotters, and digital queuing displays.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">PHP</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">MySQL</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">FPDF</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[10px] font-mono">Bootstrap</span>
+            </div>
+          </div>
+
+          <button onclick="openProjectModal('govserve')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-amber-600 hover:text-white text-slate-200 text-xs font-bold transition-all border border-slate-700 flex items-center justify-center gap-2">
+            <span>View Full Details & Live Demo</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+      </div>
     </section>
 
-    <!-- PORTFOLIO SHOWCASE SECTION -->
-    <section id="projects" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+    <!-- TECH STACK SHOWCASE -->
+    <section id="techstack" class="space-y-6 scroll-mt-20">
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <span class="text-xs font-bold tracking-widest uppercase text-brand-500 font-mono">&lt;CORE_COMPETENCIES/&gt;</span>
+        <h2 class="text-2xl font-black text-white tracking-tight">Technical Architecture & Stack</h2>
+        <p class="text-xs text-slate-400">Battle-tested languages, frameworks, databases, and deployment infrastructure used across production systems.</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center space-y-2 hover:border-brand-500/50 transition-all">
+          <div class="text-brand-500 font-bold text-lg font-mono">PHP 8.x</div>
+          <div class="text-xs text-white font-semibold">Laravel Engine</div>
+          <p class="text-[10px] text-slate-400">REST APIs, Eloquent ORM, Auth</p>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center space-y-2 hover:border-brand-500/50 transition-all">
+          <div class="text-emerald-400 font-bold text-lg font-mono">Node.js</div>
+          <div class="text-xs text-white font-semibold">Express & WebSockets</div>
+          <p class="text-[10px] text-slate-400">Real-time sync & streaming</p>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center space-y-2 hover:border-brand-500/50 transition-all">
+          <div class="text-sky-400 font-bold text-lg font-mono">React.js</div>
+          <div class="text-xs text-white font-semibold">Frontend Applications</div>
+          <p class="text-[10px] text-slate-400">State management, SPA UI</p>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center space-y-2 hover:border-brand-500/50 transition-all">
+          <div class="text-amber-400 font-bold text-lg font-mono">MySQL / PG</div>
+          <div class="text-xs text-white font-semibold">Database Design</div>
+          <p class="text-[10px] text-slate-400">ACID compliance, Indexing</p>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center space-y-2 hover:border-brand-500/50 transition-all">
+          <div class="text-cyan-400 font-bold text-lg font-mono">Tailwind CSS</div>
+          <div class="text-xs text-white font-semibold">UI Engineering</div>
+          <p class="text-[10px] text-slate-400">Responsive glassmorphism</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CLIENT TESTIMONIALS & VOUCHES -->
+    <section id="vouches" class="space-y-6 scroll-mt-20">
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <span class="text-xs font-bold tracking-widest uppercase text-brand-500 font-mono">VERIFIED FEEDBACK</span>
+        <h2 class="text-2xl font-black text-white tracking-tight">Client Vouches & Reviews</h2>
+        <p class="text-xs text-slate-400">Direct feedback from business owners and IT heads who purchased custom systems and source code.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        
+        <!-- Vouch 1 -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex text-amber-400 gap-0.5">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Verified Purchase</span>
+          </div>
+
+          <p class="text-xs text-slate-300 italic leading-relaxed">
+            "We bought the complete CARTECH source code for our Cebu auto repair shop. Charl Jun guided us through setup and configured automated mechanic SMS dispatches. Zero lag!"
+          </p>
+
+          <div class="flex items-center gap-3 pt-3 border-t border-slate-800">
+            <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center font-bold text-xs text-white">
+              RM
+            </div>
             <div>
-                <div class="text-xs font-semibold uppercase tracking-wider text-orange-400 mb-1">Catalog & Source Code</div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-white">Software Applications Showcase</h2>
-                <p class="text-slate-400 text-xs sm:text-sm mt-1">Tap "View Case Study" or "Details" on any card to view active software previews.</p>
+              <div class="text-xs font-bold text-white">Roberto M.</div>
+              <div class="text-[10px] text-slate-400">Owner, AutoFix Servicenter</div>
             </div>
-
-            <!-- Filter Tabs -->
-            <div class="flex flex-wrap gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 text-xs font-medium">
-                <button onclick="filterProjects('all')" class="filter-btn active px-3.5 py-1.5 rounded-lg bg-orange-500 text-white font-semibold transition-all">All Systems</button>
-                <button onclick="filterProjects('saas')" class="filter-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">SaaS & Logistics</button>
-                <button onclick="filterProjects('retail')" class="filter-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Retail & Health</button>
-                <button onclick="filterProjects('edtech')" class="filter-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">EdTech & Government</button>
-            </div>
+          </div>
         </div>
 
-        <!-- Project Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectsGrid">
-            
-            <!-- PROJECT 1: CARTECH -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="saas" onclick="openShowcase('cartech')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">Auto Repair ERP</span>
-                        <!-- CARTECH Live Badge (Updated dynamically in real-time) -->
-                        <span id="cartechBadge" class="cartech-status-badge px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1.5">
-                            <span id="cartechDot" class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                            <span id="cartechBadgeText">0 users online</span>
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="wrench" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-orange-400 transition-colors">CARTECH Diagnostic SaaS</h3>
-                            <p class="text-xs text-slate-400">Automotive Workshop ERP & Diagnostics</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Comprehensive repair shop management platform featuring job order tracking, automated mechanic dispatch, parts inventory alerts, and direct customer updates.
-                    </p>
-
-                    <!-- Tech Badges -->
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">PHP / Laravel</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">MySQL</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Tailwind CSS</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Live Engine</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-orange-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
+        <!-- Vouch 2 -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex text-amber-400 gap-0.5">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
             </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Verified Purchase</span>
+          </div>
 
-            <!-- PROJECT 2: TindahanHQ -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="retail" onclick="openShowcase('tindahanhq')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Retail POS & Utang</span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            78 users online
-                        </span>
-                    </div>
+          <p class="text-xs text-slate-300 italic leading-relaxed">
+            "TindahanHQ digitized our store credit ledgers effortlessly. Clean code structure, high speed barcode scanner support, and solid database design."
+          </p>
 
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-emerald-400 transition-colors">TindahanHQ POS & Utang Ledger</h3>
-                            <p class="text-xs text-slate-400">Sari-Sari Store & Micro-Retail ERP</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Tailored point-of-sale solution for local retail and neighborhood store owners. Streamlines daily inventory, tracks credit ledger ("Utang"), and generates real-time profit reports.
-                    </p>
-
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">React.js</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Node.js</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">SQLite / Postgres</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-emerald-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
+          <div class="flex items-center gap-3 pt-3 border-t border-slate-800">
+            <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-xs text-white">
+              EA
             </div>
-
-            <!-- PROJECT 3: AcademiaOne -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="edtech" onclick="openShowcase('academiaone')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">EdTech School ERP</span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                            45 users online
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-cyan-400 transition-colors">AcademiaOne School ERP</h3>
-                            <p class="text-xs text-slate-400">School Enrollment & Grading System</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Integrated student information system supporting online subject registration, teacher gradebooks, automated transcript printing, and parent SMS notification gateways.
-                    </p>
-
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Vue.js</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Express</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">PostgreSQL</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-cyan-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
+            <div>
+              <div class="text-xs font-bold text-white">Elena A.</div>
+              <div class="text-[10px] text-slate-400">Manager, Daily Mart Chain</div>
             </div>
-
-            <!-- PROJECT 4: TranspoFleet -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="saas" onclick="openShowcase('transpofleet')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">Logistics & Fleet</span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                            29 users online
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-purple-400 transition-colors">TranspoFleet Dispatch & Fuel Manager</h3>
-                            <p class="text-xs text-slate-400">Real-time Vehicle Tracking Suite</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Fleet tracking and vehicle dispatch dashboard with live GPS tracking, fuel consumption analysis, driver behavior scoring, and maintenance scheduling alerts.
-                    </p>
-
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Next.js</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">WebSockets</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Leaflet Maps</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-purple-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
-            </div>
-
-            <!-- PROJECT 5: CareFlow -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="retail" onclick="openShowcase('careflow')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Healthcare & Clinic</span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
-                            18 users online
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="heart-pulse" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-rose-400 transition-colors">CareFlow Clinic Management</h3>
-                            <p class="text-xs text-slate-400">Clinic Management & EMR Records</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Electronic medical records system with online patient queuing, doctor consultation notes, digital prescription generation, and automated queue display monitors.
-                    </p>
-
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">PHP / CodeIgniter</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">MySQL</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Bootstrap</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-rose-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
-            </div>
-
-            <!-- PROJECT 6: BarangayConnect -->
-            <div class="project-card glass-card rounded-2xl p-5 flex flex-col justify-between group cursor-pointer" data-category="edtech" onclick="openShowcase('barangayconnect')">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">LGU & Governance</span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                            112 users online
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold shadow-md">
-                            <i data-lucide="building-2" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-base group-hover:text-amber-400 transition-colors">BarangayConnect e-Gov Portal</h3>
-                            <p class="text-xs text-slate-400">Clearance & Resident Info System</p>
-                        </div>
-                    </div>
-
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
-                        Local government management system for issuing official certificates, managing resident demographics, handling blotter records, and tracking community assistance.
-                    </p>
-
-                    <div class="flex flex-wrap gap-1.5 mb-4">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Laravel</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">PostgreSQL</span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] code-font">Alpine.js</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-amber-400 group-hover:translate-x-1 transition-transform">
-                    <span>View Details & Case Study</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </div>
-            </div>
-
+          </div>
         </div>
+
+        <!-- Vouch 3 -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex text-amber-400 gap-0.5">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Verified Purchase</span>
+          </div>
+
+          <p class="text-xs text-slate-300 italic leading-relaxed">
+            "AcademiaOne was customized for our school within a few days. Online grade submissions and student registration run smoothly without hiccups."
+          </p>
+
+          <div class="flex items-center gap-3 pt-3 border-t border-slate-800">
+            <div class="w-8 h-8 rounded-full bg-sky-600 flex items-center justify-center font-bold text-xs text-white">
+              DC
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Dr. Carmona</div>
+              <div class="text-[10px] text-slate-400">Academic Director, St. Jude Tech</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </section>
 
-    <!-- DEDICATED VOUCHES & TESTIMONIALS SECTION -->
-    <section id="vouches" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-t border-slate-800/80">
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-3">
-                <i data-lucide="shield-check" class="w-4 h-4"></i>
-                <span>100% Verified Client Feedback</span>
-            </div>
-            <h2 class="text-3xl font-extrabold text-white">Client Vouches & System Reviews</h2>
-            <p class="text-slate-400 text-sm mt-2">See what verified business owners, school administrators, and shop managers say about working with Charl Jun V.</p>
+    <!-- CONTACT & SOURCE CODE CTA -->
+    <section class="glass-panel p-8 sm:p-10 rounded-3xl border border-brand-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-brand-950/40 relative overflow-hidden shadow-2xl">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+        <div class="space-y-2 text-center md:text-left">
+          <span class="px-2.5 py-1 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20 text-[10px] font-bold uppercase font-mono">Ready for Deployment</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">Need Source Code or Custom System Build?</h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+            Get complete full-stack source packages with full usage rights, setup documentation, and developer onboarding assistance.
+          </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Vouch 1 -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between border-slate-800">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex text-amber-400 gap-1">
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified Purchase</span>
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed italic">
-                        "Purchased the full CARTECH source code for my auto shop in Cebu. Charl Jun helped us configure the database and set up live SMS notifications for our mechanics. System speed is zero-lag!"
-                    </p>
-                </div>
-                <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-slate-800 border border-orange-500/30 flex items-center justify-center text-orange-400 font-bold text-xs">
-                        RM
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-100">Roberto M.</h4>
-                        <p class="text-[10px] text-slate-400">Owner, AutoFix Servicenter</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vouch 2 -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between border-slate-800">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex text-amber-400 gap-1">
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified Purchase</span>
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed italic">
-                        "TindahanHQ revolutionized how we handle our mini-mart credit ledger. No more missing notebook records. Highly recommended developer! Quick deployment and top-notch code structure."
-                    </p>
-                </div>
-                <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-slate-800 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs">
-                        EA
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-100">Elena A.</h4>
-                        <p class="text-[10px] text-slate-400">Manager, Daily Mart Chain</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vouch 3 -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between border-slate-800">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex text-amber-400 gap-1">
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified Purchase</span>
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed italic">
-                        "AcademiaOne was customized for our academy within 5 days. Students love the grade portal and teachers found enrollment super simple. Fast delivery and legit support."
-                    </p>
-                </div>
-                <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-slate-800 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-xs">
-                        DC
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-100">Dr. Carmona</h4>
-                        <p class="text-[10px] text-slate-400">Academic Director, St. Jude Tech</p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+          <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 via-amber-600 to-amber-500 hover:from-brand-500 hover:to-amber-400 text-white font-bold text-xs shadow-xl shadow-brand-500/20 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            FB Profile 1 (charljun1)
+          </a>
+          <a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs transition-all border border-slate-700 flex items-center justify-center gap-2">
+            <i data-lucide="message-square" class="w-4 h-4 text-blue-400"></i>
+            FB Profile 2 (mylovemanily)
+          </a>
         </div>
+      </div>
     </section>
 
-    <!-- CONTACT / INQUIRY SECTION -->
-    <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden border-orange-500/30">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div class="lg:col-span-8 space-y-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">Ready for Deployment</span>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Interested in Purchasing Source Code or Custom Development?</h2>
-                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
-                        Get complete, clean full-stack source code packages with lifetime usage rights, database setup scripts, and personal developer onboarding assistance. Contact directly via Facebook.
-                    </p>
-                </div>
-                <div class="lg:col-span-4 flex flex-col gap-3">
-                    <a href="https://www.facebook.com/charljun.vidal" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm text-center shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-all">
-                        <i data-lucide="message-square" class="w-4 h-4"></i>
-                        <span>Inquire on Facebook</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+  </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-[#070a10] border-t border-slate-800/80 py-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-xs text-slate-400 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center font-bold text-white text-xs">CJ</div>
+        <span>&copy; 2026 Charl Jun V. All rights reserved. Lead Systems Architect.</span>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <a href="../developer-payment/#developerAccess" class="text-brand-400 hover:underline flex items-center gap-1">
+          <i data-lucide="lock-keyhole" class="w-3 h-3"></i>
+          Developer Login
+        </a>
+        <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Facebook 1</a>
+        <a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Facebook 2</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PROJECT / LIVE DEMO INTERACTIVE MODAL -->
+  <div id="project-detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="glass-panel w-full max-w-2xl max-h-[90vh] rounded-3xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-800 flex items-start justify-between bg-slate-900/80">
+        <div class="flex items-center gap-3">
+          <div id="modal-project-icon" class="p-3 rounded-2xl bg-brand-500/10 text-brand-500 border border-brand-500/20">
+            <i data-lucide="box" class="w-6 h-6"></i>
+          </div>
+          <div>
             <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 font-bold flex items-center justify-center text-xs">CJ</div>
-                <!-- STRICT COPYRIGHT REQUIREMENT -->
-                <span id="copyrightText" class="cursor-pointer hover:text-slate-200 transition-colors" title="Developer shortcut: click here or press Shift + D / ~ to open Dev Panel">
-                    © 2018 - 2026 Charl Jun V. All rights reserved.
-                </span>
+              <span id="modal-project-category" class="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono bg-slate-800 text-slate-300 border border-slate-700">Category</span>
+              <span id="modal-project-status" class="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Production Active
+              </span>
             </div>
-            
-            <div class="flex items-center gap-6">
-                <a href="#about" class="hover:text-slate-200 transition-colors">About</a>
-                <a href="#projects" class="hover:text-slate-200 transition-colors">Projects</a>
-                <a href="#vouches" class="hover:text-slate-200 transition-colors">Vouches</a>
-                <a href="https://devccartech.github.io/cartech/" target="_blank" class="hover:text-orange-400 transition-colors">CARTECH Live</a>
-            </div>
+            <h3 id="modal-project-title" class="text-lg font-black text-white mt-0.5">Project Title</h3>
+          </div>
         </div>
-    </footer>
 
-    <!-- RICH SHOWCASE MODAL -->
-    <div id="showcaseModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
-        <div class="glass-modal rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border-slate-700 p-6 sm:p-8 relative shadow-2xl animate-in fade-in zoom-in duration-200">
+        <button onclick="closeProjectModal()" class="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-6 overflow-y-auto custom-scrollbar flex-grow space-y-5 text-xs">
+        
+        <p id="modal-project-description" class="text-slate-300 leading-relaxed">
+          Description goes here.
+        </p>
+
+        <!-- Dynamic Live Interactive Simulator Box -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-xs uppercase tracking-wider font-mono flex items-center gap-1.5">
+              <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+              Interactive Workflow Simulator
+            </span>
+            <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded font-mono border border-emerald-500/30">Live Sandbox</span>
+          </div>
+
+          <div id="modal-simulator-container" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <!-- Dynamic simulator rendered by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Tech Stack Tags -->
+        <div class="space-y-2">
+          <div class="font-bold text-white text-xs uppercase tracking-wider font-mono">Architecture & Tech Stack</div>
+          <div id="modal-project-tech" class="flex flex-wrap gap-1.5">
+            <!-- Tech badges injected here -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-800 bg-slate-900/80 flex items-center justify-between gap-3">
+        <button onclick="closeProjectModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all">
+          Close Window
+        </button>
+        <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="px-5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-amber-500 hover:from-brand-500 hover:to-amber-400 text-white font-bold text-xs shadow-lg transition-all flex items-center gap-2">
+          <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+          Inquire Full Source Code
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // Project Catalog Data Dictionary
+    const catalogData = {
+      cartech: {
+        title: "CARTECH Diagnostic SaaS & Auto ERP",
+        category: "Auto Repair ERP",
+        status: "Production Active",
+        description: "Comprehensive workshop management engine engineered for auto mechanics, service advisors, and shop managers. Features OBD-II diagnostic fault code logging, job order lifecycle tracking, automated parts deduction, mechanic dispatch, and instant customer SMS notification upon job completion.",
+        tech: ["PHP 8.2", "Laravel 10", "MySQL", "Tailwind CSS", "WebSockets", "Twilio SMS"],
+        type: "cartech"
+      },
+      tindahan: {
+        title: "TindahanHQ POS & Multi-Branch ERP",
+        category: "Retail POS & Utang Ledger",
+        status: "Active System",
+        description: "Point-of-sale and credit ledger platform tailored for local retail stores and sari-sari store chains. Replaces physical notebooks with digitized 'Utang' ledger management, high-speed barcode scanning, net profit margins analytics, and low-stock warnings.",
+        tech: ["Node.js", "Express", "React.js", "PostgreSQL", "Tailwind CSS"],
+        type: "tindahan"
+      },
+      academia: {
+        title: "AcademiaOne School ERP",
+        category: "EdTech Platform",
+        status: "Deployed",
+        description: "Integrated school enrollment and student management platform supporting online subject enrollment, teacher gradebook computation, automated transcript PDF exports, and tuition fee billing.",
+        tech: ["PHP", "Laravel", "MySQL", "FPDF", "Tailwind CSS"],
+        type: "generic"
+      },
+      govserve: {
+        title: "GovServe LGU Portal & e-Clearance",
+        category: "Government Portal",
+        status: "LGU Operational",
+        description: "Local government unit web portal for issuing Barangay Clearances, Residency Certificates, Indigency documents, resident census analytics, and blotter case registries.",
+        tech: ["PHP", "MySQL", "FPDF", "Bootstrap"],
+        type: "generic"
+      }
+    };
+
+    // PROJECT SEARCH & CATEGORY FILTERING
+    function filterProjects() {
+      const query = document.getElementById('project-search').value.toLowerCase();
+      const cards = document.querySelectorAll('.project-card');
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function setCategoryFilter(cat) {
+      const cards = document.querySelectorAll('.project-card');
+      const btnAll = document.getElementById('filter-all');
+      const btnSaas = document.getElementById('filter-saas');
+      const btnPos = document.getElementById('filter-pos');
+      const btnEdtech = document.getElementById('filter-edtech');
+
+      // Reset button styles
+      [btnAll, btnSaas, btnPos, btnEdtech].forEach(btn => {
+        if (btn) btn.className = "px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition-all";
+      });
+
+      if (cat === 'all') {
+        btnAll.className = "px-2.5 py-1 rounded font-medium text-white bg-brand-600 transition-all";
+        cards.forEach(c => c.style.display = 'flex');
+      } else if (cat === 'saas') {
+        btnSaas.className = "px-2.5 py-1 rounded font-medium text-white bg-brand-600 transition-all";
+        cards.forEach(c => c.classList.contains('saas') ? c.style.display = 'flex' : c.style.display = 'none');
+      }
+    }
+
+    function filterProjectsCategory(type) {
+      const cards = document.querySelectorAll('.project-card');
+      const btnPos = document.getElementById('filter-pos');
+      const btnEdtech = document.getElementById('filter-edtech');
+
+      if (type === 'pos') {
+        setCategoryFilter('none');
+        btnPos.className = "px-2.5 py-1 rounded font-medium text-white bg-brand-600 transition-all";
+        cards.forEach(c => c.classList.contains('pos') ? c.style.display = 'flex' : c.style.display = 'none');
+      } else if (type === 'edtech') {
+        setCategoryFilter('none');
+        btnEdtech.className = "px-2.5 py-1 rounded font-medium text-white bg-brand-600 transition-all";
+        cards.forEach(c => c.classList.contains('edtech') ? c.style.display = 'flex' : c.style.display = 'none');
+      }
+    }
+
+    // INTERACTIVE PROJECT MODAL HANDLERS
+    function openProjectModal(key) {
+      const data = catalogData[key];
+      if (!data) return;
+
+      document.getElementById('modal-project-title').innerText = data.title;
+      document.getElementById('modal-project-category').innerText = data.category;
+      document.getElementById('modal-project-status').innerText = data.status;
+      document.getElementById('modal-project-description').innerText = data.description;
+
+      // Render Tech Badges
+      const techContainer = document.getElementById('modal-project-tech');
+      techContainer.innerHTML = data.tech.map(t => `
+        <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[10px]">${t}</span>
+      `).join('');
+
+      // Render Interactive Simulator UI
+      renderSimulatorUI(data.type);
+
+      document.getElementById('project-detail-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function openCartechInteractiveDemo() {
+      openProjectModal('cartech');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('project-detail-modal').classList.add('hidden');
+    }
+
+    function renderSimulatorUI(type) {
+      const container = document.getElementById('modal-simulator-container');
+
+      if (type === 'cartech') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-bold text-white text-xs">CARTECH Job Order & Diagnostic Dispatch</span>
+              <span class="text-[10px] text-brand-400 font-mono">JO-2026-088</span>
+            </div>
             
-            <button onclick="closeShowcase()" class="absolute top-6 right-6 w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <label class="text-slate-400 block mb-1">Vehicle Owner / Plate:</label>
+                <input type="text" id="sim-cartech-v" value="Ford Ranger (GAP-9021)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono text-[11px]">
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">OBD Diagnostic Code:</label>
+                <select id="sim-cartech-code" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono text-[11px]">
+                  <option>P0300 - Engine Misfire Detected</option>
+                  <option>P0420 - Catalyst Efficiency Below Threshold</option>
+                  <option>B1000 - ECU Communication Fault</option>
+                </select>
+              </div>
+            </div>
+
+            <button onclick="runCartechSimAction()" class="w-full py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs transition-all shadow-md">
+              Process Diagnostic & Dispatch Mechanic SMS
             </button>
 
-            <div id="modalContent">
-                <!-- Dynamically Populated by JavaScript -->
+            <div id="sim-cartech-output" class="p-3 rounded-xl bg-slate-900 border border-slate-800 font-mono text-[10px] text-emerald-400 space-y-1">
+              &gt; System standby. Click process button above to execute simulation...
+            </div>
+          </div>
+        `;
+      } else if (type === 'tindahan') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-bold text-white text-xs">TindahanHQ POS Checkout Simulation</span>
+              <span class="text-[10px] text-emerald-400 font-mono">Terminal #01</span>
             </div>
 
-        </div>
-    </div>
-
-    <!-- SECRET DEVELOPER CONTROL PANEL (TRIGGERED VIA SHIFT + D, ~, OR CLICKING COPYRIGHT) -->
-    <div id="devModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-        <div class="glass-modal rounded-2xl max-w-md w-full border-orange-500/40 p-6 relative shadow-2xl">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div class="flex items-center gap-2 text-orange-400 font-bold text-sm">
-                    <i data-lucide="terminal" class="w-4 h-4"></i>
-                    <span>Dev Admin Control Panel</span>
-                </div>
-                <button onclick="toggleDevPanel(false)" class="text-slate-400 hover:text-white">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <label class="text-slate-400 block mb-1">Scanned Item:</label>
+                <select id="sim-pos-item" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono text-[11px]">
+                  <option value="65">Premium Rice 1kg - ₱65.00</option>
+                  <option value="120">Cooking Oil 1.5L - ₱120.00</option>
+                  <option value="45">Canned Sardines - ₱45.00</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Transaction Mode:</label>
+                <select id="sim-pos-mode" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono text-[11px]">
+                  <option value="cash">Cash Checkout</option>
+                  <option value="utang">Record to Utang Ledger</option>
+                </select>
+              </div>
             </div>
 
-            <div class="py-4 space-y-4">
-                <p class="text-xs text-slate-300">
-                    Real-Time Sync State Control. Actions trigger immediate remote & cross-tab broadcasts.
-                </p>
+            <button onclick="runPosSimAction()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs transition-all shadow-md">
+              Process Transaction & Calculate Profit
+            </button>
 
-                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-                    <div class="text-[11px] text-slate-400 font-mono">CARTECH LIVE STATUS CONTROLS:</div>
-                    <button onclick="tagCartechBuyer(1)" class="w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        <span>Tag CARTECH Bought (1 User Online)</span>
-                    </button>
-                    <button onclick="tagCartechBuyer(0)" class="w-full py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        <span>Reset CARTECH Status (0 Users Online)</span>
-                    </button>
-                </div>
-
-                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-                    <div class="text-[11px] text-slate-400 font-mono">CUSTOM USER COUNT INPUT:</div>
-                    <div class="flex gap-2">
-                        <input id="customUserCountInput" type="number" min="0" placeholder="e.g., 5" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white code-font focus:outline-none focus:border-orange-500">
-                        <button onclick="setCustomCartechUsers()" class="px-4 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shrink-0">Set</button>
-                    </div>
-                </div>
+            <div id="sim-pos-output" class="p-3 rounded-xl bg-slate-900 border border-slate-800 font-mono text-[10px] text-emerald-400">
+              &gt; POS Terminal initialized...
             </div>
-
-            <div class="text-[10px] text-slate-500 text-center">
-                Press Esc, Shift+D, or click close to dismiss.
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="space-y-3 text-center py-3">
+            <p class="text-slate-300 text-xs">System ready for deployment and database provisioning.</p>
+            <button onclick="runGenericSimAction()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs transition-all">
+              Execute Module Test
+            </button>
+            <div id="sim-generic-output" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 font-mono text-[10px] text-emerald-400 text-left">
+              &gt; Ready...
             </div>
-        </div>
-    </div>
+          </div>
+        `;
+      }
+    }
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+    function runCartechSimAction() {
+      const v = document.getElementById('sim-cartech-v').value;
+      const code = document.getElementById('sim-cartech-code').value;
+      const out = document.getElementById('sim-cartech-output');
 
-    <!-- JAVASCRIPT APP LOGIC & REAL-TIME REMOTE SYNC ENGINE -->
-    <script>
-        // PROJECT DATABASE
-        const projectsData = {
-            cartech: {
-                title: "CARTECH Diagnostic SaaS",
-                category: "Auto Repair ERP",
-                categoryColor: "orange",
-                badgeText: "0 users online",
-                badgeClass: "bg-slate-800 text-slate-400 border-slate-700",
-                icon: "wrench",
-                liveUrl: "https://devccartech.github.io/cartech/",
-                description: "Comprehensive automotive diagnostic and service management system designed to eliminate shop workflow bottlenecks, digitize repair job sheets, track mechanic labor efficiency, and keep vehicle owners informed.",
-                metrics: [
-                    { label: "Workshop Efficiency", value: "+40%" },
-                    { label: "Customer Trust Index", value: "99.2%" },
-                    { label: "Job Sheet Accuracy", value: "100%" }
-                ],
-                features: [
-                    "Interactive Live Repair Job Board & Mechanic Dispatch",
-                    "Automated SMS Customer Vehicle Status Alerts",
-                    "Spare Parts Inventory & Real-Time Reorder Reminders",
-                    "Printable Professional Tax Invoices & Service Estimates",
-                    "Multi-Branch Workshop Performance Analytics"
-                ],
-                techStack: ["PHP 8.2", "Laravel", "MySQL Database", "Tailwind CSS", "Twilio SMS API", "Realtime Sync"],
-                vouch: {
-                    quote: "CARTECH transformed our shop operations! Job sheets are updated live on tablets, and our clients receive instant SMS when their car is ready for pickup.",
-                    author: "Roberto M.",
-                    role: "Owner, AutoFix Servicenter",
-                    avatar: "RM"
-                }
-            },
-            tindahanhq: {
-                title: "TindahanHQ POS & Utang Ledger",
-                category: "Retail POS",
-                categoryColor: "emerald",
-                badgeText: "78 users online",
-                badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-                icon: "shopping-bag",
-                liveUrl: "https://www.facebook.com/charljun.vidal",
-                description: "Tailored point-of-sale solution for local retail and neighborhood store owners. Streamlines daily barcode inventory management, calculates real-time profit margins, and provides a digitized credit tracking ledger.",
-                metrics: [
-                    { label: "Daily Checkout Speed", value: "+3x" },
-                    { label: "Credit Recovery", value: "94%" },
-                    { label: "Inventory Accuracy", value: "99.8%" }
-                ],
-                features: [
-                    "Fast Barcode Scanner POS Interface",
-                    "Digital Customer Credit ('Utang') Tracking & Reminders",
-                    "Real-Time Net Profit Margin & Revenue Dashboard",
-                    "Low-Stock Inventory Warnings & Expiry Tracking"
-                ],
-                techStack: ["React.js", "Node.js", "Express", "SQLite / PostgreSQL", "Tailwind CSS"],
-                vouch: {
-                    quote: "The Utang Ledger function alone paid back the cost of this system! Very user-friendly and reliable.",
-                    author: "Elena A.",
-                    role: "Store Manager, Daily Mart Chain",
-                    avatar: "EA"
-                }
-            },
-            academiaone: {
-                title: "AcademiaOne School ERP",
-                category: "EdTech SIS",
-                categoryColor: "cyan",
-                badgeText: "45 users online",
-                badgeClass: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-                icon: "graduation-cap",
-                liveUrl: "https://www.facebook.com/charljun.vidal",
-                description: "All-in-one student information system built for private academies and colleges. Features digital enrollment workflows, teacher grade calculation, fee payment ledgers, and automated report cards.",
-                metrics: [
-                    { label: "Enrollment Time", value: "-70%" },
-                    { label: "Grade Processing", value: "Zero Errors" },
-                    { label: "Parent Engagement", value: "91%" }
-                ],
-                features: [
-                    "Online Subject Enrollment & Schedule Conflict Checker",
-                    "Teacher Gradebook with Weighted GPA Calculators",
-                    "Automated Official Transcript & Report Card PDF Generator",
-                    "Parent & Student Grade Gateway with Attendance Logging"
-                ],
-                techStack: ["Vue.js 3", "Node.js", "PostgreSQL", "Tailwind CSS"],
-                vouch: {
-                    quote: "AcademiaOne handled our enrollment rush smoothly with zero server slowdowns. Charl Jun provided top tier setup support.",
-                    author: "Dr. Carmona",
-                    role: "Academic Director, St. Jude Tech",
-                    avatar: "DC"
-                }
-            },
-            transpofleet: {
-                title: "TranspoFleet Dispatch & Fuel Manager",
-                category: "Logistics",
-                categoryColor: "purple",
-                badgeText: "29 users online",
-                badgeClass: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-                icon: "truck",
-                liveUrl: "https://www.facebook.com/charljun.vidal",
-                description: "Commercial fleet monitoring system equipping logistics operators with real-time vehicle map tracking, fuel tank consumption analytics, driver speed warnings, and preventive maintenance schedules.",
-                metrics: [
-                    { label: "Fuel Cost Reduction", value: "-18%" },
-                    { label: "Fleet Downtime", value: "-35%" },
-                    { label: "Ping Latency", value: "<150ms" }
-                ],
-                features: [
-                    "Live OpenStreetMap & Leaflet GPS Telemetry",
-                    "Driver Speeding, Harsh Braking & Idle Time Alerts",
-                    "Fuel Usage Graphing & Theft Detection Analytics",
-                    "Automated Maintenance Scheduler"
-                ],
-                techStack: ["Next.js", "WebSockets", "Leaflet JS", "PostgreSQL"],
-                vouch: {
-                    quote: "Great source code architecture! We adapted TranspoFleet for our delivery company and saved thousands on fuel costs.",
-                    author: "Mark S.",
-                    role: "Logistics Operations Head",
-                    avatar: "MS"
-                }
-            },
-            careflow: {
-                title: "CareFlow Clinic Management",
-                category: "Healthcare",
-                categoryColor: "rose",
-                badgeText: "18 users online",
-                badgeClass: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-                icon: "heart-pulse",
-                liveUrl: "https://www.facebook.com/charljun.vidal",
-                description: "Electronic medical records and clinic management app built for outpatient clinics. Features online patient queuing monitors, doctor consultation notes, digital prescriptions, and inventory management.",
-                metrics: [
-                    { label: "Patient Wait Time", value: "-45%" },
-                    { label: "Record Retrieval", value: "Instant" },
-                    { label: "HIPAA Compliant", value: "Verified" }
-                ],
-                features: [
-                    "Digital Waiting Room Queue Monitor Screen",
-                    "Doctor EHR Interface for Consultations & Notes",
-                    "One-Click Printable Prescription Generator",
-                    "Medicine Inventory with Expiry Date Monitoring"
-                ],
-                techStack: ["PHP 8", "CodeIgniter 4", "MySQL", "Bootstrap 5"],
-                vouch: {
-                    quote: "Clean, easy-to-understand code. Charl Jun helped us deploy CareFlow to our three clinic locations within a single week.",
-                    author: "Dr. Aris V.",
-                    role: "Medical Director",
-                    avatar: "AV"
-                }
-            },
-            barangayconnect: {
-                title: "BarangayConnect e-Gov Portal",
-                category: "LGU Governance",
-                categoryColor: "amber",
-                badgeText: "112 users online",
-                badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-                icon: "building-2",
-                liveUrl: "https://www.facebook.com/charljun.vidal",
-                description: "E-governance portal for local municipal units. Automates clearance requests, resident demographic profiling, blotter case management, and disaster response aid distribution tracking.",
-                metrics: [
-                    { label: "Clearance Time", value: "<3 mins" },
-                    { label: "Resident Records", value: "10,000+" },
-                    { label: "Data Security", value: "100%" }
-                ],
-                features: [
-                    "Automated Clearance & Certificate PDF Printing",
-                    "Resident Demographic Census & Household Mapping",
-                    "Confidential Incident & Blotter Case Management",
-                    "Emergency Cash & Relief Distribution Tracking"
-                ],
-                techStack: ["Laravel 10", "PostgreSQL", "Alpine.js", "Tailwind CSS"],
-                vouch: {
-                    quote: "BarangayConnect streamlined our hall operations completely. Residents get their certificates in minutes now!",
-                    author: "Captain J. Perez",
-                    role: "Barangay Chairman",
-                    avatar: "JP"
-                }
-            }
-        };
+      out.innerHTML = `
+        [LOG ${new Date().toLocaleTimeString()}]:<br>
+        &gt; Job Order Created: <strong class="text-white">${v}</strong><br>
+        &gt; Diagnostic Code Recorded: <span class="text-amber-400">${code}</span><br>
+        &gt; Dispatching alert to assigned mechanic bay... [OK]<br>
+        &gt; SMS Sent to Customer via Gateway API... [OK]<br>
+        <span class="text-emerald-400 font-bold">STATUS: REPAIR JOB LIVE IN WORKSHOP</span>
+      `;
+    }
 
-        // REAL-TIME AUTO-SYNC & REMOTE ENGINE (BROADCASTCHANNEL + JSONBIN/REMOTE POLL + LOCALSTORAGE)
-        const SYNC_CHANNEL_NAME = 'cartech_global_sync_channel';
-        const syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(SYNC_CHANNEL_NAME) : null;
-        
-        // Key for local storage persistence
-        const STORAGE_KEY_CARTECH_USERS = 'cartech_online_users_count';
-        
-        // Cloud endpoint mockup for persistent auto-polling heartbeat (Fallback or Remote Sync)
-        const MOCK_REMOTE_ENDPOINT = 'https://jsonbin.org/cartech-status';
+    function runPosSimAction() {
+      const itemElem = document.getElementById('sim-pos-item');
+      const price = itemElem.value;
+      const itemName = itemElem.options[itemElem.selectedIndex].text;
+      const mode = document.getElementById('sim-pos-mode').value;
+      const out = document.getElementById('sim-pos-output');
 
-        let currentCartechCount = 0;
+      out.innerHTML = `
+        [POS RECEIPT ${new Date().toLocaleTimeString()}]:<br>
+        &gt; Item Scanned: <strong class="text-white">${itemName}</strong><br>
+        &gt; Total Bill: <span class="text-brand-400 font-bold">₱${price}.00</span><br>
+        &gt; Mode: <span class="text-amber-400">${mode.toUpperCase()}</span><br>
+        &gt; Net Profit Margin Calculated: +₱${(price * 0.20).toFixed(2)}<br>
+        <span class="text-emerald-400 font-bold">SUCCESS: INVENTORY & LEDGER UPDATED</span>
+      `;
+    }
 
-        // UI Updater for CARTECH Badge
-        function updateCartechBadgeUI(count) {
-            currentCartechCount = parseInt(count, 10) || 0;
-            const badge = document.getElementById('cartechBadge');
-            const badgeText = document.getElementById('cartechBadgeText');
-            const dot = document.getElementById('cartechDot');
+    function runGenericSimAction() {
+      const out = document.getElementById('sim-generic-output');
+      out.innerHTML = `
+        [MODULE CHECK ${new Date().toLocaleTimeString()}]:<br>
+        &gt; Connecting to PostgreSQL database... OK<br>
+        &gt; Verifying security token authorization... OK<br>
+        <span class="text-emerald-400 font-bold">STATUS: SYSTEM READY FOR LIVE PRODUCTION</span>
+      `;
+    }
 
-            if (currentCartechCount > 0) {
-                projectsData.cartech.badgeText = `${currentCartechCount} user${currentCartechCount > 1 ? 's' : ''} online`;
-                if (badge) {
-                    badge.className = "cartech-status-badge px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5 shadow-sm shadow-emerald-500/20";
-                }
-                if (dot) {
-                    dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse";
-                }
-                if (badgeText) {
-                    badgeText.textContent = `${currentCartechCount} user${currentCartechCount > 1 ? 's' : ''} online`;
-                }
-            } else {
-                projectsData.cartech.badgeText = "0 users online";
-                if (badge) {
-                    badge.className = "cartech-status-badge px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1.5";
-                }
-                if (dot) {
-                    dot.className = "w-1.5 h-1.5 rounded-full bg-slate-500";
-                }
-                if (badgeText) {
-                    badgeText.textContent = "0 users online";
-                }
-            }
+    // INITIALIZATION ON PAGE LOAD
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      if (new URLSearchParams(window.location.search).get('license') === 'expired') {
+        document.getElementById('cartech-expired-notice').classList.remove('hidden');
+      }
+      document.getElementById('copyCartechSalesLink').addEventListener('click', async () => {
+        const link = new URL('#cartech-license', window.location.href);
+        link.search = '';
+        const status = document.getElementById('cartechSalesFeedback');
+        try {
+          await navigator.clipboard.writeText(link.href);
+          status.textContent = 'Purchase page link copied. Send this public page to your buyer.';
+        } catch (_) {
+          status.textContent = `Copy this purchase page URL: ${link.href}`;
         }
-
-        // Global Sync Dispatcher
-        function broadcastCartechStatus(count, isRemoteTrigger = false) {
-            const numCount = parseInt(count, 10) || 0;
-            localStorage.setItem(STORAGE_KEY_CARTECH_USERS, numCount.toString());
-            updateCartechBadgeUI(numCount);
-
-            // Broadcast cross-tab
-            if (syncChannel) {
-                syncChannel.postMessage({ type: 'CARTECH_LIVE_UPDATE', userCount: numCount, timestamp: Date.now() });
-            }
-
-            // Simulate remote API push
-            try {
-                window.dispatchEvent(new CustomEvent('cartech_remote_sync', { detail: { userCount: numCount } }));
-            } catch(e){}
-        }
-
-        // Action Triggered from Dev Admin Panel
-        function tagCartechBuyer(count = 1) {
-            broadcastCartechStatus(count);
-            showToast(count > 0 ? `CARTECH Tagged: ${count} User Online Globally!` : "CARTECH Reset: 0 Users Online");
-            toggleDevPanel(false);
-        }
-
-        function setCustomCartechUsers() {
-            const val = document.getElementById('customUserCountInput').value;
-            if (val !== "") {
-                tagCartechBuyer(parseInt(val, 10));
-                document.getElementById('customUserCountInput').value = "";
-            }
-        }
-
-        // Listen for BroadcastChannel updates from other tabs
-        if (syncChannel) {
-            syncChannel.onmessage = (event) => {
-                if (event.data && event.data.type === 'CARTECH_LIVE_UPDATE') {
-                    updateCartechBadgeUI(event.data.userCount);
-                }
-            };
-        }
-
-        // Listen for localStorage changes across windows
-        window.addEventListener('storage', (e) => {
-            if (e.key === STORAGE_KEY_CARTECH_USERS) {
-                updateCartechBadgeUI(e.newValue);
-            }
-        });
-
-        // 3-SECOND PERSISTENT AUTO-POLLING HEARTBEAT
-        setInterval(() => {
-            const savedCount = localStorage.getItem(STORAGE_KEY_CARTECH_USERS);
-            if (savedCount !== null && parseInt(savedCount, 10) !== currentCartechCount) {
-                updateCartechBadgeUI(savedCount);
-            }
-        }, 3000);
-
-        // TOAST NOTIFICATION FUNCTION
-        function showToast(message) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = "glass-card px-4 py-3 rounded-xl border-orange-500/40 text-xs text-white shadow-xl flex items-center gap-2 animate-in slide-in-from-bottom duration-300";
-            toast.innerHTML = `<i data-lucide="bell" class="w-4 h-4 text-orange-400"></i><span>${message}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3500);
-        }
-
-        // FILTER PROJECTS LOGIC
-        function filterProjects(category) {
-            const cards = document.querySelectorAll('.project-card');
-            const buttons = document.querySelectorAll('.filter-btn');
-
-            buttons.forEach(btn => {
-                btn.classList.remove('bg-orange-500', 'text-white', 'font-semibold');
-                btn.classList.add('text-slate-400');
-            });
-
-            event.target.classList.add('bg-orange-500', 'text-white', 'font-semibold');
-            event.target.classList.remove('text-slate-400');
-
-            cards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // SHOWCASE MODAL LOGIC
-        function openShowcase(projectId) {
-            const data = projectsData[projectId];
-            if (!data) return;
-
-            // Refresh current badge state for modal
-            if (projectId === 'cartech') {
-                data.badgeText = currentCartechCount > 0 ? `${currentCartechCount} user${currentCartechCount > 1 ? 's' : ''} online` : "0 users online";
-                data.badgeClass = currentCartechCount > 0 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-slate-800 text-slate-400 border-slate-700";
-            }
-
-            const modal = document.getElementById('showcaseModal');
-            const modalContent = document.getElementById('modalContent');
-
-            modalContent.innerHTML = `
-                <div class="space-y-6">
-                    <!-- Modal Header -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold shadow-lg">
-                                <i data-lucide="${data.icon}" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20 uppercase tracking-wider">${data.category}</span>
-                                <h2 class="text-xl sm:text-2xl font-bold text-white mt-0.5">${data.title}</h2>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${data.badgeClass} flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full ${data.badgeText.includes('0') ? 'bg-slate-500' : 'bg-emerald-400 animate-pulse'}"></span>
-                            <span>${data.badgeText}</span>
-                        </span>
-                    </div>
-
-                    <!-- Description -->
-                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        ${data.description}
-                    </p>
-
-                    <!-- ROI Stats -->
-                    <div class="grid grid-cols-3 gap-3">
-                        ${data.metrics.map(m => `
-                            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800/80 text-center">
-                                <div class="text-base sm:text-xl font-bold text-orange-400 code-font">${m.value}</div>
-                                <div class="text-[10px] text-slate-400 mt-0.5">${m.label}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <!-- Feature Grid -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-                            <i data-lucide="check-square" class="w-4 h-4 text-orange-400"></i> Core Features & Capabilities:
-                        </h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            ${data.features.map(f => `
-                                <div class="flex items-start gap-2 text-xs text-slate-200 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800/60">
-                                    <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
-                                    <span>${f}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Tech Badges -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Tech Stack Architecture:</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${data.techStack.map(t => `
-                                <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 text-xs code-font border border-slate-700">${t}</span>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Client Vouch Card -->
-                    <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-900/90 border border-amber-500/30 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <div class="flex text-amber-400 gap-1">
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-                            </div>
-                            <span class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                                <i data-lucide="shield-check" class="w-3 h-3"></i> Verified Client Vouch
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-300 italic">"${data.vouch.quote}"</p>
-                        <div class="text-[11px] font-bold text-slate-200">— ${data.vouch.author} <span class="font-normal text-slate-400">(${data.vouch.role})</span></div>
-                    </div>
-
-                    <!-- Action CTA Buttons -->
-                    <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
-                        <a href="https://www.facebook.com/charljun.vidal" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 px-5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs text-center transition-all shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2">
-                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                            <span>Inquire & Buy Source Code</span>
-                        </a>
-                        ${data.liveUrl && data.liveUrl.includes('github.io') ? `
-                            <a href="${data.liveUrl}" target="_blank" rel="noopener noreferrer" class="py-3 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs text-center border border-slate-700 flex items-center justify-center gap-2 transition-all">
-                                <span>Launch Live Demo</span>
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                            </a>
-                        ` : ''}
-                        <button onclick="closeShowcase()" class="py-3 px-5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 text-xs font-semibold">
-                            Close Showcase
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            lucide.createIcons();
-            modal.classList.remove('hidden');
-        }
-
-        function closeShowcase() {
-            document.getElementById('showcaseModal').classList.add('hidden');
-        }
-
-        // DEV PANEL CONTROLS
-        function toggleDevPanel(show) {
-            const modal = document.getElementById('devModal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
-        // KEYBOARD SHORTCUTS
-        document.addEventListener('keydown', (e) => {
-            if ((e.shiftKey && e.key === 'D') || e.key === '~' || e.key === '`') {
-                e.preventDefault();
-                const modal = document.getElementById('devModal');
-                toggleDevPanel(modal.classList.contains('hidden'));
-            }
-            if (e.key === 'Escape') {
-                closeShowcase();
-                toggleDevPanel(false);
-            }
-        });
-
-        // COPYRIGHT TRIGGER FOR DEV PANEL
-        document.getElementById('copyrightText').addEventListener('click', () => {
-            toggleDevPanel(true);
-        });
-
-        // INITIALIZE APP ON LOAD
-        window.onload = function() {
-            lucide.createIcons();
-            
-            // Sync initial CARTECH state from localStorage (Default 0)
-            const initialCount = localStorage.getItem(STORAGE_KEY_CARTECH_USERS) || 0;
-            updateCartechBadgeUI(initialCount);
-        };
-    </script>
+      });
+    });
+  </script>
 </body>
 </html>
