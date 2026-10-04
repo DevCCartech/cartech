@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-office-autoprint-v88">
+  <meta name="cartech-build" content="cartech-office-autoprint-v88.1">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Wizard v74 · Low egress</title>
@@ -10856,6 +10856,7 @@ window.CartechInspections = (() => {
   const dialog = byId('ctInspectionReport');
   const numberDialog = byId('ctDiagnosticNumberDialog');
   const snapshots = new Map();
+  const autoPrintSnapshots = new Map();
   let selected = null, reportVersion = '', returnFocus = null;
   let numberBusy = false, jobNumberId = null, jobNumberReturnFocus = null, jobNumberBusy = false;
   const findJob = id => state.find(job => job.id === id) || completedArchive.find(job => job.id === id);
@@ -10934,7 +10935,10 @@ window.CartechInspections = (() => {
       for (const job of jobs) {
         const data = dataOf(job), version = JSON.stringify({ data: data || null, number: jobDiagnosticNumber(job) }), prior = snapshots.get(job.id);
         snapshots.set(job.id, version);
-        window.CartechAutoPrint?.observe(job, data);
+        const latestSubmission = data?.savedAtISO || '';
+        const previousSubmission = autoPrintSnapshots.get(job.id);
+        autoPrintSnapshots.set(job.id, latestSubmission);
+        window.CartechAutoPrint?.observe(job, data, previousSubmission !== undefined && previousSubmission !== latestSubmission);
       if (prior !== undefined && prior !== version && data && available(job) && ['office','admin','developer'].includes(currentRole) && data.savedBy?.toLowerCase() !== currentUser?.toLowerCase()) {
         deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection Ready • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap the mechanic’s red Inspection ready badge or View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'inspection' });
       }
@@ -11015,7 +11019,7 @@ window.CartechInspections = (() => {
     } catch (caught) { error.textContent = caught?.message || 'Could not save the diagnostic number.'; error.hidden = false; input.focus(); input.select(); }
     finally { jobNumberBusy = false; [saveButton, cancelButton, closeButton, input].forEach(node => { if (node) node.disabled = false; }); saveButton.textContent = 'Save number'; }
   }
-  function reset() { snapshots.clear(); selected=null; reportVersion=''; cancelNumberEdit(); if(dialog.open)dialog.close(); if(numberDialog?.open)numberDialog.close(); jobNumberId=null; jobNumberReturnFocus=null; }
+  function reset() { snapshots.clear(); autoPrintSnapshots.clear(); selected=null; reportVersion=''; cancelNumberEdit(); if(dialog.open)dialog.close(); if(numberDialog?.open)numberDialog.close(); jobNumberId=null; jobNumberReturnFocus=null; }
   document.addEventListener('click', event => {
     const numberButton = event.target.closest('[data-diagnostic-number-job]');
     if (numberButton) { event.preventDefault(); event.stopPropagation(); openJobNumberEditor(numberButton.dataset.diagnosticNumberJob); return; }
@@ -11036,11 +11040,17 @@ window.CartechAutoPrint = (() => {
   const status = document.getElementById('ctOfficeAutoPrintStatus');
   const configKey = () => `cartech-office-auto-print-v88:${currentShopId}`;
   const seenKey = () => `cartech-office-printed-v88:${currentShopId}`;
+  const outcomeKey = () => `cartech-office-last-print-v88:${currentShopId}`;
   const queue = [];
   const pending = new Set();
   const failed = new Set();
   let busy = false;
+  let restoredStatus = false;
   const say = message => { if (status) status.textContent = message; };
+  const recordStatus = (stamp, message) => {
+    try { localStorage.setItem(outcomeKey(), JSON.stringify({ stamp, message, at:Date.now() })); } catch (_) {}
+    say(message);
+  };
   const config = () => {
     try { return JSON.parse(localStorage.getItem(configKey()) || 'null'); } catch (_) { return null; }
   };
@@ -11057,6 +11067,10 @@ window.CartechAutoPrint = (() => {
     if (!checkbox) return;
     if (card) card.hidden = !isShiela() || !hasNativePrinter() || currentShopId !== 'cartech-main';
     checkbox.checked = isShiela() && hasNativePrinter() && !!config()?.enabledAt;
+    if (checkbox.checked && !restoredStatus) {
+      try { const last = JSON.parse(localStorage.getItem(outcomeKey()) || 'null'); if (last?.message) say(last.message); } catch (_) {}
+      restoredStatus = true;
+    }
   }
   function finish() {
     if (!busy) return;
@@ -11078,7 +11092,7 @@ window.CartechAutoPrint = (() => {
     const data = job && parsePartsInfo(job.auto_schedule_slot).diagData;
     if (!job || !data || stampFor(job, data) !== item.stamp) { void printNext(); return; }
     const report = window.CartechDiagnostics.buildReport(job);
-    if (!report) { failed.add(item.stamp); say('Inspection arrived, but the report could not be prepared. Use View inspection to print it.'); return; }
+    if (!report) { remember(item.stamp); failed.add(item.stamp); recordStatus(item.stamp, 'Inspection arrived, but the report could not be prepared. Use View inspection to print it manually.'); return; }
     const host = document.getElementById('ctDiagnosticPrintHost');
     if (!host) return;
     busy = true;
@@ -11086,24 +11100,25 @@ window.CartechAutoPrint = (() => {
     document.body.classList.add('ct-print-diagnostic');
     say(`Sending diagnostic ${report.number} to Shiela's PC printer…`);
     try {
+      // A submitted version gets one automatic attempt, even after a printer error or restart.
+      remember(item.stamp);
       const result = await window.CartechNativePrint.printInspection({
         username:currentUser, role:currentRole, shopId:currentShopId,
         jobId:job.id, savedAtISO:data.savedAtISO
       });
       if (!result?.success) throw new Error(result?.reason || 'Printer did not accept this inspection.');
-      remember(item.stamp);
-      say(`Diagnostic ${report.number} sent to the default printer.`);
+      recordStatus(item.stamp, `Diagnostic ${report.number} (${job.id}) sent to the Windows print queue once at ${new Date().toLocaleTimeString()}. Paper output is not confirmed.`);
       document.body.classList.remove('ct-print-diagnostic');
       finish();
     } catch (error) {
       document.body.classList.remove('ct-print-diagnostic');
       failed.add(item.stamp);
-      say(`Automatic print failed: ${String(error?.message || 'check printer').slice(0,140)}. Use View inspection → Print to retry.`);
+      recordStatus(item.stamp, `Automatic print failed for ${job.id}: ${String(error?.message || 'check printer').slice(0,100)}. This version will not auto-retry; use View inspection → Print.`);
       finish();
     }
   }
-  function observe(job, data) {
-    if (!job || !data?.savedAtISO || !allowed() || job.shop_id !== currentShopId) return;
+  function observe(job, data, newSubmission) {
+    if (!newSubmission || !job || !data?.savedAtISO || !allowed() || job.shop_id !== currentShopId) return;
     const mechanic = String(resolveMechanicName(job) || '').toLowerCase();
     if (!mechanic || String(data.savedBy || '').toLowerCase() !== mechanic) return;
     const enabledAt = Number(config()?.enabledAt || 0);
@@ -11127,7 +11142,7 @@ window.CartechAutoPrint = (() => {
       }
     } catch (error) { checkbox.checked = false; say(error.message || 'Could not save printer setting.'); }
   });
-  window.addEventListener('focus', () => { sync(); if (allowed()) [...state, ...completedArchive].forEach(job => observe(job, parsePartsInfo(job.auto_schedule_slot).diagData)); });
+  window.addEventListener('focus', sync);
   sync();
   return {observe, sync};
 })();
