@@ -101,12 +101,13 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         </div>
       </section>
       <section id="timedBuyerLinksCard" class="card license-control-card" style="margin-top:20px">
-        <div class="card-head"><h2>CARTECH Main · timed buyer links</h2><p>One active link at a time for <strong>cartech-main</strong>. Creating a replacement revokes the old link. The buyer opens the link and signs in; no license key is entered.</p></div>
+        <div class="card-head"><h2>CARTECH Main · permanent buyer link &amp; timer</h2><p>Renew the <strong>same private URL</strong> after payment. Devices connected to it can reopen their launcher or Android app when the timer resumes. Revocation permanently ends that URL.</p></div>
         <div class="card-body">
           <div class="toolbar"><label style="flex:2;min-width:180px">Buyer or test label<input id="timedBuyerLabel" class="input" maxlength="80" value="CARTECH test" style="width:100%;margin-top:5px"></label><label style="flex:1;min-width:190px">Access duration<select id="timedDuration" class="input" style="width:100%;margin-top:5px"><option value="5">5-minute test · no payment</option><option value="15">15-minute test · no payment</option><option value="1440">1 day · ₱60</option><option value="10080">7 days · ₱420</option><option value="21600">15 days · ₱900</option><option value="43200">30 days · ₱1,800</option></select></label></div>
           <div id="timedReferenceRow" class="toolbar" style="margin-top:12px" hidden><label style="flex:1">Verified GCash reference<input id="timedReference" class="input" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="10–20 digits from the actual GCash transaction" style="width:100%;margin-top:5px"></label></div>
-          <div class="toolbar" style="margin-top:12px"><button id="createTimedLinkButton" class="btn primary" type="button">Create 5-minute test link</button><button id="loadTimedLinksButton" class="btn quiet" type="button">Refresh links</button></div>
-          <p id="timedLinkStatus" class="status" role="status">A test link makes no payment record. For a paid link, verify the transaction in GCash first.</p>
+          <div class="toolbar" style="margin-top:12px"><button id="createTimedLinkButton" class="btn primary" type="button" disabled>Load links first</button><button id="createReplacementLinkButton" class="btn danger" type="button" disabled>Create replacement URL</button><button id="loadTimedLinksButton" class="btn quiet" type="button">Refresh links</button></div>
+          <p id="timedRenewSelection" class="warning">Loading current link…</p>
+          <p id="timedLinkStatus" class="status" role="status">For a paid renewal, verify the transaction in GCash first. A test makes no payment record.</p>
           <div id="timedLinkResult" class="result" hidden><strong>Copy this link now — the full URL is shown once</strong><div class="toolbar" style="margin-top:9px"><input id="timedLinkUrl" class="input" readonly aria-label="Timed private buyer link"><button id="copyTimedLinkButton" class="btn primary" type="button">Copy link</button></div><p id="timedLinkExpiry" class="warning"></p></div>
           <div id="timedLinksList" class="license-list"><div class="empty">Log in as developer, then refresh links.</div></div>
         </div>
@@ -239,6 +240,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       byId('timedLinkUrl').value = '';
       byId('timedLinkResult').hidden = true;
       byId('timedLinksList').innerHTML = '<div class="empty">Log in as developer, then refresh links.</div>';
+      timedLinksReady = false;
+      timedRenewLinkId = '';
+      byId('timedRenewSelection').textContent = 'Log in to manage the permanent buyer link.';
+      syncTimedLinkForm();
       byId('result').innerHTML = '';
       byId('result').hidden = true;
       byId('licenseList').innerHTML = '';
@@ -370,75 +375,113 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     }
 
     const TIMED_LINK_PLANS = Object.freeze({5:0,15:0,1440:60,10080:420,21600:900,43200:1800});
+    let timedRenewLinkId = '';
+    let timedLinksReady = false;
     function syncTimedLinkForm() {
       const minutes = Number(byId('timedDuration').value);
       const test = minutes === 5 || minutes === 15;
       byId('timedReferenceRow').hidden = test;
-      byId('createTimedLinkButton').textContent = test
-        ? `Create ${minutes}-minute test link`
-        : `Create ${minutes / 1440}-day buyer link · ₱${TIMED_LINK_PLANS[minutes].toLocaleString('en-PH')}`;
+      byId('createTimedLinkButton').disabled = !timedLinksReady;
+      byId('createReplacementLinkButton').disabled = !timedLinksReady || !timedRenewLinkId;
+      byId('timedBuyerLabel').disabled = Boolean(timedRenewLinkId);
+      byId('createTimedLinkButton').textContent = timedRenewLinkId
+        ? (test ? `Add ${minutes}-minute test to SAME link` : `Add ${minutes / 1440} days to SAME link · ₱${TIMED_LINK_PLANS[minutes].toLocaleString('en-PH')}`)
+        : (test ? `Create ${minutes}-minute private link` : `Create ${minutes / 1440}-day private link · ₱${TIMED_LINK_PLANS[minutes].toLocaleString('en-PH')}`);
     }
     let timedLinkBusy = false;
     async function loadTimedLinks(silent = false) {
       if (!secret()) return;
       try {
-        const response = await rpc('cartech_list_timed_links_v85', { p_admin_secret:secret() });
+        const response = await rpc('cartech_list_timed_links_v86', { p_admin_secret:secret() });
         const rows = Array.isArray(response.data) ? response.data : [];
+        const current = rows.find(row => row.is_current && row.status !== 'revoked');
+        timedLinksReady = true;
+        timedRenewLinkId = current?.link_id || '';
+        if (current) byId('timedBuyerLabel').value = current.buyer_label;
+        byId('timedRenewSelection').textContent = current
+          ? `Selected: ${current.buyer_label} · ${current.status.toUpperCase()} · ${date(current.expires_at)}. Add time here; the URL stays the same on every connected device.`
+          : 'No renewable link yet. Create one private URL and connect each separate app once.';
+        syncTimedLinkForm();
         byId('timedLinksList').innerHTML = rows.length ? rows.map(row => {
           const active = row.status === 'active';
-          return `<article class="license-row"><div><h3>${esc(row.buyer_label)} <span class="pill ${active ? 'active' : 'expired'}">${esc(row.status)}</span></h3><p>${row.is_test ? 'TEST · no payment' : `${esc(row.duration_minutes / 1440)} day(s) · ${esc(amount(row.amount_pesos))}`} · Created ${esc(date(row.created_at))} · Expires ${esc(date(row.expires_at))}</p><p>Private URL is not stored in readable form. Create a replacement if it was lost.</p></div><div class="license-side">${active ? `<button class="btn danger" type="button" data-timed-revoke="${esc(row.link_id)}">Revoke link</button>` : ''}</div></article>`;
-        }).join('') : '<div class="empty">No timed buyer links yet. Create a 5-minute test to try the flow.</div>';
+          const renewalAllowed = row.is_current && row.status !== 'revoked';
+          const lastPlan = row.last_is_test ? 'Test · no payment' : `${esc(row.last_duration_minutes / 1440)} day(s) · ${esc(amount(row.last_amount_pesos))}`;
+          return `<article class="license-row"><div><h3>${esc(row.buyer_label)} <span class="pill ${active ? 'active' : 'expired'}">${esc(row.status)}</span></h3><p>${lastPlan} · Renewed ${esc(row.renewal_count)} time(s) · Expires ${esc(date(row.expires_at))}</p><p>${renewalAllowed ? 'Same private URL works again after renewal. It cannot be retrieved here; keep the original copy.' : 'This URL cannot be renewed.'}</p></div><div class="license-side">${renewalAllowed ? `<button class="btn primary" type="button" data-timed-renew="${esc(row.link_id)}">Use same URL</button><button class="btn danger" type="button" data-timed-revoke="${esc(row.link_id)}">Revoke permanently</button>` : ''}</div></article>`;
+        }).join('') : '<div class="empty">No buyer link yet. Create one short test URL, then keep that same URL for paid renewals.</div>';
       } catch (error) {
-        if (!silent) byId('timedLinkStatus').textContent = error?.message?.includes('cartech_list_timed_links_v85')
-          ? 'Run CARTECH-v85-TIMED-BUYER-LINK-SETUP.sql in Supabase, then refresh.'
+        timedLinksReady = false;
+        syncTimedLinkForm();
+        const setupMissing = /cartech_list_timed_links_v86|PGRST202|Could not find the function/i.test(error?.message || '');
+        if (setupMissing || !silent) byId('timedLinkStatus').textContent = setupMissing
+          ? 'Run CARTECH-v86-RENEW-SAME-LINK-SETUP.sql in Supabase, then refresh.'
           : (error?.message || 'Could not load buyer links.');
       }
     }
     async function createTimedLink() {
-      if (timedLinkBusy) return;
+      if (timedLinkBusy || !timedLinksReady) return;
       const minutes = Number(byId('timedDuration').value);
       const price = TIMED_LINK_PLANS[minutes];
       const test = minutes === 5 || minutes === 15;
+      const renewing = Boolean(timedRenewLinkId);
       const label = String(byId('timedBuyerLabel').value || '').trim();
       const reference = String(byId('timedReference').value || '').trim();
       const status = byId('timedLinkStatus');
       if (!secret()) { status.textContent = 'Log in with the developer manager secret first.'; return; }
       if (price === undefined || label.length < 2 || label.length > 80) { status.textContent = 'Choose a duration and enter a buyer or test label.'; return; }
       if (!test && !/^[0-9]{10,20}$/.test(reference)) { status.textContent = 'Enter the real 10–20 digit GCash transaction reference.'; return; }
-      if (!confirm(test
-        ? `Create a ${minutes}-minute test link for ${label}? This replaces the current cartech-main link.`
-        : `Have you verified the actual ₱${price.toLocaleString('en-PH')} GCash payment and reference ${reference}? Create a ${minutes / 1440}-day link for ${label} and revoke the old link?`)) return;
+      if (!confirm(renewing
+        ? (test ? `Add ${minutes} test minutes to the SAME URL for ${label}?` : `Verified ₱${price.toLocaleString('en-PH')} in GCash, reference ${reference}? Add ${minutes / 1440} days to the SAME URL for ${label}?`)
+        : (test ? `Create the first ${minutes}-minute private URL for ${label}? Copy it once and connect the apps.` : `Verified ₱${price.toLocaleString('en-PH')} in GCash, reference ${reference}? Create the first private URL for ${label}?`))) return;
       timedLinkBusy = true;
       byId('createTimedLinkButton').disabled = true;
-      status.textContent = 'Creating secure buyer link…';
+      status.textContent = renewing ? 'Renewing the same buyer link…' : 'Creating the private buyer link…';
       try {
-        const response = await rpc('cartech_create_timed_link_v85', {
+        const params = {
           p_admin_secret:secret(), p_buyer_label:label, p_duration_minutes:minutes,
           p_amount_pesos:test ? null : price, p_gcash_reference:test ? null : reference,
           p_is_test:test
-        });
-        const created = rowData(response.data);
-        if (!/^[a-f0-9]{48}$/i.test(String(created?.link_token || ''))) throw new Error('The server did not return a valid buyer link.');
-        const url = new URL('../index.html', location.href);
-        url.searchParams.set('cartech_access', created.link_token);
-        url.searchParams.set('from', 'portfolio');
-        byId('timedLinkUrl').value = url.href;
-        byId('timedLinkResult').hidden = false;
-        byId('timedLinkExpiry').textContent = `Expires ${date(created.expires_at)}. Every device opening this URL can join the same cartech-main workshop until you revoke the link or it expires.`;
+        };
+        if (renewing) {
+          delete params.p_buyer_label;
+          params.p_link_id = timedRenewLinkId;
+        }
+        const response = await rpc(renewing ? 'cartech_renew_timed_link_v86' : 'cartech_create_timed_link_v85', params);
+        const changed = rowData(response.data);
+        if (!changed?.expires_at) throw new Error('The server did not confirm the new timer.');
+        if (!renewing) {
+          if (!/^[a-f0-9]{48}$/i.test(String(changed.link_token || ''))) throw new Error('The server did not return a valid buyer link.');
+          const url = new URL('../index.html', location.href);
+          url.searchParams.set('cartech_access', changed.link_token);
+          url.searchParams.set('from', 'portfolio');
+          byId('timedLinkUrl').value = url.href;
+          byId('timedLinkResult').hidden = false;
+        }
+        if (!byId('timedLinkResult').hidden) byId('timedLinkExpiry').textContent = `Expires ${date(changed.expires_at)}. Save this URL; future payments extend this same URL without reconnecting devices.`;
         byId('timedReference').value = '';
-        status.textContent = `${test ? 'Test' : 'Paid'} link created. Copy it now and open it in a different browser or Incognito for testing.`;
+        status.textContent = renewing
+          ? `Same link renewed until ${date(changed.expires_at)}. Already connected launchers and Android apps can return automatically.`
+          : `Private URL created. Copy it now. Connect each separate launcher or Android app once; later payments reuse this URL.`;
         await loadTimedLinks(true);
       } catch (error) { status.textContent = error?.message || 'Could not create buyer link.'; }
-      finally { timedLinkBusy = false; byId('createTimedLinkButton').disabled = false; }
+      finally { timedLinkBusy = false; syncTimedLinkForm(); }
+    }
+    function createReplacementLink() {
+      if (!timedLinksReady || !timedRenewLinkId) return;
+      if (!confirm('Create a DIFFERENT URL? The previous URL will no longer be renewable. All launcher and Android app installations will need to connect again once. Only do this if the original URL was lost or compromised.')) return;
+      timedRenewLinkId = '';
+      byId('timedBuyerLabel').disabled = false;
+      byId('timedRenewSelection').textContent = 'Replacement mode: enter a label and create a NEW URL. Connected apps must be linked once again.';
+      syncTimedLinkForm();
     }
     async function revokeTimedLink(linkId, button) {
-      if (!secret() || !confirm('Revoke this buyer link now? Its claimed devices will lose access on the next server check.')) return;
+      if (!secret() || !confirm('Permanently revoke this URL? The same URL cannot be renewed afterward. Use expiry for normal payment renewal.')) return;
       button.disabled = true;
       try {
-        await rpc('cartech_revoke_timed_link_v85', {p_admin_secret:secret(),p_link_id:linkId});
+        const result = await rpc('cartech_revoke_timed_link_v86', {p_admin_secret:secret(),p_link_id:linkId});
+        if (result.data !== true) throw new Error('This link was already revoked. Refresh links.');
         byId('timedLinkUrl').value = '';
         byId('timedLinkResult').hidden = true;
-        byId('timedLinkStatus').textContent = 'Link revoked. Buyer access will return to the portfolio after its next check.';
+        byId('timedLinkStatus').textContent = 'URL permanently revoked. Connected apps return to the portfolio; a replacement requires one-time reconnection.';
         await loadTimedLinks(true);
       } catch (error) { byId('timedLinkStatus').textContent = error?.message || 'Could not revoke link.'; button.disabled = false; }
     }
@@ -1045,6 +1088,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     byId('timedDuration').addEventListener('change', syncTimedLinkForm);
     syncTimedLinkForm();
     byId('createTimedLinkButton').addEventListener('click', () => void createTimedLink());
+    byId('createReplacementLinkButton').addEventListener('click', createReplacementLink);
     byId('loadTimedLinksButton').addEventListener('click', () => void loadTimedLinks(false));
     byId('copyTimedLinkButton').addEventListener('click', async () => {
       const link = byId('timedLinkUrl').value;
@@ -1053,6 +1097,13 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       catch (_) { byId('timedLinkUrl').select(); byId('timedLinkStatus').textContent = 'Select and copy the link above.'; }
     });
     byId('timedLinksList').addEventListener('click', event => {
+      const renew = event.target.closest('[data-timed-renew]');
+      if (renew) {
+        timedRenewLinkId = renew.dataset.timedRenew;
+        byId('timedRenewSelection').textContent = 'Same URL selected. Pick the paid plan, verify GCash, then add time. Connected apps keep their access.';
+        syncTimedLinkForm();
+        byId('timedBuyerLinksCard').scrollIntoView({behavior:'smooth',block:'start'});
+      }
       const button = event.target.closest('[data-timed-revoke]');
       if (button) void revokeTimedLink(button.dataset.timedRevoke, button);
     });
