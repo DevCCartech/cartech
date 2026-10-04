@@ -20,8 +20,9 @@
     // reusing the short-lived delivery link; its license is checked separately.
     (() => {
       const params = new URLSearchParams(location.search);
-      const supplied = params.has('cartech_handoff');
-      const token = (params.get('cartech_handoff') || '').trim().toLowerCase();
+      const timedLink = params.has('cartech_access');
+      const supplied = timedLink || params.has('cartech_handoff');
+      const token = (params.get(timedLink ? 'cartech_access' : 'cartech_handoff') || '').trim().toLowerCase();
       let savedToken = '';
       let hasPreviousAccess = false;
       let hasActivatedAccess = false;
@@ -59,8 +60,18 @@
         if (!response.ok) throw new Error('Link verification unavailable');
         return response.json();
       };
-      (async () => {
+      const verifyLink = (async () => {
         try {
+          if (timedLink) {
+            const preview = await rpc('cartech_preview_timed_link_v85', {p_token:checkToken});
+            const row = Array.isArray(preview) ? preview[0] : preview;
+            if (row?.valid !== true || row.shop_id !== 'cartech-main') {
+              portfolio('expired');
+              return false;
+            }
+            document.documentElement.classList.remove('ct-handoff-verifying');
+            return true;
+          }
           const result = await rpc('cartech_get_buyer_handoff', {p_handoff_token:checkToken});
           const delivery = Array.isArray(result) ? result[0] : result;
           if (delivery?.status !== 'approved' || !delivery.license_key || !delivery.shop_id) {
@@ -71,11 +82,14 @@
           // The workshop license is checked by the app's authenticated access
           // flow; this public check only validates the short-lived buyer URL.
           document.documentElement.classList.remove('ct-handoff-verifying');
+          return true;
         } catch (_) {
           // Network errors must not make an unverified link look valid.
           portfolio('check-failed');
+          return false;
         }
       })();
+      if (timedLink) window.cartechTimedBuyerGate = verifyLink;
     })();
   </script>
 
@@ -4016,6 +4030,27 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
     async function readDeviceAccess(allowTrial = true) {
       await ensureDeviceAuth();
+      const timedToken = new URLSearchParams(window.location.search).get('cartech_access');
+      if (timedToken) {
+        const entryVerified = await window.cartechTimedBuyerGate;
+        if (!entryVerified) throw new Error('Buyer link expired or unavailable.');
+        const claimed = await cartechRpc('cartech_claim_timed_link_v85', { p_token:timedToken });
+        const linkedAccess = tenantResult(claimed.data);
+        if (claimed.error || linkedAccess?.valid !== true) {
+          const portfolio = new URL('portfolio/', window.location.href);
+          portfolio.searchParams.set('link', 'expired');
+          portfolio.hash = 'cartech-license';
+          window.location.replace(portfolio.href);
+          throw claimed.error || new Error('Buyer link expired or revoked.');
+        }
+        localStorage.setItem(CARTECH_LICENSE_KEY, 'activated');
+        try {
+          const clean = new URL(window.location.href);
+          clean.searchParams.delete('cartech_access');
+          window.history.replaceState({}, document.title, clean.href);
+        } catch (_) {}
+        return acceptTenantAccess(linkedAccess);
+      }
       // v27 resolves the active license at workshop level. The owner enters the
       // key once; every browser/app for this workshop is then attached to the
       // same active license automatically on its next verification.
@@ -4049,7 +4084,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     }
 
     function ensureTenantSession(force = false, allowTrial = true) {
-      if (!force && tenantAccessSnapshot?.valid === true && Date.now() - tenantLastCheckedAt < TENANT_VERIFY_INTERVAL_MS) {
+      const verifyInterval = currentShopId === CARTECH_MAIN_SHOP_ID ? 60 * 1000 : TENANT_VERIFY_INTERVAL_MS;
+      if (!force && tenantAccessSnapshot?.valid === true && Date.now() - tenantLastCheckedAt < verifyInterval) {
         return Promise.resolve(tenantAccessSnapshot);
       }
       if (tenantSessionPromise) return tenantSessionPromise;
@@ -10047,6 +10083,10 @@ window.CartechAccess = (() => {
     if (!byId('ctLauncherLicenseScreen').hidden) refreshLauncherLicenseOverview();
     if (!document.hidden && !byId('ctUnderDevelopment')?.hidden) renderLicensePortal();
     refreshProgramStatus();
+    if (currentShopId === CARTECH_MAIN_SHOP_ID && workshopAccessActive()
+        && !document.hidden && Date.now() - tenantLastCheckedAt >= 60 * 1000) {
+      void refreshLicenseStatus(true);
+    }
     if (!workshopAccessActive()) {
       if (verifiedUser) signOut('license-expired');
       else if (!developerLoginOpen) showDevelopment(false);
