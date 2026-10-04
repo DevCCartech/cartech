@@ -50,6 +50,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
     .request.provisional .btn.primary{background:#0b7659;border-color:#2aab85}
 </style>
 <style>
+  #timedReferenceRow[hidden], #timedLinkResult[hidden] { display:none!important; }
   .ct-auth-locked #pwaStatus, .ct-auth-locked .shell, .ct-auth-locked .mobile-dock { display:none!important; }
   html:not(.ct-auth-locked) #developerLoginGate { display:none!important; }
   .ct-login-shell { min-height:100vh; display:grid; place-items:center; padding:22px; background:radial-gradient(circle at top,#203650,#0b1322 65%); }
@@ -84,12 +85,12 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
   <div class="shell">
     <aside>
       <div class="brand"><span class="mark">C</span><div><strong>CARTECH</strong><small>PAYMENT REVIEW</small></div></div>
-      <nav class="ct-dev-nav" aria-label="Developer sections"><a href="#developerAccess"><span>01</span> Developer access</a><a href="#planSettingsCard"><span>02</span> Plans &amp; stock</a><a href="#licenseControl"><span>03</span> License keys</a><a href="#paymentReviewAnchor"><span>04</span> Payment requests</a></nav><div class="side-note"><strong>Developer-only console</strong><p>Review QR/GCash receipts here. Check the real transaction in your GCash app before approving a key.</p></div>
-      <div class="side-note"><strong>Temporary keys</strong><p>New buyers may receive a 24-hour key before payment review. Confirm the actual GCash transaction to unlock the purchased term, or revoke and block the request.</p></div>
-      <p class="secure">Never publish the manager secret or this page with a pre-filled secret. Keep the key and temporary password private.</p>
+      <nav class="ct-dev-nav" aria-label="Developer sections"><a href="#developerAccess"><span>01</span> Developer access</a><a href="#timedBuyerLinksCard"><span>02</span> Buyer links</a><a href="#planSettingsCard"><span>03</span> Plans &amp; stock</a><a href="#paymentReviewAnchor"><span>04</span> Payment requests</a></nav><div class="side-note"><strong>Developer-only console</strong><p>Check the real GCash transaction before creating a paid buyer link.</p></div>
+      <div class="side-note"><strong>Timed access</strong><p>Use a 5-minute link for testing. For a paid plan, verify GCash first, then create the buyer link.</p></div>
+      <p class="secure">Keep the manager secret private. Share a buyer link only with the intended buyer.</p>
     </aside>
     <main>
-      <header class="top"><div><h1>Payments &amp; workshop licenses</h1><p>Verify GCash transactions and confirm or revoke temporary keys.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v72 · Payment console</span></div></header>
+      <header class="top"><div><h1>Buyer links &amp; payments</h1><p>Create timed CARTECH access after checking payment, or make a short test link.</p></div><div class="top-actions"><button id="installAppButtonTop" class="btn install-button" type="button" hidden>Install Android app</button><button id="editPlansButton" class="btn primary plan-jump" type="button" aria-controls="planSettingsCard" aria-expanded="false">Edit customer plans ↓</button><span class="badge">PWA v85 · Payment console</span></div></header>
       <section id="developerAccess" class="card">
         <div class="card-head"><h2>Developer access</h2><p>Unlocked on this tab after server verification. The manager secret is not saved on this device.</p></div>
         <div class="card-body">
@@ -99,7 +100,18 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           <div class="summary"><span id="pendingCount" class="pill pending">0 pending</span><span id="totalCount" class="pill">0 total</span><span id="lastLoaded" class="pill">Not loaded</span></div>
         </div>
       </section>
-      <section id="verifiedRenewalCard" class="card" style="margin-top:20px">
+      <section id="timedBuyerLinksCard" class="card license-control-card" style="margin-top:20px">
+        <div class="card-head"><h2>CARTECH Main · timed buyer links</h2><p>One active link at a time for <strong>cartech-main</strong>. Creating a replacement revokes the old link. The buyer opens the link and signs in; no license key is entered.</p></div>
+        <div class="card-body">
+          <div class="toolbar"><label style="flex:2;min-width:180px">Buyer or test label<input id="timedBuyerLabel" class="input" maxlength="80" value="CARTECH test" style="width:100%;margin-top:5px"></label><label style="flex:1;min-width:190px">Access duration<select id="timedDuration" class="input" style="width:100%;margin-top:5px"><option value="5">5-minute test · no payment</option><option value="15">15-minute test · no payment</option><option value="1440">1 day · ₱60</option><option value="10080">7 days · ₱420</option><option value="21600">15 days · ₱900</option><option value="43200">30 days · ₱1,800</option></select></label></div>
+          <div id="timedReferenceRow" class="toolbar" style="margin-top:12px" hidden><label style="flex:1">Verified GCash reference<input id="timedReference" class="input" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="10–20 digits from the actual GCash transaction" style="width:100%;margin-top:5px"></label></div>
+          <div class="toolbar" style="margin-top:12px"><button id="createTimedLinkButton" class="btn primary" type="button">Create 5-minute test link</button><button id="loadTimedLinksButton" class="btn quiet" type="button">Refresh links</button></div>
+          <p id="timedLinkStatus" class="status" role="status">A test link makes no payment record. For a paid link, verify the transaction in GCash first.</p>
+          <div id="timedLinkResult" class="result" hidden><strong>Copy this link now — the full URL is shown once</strong><div class="toolbar" style="margin-top:9px"><input id="timedLinkUrl" class="input" readonly aria-label="Timed private buyer link"><button id="copyTimedLinkButton" class="btn primary" type="button">Copy link</button></div><p id="timedLinkExpiry" class="warning"></p></div>
+          <div id="timedLinksList" class="license-list"><div class="empty">Log in as developer, then refresh links.</div></div>
+        </div>
+      </section>
+      <section id="verifiedRenewalCard" class="card" style="margin-top:20px;display:none">
         <div class="card-head"><h2>CARTECH Main · manual payment timer</h2><p>For <strong>cartech-main</strong> only, with an existing non-revoked license. Check the actual GCash transaction before setting paid time. This does not generate a buyer link. For a private buyer link, use an approved payment request with an issued license below.</p></div>
         <div class="card-body">
           <div class="toolbar" style="margin-top:12px"><label style="flex:1;min-width:130px">Days to add<input id="verifiedDays" class="input" type="number" min="1" max="365" step="1" value="7" style="width:100%;margin-top:5px"></label><label style="flex:1;min-width:130px">Amount paid (₱)<input id="verifiedAmount" class="input" type="number" min="0.01" max="1000000" step="0.01" value="420" style="width:100%;margin-top:5px"></label><label style="flex:2;min-width:200px">Real GCash reference<input id="verifiedReference" class="input" style="width:100%;margin-top:5px" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="10–20 digits from GCash"></label></div>
@@ -120,7 +132,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
           <div id="dauisTestResult" class="result" hidden></div>
         </div>
       </section>
-      <section id="licenseControl" class="card license-control-card" style="margin-top:20px">
+      <section id="licenseControl" class="card license-control-card" style="margin-top:20px;display:none">
         <div class="card-head"><div class="section-heading"><div><h2>License time, payment &amp; bonus control</h2><p>Edit the exact expiry, pause access for an unpaid balance, or offer claimable extra time to the office.</p></div><span class="section-badge">Developer only</span></div></div>
         <div class="card-body"><div class="toolbar"><button id="loadLicensesButton" class="btn primary" type="button">Load all license keys</button><span class="license-toolbar-note">Use the manager secret above.</span></div><p id="licenseStatus" class="status">No license records loaded.</p><div id="licenseList" class="license-list"><div class="empty">Enter the manager secret, then choose Load all license keys.</div></div><p class="license-help">Open “Manage this running key” to change its expiry, payment state, or claimable bonus. Revoke a running key before permanently deleting it. Workshop jobs and account data remain safe.</p></div>
       </section>
@@ -135,7 +147,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       <p class="footer">CARTECH developer utility · verification should be completed in the official GCash app.</p>
     </main>
   </div>
-  <nav class="mobile-dock" aria-label="Quick app navigation"><a href="#developerAccess"><b>⌁</b>Access</a><a href="#licenseControl"><b>🔑</b>Licenses</a><a href="#paymentReviewAnchor"><b>₱</b>Payments</a><button id="dockRefreshButton" type="button"><b>↻</b>Refresh</button></nav>
+  <nav class="mobile-dock" aria-label="Quick app navigation"><a href="#developerAccess"><b>⌁</b>Access</a><a href="#timedBuyerLinksCard"><b>🔗</b>Buyer links</a><a href="#paymentReviewAnchor"><b>₱</b>Payments</a><button id="dockRefreshButton" type="button"><b>↻</b>Refresh</button></nav>
   <script>
     const SUPABASE_URL = 'https://thqoydzuthttyybwijgq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK';
@@ -224,6 +236,9 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       byId('developerLoginStatus').classList.remove('error');
       byId('buyerLinkOutput').value = '';
       byId('buyerLinkBox').hidden = true;
+      byId('timedLinkUrl').value = '';
+      byId('timedLinkResult').hidden = true;
+      byId('timedLinksList').innerHTML = '<div class="empty">Log in as developer, then refresh links.</div>';
       byId('result').innerHTML = '';
       byId('result').hidden = true;
       byId('licenseList').innerHTML = '';
@@ -352,6 +367,80 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
         verifiedPlanBusy = false;
         byId('applyVerifiedPlanButton').disabled = false;
       }
+    }
+
+    const TIMED_LINK_PLANS = Object.freeze({5:0,15:0,1440:60,10080:420,21600:900,43200:1800});
+    function syncTimedLinkForm() {
+      const minutes = Number(byId('timedDuration').value);
+      const test = minutes === 5 || minutes === 15;
+      byId('timedReferenceRow').hidden = test;
+      byId('createTimedLinkButton').textContent = test
+        ? `Create ${minutes}-minute test link`
+        : `Create ${minutes / 1440}-day buyer link · ₱${TIMED_LINK_PLANS[minutes].toLocaleString('en-PH')}`;
+    }
+    let timedLinkBusy = false;
+    async function loadTimedLinks(silent = false) {
+      if (!secret()) return;
+      try {
+        const response = await rpc('cartech_list_timed_links_v85', { p_admin_secret:secret() });
+        const rows = Array.isArray(response.data) ? response.data : [];
+        byId('timedLinksList').innerHTML = rows.length ? rows.map(row => {
+          const active = row.status === 'active';
+          return `<article class="license-row"><div><h3>${esc(row.buyer_label)} <span class="pill ${active ? 'active' : 'expired'}">${esc(row.status)}</span></h3><p>${row.is_test ? 'TEST · no payment' : `${esc(row.duration_minutes / 1440)} day(s) · ${esc(amount(row.amount_pesos))}`} · Created ${esc(date(row.created_at))} · Expires ${esc(date(row.expires_at))}</p><p>Private URL is not stored in readable form. Create a replacement if it was lost.</p></div><div class="license-side">${active ? `<button class="btn danger" type="button" data-timed-revoke="${esc(row.link_id)}">Revoke link</button>` : ''}</div></article>`;
+        }).join('') : '<div class="empty">No timed buyer links yet. Create a 5-minute test to try the flow.</div>';
+      } catch (error) {
+        if (!silent) byId('timedLinkStatus').textContent = error?.message?.includes('cartech_list_timed_links_v85')
+          ? 'Run CARTECH-v85-TIMED-BUYER-LINK-SETUP.sql in Supabase, then refresh.'
+          : (error?.message || 'Could not load buyer links.');
+      }
+    }
+    async function createTimedLink() {
+      if (timedLinkBusy) return;
+      const minutes = Number(byId('timedDuration').value);
+      const price = TIMED_LINK_PLANS[minutes];
+      const test = minutes === 5 || minutes === 15;
+      const label = String(byId('timedBuyerLabel').value || '').trim();
+      const reference = String(byId('timedReference').value || '').trim();
+      const status = byId('timedLinkStatus');
+      if (!secret()) { status.textContent = 'Log in with the developer manager secret first.'; return; }
+      if (price === undefined || label.length < 2 || label.length > 80) { status.textContent = 'Choose a duration and enter a buyer or test label.'; return; }
+      if (!test && !/^[0-9]{10,20}$/.test(reference)) { status.textContent = 'Enter the real 10–20 digit GCash transaction reference.'; return; }
+      if (!confirm(test
+        ? `Create a ${minutes}-minute test link for ${label}? This replaces the current cartech-main link.`
+        : `Have you verified the actual ₱${price.toLocaleString('en-PH')} GCash payment and reference ${reference}? Create a ${minutes / 1440}-day link for ${label} and revoke the old link?`)) return;
+      timedLinkBusy = true;
+      byId('createTimedLinkButton').disabled = true;
+      status.textContent = 'Creating secure buyer link…';
+      try {
+        const response = await rpc('cartech_create_timed_link_v85', {
+          p_admin_secret:secret(), p_buyer_label:label, p_duration_minutes:minutes,
+          p_amount_pesos:test ? null : price, p_gcash_reference:test ? null : reference,
+          p_is_test:test
+        });
+        const created = rowData(response.data);
+        if (!/^[a-f0-9]{48}$/i.test(String(created?.link_token || ''))) throw new Error('The server did not return a valid buyer link.');
+        const url = new URL('../index.html', location.href);
+        url.searchParams.set('cartech_access', created.link_token);
+        url.searchParams.set('from', 'portfolio');
+        byId('timedLinkUrl').value = url.href;
+        byId('timedLinkResult').hidden = false;
+        byId('timedLinkExpiry').textContent = `Expires ${date(created.expires_at)}. Every device opening this URL can join the same cartech-main workshop until you revoke the link or it expires.`;
+        byId('timedReference').value = '';
+        status.textContent = `${test ? 'Test' : 'Paid'} link created. Copy it now and open it in a different browser or Incognito for testing.`;
+        await loadTimedLinks(true);
+      } catch (error) { status.textContent = error?.message || 'Could not create buyer link.'; }
+      finally { timedLinkBusy = false; byId('createTimedLinkButton').disabled = false; }
+    }
+    async function revokeTimedLink(linkId, button) {
+      if (!secret() || !confirm('Revoke this buyer link now? Its claimed devices will lose access on the next server check.')) return;
+      button.disabled = true;
+      try {
+        await rpc('cartech_revoke_timed_link_v85', {p_admin_secret:secret(),p_link_id:linkId});
+        byId('timedLinkUrl').value = '';
+        byId('timedLinkResult').hidden = true;
+        byId('timedLinkStatus').textContent = 'Link revoked. Buyer access will return to the portfolio after its next check.';
+        await loadTimedLinks(true);
+      } catch (error) { byId('timedLinkStatus').textContent = error?.message || 'Could not revoke link.'; button.disabled = false; }
     }
 
     async function loadPlanSettings(silent = false) {
@@ -862,7 +951,7 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       if (!navigator.onLine) { setStatus('Offline. Reconnect to load live payment and license records.', true); return; }
       if (!secret()) { setStatus('Open Developer Login first.', true); return; }
       if (showMessage) setStatus('Refreshing live payment and license data…');
-      await Promise.allSettled([loadRequests(true), loadTopups(true), loadLicenses(true), loadPlanSettings(true)]);
+      await Promise.allSettled([loadRequests(true), loadTopups(true), loadLicenses(true), loadPlanSettings(true), loadTimedLinks(true)]);
       if (showMessage) setStatus('Live data refreshed. Receipts are loaded only when you open them.');
     }
 
@@ -953,7 +1042,21 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:radial-gradi
       } finally { button.disabled = false; }
     }
     byId('createDauisTestButton').addEventListener('click', () => void createDauisTest());
-    byId('loadButton').addEventListener('click', () => { void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); });
+    byId('timedDuration').addEventListener('change', syncTimedLinkForm);
+    syncTimedLinkForm();
+    byId('createTimedLinkButton').addEventListener('click', () => void createTimedLink());
+    byId('loadTimedLinksButton').addEventListener('click', () => void loadTimedLinks(false));
+    byId('copyTimedLinkButton').addEventListener('click', async () => {
+      const link = byId('timedLinkUrl').value;
+      if (!link) return;
+      try { await navigator.clipboard.writeText(link); byId('timedLinkStatus').textContent = 'Buyer link copied. Send it only to your buyer.'; }
+      catch (_) { byId('timedLinkUrl').select(); byId('timedLinkStatus').textContent = 'Select and copy the link above.'; }
+    });
+    byId('timedLinksList').addEventListener('click', event => {
+      const button = event.target.closest('[data-timed-revoke]');
+      if (button) void revokeTimedLink(button.dataset.timedRevoke, button);
+    });
+    byId('loadButton').addEventListener('click', () => { void loadRequests(false); void loadTopups(false); void loadLicenses(false); void loadPlanSettings(false); void loadTimedLinks(false); });
     byId('applyVerifiedPlanButton').addEventListener('click', () => void applyVerifiedPlan());
     byId('loadLicensesButton').addEventListener('click', () => { void loadLicenses(false); });
     byId('loadPlanSettingsButton').addEventListener('click', () => { void loadPlanSettings(false); });
