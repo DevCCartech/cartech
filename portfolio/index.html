@@ -9,6 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,7 +128,7 @@
   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-16 w-full">
 
     <p id="cartech-expired-notice" class="hidden rounded-2xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-200" role="status">
-      Your CARTECH access has expired. Contact the developer below to renew, then open the new private buyer link.
+      Your CARTECH time has expired. Contact the developer to add time to the same buyer link. A connected launcher or Android app can resume after renewal.
       <a href="#cartech-license" class="font-bold underline">Contact developer</a>
     </p>
 
@@ -242,15 +243,24 @@
     <section id="cartech-license" class="scroll-mt-24 glass-panel rounded-3xl border border-brand-500/30 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6 sm:p-8 space-y-5">
       <span class="inline-flex rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-400">CARTECH v85 · Workshop access</span>
       <h2 class="text-2xl sm:text-3xl font-black text-white">Get CARTECH for your workshop</h2>
-      <p class="max-w-2xl text-sm leading-relaxed text-slate-300">Message Charl for the current plan and payment details. After your payment is checked, you receive a private CARTECH access link. Your access runs for the approved term; contact Charl here when it expires.</p>
+      <p class="max-w-2xl text-sm leading-relaxed text-slate-300">Message Charl for the current plan and payment details. Keep the private CARTECH link you receive. When your time expires, Charl can renew that same link after checking payment.</p>
       <div class="flex flex-wrap gap-3">
         <a href="https://www.facebook.com/charljun1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white hover:bg-blue-500"><i data-lucide="facebook" class="w-4 h-4"></i> Facebook 1 · charljun1</a>
         <a href="https://www.facebook.com/mylovemanily" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-blue-500/50 bg-blue-500/10 px-5 py-3 text-xs font-bold text-blue-200 hover:bg-blue-500/20"><i data-lucide="facebook" class="w-4 h-4"></i> Facebook 2 · mylovemanily</a>
         <button id="copyCartechSalesLink" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-5 py-3 text-xs font-bold text-white hover:bg-slate-700"><i data-lucide="copy" class="w-4 h-4"></i> Copy purchase page</button>
       </div>
-      <p id="cartechSalesFeedback" class="text-xs text-slate-400" role="status" aria-live="polite">The activation link is created after payment approval.</p>
+      <p id="cartechSalesFeedback" class="text-xs text-slate-400" role="status" aria-live="polite">The private link is issued once. Payment renewals extend its timer.</p>
+      <div class="rounded-2xl border border-blue-500/30 bg-blue-950/20 p-4 sm:p-5 space-y-3">
+        <h3 class="font-bold text-sm text-white">Connect this launcher or Android app once</h3>
+        <p class="text-xs leading-relaxed text-slate-300">If this installed app still shows the portfolio, paste your private CARTECH link here once while it is active. Future renewals use the same link automatically in this app.</p>
+        <form id="connectCartechApp" class="flex flex-col sm:flex-row gap-2">
+          <input id="connectCartechLink" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Private CARTECH buyer link" placeholder="Paste the private CARTECH buyer link" class="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-400 focus:outline-none">
+          <button type="submit" class="shrink-0 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white hover:bg-blue-500">Connect this app</button>
+        </form>
+        <p id="connectCartechStatus" class="text-xs text-slate-400" role="status"></p>
+      </div>
       <div class="border-t border-slate-800 pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p class="max-w-xl text-xs text-slate-400"><strong class="text-white">For the developer:</strong> Log in with your private manager secret, review the payment request, then select <strong class="text-white">Generate buyer link (v85)</strong> on an approved request. Copy and send that private link to the buyer.</p>
+        <p class="max-w-xl text-xs text-slate-400"><strong class="text-white">For the developer:</strong> Use Developer Payment to verify GCash and add time to the same buyer URL. Create a replacement only if the original URL was lost or compromised.</p>
         <a href="../developer-payment/#developerAccess" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-500/50 bg-brand-500/10 px-5 py-3 text-xs font-bold text-brand-400 hover:bg-brand-500/20"><i data-lucide="lock-keyhole" class="w-4 h-4"></i> Developer Login</a>
       </div>
     </section>
@@ -1023,9 +1033,67 @@
     // INITIALIZATION ON PAGE LOAD
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      if (new URLSearchParams(window.location.search).get('license') === 'expired') {
+      const pageParams = new URLSearchParams(window.location.search);
+      if (pageParams.get('license') === 'expired' || pageParams.get('link') === 'expired') {
         document.getElementById('cartech-expired-notice').classList.remove('hidden');
       }
+      document.getElementById('connectCartechApp').addEventListener('submit', event => {
+        event.preventDefault();
+        const input = document.getElementById('connectCartechLink');
+        const status = document.getElementById('connectCartechStatus');
+        const supplied = input.value.trim();
+        let token = /^[a-f0-9]{48}$/i.test(supplied) ? supplied : '';
+        if (!token) {
+          try {
+            const shared = new URL(supplied);
+            if (shared.origin === location.origin && shared.pathname.replace(/\/$/,'').match(/\/cartech(?:\/index\.html)?$/)) {
+              token = shared.searchParams.get('cartech_access') || '';
+            }
+          } catch (_) {}
+        }
+        if (!/^[a-f0-9]{48}$/i.test(token)) {
+          status.textContent = 'Paste the complete private CARTECH link you received from the developer.';
+          return;
+        }
+        const target = new URL('../index.html',location.href);
+        target.searchParams.set('cartech_access',token.toLowerCase());
+        target.searchParams.set('from','portfolio');
+        input.value = '';
+        status.textContent = 'Connecting this app…';
+        location.assign(target.href);
+      });
+      const checkConnectedAccess = async () => {
+        if (document.hidden || !navigator.onLine || !window.supabase || checkConnectedAccess.busy) return;
+        checkConnectedAccess.busy = true;
+        try {
+          const client = checkConnectedAccess.client ||= window.supabase.createClient(
+            'https://thqoydzuthttyybwijgq.supabase.co',
+            'sb_publishable_9roDNcH-tv6rH6BfjbmhFA_L4kJeMvK',
+            {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}
+          );
+          let savedToken = '';
+          try { savedToken = localStorage.getItem('cartech_permanent_buyer_token_v86') || ''; } catch (_) {}
+          let session = await client.auth.getSession();
+          if (!session.data?.session && /^[a-f0-9]{48}$/.test(savedToken)) {
+            session = await client.auth.signInAnonymously();
+          }
+          if (!session.data?.session) return;
+          let access = await client.rpc('cartech_auto_join_shop',{p_shop_id:'cartech-main'});
+          let row = Array.isArray(access.data) ? access.data[0] : access.data;
+          if (row?.valid !== true && /^[a-f0-9]{48}$/.test(savedToken)) {
+            access = await client.rpc('cartech_claim_timed_link_v85',{p_token:savedToken});
+            row = Array.isArray(access.data) ? access.data[0] : access.data;
+          }
+          if (!access.error && row?.valid === true && row.shop_id === 'cartech-main') {
+            try { localStorage.setItem('cartech_shop_license_v1','activated'); } catch (_) {}
+            location.replace(new URL('../index.html?from=portfolio',location.href).href);
+          }
+        } catch (_) { /* An expired or offline device stays on the portfolio. */ }
+        finally { checkConnectedAccess.busy = false; }
+      };
+      void checkConnectedAccess();
+      setInterval(checkConnectedAccess, 60000);
+      document.addEventListener('visibilitychange', checkConnectedAccess);
       document.getElementById('copyCartechSalesLink').addEventListener('click', async () => {
         const link = new URL('#cartech-license', window.location.href);
         link.search = '';
