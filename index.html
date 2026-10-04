@@ -31,6 +31,7 @@
         hasActivatedAccess = localStorage.getItem('cartech_shop_license_v1') === 'activated'
           || Boolean(localStorage.getItem('cartech_auth_user') && localStorage.getItem('cartech_auth_role'));
         hasPreviousAccess = hasActivatedAccess
+          || Boolean(localStorage.getItem('cartech_permanent_buyer_token_v86'))
           || Boolean(localStorage.getItem('cartech_license_payment_request_v1'))
           || Boolean(localStorage.getItem('cartech_license_topup_request_v1'));
       } catch (_) {}
@@ -4044,6 +4045,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
           throw claimed.error || new Error('Buyer link expired or revoked.');
         }
         localStorage.setItem(CARTECH_LICENSE_KEY, 'activated');
+        localStorage.setItem('cartech_permanent_buyer_token_v86', timedToken.trim().toLowerCase());
         try {
           const clean = new URL(window.location.href);
           clean.searchParams.delete('cartech_access');
@@ -4069,6 +4071,20 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       if (!result.error && access?.valid !== true && currentShopId !== CARTECH_MAIN_SHOP_ID) {
         result = await cartechRpc('cartech_auto_join_shop', { p_shop_id:CARTECH_MAIN_SHOP_ID });
         access = tenantResult(result.data);
+      }
+      // A launcher or Android app keeps its original private URL on this device.
+      // If its anonymous session changes, re-claim the same link after renewal.
+      if (access?.valid !== true) {
+        let rememberedToken = '';
+        try { rememberedToken = localStorage.getItem('cartech_permanent_buyer_token_v86') || ''; } catch (_) {}
+        if (/^[a-f0-9]{48}$/.test(rememberedToken)) {
+          const resumed = await cartechRpc('cartech_claim_timed_link_v85', { p_token:rememberedToken });
+          if (!resumed.error && tenantResult(resumed.data)?.valid === true) {
+            result = resumed;
+            access = tenantResult(resumed.data);
+            localStorage.setItem(CARTECH_LICENSE_KEY, 'activated');
+          }
+        }
       }
       const missingShopwideRpc = result.error && (result.error.code === '42883' || /cartech_auto_join_shop/i.test(result.error.message || ''));
       if (missingShopwideRpc) {
