@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-office-autoprint-v88.1">
+  <meta name="cartech-build" content="cartech-office-autoprint-v88.2">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Wizard v74 · Low egress</title>
@@ -1991,77 +1991,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
 }
 @media(max-width:430px){#ctLicenseStoreDialog .ct-license-plans{grid-template-columns:1fr!important}#ctUnderDevelopment h1#ctDevelopmentTitle{font-size:18px!important}}
 </style>
-<style>
-/* Shown only after an admin/developer signs in through the Windows launcher. */
-#ctLauncherLicenseScreen[hidden] { display:none!important; }
-#ctLauncherLicenseScreen { min-height:100vh; background:linear-gradient(145deg,#0a142a,#101d36); color:#f7f9ff; font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; }
-.ct-lo-head { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:17px max(24px,calc((100% - 1050px)/2)); border-bottom:1px solid #243650; background:#0c162b; }
-.ct-lo-head-brand { display:flex; align-items:center; gap:11px; font-weight:850; letter-spacing:.04em; }
-.ct-lo-mark { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f16610; color:white; font-size:20px; }
-.ct-lo-head small { display:block; font-size:11px; font-weight:500; color:#8ea4c3; letter-spacing:0; }
-.ct-lo-head-user { font-size:12px; color:#aac0de; text-align:right; }
-.ct-lo-main { max-width:1050px; margin:0 auto; padding:23px 24px 38px; }
-.ct-lo-main h1 { margin:0 0 14px; font-size:24px; line-height:1.25; font-weight:800; color:#fff; }
-.ct-lo-hero { display:flex; align-items:center; justify-content:space-between; gap:22px; padding:24px 26px; border:1px solid #304464; border-left:4px solid #ff731a; border-radius:14px; background:#14233c; }
-.ct-lo-heading { display:flex; align-items:center; gap:16px; min-width:0; }
-.ct-lo-keyicon { display:grid; place-items:center; flex:none; width:48px; height:48px; border-radius:12px; background:#53301f; color:#ffa35d; font-size:23px; }
-.ct-lo-kicker { color:#ffa35d; font-size:11px; font-weight:850; letter-spacing:.08em; text-transform:uppercase; }
-.ct-lo-shop { margin:4px 0 2px; color:white; font-size:20px; font-weight:750; overflow-wrap:anywhere; }
-.ct-lo-sub { color:#aabbd4; font-size:12px; }
-.ct-lo-timer { flex:none; min-width:285px; padding:14px 20px; border:1px solid #273e5c; border-radius:11px; background:#09152a; text-align:center; }
-.ct-lo-timer small { color:#b0bfd2; font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
-.ct-lo-timer strong { display:block; margin:4px 0; color:#ff8c34; font:800 25px/1.25 ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums; }
-.ct-lo-timer span { color:#8297b8; font-size:10px; }
-.ct-lo-section-title { margin:19px 0 10px; color:#a9bdd9; font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:800; }
-.ct-lo-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
-.ct-lo-card { display:flex; flex-direction:column; min-height:187px; padding:18px; border:1px solid #2b3d58; border-radius:11px; background:#14233c; }
-.ct-lo-card strong { color:white; font-size:16px; }
-.ct-lo-card p { margin:11px 0 16px; color:#aabdd8; font-size:12px; line-height:1.65; }
-.ct-lo-card span { margin-top:auto; color:#ff9c52; font-size:12px; font-weight:750; overflow-wrap:anywhere; }
-.ct-lo-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:18px; padding-top:15px; border-top:1px solid #293a57; }
-.ct-lo-actions p { color:#9bafcd; font-size:12px; }
-.ct-lo-buttons { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:9px; }
-.ct-lo-actions button { min-height:42px; padding:10px 17px; border:1px solid #415776; border-radius:8px; background:#243952; color:white; font-size:12px; font-weight:750; cursor:pointer; }
-.ct-lo-actions button.ct-lo-proceed { background:#0a9a70; border-color:#0a9a70; }
-.ct-lo-actions button:hover { filter:brightness(1.12); }
-#ctLauncherLicenseScreen { background:radial-gradient(circle at 18% 12%,#1b3049 0%,transparent 42%),linear-gradient(135deg,#0b1527,#101d34); }
-.ct-lo-head { padding:15px max(27px,calc((100% - 980px)/2)); background:#0b172c; border-color:#2b3e58; }
-.ct-lo-mark { background:linear-gradient(135deg,#ff873a,#ed540a); font-size:19px; box-shadow:0 4px 16px #f2621940; }
-.ct-lo-head-brand { letter-spacing:.08em; }
-.ct-lo-head small { font-size:9px; letter-spacing:.12em; color:#abc0da; }
-.ct-lo-head-user { padding:7px 11px; border:1px solid #354862; border-radius:30px; font-weight:700; }
-.ct-lo-main { max-width:980px; padding:26px 27px 30px; }
-.ct-lo-eyebrow { margin:0 0 5px; color:#ff9c54; font-size:10px; font-weight:850; letter-spacing:.16em; }
-.ct-lo-main h1 { margin:0; font-size:27px; line-height:1.25; letter-spacing:-.025em; }
-.ct-lo-intro { margin:7px 0 18px; color:#a7bbd2; font-size:12px; }
-.ct-lo-hero { display:grid; grid-template-columns:minmax(0,1fr) 300px; align-items:stretch; gap:20px; padding:23px; border:1px solid #3e5270; border-top:3px solid #f77724; border-left:1px solid #3e5270; background:linear-gradient(120deg,#192c47,#14243d 70%); box-shadow:0 16px 36px #030b1c36; }
-.ct-lo-hero-left { min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:22px; }
-.ct-lo-keyicon { background:#613319; color:#ffd0a8; font-size:25px; }
-.ct-lo-kicker { display:inline-flex; padding:4px 9px; border-radius:30px; color:#8fe3bf; background:#133f38; font-size:10px; letter-spacing:.045em; }
-.ct-lo-shop { font-size:21px; margin:8px 0 2px; }
-.ct-lo-sub { font-size:11px; }
-.ct-lo-timer { display:flex; flex-direction:column; justify-content:center; min-width:0; padding:20px; background:#0b182d; border-color:#3a506e; text-align:left; }
-.ct-lo-timer strong { margin:10px 0 8px; color:#ff9b48; font-size:24px; letter-spacing:-.04em; }
-.ct-lo-timer span { color:#aec0d5; font-size:11px; }
-.ct-lo-progress[hidden] { display:none!important; }
-.ct-lo-progress-label { display:flex; justify-content:space-between; gap:10px; color:#b7c7db; font-size:10px; font-weight:700; }
-.ct-lo-track { height:6px; margin-top:8px; border-radius:99px; background:#344761; overflow:hidden; }
-.ct-lo-track span { display:block; height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,#f66e1a,#ffb45b); transition:width .4s linear; }
-.ct-lo-details { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:13px; }
-.ct-lo-detail { min-width:0; display:flex; flex-direction:column; gap:4px; padding:14px 17px; border:1px solid #324760; border-radius:11px; background:#16263e; }
-.ct-lo-detail small { color:#9bb3d1; font-size:10px; font-weight:800; letter-spacing:.1em; }
-.ct-lo-detail strong { color:#fff; font-size:15px; overflow-wrap:anywhere; }
-.ct-lo-detail span { color:#9bb3d1; font-size:10px; }
-.ct-lo-renew { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:14px; padding:15px 18px; border:1px solid #5b4435; border-radius:11px; background:linear-gradient(110deg,#302b30,#242c3e); }
-.ct-lo-renew strong { color:#fff; font-size:15px; }
-.ct-lo-renew p { max-width:560px; margin:4px 0 0; color:#c5cbd3; font-size:11px; }
-.ct-lo-renew button { flex:none; min-height:40px; padding:9px 16px; border-radius:8px; background:#f36b1b; color:#fff; font-size:12px; font-weight:800; cursor:pointer; }
-.ct-lo-renew button:hover { background:#ff823a; }
-.ct-lo-actions { margin-top:13px; padding-top:14px; }
-.ct-lo-actions p { font-size:11px; }
-.ct-lo-actions button.ct-lo-proceed { min-height:43px; background:#0d9e75; border-color:#0d9e75; font-size:12px; }
-@media(max-width:760px) { .ct-lo-head{padding:14px 18px}.ct-lo-main{padding:20px 18px}.ct-lo-hero{grid-template-columns:1fr;padding:18px}.ct-lo-timer{width:100%}.ct-lo-details{grid-template-columns:1fr}.ct-lo-renew{align-items:stretch;flex-direction:column}.ct-lo-actions{align-items:stretch;flex-direction:column}.ct-lo-actions button{width:100%} }
-</style>
 <style id="ct-license-ai-style">
   #ctLicenseAiDialog{width:min(460px,calc(100% - 24px));max-height:min(700px,calc(100dvh - 32px));padding:0;border:1px solid #40506a;border-radius:16px;background:#0b1529;color:#f2f6fc;box-shadow:0 25px 80px #020815a8;overflow:hidden}
   #ctLicenseAiDialog::backdrop{background:#020916c9;backdrop-filter:blur(5px)}
@@ -2280,6 +2209,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   .ct-topbar-context .ct-sync-chip{padding:5px 9px;font-size:10px}
   .ct-topbar .ct-top-actions{order:2;margin-left:auto;gap:6px;flex-wrap:nowrap}
   .ct-topbar .ct-staff-chip{padding:5px 8px;border-radius:8px;background:#f8fafc;font-size:10px;white-space:nowrap}
+  .ct-topbar .ct-staff-chip #roleBadge:not([hidden]){margin-left:5px;color:#6d28d9;font-weight:750}
   .ct-topbar .ct-icon-button{width:32px;height:32px;min-height:32px;border:1px solid #e4e9f0;border-radius:8px;background:#f8fafc}
   .ct-topbar .ct-icon-button i{font-size:13px}
   .ct-topbar .ct-header-ai-support{width:32px;min-width:32px;height:32px;min-height:32px;padding:0;border-radius:8px}
@@ -2693,26 +2623,6 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     </div>
   </div>
 
-  <!-- Windows launcher: post-login license overview for admins/developers only. -->
-  <section id="ctLauncherLicenseScreen" hidden aria-labelledby="ctLauncherLicenseTitle">
-    <header class="ct-lo-head"><div class="ct-lo-head-brand"><span class="ct-lo-mark" aria-hidden="true">C</span><span>CARTECH<small>WORKSHOP LICENSE CENTER</small></span></div><span id="ctLauncherLicenseUser" class="ct-lo-head-user"></span></header>
-    <main class="ct-lo-main">
-      <p class="ct-lo-eyebrow">YOUR WORKSHOP · SUBSCRIPTION</p>
-      <h1 id="ctLauncherLicenseTitle">Ready for the workshop.</h1>
-      <p class="ct-lo-intro">Review your license before entering the dashboard.</p>
-      <section class="ct-lo-hero" aria-label="Current subscription">
-        <div class="ct-lo-hero-left">
-          <div class="ct-lo-heading"><span class="ct-lo-keyicon" aria-hidden="true">✦</span><div><span id="ctLauncherLicenseStatus" class="ct-lo-kicker">Checking license</span><h2 id="ctLauncherLicenseShop" class="ct-lo-shop">CARTECH Workshop</h2><span id="ctLauncherLicenseProfile" class="ct-lo-sub">Your workshop subscription</span></div></div>
-          <div id="ctLauncherLicenseProgressWrap" class="ct-lo-progress" hidden><div class="ct-lo-progress-label"><span>Subscription remaining</span><span id="ctLauncherLicensePercent">—</span></div><div id="ctLauncherLicenseProgress" class="ct-lo-track" role="progressbar" aria-label="Subscription time remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div></div>
-        </div>
-        <div class="ct-lo-timer"><small>TIME REMAINING</small><strong id="ctLauncherLicenseCountdown" aria-live="off">—</strong><span id="ctLauncherLicenseEnd">Checking expiry…</span></div>
-      </section>
-      <div class="ct-lo-details"><section class="ct-lo-detail"><small>LICENSE STARTED</small><strong id="ctLauncherLicenseStart">Checking start…</strong><span id="ctLauncherLicenseSummary">Checking status…</span></section><section class="ct-lo-detail"><small>EXPIRES ON</small><strong id="ctLauncherLicenseExpiry">Checking expiry…</strong><span>Philippine time · CARTECH subscription</span></section></div>
-      <aside class="ct-lo-renew"><div><strong>Need more time?</strong><p>Top up your active key without losing its remaining time. View the current CARTECH plans and payment steps.</p></div><button type="button" onclick="CartechAccess.openLicenseStore()">View plans / Top up →</button></aside>
-      <footer class="ct-lo-actions"><p>Based on the latest online license check.</p><button type="button" class="ct-lo-proceed" onclick="CartechAccess.proceedFromLicenseOverview()">Proceed to Main Dashboard <span aria-hidden="true">→</span></button></footer>
-    </main>
-  </section>
-
   <!-- 1. AUTH SCREEN -->
   <div id="loginScreen" class="fixed inset-0 w-full h-full full-screen-bg flex items-center justify-center p-4 z-50 overflow-y-auto">
 
@@ -2937,7 +2847,7 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
     <header class="ct-topbar no-print">
       <button id="ctMenuButton" class="ct-icon-button ct-mobile-menu" type="button" onclick="CartechUI.toggleMenu()" aria-label="Open navigation" aria-expanded="false" aria-controls="ctSidebar"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
       <div class="ct-breadcrumb"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Workspace</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="ctBreadcrumb">Workshop</strong></div>
-      <div class="ct-topbar-context"><span class="ct-sync-chip"><i class="fa-solid fa-circle" aria-hidden="true"></i> Live workspace</span><span>Office workspace</span></div>
+      <div class="ct-topbar-context"><span>Office workspace</span></div>
       <div class="ct-top-actions">
         <button type="button" id="ctHeaderAiSupport" class="ct-header-ai-support" onclick="CartechSupportChat.open()" aria-label="Developer Chat Support" title="Developer Chat Support" hidden><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Developer Chat Support</span><span id="ctSupportBadge" class="ct-support-badge" hidden>0</span></button>
         <span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
@@ -5439,7 +5349,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
 
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
-      document.getElementById('staffBadge').innerText = currentUser;
+      const shielaAdmin = currentRole === 'admin' && String(currentUser || '').toLowerCase() === 'shiela';
+      document.getElementById('staffBadge').innerText = shielaAdmin ? 'Shiela' : currentUser;
       
       let roleLabel = 'Front Desk';
       if (currentRole === 'developer') roleLabel = 'Developer Terminal';
@@ -5447,6 +5358,8 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       if (currentRole === 'tester') roleLabel = 'Temporary Tester';
       if (currentRole === 'workshop') roleLabel = currentUser === 'bot' ? '24/7 Automated Bot' : 'Mechanic Station';
       document.getElementById('roleBadge').innerText = roleLabel;
+      document.getElementById('roleBadge').hidden = !shielaAdmin;
+      if (shielaAdmin) document.getElementById('roleBadge').innerText = 'Admin';
 
       const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
@@ -8426,7 +8339,6 @@ window.CartechAccess = (() => {
   const consentKey = 'cartech_terms_agreement_session';
   let agreementAccepted = false, agreementPreview = false, underDevPreview = false, agreementBusy = false;
   let developerLoginOpen = false, authGeneration = 0, phoneLayout = null;
-  let licenseOverviewShownForLogin = false;
   let renewalAuthorized = false, renewalUser = null, renewalPassword = null, renewalRole = null;
   const allowedRoles = ['developer', 'admin', 'office', 'workshop', 'tester'];
   const nowMono = () => typeof performance !== 'undefined' ? performance.now() : Date.now();
@@ -10046,10 +9958,6 @@ window.CartechAccess = (() => {
     window.CartechSupportChat?.clear?.(['logout', 'updated', 'verification'].includes(reason));
     const wasTester = currentRole === 'tester' || verifiedRole === 'tester';
     authGeneration++; agreementAccepted = false; agreementPreview = false; underDevPreview = false; agreementBusy = false; developerLoginOpen = false; clearConsent();
-    licenseOverviewShownForLogin = false;
-    if (!byId('ctLauncherLicenseScreen').hidden) {
-      byId('ctLauncherLicenseScreen').hidden = true;
-    }
     window.CartechLauncher?.showLogin?.();
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true;
     byId('ctTesterTermsAccepted').checked = false; byId('ctTesterTermsAccepted').disabled = false;
@@ -10101,7 +10009,6 @@ window.CartechAccess = (() => {
     } finally { checking = false; }
   }
   function checkExpiry() {
-    if (!byId('ctLauncherLicenseScreen').hidden) refreshLauncherLicenseOverview();
     if (!document.hidden && !byId('ctUnderDevelopment')?.hidden) renderLicensePortal();
     refreshProgramStatus();
     if (currentShopId === CARTECH_MAIN_SHOP_ID && workshopAccessActive()
@@ -10238,56 +10145,9 @@ window.CartechAccess = (() => {
     window.scrollTo?.({ top:0, behavior:'instant' });
     byId('ctWelcomeTitle').focus();
   }
-  function refreshLauncherLicenseOverview() {
-    if (byId('ctLauncherLicenseScreen').hidden || !['admin','developer'].includes(currentRole) || !identityValid()) return;
-    const expiresAt = licenseExpiry();
-    const seconds = Math.max(0, Math.floor((expiresAt - now()) / 1000));
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor(seconds % 86400 / 3600);
-    const minutes = Math.floor(seconds % 3600 / 60);
-    const remainder = seconds % 60;
-    byId('ctLauncherLicenseCountdown').textContent = Number.isFinite(expiresAt) && expiresAt > 0
-      ? `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(remainder)}s` : '—';
-    const label = Number.isFinite(expiresAt) && expiresAt > 0 ? philippineDate(expiresAt) : 'Expiry unavailable';
-    byId('ctLauncherLicenseEnd').textContent = `Expires ${label}`;
-    byId('ctLauncherLicenseExpiry').textContent = label;
-    const startsAt = Date.parse(String(tenantAccessSnapshot?.license_starts_at || ''));
-    const hasWindow = Number.isFinite(startsAt) && Number.isFinite(expiresAt) && startsAt < expiresAt;
-    byId('ctLauncherLicenseStart').textContent = hasWindow ? philippineDate(startsAt) : 'Start time unavailable';
-    byId('ctLauncherLicenseProgressWrap').hidden = !hasWindow;
-    if (hasWindow) {
-      const percent = Math.max(0, Math.min(100, Math.round((expiresAt - now()) / (expiresAt - startsAt) * 100)));
-      byId('ctLauncherLicensePercent').textContent = `${percent}%`;
-      byId('ctLauncherLicenseProgress').firstElementChild.style.width = `${percent}%`;
-      byId('ctLauncherLicenseProgress').setAttribute('aria-valuenow', String(percent));
-    }
-    byId('ctLauncherLicenseStatus').textContent = paidLicenseActive() ? 'License status · active' : 'Workshop access · active';
-    byId('ctLauncherLicenseShop').textContent = tenantAccessSnapshot?.shop_name || 'CARTECH Workshop';
-    byId('ctLauncherLicenseProfile').textContent = `Workshop ID: ${currentShopId}`;
-    byId('ctLauncherLicenseSummary').textContent = paidLicenseActive() ? 'Active workshop license' : 'Active trial access';
-    byId('ctLauncherLicenseUser').textContent = `${currentRole.toUpperCase()} · ${currentUser}`;
-  }
-  function proceedFromLicenseOverview() {
-    if (byId('ctLauncherLicenseScreen').hidden || !['admin','developer'].includes(currentRole) || !sessionValid()) return;
-    licenseOverviewShownForLogin = true;
-    byId('ctLauncherLicenseScreen').hidden = true;
-    enterWorkspace();
-  }
   function enterWorkspace() {
     if (!sessionValid()) return;
     agreementPreview = false; underDevPreview = false; developerLoginOpen = false;
-    if (window.CartechLauncher?.isLauncher === true && ['admin','developer'].includes(currentRole) && !licenseOverviewShownForLogin) {
-      byId('ctTesterWelcome').hidden = true;
-      byId('ctUnderDevelopment').hidden = true;
-      byId('loginScreen').classList.add('hidden');
-      byId('appShell').classList.add('hidden');
-      byId('appShell').inert = true;
-      byId('ctLauncherLicenseScreen').hidden = false;
-      refreshLauncherLicenseOverview();
-      window.CartechLauncher.showOverview();
-      window.scrollTo?.({ top:0, behavior:'instant' });
-      return;
-    }
     byId('ctTesterWelcome').hidden = true; byId('ctUnderDevelopment').hidden = true; byId('appShell').inert = false;
     window.CartechLauncher?.openWorkspace?.();
     getAudioContext(); bootApp(); refresh();
@@ -10845,7 +10705,7 @@ window.CartechAccess = (() => {
   }
   const api = { finishLicenseSuccess, buildId, sessionRevision, agreementVersion, licenseAgreementVersion, effectiveExpiry, getAgreementStatus, programDeadlineShort, receiveConfig, saveProgramSchedule, resetLicenseTest, saveLicenseStart, saveLoginNotice, updateConfig, syncAccessEditor, addAccessTime, getProgramEndsAt: () => programEndsAt, programClosed, activateLicense, updateLicenseAgreementButton, refreshLicenseStatus, identityValid, acceptAgreement, declineAgreement, updateAgreementButton, previewAgreement, previewDevelopment, closeProgramPreview, openDeveloperLogin, openLicenseStore, closeLicenseStore, filterLicensePlans, selectLicensePlan, proceedToPayment, backToLicensePlans, showPaymentProofStep, paymentReceiptChanged, autoApplyPaymentKey, resetTopupPlanSelection, copyGcashNumber, openGcash, returnFromGcash, downloadPaymentQr, submitPaymentRequest, submitPaymentReference, copyPaymentRequest, copyPaymentDelivery, checkPaymentResult, showLicensePlansFromPayment, syncPhoneLayout, login, quickLogin, restoreSession, sessionValid, can, licenseSupportAllowed, supportContext, authGeneration: () => authGeneration, testerAllowed, checkExpiry, verifyActive, receiveAccounts, now, signOut, refresh, roleChanged, durationChanged, saveAccount, createAccount, changePassword, revoke, toggleAccount, toggleReadOnly, toggleDispatch, toggleRosterVisibility, deleteAccount, openEditAccess, closeEditAccess, setExpiryFromNow, editExpiry, revokeEditing: () => revoke(editing), previewData, savePreview, openFeedback, closeFeedback, downloadFeedback };
   Object.assign(api, { copyPauseRequest, checkPauseAccess });
-  Object.assign(api, { proceedFromLicenseOverview, cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
+  Object.assign(api, { cancelRenewal, resumeOperationalAsOwner, resumeOperationalAsDeveloper, pauseOperationalAccess });
   Object.defineProperty(api, 'programEndsAt', { enumerable: true, get: () => programEndsAt });
   return api;
 })();
