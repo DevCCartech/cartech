@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-license-renewal-v77">
+  <meta name="cartech-build" content="cartech-office-autoprint-v88">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Wizard v74 · Low egress</title>
@@ -929,6 +929,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 #ctVinDialog .df-input:focus { outline: 2px solid #79acb0; outline-offset: 2px; }
 #ctVinDialog .df-error { border: 0; padding: 10px; margin-top: 14px; }
 #ctDiagnosticPrintHost { display: none; }
+#ctOfficeAutoPrintCard[hidden] { display: none !important; }
 @media (max-width: 600px) {
   .df-choice-group.df-five { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .df-five .df-choice:last-child { grid-column: 1 / -1; }
@@ -3218,6 +3219,10 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
     <main id="viewOffice" class="hidden" tabindex="-1">
       
       <section class="ct-team-strip" aria-label="Workshop team status"><div class="ct-team-strip-head"><div><h3><i class="fa-solid fa-user-group"></i> Team overview</h3><p>Tap an inspection-ready mechanic to open the submitted report.</p></div></div><div id="messengerSidebarAvatars"></div><div class="ct-team-strip-actions"><div id="officeRemainingMechanicBadge"></div><button type="button" class="ct-button ct-primary" onclick="CartechUI.openDispatch()"><i class="fa-solid fa-plus" aria-hidden="true"></i>Add a job</button></div></section>
+      <section id="ctOfficeAutoPrintCard" class="ct-panel" aria-label="Shiela inspection printer" style="margin:12px 0;padding:14px 16px" hidden>
+        <label style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;cursor:pointer"><input id="ctOfficeAutoPrint" type="checkbox" style="width:18px;height:18px;accent-color:#147a7f"> Shiela's Office PC · Auto-print new mechanic inspections</label>
+        <p id="ctOfficeAutoPrintStatus" role="status" style="margin:7px 0 0;color:#64748b;font-size:11px">Enable this in Shiela's CARTECH launcher only. New submissions use the existing CARTECH inspection report.</p>
+      </section>
       <section class="ct-stats" aria-label="Vehicle workflow. Select a stage to view its current vehicles."><button type="button" id="card-waiting" class="ct-stat" onclick="CartechUI.selectFilter('waiting')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">01</span>Waiting</span><i class="fa-regular fa-clock" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statWaiting">0</strong><small>awaiting a mechanic</small></span></button><button type="button" id="card-inprogress" class="ct-stat" onclick="CartechUI.selectFilter('inprogress')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">02</span>In service</span><i class="fa-solid fa-wrench" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statActive">0</strong><small>in the workshop</small></span></button><button type="button" id="card-inspections" class="ct-stat ct-stat-inspections" onclick="CartechUI.selectFilter('inspections')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">03</span>Inspections</span><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statInspections">0</strong><small>active reports</small></span></button><button type="button" id="card-waiting_parts" class="ct-stat" onclick="CartechUI.selectFilter('waiting_parts')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">04</span>Awaiting parts</span><i class="fa-solid fa-box-open" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statParts">0</strong><small>needs attention</small></span></button><button type="button" id="card-completed" class="ct-stat" onclick="CartechUI.selectFilter('completed')"><span class="ct-stat-top"><span class="ct-stat-name"><span class="ct-stat-step">05</span>Completed</span><i class="fa-regular fa-circle-check" aria-hidden="true"></i></span><span class="ct-stat-bottom"><strong id="statDone">0</strong><small id="ctArchiveCaption">tap to load archive</small></span></button></section>
       <div class="ct-body-grid"><section class="ct-queue-panel" aria-label="Vehicle jobs">
         <div id="ctAttention" class="ct-attention" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong id="ctAttentionTitle">Parts requested</strong><p id="ctAttentionText"></p></div><button type="button" class="ct-icon-button" onclick="CartechUI.selectFilter('waiting_parts')" aria-label="Review parts requests"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
@@ -10923,11 +10928,13 @@ window.CartechInspections = (() => {
   }
   function close() { if (numberBusy) return; if (dialog.open) dialog.close(); selected = null; cancelNumberEdit(); returnFocus?.focus?.(); }
   function hash(value) { let h=2166136261; for (let i=0;i<value.length;i++) h=Math.imul(h^value.charCodeAt(i),16777619); return (h>>>0).toString(16); }
-  function refresh() {
-    const jobs = [...state, ...completedArchive];
-    for (const job of jobs) {
-      const data = dataOf(job), version = JSON.stringify({ data: data || null, number: jobDiagnosticNumber(job) }), prior = snapshots.get(job.id);
-      snapshots.set(job.id, version);
+    function refresh() {
+      const jobs = [...state, ...completedArchive];
+      window.CartechAutoPrint?.sync();
+      for (const job of jobs) {
+        const data = dataOf(job), version = JSON.stringify({ data: data || null, number: jobDiagnosticNumber(job) }), prior = snapshots.get(job.id);
+        snapshots.set(job.id, version);
+        window.CartechAutoPrint?.observe(job, data);
       if (prior !== undefined && prior !== version && data && available(job) && ['office','admin','developer'].includes(currentRole) && data.savedBy?.toLowerCase() !== currentUser?.toLowerCase()) {
         deliverCartechAlert({ eventKey:`inspection:${job.id}:${hash(version)}`, title:`CARTECH Inspection Ready • ${job.vehicle}`, body:`${data.savedBy || resolveMechanicName(job) || 'Mechanic'} submitted inspection findings. Tap the mechanic’s red Inspection ready badge or View inspection to review the action items.`, jobId:job.id, alertType:'inspection', sound:'inspection' });
       }
@@ -11019,6 +11026,110 @@ window.CartechInspections = (() => {
   numberDialog?.addEventListener('cancel', event => { if (jobNumberBusy) event.preventDefault(); });
   numberDialog?.addEventListener('close',()=>{ jobNumberBusy=false; jobNumberId=null; jobNumberReturnFocus=null; });
   return { card, officeItem, info, open, close, print, download, refresh, reset, editNumber, cancelNumberEdit, saveNumber, openJobNumberEditor, closeJobNumberEditor, saveJobNumber };
+})();
+
+// Shiela's designated Office launcher prints confirmed mechanic submissions.
+// Printing requires the updated native launcher bridge on this PC.
+window.CartechAutoPrint = (() => {
+  const card = document.getElementById('ctOfficeAutoPrintCard');
+  const checkbox = document.getElementById('ctOfficeAutoPrint');
+  const status = document.getElementById('ctOfficeAutoPrintStatus');
+  const configKey = () => `cartech-office-auto-print-v88:${currentShopId}`;
+  const seenKey = () => `cartech-office-printed-v88:${currentShopId}`;
+  const queue = [];
+  const pending = new Set();
+  const failed = new Set();
+  let busy = false;
+  const say = message => { if (status) status.textContent = message; };
+  const config = () => {
+    try { return JSON.parse(localStorage.getItem(configKey()) || 'null'); } catch (_) { return null; }
+  };
+  const readSeen = () => {
+    try { return JSON.parse(localStorage.getItem(seenKey()) || '{}') || {}; } catch (_) { return {}; }
+  };
+  const isShiela = () => ['shiela','shielaadmin'].includes(String(currentUser || '').trim().toLowerCase()) &&
+    ['office','admin'].includes(String(currentRole || '').toLowerCase());
+  const hasNativePrinter = () => typeof window.CartechNativePrint?.printInspection === 'function';
+  const allowed = () => isShiela() && !!config()?.enabledAt &&
+    hasNativePrinter() && window.CartechDiagnostics?.canPrint() === true && currentShopId === 'cartech-main';
+  const stampFor = (job, data) => `${job.id}:${data.savedAtISO}`;
+  function sync() {
+    if (!checkbox) return;
+    if (card) card.hidden = !isShiela() || !hasNativePrinter() || currentShopId !== 'cartech-main';
+    checkbox.checked = isShiela() && hasNativePrinter() && !!config()?.enabledAt;
+  }
+  function finish() {
+    if (!busy) return;
+    busy = false;
+    setTimeout(printNext, 900);
+  }
+  function remember(stamp) {
+    const seen = readSeen();
+    seen[stamp] = Date.now();
+    const recent = Object.entries(seen).sort((a,b) => b[1] - a[1]).slice(0,200);
+    localStorage.setItem(seenKey(), JSON.stringify(Object.fromEntries(recent)));
+  }
+  async function printNext() {
+    if (busy || !queue.length || !allowed()) return;
+    const item = queue.shift();
+    pending.delete(item.stamp);
+    if (item.shop !== currentShopId || readSeen()[item.stamp]) { void printNext(); return; }
+    const job = [...state, ...completedArchive].find(row => row.id === item.jobId);
+    const data = job && parsePartsInfo(job.auto_schedule_slot).diagData;
+    if (!job || !data || stampFor(job, data) !== item.stamp) { void printNext(); return; }
+    const report = window.CartechDiagnostics.buildReport(job);
+    if (!report) { failed.add(item.stamp); say('Inspection arrived, but the report could not be prepared. Use View inspection to print it.'); return; }
+    const host = document.getElementById('ctDiagnosticPrintHost');
+    if (!host) return;
+    busy = true;
+    host.innerHTML = report.content;
+    document.body.classList.add('ct-print-diagnostic');
+    say(`Sending diagnostic ${report.number} to Shiela's PC printer…`);
+    try {
+      const result = await window.CartechNativePrint.printInspection({
+        username:currentUser, role:currentRole, shopId:currentShopId,
+        jobId:job.id, savedAtISO:data.savedAtISO
+      });
+      if (!result?.success) throw new Error(result?.reason || 'Printer did not accept this inspection.');
+      remember(item.stamp);
+      say(`Diagnostic ${report.number} sent to the default printer.`);
+      document.body.classList.remove('ct-print-diagnostic');
+      finish();
+    } catch (error) {
+      document.body.classList.remove('ct-print-diagnostic');
+      failed.add(item.stamp);
+      say(`Automatic print failed: ${String(error?.message || 'check printer').slice(0,140)}. Use View inspection → Print to retry.`);
+      finish();
+    }
+  }
+  function observe(job, data) {
+    if (!job || !data?.savedAtISO || !allowed() || job.shop_id !== currentShopId) return;
+    const mechanic = String(resolveMechanicName(job) || '').toLowerCase();
+    if (!mechanic || String(data.savedBy || '').toLowerCase() !== mechanic) return;
+    const enabledAt = Number(config()?.enabledAt || 0);
+    const submittedAt = Date.parse(data.savedAtISO);
+    if (!Number.isFinite(submittedAt) || submittedAt < enabledAt) return;
+    const stamp = stampFor(job, data);
+    if (pending.has(stamp) || failed.has(stamp) || readSeen()[stamp]) return;
+    pending.add(stamp);
+    queue.push({jobId:job.id, stamp, shop:currentShopId});
+    printNext();
+  }
+  checkbox?.addEventListener('change', () => {
+    try {
+      if (checkbox.checked) {
+        if (!isShiela() || !hasNativePrinter() || !window.CartechDiagnostics?.canPrint() || currentShopId !== 'cartech-main') throw new Error('Sign in as Shiela on the updated CARTECH launcher first.');
+        localStorage.setItem(configKey(), JSON.stringify({enabledAt:Date.now()}));
+        say('Ready. New mechanic inspections will print here. Set this PC’s physical printer as the default.');
+      } else {
+        localStorage.removeItem(configKey()); queue.length = 0; pending.clear(); failed.clear();
+        say('Auto-print is off on this PC.');
+      }
+    } catch (error) { checkbox.checked = false; say(error.message || 'Could not save printer setting.'); }
+  });
+  window.addEventListener('focus', () => { sync(); if (allowed()) [...state, ...completedArchive].forEach(job => observe(job, parsePartsInfo(job.auto_schedule_slot).diagData)); });
+  sync();
+  return {observe, sync};
 })();
 
 /* Same-origin deployment checks. HEAD requests avoid downloading embedded logos every minute.
