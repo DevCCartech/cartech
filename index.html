@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta name="cartech-application" content="CARTECH-HYBRID-QUEUE">
-  <meta name="cartech-build" content="cartech-office-autoprint-v88.2">
+  <meta name="cartech-build" content="cartech-office-themes-v88-3">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARTECH - License Wizard v74 · Low egress</title>
@@ -2548,6 +2548,125 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
   @media(prefers-reduced-motion:reduce) { #ctPauseScreen * { animation:none!important; transition:none!important } }
 </style>
 
+<style id="ct-dashboard-themes-v88-3">
+  /* The two office palettes share the existing layout and leave report printing alone. */
+  #appShell[data-ct-dashboard-theme="warm"] {
+    --ct-dash-page:#faf3e9; --ct-dash-surface:#fffdf9; --ct-dash-soft:#f7ecdf;
+    --ct-dash-border:#e5d6c6; --ct-dash-ink:#342e2b; --ct-dash-muted:#75685f;
+    --ct-dash-nav:#302c30; --ct-dash-nav-card:#413b3e; --ct-dash-nav-active:#654c43;
+    --ct-dash-accent:#b95937; --ct-dash-accent-soft:#fff0e5;
+  }
+  #appShell[data-ct-dashboard-theme="graphite"] {
+    --ct-dash-page:#edf1f3; --ct-dash-surface:#fbfcfd; --ct-dash-soft:#e6ecef;
+    --ct-dash-border:#cdd8de; --ct-dash-ink:#28343d; --ct-dash-muted:#60717c;
+    --ct-dash-nav:#2c3943; --ct-dash-nav-card:#3c4a55; --ct-dash-nav-active:#52626e;
+    --ct-dash-accent:#426475; --ct-dash-accent-soft:#e4eef2;
+  }
+  #ctDashboardThemeToggle[hidden] { display:none!important; }
+  .ct-topbar #ctDashboardThemeToggle {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    width:auto; min-width:108px; min-height:32px; padding:0 9px;
+    border:1px solid #dbe3e8; border-radius:8px; background:#f7fafb;
+    color:#344957; font-size:10px; font-weight:700; white-space:nowrap;
+  }
+  .ct-topbar #ctDashboardThemeToggle:hover { background:#eaf1f3; border-color:#b7c9d0; }
+  #appShell[data-ct-dashboard-theme] {
+    background:var(--ct-dash-page);
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] #ctSidebar {
+    background:var(--ct-dash-nav); border-right-color:var(--ct-dash-nav);
+  }
+  #appShell[data-ct-dashboard-theme] #ctSidebar .ct-location,
+  #appShell[data-ct-dashboard-theme] #ctSidebar .ct-capacity {
+    background:var(--ct-dash-nav-card); border-color:rgba(255,255,255,.16);
+  }
+  #appShell[data-ct-dashboard-theme] #ctSidebar .ct-nav button:hover {
+    background:var(--ct-dash-nav-card); border-color:rgba(255,255,255,.14);
+  }
+  #appShell[data-ct-dashboard-theme] #ctSidebar .ct-nav button[aria-current="page"] {
+    background:var(--ct-dash-nav-active); border-color:rgba(255,255,255,.20);
+    color:#fff;
+  }
+  #appShell[data-ct-dashboard-theme] .ct-topbar {
+    background:var(--ct-dash-surface); border-bottom:1px solid var(--ct-dash-border);
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-topbar-context,
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-staff-chip { color:var(--ct-dash-muted); }
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-staff-chip,
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-icon-button,
+  #appShell[data-ct-dashboard-theme] .ct-topbar #ctDashboardThemeToggle {
+    background:var(--ct-dash-soft); border-color:var(--ct-dash-border);
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-staff-chip strong,
+  #appShell[data-ct-dashboard-theme] .ct-topbar .ct-staff-chip #roleBadge:not([hidden]) {
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-team-strip,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-queue-panel,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-panel,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-card {
+    background:var(--ct-dash-surface);
+    border-color:var(--ct-dash-border);
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-team-strip h3,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat-top,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat-bottom strong,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-title h3,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-queue-tools h3,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-panel-title h3 { color:var(--ct-dash-ink); }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-team-strip p,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat-bottom small,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-ids,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-meta,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-board-subtitle { color:var(--ct-dash-muted); }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat.ring-2,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-card:hover {
+    border-color:var(--ct-dash-accent);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice #messengerSidebarAvatars>div,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-stat-step,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-car-icon,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-footer,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-tabs {
+    background:var(--ct-dash-soft); border-color:var(--ct-dash-border);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice #messengerSidebarAvatars>div.ct-inspection-pop {
+    background:#fff3f1; border-color:#df9991;
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-search,
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-search input {
+    background:var(--ct-dash-surface); border-color:var(--ct-dash-border);
+    color:var(--ct-dash-ink);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-tab { color:var(--ct-dash-muted); }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-tab[aria-pressed="true"] {
+    color:var(--ct-dash-accent); background:var(--ct-dash-surface);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-job-ids b {
+    color:var(--ct-dash-muted); background:var(--ct-dash-soft); border-color:var(--ct-dash-border);
+  }
+  #appShell[data-ct-dashboard-theme] #viewOffice .ct-page-heading {
+    background:linear-gradient(120deg,var(--ct-dash-nav),var(--ct-dash-nav-card));
+    border-color:var(--ct-dash-nav-active);
+  }
+  #appShell[data-ct-dashboard-theme="warm"] #viewOffice .ct-button.ct-primary {
+    background:#cf6940; border-color:#cf6940; color:#fff;
+  }
+  #appShell[data-ct-dashboard-theme="graphite"] #viewOffice .ct-button.ct-primary {
+    background:#496b7a; border-color:#496b7a; color:#fff;
+  }
+  @media(max-width:760px) {
+    .ct-topbar #ctDashboardThemeToggle {
+      width:29px; min-width:29px; height:29px; min-height:29px; padding:0;
+    }
+    .ct-topbar #ctDashboardThemeToggle span { display:none; }
+  }
+</style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 min-h-screen font-sans antialiased text-sm">
 <section id="ctPauseScreen" hidden aria-labelledby="ctPauseTitle">
@@ -2849,12 +2968,44 @@ body.ct-tester-mode .ct-page-heading-actions .ct-primary { display:none!importan
       <div class="ct-breadcrumb"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Workspace</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="ctBreadcrumb">Workshop</strong></div>
       <div class="ct-topbar-context"><span>Office workspace</span></div>
       <div class="ct-top-actions">
+        <button id="ctDashboardThemeToggle" class="ct-icon-button" type="button" aria-label="Change dashboard theme" title="Change dashboard theme" hidden><i class="fa-solid fa-palette" aria-hidden="true"></i><span>Warm Light</span></button>
         <button type="button" id="ctHeaderAiSupport" class="ct-header-ai-support" onclick="CartechSupportChat.open()" aria-label="Developer Chat Support" title="Developer Chat Support" hidden><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Developer Chat Support</span><span id="ctSupportBadge" class="ct-support-badge" hidden>0</span></button>
         <span class="ct-staff-chip">Staff: <strong id="staffBadge">Staff</strong><span id="roleBadge" hidden>Terminal</span></span>
         <button type="button" class="ct-icon-button" onclick="enableCartechAlerts()" title="Enable live notification sounds and pop-ups" aria-label="Enable live alerts"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
         <button type="button" id="ctInboxButton" class="ct-icon-button" onclick="CartechUI.openInbox()" aria-label="Unread messages"><span id="wsBellIcon"><i class="fa-regular fa-bell" aria-hidden="true"></i></span><span id="ctUnreadCount" class="ct-bell-count" hidden>0</span></button>
       </div>
     </header>
+
+    <script>
+      window.CartechDashboardTheme = (() => {
+        const shell = document.getElementById('appShell');
+        const toggle = document.getElementById('ctDashboardThemeToggle');
+        const storageKey = 'cartech-dashboard-theme-v88.3';
+        let selected = 'warm';
+        try { if (localStorage.getItem(storageKey) === 'graphite') selected = 'graphite'; } catch (_) {}
+        function render() {
+          const label = selected === 'warm' ? 'Warm Light' : 'Graphite Light';
+          const next = selected === 'warm' ? 'Graphite Light' : 'Warm Light';
+          toggle.querySelector('span').textContent = label;
+          toggle.setAttribute('aria-label', 'Dashboard theme: ' + label + '. Switch to ' + next);
+          toggle.title = 'Dashboard theme: ' + label + '. Switch to ' + next;
+          if (!toggle.hidden) shell.dataset.ctDashboardTheme = selected;
+        }
+        toggle.addEventListener('click', () => {
+          if (toggle.hidden) return;
+          selected = selected === 'warm' ? 'graphite' : 'warm';
+          try { localStorage.setItem(storageKey, selected); } catch (_) {}
+          render();
+        });
+        function syncRole(role) {
+          toggle.hidden = !['office', 'admin', 'developer'].includes(role);
+          if (toggle.hidden) shell.removeAttribute('data-ct-dashboard-theme');
+          else render();
+        }
+        render();
+        return { syncRole };
+      })();
+    </script>
 
     <div id="notificationPermissionBanner" class="hidden mx-4 md:mx-6 mt-3 rounded-2xl border border-orange-300 bg-gradient-to-r from-orange-50 to-amber-50 p-3.5 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -5360,6 +5511,7 @@ SEPTEMBER 19 BETA TEST IS ENDED</textarea>
       document.getElementById('roleBadge').innerText = roleLabel;
       document.getElementById('roleBadge').hidden = !shielaAdmin;
       if (shielaAdmin) document.getElementById('roleBadge').innerText = 'Admin';
+      window.CartechDashboardTheme?.syncRole(currentRole);
 
       const devView = document.getElementById('viewDeveloper');
       const officeView = document.getElementById('viewOffice');
